@@ -1,0 +1,28 @@
+
+Executable {
+    id = "parser";
+    project_name = "parser_";
+
+    settings = { 
+        subsystem = "CONSOLE"; 
+    }; 
+
+    libraries = {
+        "assert/assert",
+        "cmdline/cmdline",
+        "debug/debug",
+        "error/error",
+        "lexer/lexer",
+        "lua/lua",
+        "lua/lua_/liblua",
+        "parser/parser",
+        "pointer/pointer",
+        "rtti/rtti"
+    };
+    
+    Cc {
+        pch = "stdafx.hpp";
+        "Application.cpp", 
+        "main.cpp"
+    };
+}

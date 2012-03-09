@@ -1,0 +1,15 @@
+
+Executable {
+    id = "error_test";
+
+    libraries = {
+        "error/error",
+        "assert/assert",
+        "unit/libUnitTest"
+    };
+        
+    Cc {
+        pch = "stdafx.hpp";
+        "main.cpp"
+    };
+}

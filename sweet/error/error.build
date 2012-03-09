@@ -1,0 +1,19 @@
+
+buildfile "error_test/error_test.build";
+
+Library {
+    id = "error";
+    
+    libraries = {
+        "assert/assert"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "boost_integration.cpp",
+        "dinkumware_integration.cpp",
+        "Error.cpp",
+        "ErrorPolicy.cpp",
+        "functions.cpp"
+    };
+}    

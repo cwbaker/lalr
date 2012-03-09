@@ -1,0 +1,23 @@
+
+Executable {
+    id = "lua_test";
+    
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "lua/lua",
+        "lua/lua_/liblua",
+        "rtti/rtti",
+        "unit/libUnitTest"
+    };
+    
+    Cc {
+        "main.cpp",
+        "TestLua.cpp",
+        "TestLuaObject.cpp",
+        "TestLuaPreprocessor.cpp",
+        "TestLuaThread.cpp",
+        "TestLuaWithStl.cpp",
+        "TestLuaValue.cpp"
+    };
+}

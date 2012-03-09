@@ -1,0 +1,15 @@
+
+Executable {
+    id = "cmdline_test";
+
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "unit/libUnitTest"
+    };
+
+    Cc {
+        "main.cpp",
+        "TestParser.cpp"
+    };
+}

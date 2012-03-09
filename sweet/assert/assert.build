@@ -1,0 +1,9 @@
+
+Library {
+    id = "assert";
+
+    Cc {
+        pch = "stdafx.hpp";
+        "assert.cpp"
+    }
+}

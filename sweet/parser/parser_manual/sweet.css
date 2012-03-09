@@ -1,0 +1,78 @@
+
+body { margin-left: 10%; margin-right: 10%; margin-bottom: 0; }
+h1 { margin: 0 0 0 -5%; font-size: 200%; }
+h2 { margin: 0 0 0 -5%; font-size: 180%; }
+h3 { margin: 0 0 0 -5%; font-size: 160%; }
+h4 { margin: 0 0 0 -5%; font-size: 140%; }
+h5 { margin: 0 0 0 -5%; font-size: 120%; }
+h6 { margin: 0 0 0 -5%; font-size: 100%; }
+p { font-family: sans-serif; text-align: justify; }
+
+div.right { text-align: right; }
+div.centered { text-align: center; }
+div.deprecated { color: gray }
+
+div.grammar { margin-left:1%; margin-right:1%; background-color:#e0f8f8; padding: 2 2 2 2; border: solid 1px #c0d8d8; }
+div.grammar p { font-family: monospace; margin: 0 0 0 4px; }
+
+pre { margin-left:1%; margin-right:1%; font-family: monospace; padding: 8 8 8 8; border: solid 1px #d0e0e0; }
+
+#toc table { border: none 0px #ffffff; margin-left:auto; margin-right: auto; text-align: center; }
+#toc tbody tr td { border: none 0px #ffffff; padding: 3px 8px; font-family:sans-serif; text-align:left; }
+#toc tbody tr.odd td { border: none 0px #ffffff; background-color: #edf3fe; padding: 3px 8px; font-family: sans-serif; text-align:left; }
+#toc a { color:black; text-decoration: none; }
+
+table { border-top: 1px solid #d9d9d9; border-right: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9; }
+thead { font-family: sans-serif;  background-color: silver }
+tbody tr td { border-left: solid 1px #d9d9d9; padding: 3px 8px; font-family: sans-serif; }
+tbody tr.odd td { background-color:#edf3fe; border-left: solid 1px #d9d9d9; padding: 3px 8px; font-family: sans-serif; }
+
+ul { font-family: sans-serif }
+li { font-family: sans-serif }
+dl { font-family: sans-serif }
+dt { margin-top: 8px; font-weight: bold }
+
+html
+{
+	overflow:-moz-scrollbars-vertical;
+}
+
+hr 
+{ 
+	border: 0px;
+	border-top: solid 1px black; 
+	height: 2px; 
+	color: black; 
+}
+
+div#title
+{	
+	text-align: right;
+	min-width: 900px;
+}
+
+div#footer
+{
+	clear: both;
+}
+
+div#footer p
+{
+	font-size: smaller;
+	text-align: right;
+}
+
+div.logo
+{
+	background: white url("images/sweet-logo-small-right.png") no-repeat right 0px;
+	font-size: 1px;
+	margin-top: 18px;
+	height: 29px;
+}
+
+div.logo div.cap
+{
+	background: transparent url("images/sweet-logo-small-left.png") no-repeat 0px 0px;
+	font-size: 1px;
+	height: 29px;
+}

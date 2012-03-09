@@ -1,0 +1,18 @@
+
+buildfile "cmdline_test/cmdline_test.build";
+
+Library {
+    id = "cmdline";
+
+    libraries = {
+        "assert/assert",
+        "error/error"
+    };
+
+    Cc {
+        "AddOption.cpp",
+        "Error.cpp",
+        "Option.cpp",
+        "Parser.cpp"
+    };
+}

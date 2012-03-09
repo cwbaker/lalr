@@ -1,0 +1,17 @@
+
+Executable {
+    id = "debug_test";
+
+    libraries = {
+        "assert/assert",
+        "debug/debug",
+        "unit/libUnitTest"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "main.cpp",
+        "TestStackTrace.cpp",
+        "TestTrace.cpp"
+    };
+}

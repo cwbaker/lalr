@@ -1,0 +1,20 @@
+
+Executable {
+    id = "parser_test";
+    
+    libraries = {
+        "assert/assert", 
+        "error/error",
+        "lexer/lexer",
+        "parser/parser",
+        "pointer/pointer",
+        "unit/libUnitTest"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "main.cpp",
+        "TestParsers.cpp",
+        "TestPrecedenceDirectives.cpp"
+    };
+}

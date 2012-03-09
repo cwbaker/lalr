@@ -1,0 +1,16 @@
+
+Library {
+    id = "lua_unit";
+    
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "lua/lua",
+        "lua/lua_/liblua",
+        "unit/libUnitTest"
+    };
+        
+    Cc {
+        "LuaUnitTest.cpp"
+    };
+}

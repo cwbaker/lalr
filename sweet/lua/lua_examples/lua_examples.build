@@ -1,0 +1,22 @@
+
+Executable {
+    id = "lua_examples";
+    
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "lua/lua",
+        "lua/lua_/liblua",
+        "rtti/rtti"
+    };
+
+    Cc {
+        "lua_factorial_example.cpp",
+        "lua_hello_world_example.cpp",
+        "lua_logging_example.cpp",
+        "lua_logging_owned_by_lua_example.cpp",
+        "lua_logging_prototype_example.cpp",
+        "lua_vector_example.cpp",
+        "main.cpp"
+    };
+}

@@ -1,0 +1,29 @@
+
+buildfile "lexer_test/lexer_test.build";
+
+Library {
+    id = "lexer";
+    
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "pointer/pointer"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "Error.cpp",        
+        "LexerAction.cpp",
+        "LexerErrorPolicy.cpp",
+        "LexerGenerator.cpp",
+        "LexerItem.cpp",
+        "LexerState.cpp",
+        "LexerStateMachine.cpp",
+        "LexerToken.cpp",
+        "LexerTransition.cpp",
+        "RegexCharacter.cpp",
+        "RegexNode.cpp",
+        "RegexNodeLess.cpp",
+        "RegexParser.cpp"
+    };
+}

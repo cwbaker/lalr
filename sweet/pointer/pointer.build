@@ -1,0 +1,16 @@
+
+buildfile "pointer_test/pointer_test.build";
+
+Library {
+    id = "pointer";
+    
+    libraries = {
+        "assert/assert",
+        "error/error"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "ReferenceCount.cpp"
+    };
+}

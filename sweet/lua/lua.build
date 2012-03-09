@@ -1,0 +1,43 @@
+
+buildfile "lua_/lua_.build";
+buildfile "lua_examples/lua_examples.build";
+buildfile "lua_test/lua_test.build";
+buildfile "lua_unit/lua_unit.build";
+
+Library {
+    id = "lua";
+    
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "lua/lua_/liblua",
+        "rtti/rtti"
+    };
+    
+    Cc {
+        "AddGlobal.cpp", 
+        "AddMember.cpp",
+        "AddMemberHelper.cpp",
+        "AddParameter.cpp",
+        "AddParameterHelper.cpp",
+        "Error.cpp",
+        "Lua.cpp",
+        "LuaAllocator.cpp",
+        "LuaConverter.cpp",
+        "LuaFileReader.cpp",
+        "LuaGlobalEnvironment.cpp", 
+        "LuaMemoryReader.cpp",
+        "LuaObject.cpp",
+        "LuaOutOfOrderParameter.cpp",
+        "LuaNil.cpp",
+        "LuaPreprocessReader.cpp",
+        "LuaRawWrapper.cpp",
+        "LuaReturner.cpp",
+        "LuaStackGuard.cpp", 
+        "LuaThread.cpp",
+        "LuaUserData.cpp", 
+        "LuaValue.cpp",
+        "lua_functions.cpp",
+        "lua_types.cpp"       
+    };
+}

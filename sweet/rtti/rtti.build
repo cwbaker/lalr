@@ -1,0 +1,13 @@
+
+Library {
+    id = "rtti";
+    
+    libraries = {
+        "assert/assert"
+    };
+    
+    Cc {
+        "Type.cpp",
+        "SweetTypeInfo.cpp"
+    };
+}

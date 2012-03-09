@@ -1,0 +1,367 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Sweet Parser - User's Manual</title>
+    <link href="sweet.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div>
+        <div class="logo">
+            <div class="cap">
+            </div>
+        </div>
+    </div>
+    <hr />
+    
+    <h1>
+        Sweet Parser User's Manual</h1>
+        
+    <h2>
+        Overview</h2>
+
+    <p>
+        The Sweet Parser tool is a standalone executable that embeds a Lua interpreter 
+        and Lua bindings to the Sweet Parser library so that LALR(1) parsers can be 
+        generated for arbitrary languages. It provides bindings to the parser and 
+        lexer state machines generated from an EBNF grammar.</p>
+
+    <p>
+        Usage is to pass a string to be passed to the Lua '<tt>require()</tt>' function 
+        on startup (the default is '<tt>parser/cxx</tt>').  The required script is 
+        expected to export a single function, '<tt>parser()</tt>', that takes a filename as a 
+        parameter.  The executable will call this function passing each command line 
+        argument that is not an option or an assignment.  The function is then expected 
+        to construct a '<tt>ParserData</tt>' object to create the parser state machine 
+        from a grammar specified in the file and write source code for a parser and lexer 
+        by traversing the data available in the state machine.</p>
+
+    <p>
+        The command line used to generate the JSON parser used in the parser examples
+        is '<tt>parser -r parser/cxx json.g</tt>'.  This generates the C++ header file 
+        '<tt>json.hpp</tt>' that contains the parse tables to parse JSON.</p>
+
+    <p>
+        Any command line arguments of the form <tt><em>variable</em>=<em>value</em></tt>
+        are treated as assignments to global variables.  These assignments are made 
+        to global variables before the generation script is required and before any
+        calls are made to the generation function.</p>
+
+    <h3>
+        Installation</h3>
+
+    <p>
+        The executable is standalone with no external dependencies so it just needs
+        to be copied somewhere in your path.  The generation scripts are required 
+        using a standard Lua '<tt>require()</tt>' call so they need to be copied 
+        somewhere into the path specified by <tt>LUA_PATH</tt>.</p>
+
+    <h2>
+        Reference</h2>
+        
+    <h3>
+        Usage</h3>
+        
+    <pre>Usage: parser [options] [attribute=value] file ... 
+Options: 
+  -h, --help         Print this message and exit.
+  -v, --version      Print the version and exit.
+  -r, --require      Set the name of the script to require on startup.
+  -s, --stack-trace  Enable stack traces in error messages.</pre>
+          
+    <h3>
+        API</h3>
+
+    <h4>
+        ParserData</h4>
+    <p>
+        <strong>ParserData</strong>( <em>grammar</em>, <em>filename</em> )</p>
+    <p>
+        Convert the EBNF grammar in <em>grammar</em> into a state 
+        machine that can be used to implement an LALR parser.  The 
+        <em>filename</em> parameter is used when reporting errors to stderr.</p>
+    <p>
+        <strong>ParserData:id</strong>()</p>       
+    <p>
+        Returns the identifier of the grammar that was used to create 
+        this ParserData.  This is the identifier of the top level block 
+        in the grammar.</p>        
+    <p>
+        <strong>ParserData:actions</strong>()</p>
+    <p>
+        Returns an iterator over the ParserActions that were specified 
+        between '[' and ']' in the grammar.</p>    
+    <p>
+        <strong>ParserData:productions</strong>()</p>
+    <p>
+        Returns an iterator over the ParserProductions in the grammar.</p>        
+    <p>
+        <strong>ParserData:symbols</strong>()</p>
+    <p>
+        Returns an iterator over the ParserSymbols (both terminal and 
+        non-terminal) that are used in the parser/appear in the 
+        grammar.</p>
+    <p>
+        <strong>ParserData:states</strong>()</p>
+    <p>
+        Returns an iterator over the ParserStates in the state machine
+        that implements the parser.</p>
+    <p>
+        <strong>ParserData:start_state</strong>()</p>
+    <p>
+        Returns the starting state of the state machine (the start state 
+        is also included in the states that are available via 
+        \e states).</p>    
+    <p>
+        <strong>ParserData:lexer_actions</strong>()</p>
+    <p>
+        Returns an iterator over the LexerActions in the lexical analyzer 
+        for the parser.</p>
+    <p>
+        <strong>ParserData:lexer_data</strong>()</p>
+    <p>
+        Returns the LexerData for the lexical analyzer used by the
+        parser.</p>    
+    <p>
+        <strong>ParserData:whitespace_lexer_data</strong>()</p>
+    <p>
+        Returns the LexerData for the lexical analyzer that is used by 
+        the parser to skip whitespace between symbols or nil if there is 
+        no 'whitespace' production in the grammar.</p>
+    <p>
+        <strong>ParserData:start_symbol</strong>()</p>
+    <p>
+        Returns the implicit starting symbol in the grammar.</p>
+    <p>
+        <strong>ParserData:end_symbol</strong>()</p>
+    <p>
+        Returns the implicit end symbol in the grammar.</p>
+    <p>
+        <strong>ParserData:error_symbol</strong>()</p>
+    <p>
+        Returns the implicit error symbol in the grammar.</p>
+    
+    <h4>
+        ParserState</h4>    
+    <p>
+        <strong>ParserState:index</strong>()</p>
+    <p>
+        Returns the index of the state.</p>
+    <p>
+        <strong>ParserState:transitions</strong>()</p>        
+    <p>
+        Returns an iterator over the transitions from this state to other states.
+
+    <h4>
+        ParserTransition</h4>    
+    <p>
+        <strong>ParserTransition.TRANSITION_SHIFT</strong></p>
+    <p>
+        The value returned by ParserTransition:type() to indicate that a
+        transition is a shift transition.<p>        
+    <p>
+        <strong>ParserTransition.TRANSITION_REDUCE</strong></p>
+    <p>
+        The value returned by ParserTransition:type() to indicate that a
+        transition is a reduce transition.<p>
+    <p>
+        <strong>ParserTransition:type</strong>()</p>
+    <p>
+        Returns the type of a transition.<p>
+    <p>
+        <strong>ParserTransition:state</strong>()</p>
+    <p>
+        Returns the state that a transition transitions to or nil for a reduce
+        transition.</p>
+    <p>
+        <strong>ParserTransition:reduced_production</strong>()</p>
+    <p>
+        Returns the production that a reduce transition reduces to or nil for a shift
+        transition.
+    <p>
+        <strong>ParserTransition:is_symbol</strong>( <em>symbol</em> )</p>
+    <p>
+        Returns true if this transition is taken on <em>symbol</em> otherwise
+        false.
+    <p>
+        <strong>ParserTransition:symbol</strong>()</p>
+    <p>
+        Returns the symbol that this transition is taken on.</p>
+    <p>
+        <strong>ParserTransition:started_productions</strong>()</p>
+    <p>
+        Returns an iterator over the productions that are potentially started
+        when this transition is taken.
+    <p>
+        <strong>ParserTransition:index</strong>()</p>
+    <p>
+        Returns the index of this transition.</p>
+        
+    <h4>
+        ParserSymbol</h4>
+    <p>
+        <strong>ParserSymbol:index</strong>()</p>
+    <p>
+        Returns the index of this symbol.</p>
+    <p>
+        <strong>ParserSymbol:type</strong>()</p>
+    <p>
+        Returns the type of this symbol.</p>
+    <p>
+        <strong>ParserSymbol:kind</strong>()</p>
+    <p>
+        Returns the kind of this symbol.</p>
+    <p>
+        <strong>ParserSymbol:lexeme</strong>()</p>
+    <p>
+        Returns the lexeme of this symbol.</p>
+    <p>
+        <strong>ParserSymbol:id</strong>()</p>
+    <p>
+        Returns the identifier of this symbol.</p>
+    <p>
+        <strong>ParserSymbol:is_literal</strong>()</p>
+    <p>
+        Returns true if this symbol is a literal (specified in the grammar 
+        with single quotes) otherwise false.
+    <p>
+        <strong>ParserSymbol:is_regular_expression</strong>()</p>
+    <p>
+        Returns true if this symbol is a regular expression (specified in the
+        grammar with double quotes) otherwise false.
+    <p>
+        <strong>ParserSymbol:is_nullable</strong>()</p>
+    <p>
+        Returns true if this symbol is nullable.</p>
+    <p>
+        <strong>ParserSymbol:first</strong>()</p>
+    <p>
+        Returns an iterator over the symbols in the first set of this symbol.
+        The first set is the set of all terminal symbols that may appear as
+        the first symbol in a non-terminal symbol.
+    <p>
+        <strong>ParserSymbol:follow</strong>()</p>
+    <p>
+        Returns an iterator over the symbols in the follow set of this symbol.
+        The follow set is the set of all terminal symbols that may appear
+        after another symbol.
+    <h4>
+        ParserAction</h4>
+    <p>
+        <strong>ParserAction:index</strong>()</p>
+    <p>
+        Returns the index of this action.<p>
+    <p>
+        <strong>ParserAction:id</strong>()</p>
+    <p>
+        Returns the id of this action.</p>
+
+    <h4>
+        ParserProduction</h4>
+    <p>
+        <strong>ParserProduction:index</strong>()</p>
+    <p>
+        Returns the index of this production.</p>
+    <p>
+        <strong>ParserProduction:symbol</strong>()</p>
+    <p>
+        Returns the symbol that this production reduces to.</p>
+    <p>
+        <strong>ParserProduction:is_nullable</strong>()</p>
+    <p>
+        Returns true if this production is nullable otherwise false.</p>
+    <p>
+        <strong>ParserProduction:action</strong>()</p>
+    <p>
+        Returns the action taken when this production is reduced or nil if this
+        production has no attached action.</p>
+    <p>
+        <strong>ParserProduction:minimum_length</strong>()</p>
+    <p>
+        Returns the minimum number of nodes that can be reduced when this 
+        production is reduced.</p>
+    <h4>
+        LexerData</h4>    
+    <p>
+        <strong>LexerData:index</strong>()</p>
+    <p>
+        Returns the index of this lexical analyzer.</p>
+    <p>
+        <strong>LexerData:symbols</strong>()</p>
+    <p>
+        Returns the symbols that this lexical analyzer can recognize.</p>
+    <p>
+        <strong>LexerData:states</strong>()</p>
+    <p>
+        Returns the states in the lexical analyzer.</p>
+    <p>
+        <strong>LexerData:start_state</strong>()</p>
+    <p>
+        Returns the starting state in the lexical analyzer.
+
+    <h4>
+        LexerState</h4>
+    <p>
+        <strong>LexerState:symbol</strong>()</p>
+    <p>
+        Returns the symbol that this state recognizes or nil if this state 
+        doesn't recognize any symbol.</p>
+    <p>
+        <strong>LexerState:find_transition_by_character</strong>( <em>character</em>)</p>
+    <p>
+        Returns the transition that should be taken when <em>character</em> is received
+        as input or nil if there is no transition that can be taken on that character.
+    <p>
+        <strong>LexerState:transitions</strong>()</p>
+    <p>
+        Returns an iterator over the transitions from this state.</p>
+    <p>
+        <strong>LexerState:index</strong>()</p>
+    <p>
+        Returns the index of this state.</p>
+        
+    <h4>
+        LexerTransition</h4>    
+    <p>
+        <strong>LexerTransition:start</strong>()</p>
+    <p>
+        Returns the first character in the inclusive-exclusive range of characters
+        that this transition can be taken on.</p>
+    <p>
+        <strong>LexerTransition:finish</strong>()</p>
+    <p>
+        Returns the last character in the inclusive-exclusive range of characters
+        that this transition can be taken on.  The range is exclusive at the end 
+        so the last character is not considered part of the characters that can 
+        be transitioned on.
+    <p>
+        <strong>LexerTransition:is_on_character</strong>( <em>character</em> )</p>
+    <p>
+        Returns true if this transition is taken on <em>character</em> otherwise
+        false.
+    <p>
+        <strong>LexerTransition:state</strong>()</p>
+    <p>
+        Return the state that this transition transitions to.</p>
+    <p>
+        <strong>LexerTransition:action</strong>()</p>
+    <p>
+        Return the action taken when this transition is taken or nil if this
+        transition doesn't have an attached action.
+        
+    <h4>
+        LexerAction</h4>
+    <p>
+        <strong>LexerAction:index</strong>()</p>
+    <p>
+        Returns the index of this action.</p>
+    <p>
+        <strong>LexerAction:id</strong>()</p>
+    <p>
+        Returns the identifier of this action.</p>
+
+    <div id="footer">
+        <hr />
+        <p>
+            Copyright © 2006 - 2010 Sweet Software Limited. All rights reserved.</p>
+    </div>    
+</body>
+</html>

@@ -1,0 +1,32 @@
+
+buildfile "parser_/parser_.build";
+buildfile "parser_examples/parser_examples.build";
+buildfile "parser_test/parser_test.build";
+
+Library {
+    id = "parser";
+
+    libraries = {
+        "assert/assert",
+        "error/error",
+        "lexer/lexer",
+        "pointer/pointer"
+    };
+
+    Cc {
+        pch = "stdafx.hpp";
+        "Error.cpp",        
+        "GrammarParser.cpp",
+        "ParserAction.cpp",
+        "ParserStateMachine.cpp",
+        "ParserErrorPolicy.cpp",
+        "ParserGenerator.cpp",
+        "ParserGrammar.cpp",
+        "ParserItem.cpp",
+        "ParserState.cpp",
+        "ParserTransition.cpp",
+        "ParserProduction.cpp",
+        "ParserSymbol.cpp",
+        "parser_types.cpp"
+    };
+}
