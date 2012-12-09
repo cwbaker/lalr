@@ -7,9 +7,3 @@
 #define NOMINMAX
 #define _WIN32_WINNT 0x500
 #define WINVER       0x500
-
-#include <sweet/build.hpp>
-#include <stdlib.h>
-#include <stdio.h>
-#include <windows.h>
-#include <dbghelp.h>

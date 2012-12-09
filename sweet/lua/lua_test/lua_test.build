@@ -11,7 +11,7 @@ Executable {
         "unit/libUnitTest"
     };
     
-    Cc {
+    Source {
         "main.cpp",
         "TestLua.cpp",
         "TestLuaObject.cpp",

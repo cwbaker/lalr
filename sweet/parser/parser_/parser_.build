@@ -10,7 +10,6 @@ Executable {
     libraries = {
         "assert/assert",
         "cmdline/cmdline",
-        "debug/debug",
         "error/error",
         "lexer/lexer",
         "lua/lua",
@@ -20,7 +19,7 @@ Executable {
         "rtti/rtti"
     };
     
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "Application.cpp", 
         "main.cpp"

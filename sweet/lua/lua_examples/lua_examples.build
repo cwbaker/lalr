@@ -3,14 +3,14 @@ Executable {
     id = "lua_examples";
     
     libraries = {
-        "assert/assert",
-        "error/error",
         "lua/lua",
         "lua/lua_/liblua",
-        "rtti/rtti"
+        "rtti/rtti",
+        "error/error",
+        "assert/assert"
     };
 
-    Cc {
+    Source {
         "lua_factorial_example.cpp",
         "lua_hello_world_example.cpp",
         "lua_logging_example.cpp",

@@ -1,10 +1,6 @@
-//
-// TestParser.cpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
-//
 
 #include <sweet/unit/UnitTest.h>
-#include <sweet/cmdline/cmdline.hpp>
+#include <sweet/cmdline/Parser.hpp>
 
 using namespace sweet::cmdline;
 
@@ -14,8 +10,8 @@ SUITE( TestParser )
     {
         bool boolean = false;
 
-        int   argc = 2;
-        char* argv[] = { "", "-b" };
+        int argc = 2;
+        const char* argv[] = { "", "-b" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -30,8 +26,8 @@ SUITE( TestParser )
     {
         bool boolean = false;
 
-        int    argc = 2;
-        char* argv[] = { "", "--boolean" };
+        int argc = 2;
+        const char* argv[] = { "", "--boolean" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -46,8 +42,8 @@ SUITE( TestParser )
     {
         int integer = 0;
 
-        int    argc = 2;
-        char* argv[] = { "", "-i1" };
+        int argc = 2;
+        const char* argv[] = { "", "-i1" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -62,8 +58,8 @@ SUITE( TestParser )
     {
         int integer = 0;
 
-        int    argc = 2;
-        char* argv[] = { "", "--integer=1" };
+        int argc = 2;
+        const char* argv[] = { "", "--integer=1" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -78,8 +74,8 @@ SUITE( TestParser )
     {
         float real = 0.0f;
 
-        int    argc = 2;
-        char* argv[] = { "", "-r1.0" };
+        int argc = 2;
+        const char* argv[] = { "", "-r1.0" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -94,8 +90,8 @@ SUITE( TestParser )
     {
         float real = 0.0f;
 
-        int    argc = 2;
-        char* argv[] = { "", "--real=1.0" };
+        int argc = 2;
+        const char* argv[] = { "", "--real=1.0" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -110,8 +106,8 @@ SUITE( TestParser )
     {
         std::string string;
 
-        int    argc = 2;
-        char* argv[] = { "", "-sfoo" };
+        int argc = 2;
+        const char* argv[] = { "", "-sfoo" };
 
         Parser command_line_parser;
         command_line_parser.add_options()
@@ -126,8 +122,8 @@ SUITE( TestParser )
     {
         std::string string;
 
-        int    argc = 2;
-        char* argv[] = { "", "--string=foo" };
+        int argc = 2;
+        const char* argv[] = { "", "--string=foo" };
 
         Parser command_line_parser;
         command_line_parser.add_options()

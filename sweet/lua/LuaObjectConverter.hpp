@@ -1,6 +1,6 @@
 //
 // LuaObjectConverter.hpp
-// Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUAOBJECTCONVERTER_HPP_INCLUDED
@@ -8,6 +8,7 @@
 
 #include "LuaTraits.hpp"
 #include "lua_functions.hpp"
+#include <sweet/assert/assert.hpp>
 
 namespace sweet
 {

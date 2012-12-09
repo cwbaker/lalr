@@ -1,6 +1,6 @@
 //
 // ReferenceCountTemplate.ipp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_POINTER_REFERENCECOUNTTEMPLATE_IPP_INCLUDED

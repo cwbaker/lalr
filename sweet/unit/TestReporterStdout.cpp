@@ -2,7 +2,10 @@
 #include <sweet/unit/TestReporterStdout.h>
 #include <cstdio>
 #include <sweet/unit/TestDetails.h>
+
+#if defined(BUILD_OS_WINDOWS)
 #include <windows.h>
+#endif
 
 namespace UnitTest {
 
@@ -17,10 +20,12 @@ void TestReporterStdout::ReportFailure(TestDetails const& details, char const* f
 	using namespace std;
     printf(errorFormat, details.filename, details.lineNumber, details.testName, failure);
 
+#if defined(BUILD_OS_WINDOWS)
     char buffer [1024];
     _snprintf(buffer, sizeof(buffer), errorFormat, details.filename, details.lineNumber, details.testName, failure);
     buffer [sizeof(buffer) - 1] = '\0';
     OutputDebugStringA( buffer );
+#endif
 }
 
 void TestReporterStdout::ReportTestStart(TestDetails const& /*test*/)

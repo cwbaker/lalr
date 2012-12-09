@@ -1,6 +1,6 @@
 //
 // atomic.ipp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_ATOMIC_ATOMIC_IPP_INCLUDED
@@ -8,7 +8,7 @@
 
 #include <sweet/assert/assert.hpp>
 
-#if defined(BUILD_PLATFORM_MSVC)
+#if defined(BUILD_OS_WINDOWS)
 #include <windows.h>
 #endif
 
@@ -29,11 +29,13 @@ namespace atomic
 */
 inline int atomic_increment( volatile int* destination )
 {
-#if defined(BUILD_PLATFORM_MSVC)
+#if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedIncrement(reinterpret_cast<volatile long*>(destination)) );
+#elif defined(BUILD_OS_MACOSX)
+    return static_cast<int>( __sync_add_and_fetch(destination, 1) );
 #else
-#error "The function 'sweet::atomic::atomic_increment()' is not implemened for this platform."
+#error "The function 'sweet::atomic::atomic_increment()' is not implemented for this platform."
 #endif   
 }
 
@@ -48,11 +50,13 @@ inline int atomic_increment( volatile int* destination )
 */
 inline int atomic_decrement( volatile int* destination )
 {
-#if defined(BUILD_PLATFORM_MSVC)
+#if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedDecrement(reinterpret_cast<volatile long*>(destination)) );
+#elif defined(BUILD_OS_MACOSX)
+    return static_cast<int>( __sync_sub_and_fetch(destination, 1) );
 #else
-#error "The function 'sweet::atomic::atomic_decrement()' is not implemened for this platform."
+#error "The function 'sweet::atomic::atomic_decrement()' is not implemented for this platform."
 #endif   
 }
 
@@ -70,11 +74,15 @@ inline int atomic_decrement( volatile int* destination )
 */
 inline int atomic_exchange( volatile int* destination, int exchange )
 {
-#if defined(BUILD_PLATFORM_MSVC)
+#if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedExchange(reinterpret_cast<volatile long*>(destination), exchange) );
+#elif defined(BUILD_OS_MACOSX)
+    int result = static_cast<int>( __sync_lock_test_and_set(destination, exchange) );
+    __sync_lock_release( destination );
+    return result;
 #else
-#error "The function 'sweet::atomic::atomic_exchange()' is not implemened for this platform."
+#error "The function 'sweet::atomic::atomic_exchange()' is not implemented for this platform."
 #endif   
 }
 
@@ -85,12 +93,12 @@ inline int atomic_exchange( volatile int* destination, int exchange )
 // \e destination is exchanged with \e exchange.
 //
 @code
-int original_value = *value;
+int original = *value;
 if ( *value == comparand )
 {
     *value = exchange;
 }
-return original_value;
+return original;
 @endcode
 //
 // The \e destination pointer is assumed not to be null and to be aligned on 
@@ -110,11 +118,13 @@ return original_value;
 */ 
 inline int atomic_compare_exchange( volatile int* destination, int exchange, int comparand )
 {
-#if defined(BUILD_PLATFORM_MSVC)
+#if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedCompareExchange(reinterpret_cast<volatile long*>(destination), exchange, comparand) );
+#elif defined(BUILD_OS_MACOSX)
+    return static_cast<int>( __sync_val_compare_and_swap(destination, comparand, exchange) );
 #else
-#error "The function 'sweet::atomic::atomic_compare_exchange()' is not implemened for this platform."
+#error "The function 'sweet::atomic::atomic_compare_exchange()' is not implemented for this platform."
 #endif   
 }
 

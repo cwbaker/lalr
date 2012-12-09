@@ -21,6 +21,8 @@ namespace lua
 */
 class SWEET_LUA_DECLSPEC LuaNil
 {
+public:
+    LuaNil();
 };
 
 SWEET_LUA_DECLSPEC extern const LuaNil nil;

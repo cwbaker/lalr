@@ -1,6 +1,6 @@
 //
 // weak_ptr.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_POINTER_WEAK_PTR_HPP_INCLUDED
@@ -19,13 +19,15 @@ namespace sweet
 namespace pointer
 {
 
+template <class Type> class ptr;
+
 /**
 // A weak reference counted smart pointer.
 */
 template <class Type>
 class weak_ptr
 {
-    template <class Type> friend class ptr;
+    template <class OtherType> friend class ptr;
 
     Type* ptr_; ///< The object that this weak_ptr points to.
     ReferenceCount* reference_count_; ///< The ReferenceCount that stores the reference counts for the object.

@@ -1,6 +1,6 @@
 //
 // Error.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_CMDLINE_ERROR_HPP_INCLUDED
@@ -23,8 +23,8 @@ namespace cmdline
 */
 enum ErrorCodes
 {
-    CMDLINE_ERROR_NONE,            ///< No error has occured.
-    CMDLINE_ERROR_INVALID_OPTION,  ///< An option on the command line is not recognized or expects an argument and is grouped with other options.
+    CMDLINE_ERROR_NONE, ///< No error has occured.
+    CMDLINE_ERROR_INVALID_OPTION, ///< An option on the command line is not recognized or expects an argument and is grouped with other options.
     CMDLINE_ERROR_INVALID_ARGUMENT ///< An option on the command line that requires an argument doesn't have one.
 };
 

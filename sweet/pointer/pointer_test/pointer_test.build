@@ -3,14 +3,13 @@ Executable {
     id = "pointer_test";
     
     libraries = {
-        "assert/assert",
-        "error/error",
         "pointer/pointer",
+        "error/error",
+        "assert/assert",
         "unit/libUnitTest"
     };
 
-    Cc {
-        pch = "stdafx.hpp";
+    Source {
         "main.cpp",
         "TestPointer.cpp",
         "TestPointerCast.cpp"

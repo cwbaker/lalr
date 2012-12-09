@@ -13,7 +13,7 @@ Library {
         "pointer/pointer"
     };
 
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "Error.cpp",        
         "GrammarParser.cpp",

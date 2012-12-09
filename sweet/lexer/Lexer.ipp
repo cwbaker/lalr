@@ -67,7 +67,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
     if ( state_machine_ )
     {
         action_handlers_.reserve( state_machine_->actions().size() );
-        for ( std::vector<ptr<LexerAction>>::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
+        for ( std::vector<ptr<LexerAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
         {
             LexerAction* action = i->get();
             SWEET_ASSERT( action );
@@ -90,7 +90,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::set_action_handler( const char* i
 {
     SWEET_ASSERT( identifier );
     
-    std::vector<LexerActionHandler>::iterator action_handler = action_handlers_.begin();
+    typename std::vector<LexerActionHandler>::iterator action_handler = action_handlers_.begin();
     while ( action_handler != action_handlers_.end() && action_handler->action_->get_identifier() != identifier )
     {
         ++action_handler;

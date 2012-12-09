@@ -8,8 +8,13 @@
 #include "LexerAction.hpp"
 #include "LexerState.hpp"
 #include <sweet/assert/assert.hpp>
+#include <stdio.h>
 
 using namespace sweet::lexer;
+
+#if defined(BUILD_PLATFORM_MSVC)
+#define snprintf _snprintf
+#endif
 
 /**
 // Constructor.
@@ -109,7 +114,7 @@ void LexerTransition::describe( std::string* description ) const
     SWEET_ASSERT( state_ );    
     
     char buffer [512];
-    _snprintf( buffer, sizeof(buffer), "to %d on ['%c' %d, '%c' %d) %s", 
+    snprintf( buffer, sizeof(buffer), "to %d on ['%c' %d, '%c' %d) %s", 
         state_->get_index(), 
         begin_ > 32 && begin_ < 128 ? begin_ : '.', 
         begin_, 

@@ -40,7 +40,7 @@ class ParserErrorPolicy;
 /**
 // A %parser.
 */
-template <class Iterator, class UserData = ptr<ParserUserData<std::iterator_traits<Iterator>::value_type>>, class Char = std::iterator_traits<Iterator>::value_type, class Traits = std::char_traits<Char>, class Allocator = std::allocator<Char>>
+template <class Iterator, class UserData = ptr<ParserUserData<typename std::iterator_traits<Iterator>::value_type> >, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class Parser
 {
     public:
@@ -92,7 +92,7 @@ class Parser
         
     private:
         const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;
-        typename std::vector<ParserNode>::const_iterator find_node_to_reduce_to( const ParserProduction* production, const std::vector<ParserNode>& nodes ) const;
+        typename std::vector<ParserNode>::iterator find_node_to_reduce_to( const ParserProduction* production, std::vector<ParserNode>& nodes );
         void debug_shift( const ParserNode& node ) const;
         void debug_reduce( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const;
         UserData handle( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const;

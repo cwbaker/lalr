@@ -1,15 +1,18 @@
 //
 // lua_functions.cpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "lua_types.hpp"
 #include "lua_functions.hpp"
 #include "LuaUserData.hpp"
-#include "LuaUserDataTemplate.hpp"
 #include "LuaConverter.hpp"
 #include "LuaStackGuard.hpp"
+#include "LuaUserDataTemplate.ipp"
+#include "Error.hpp"
 #include <sweet/rtti/Type.hpp>
+#include <sweet/assert/assert.hpp>
+#include <stdio.h>
 
 namespace sweet
 {
@@ -35,7 +38,7 @@ void lua_dump_stack( lua_State* lua_state )
         }
         else
         {
-            printf( "%d, %s, 0x%08x\n", i, lua_typename(lua_state, lua_type(lua_state, i)), lua_topointer(lua_state, i) );
+            printf( "%d, %s, 0x%p\n", i, lua_typename(lua_state, lua_type(lua_state, i)), lua_topointer(lua_state, i) );
         }
     }
 }
@@ -215,6 +218,9 @@ void lua_create_object( lua_State* lua_state, void* object )
 // value currently at the top of the Lua stack in \e lua_state.
 //
 // Assumes that the value at the top of the Lua stack is a table.
+//
+// The table at the top of the stack is left popped from the stack when this
+// function returns.
 //
 // @param lua_state
 //  The lua_State to create the object in.
@@ -404,7 +410,10 @@ void lua_push_object( lua_State* lua_state, void* object )
             lua_pushlightuserdata( lua_state, object );
             lua_gettable( lua_state, -2 );
             lua_remove( lua_state, -2 );
-            SWEET_ASSERT( lua_istable(lua_state, -1) );            
+            if ( !lua_istable(lua_state, -1) )
+            {
+                SWEET_ERROR( RuntimeError("No entry in the Lua registry for the object with address 0x%p", object) );
+            }         
         }
     }
     else

@@ -11,6 +11,7 @@
 #include "ParserAction.hpp"
 #include "Error.hpp"
 #include <sweet/pointer/ptr.hpp>
+#include <stdio.h>
 
 using std::set;
 using std::vector;
@@ -65,7 +66,7 @@ std::string& ParserGrammar::identifier()
 // @return
 //  The actions.
 */
-std::vector<ptr<ParserAction>>& ParserGrammar::actions()
+std::vector<ptr<ParserAction> >& ParserGrammar::actions()
 {
     return actions_;
 }
@@ -76,7 +77,7 @@ std::vector<ptr<ParserAction>>& ParserGrammar::actions()
 // @return
 //  The productions.
 */
-std::vector<ptr<ParserProduction>>& ParserGrammar::productions()
+std::vector<ptr<ParserProduction> >& ParserGrammar::productions()
 {
     return productions_;
 }
@@ -87,7 +88,7 @@ std::vector<ptr<ParserProduction>>& ParserGrammar::productions()
 // @return
 //  The symbols.
 */
-std::vector<ptr<ParserSymbol>>& ParserGrammar::symbols()
+std::vector<ptr<ParserSymbol> >& ParserGrammar::symbols()
 {
     return symbols_;
 }
@@ -197,7 +198,7 @@ ParserAction* ParserGrammar::add_action( const std::string& identifier )
 
     if ( !identifier.empty() )
     {
-        std::vector<ptr<ParserAction>>::const_iterator i = actions_.begin();
+        std::vector<ptr<ParserAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
@@ -314,7 +315,7 @@ void ParserGrammar::precedence_symbol( ParserSymbol* symbol )
 */
 void ParserGrammar::print() const
 {
-    for ( vector<ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<ptr<ParserSymbol> >::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         const ParserSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
@@ -333,7 +334,7 @@ void ParserGrammar::print() const
         }
     }
 
-    for ( vector<ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         const ParserProduction* production = i->get();
         SWEET_ASSERT( production );
@@ -368,7 +369,7 @@ void ParserGrammar::print_positions( const std::set<int>& positions ) const
 */
 void ParserGrammar::calculate_identifiers()
 {
-    for ( vector<ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<ptr<ParserSymbol> >::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         ParserSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
@@ -387,7 +388,7 @@ void ParserGrammar::calculate_identifiers()
 */
 void ParserGrammar::replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol )
 {
-    for ( std::vector<ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( std::vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         ParserProduction* production = i->get();
         SWEET_ASSERT( production );
@@ -415,7 +416,7 @@ void ParserGrammar::replace_references_to_symbol( ParserSymbol* to_symbol, Parse
 */
 void ParserGrammar::calculate_implicit_terminal_symbols()
 {
-    for ( vector<ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<ptr<ParserSymbol> >::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         ParserSymbol* non_terminal_symbol = i->get();        
         if ( non_terminal_symbol && non_terminal_symbol != error_symbol_ )
@@ -431,7 +432,7 @@ void ParserGrammar::calculate_implicit_terminal_symbols()
         }
     }
     
-    vector<ptr<ParserSymbol>>::iterator i = symbols_.begin();
+    vector<ptr<ParserSymbol> >::iterator i = symbols_.begin();
     while ( i != symbols_.end() )
     {
         if ( !i->get() )
@@ -455,7 +456,7 @@ void ParserGrammar::calculate_first()
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<ptr<ParserSymbol> >::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
             ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
@@ -476,7 +477,7 @@ void ParserGrammar::calculate_follow()
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<ptr<ParserSymbol> >::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
             ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
@@ -491,7 +492,7 @@ void ParserGrammar::calculate_follow()
 void ParserGrammar::calculate_indices()
 {
     int index = 0;
-    for ( vector<ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<ptr<ParserSymbol> >::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         ParserSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
@@ -506,7 +507,7 @@ void ParserGrammar::calculate_indices()
 */
 void ParserGrammar::calculate_precedence_of_productions()
 {
-    for ( vector<ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         ParserProduction* production = i->get();
         SWEET_ASSERT( production );       
@@ -530,7 +531,7 @@ void ParserGrammar::check_for_undefined_symbol_errors( ParserGenerator* generato
 
     if ( generator->errors() == 0 )
     {
-        for ( vector<ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<ptr<ParserSymbol> >::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
             const ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
@@ -554,7 +555,7 @@ void ParserGrammar::check_for_unreferenced_symbol_errors( ParserGenerator* gener
 
     if ( generator->errors() == 0 )
     {
-        for ( vector<ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<ptr<ParserSymbol> >::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
             const ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
@@ -562,7 +563,7 @@ void ParserGrammar::check_for_unreferenced_symbol_errors( ParserGenerator* gener
             int references = 0;            
             if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
             {
-                for ( vector<ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+                for ( vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
                     const ParserProduction* production = i->get();
                     SWEET_ASSERT( production );
@@ -593,8 +594,8 @@ void ParserGrammar::check_for_error_symbol_on_left_hand_side_errors( ParserGener
     SWEET_ASSERT( error_symbol_ );
     SWEET_ASSERT( generator );
 
-    const vector<ptr<ParserProduction>>& productions = error_symbol_->get_productions();
-    for ( vector<ptr<ParserProduction>>::const_iterator i = productions.begin(); i != productions.end(); ++i )
+    const vector<ptr<ParserProduction> >& productions = error_symbol_->get_productions();
+    for ( vector<ptr<ParserProduction> >::const_iterator i = productions.begin(); i != productions.end(); ++i )
     {
         const ParserProduction* production = i->get();
         SWEET_ASSERT( production );

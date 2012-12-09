@@ -32,7 +32,7 @@ namespace lexer
 // ParserGrammar for regular expressions.
 */
 template <class Iterator>
-class RegexGrammar : public boost::spirit::grammar<RegexGrammar<Iterator>>
+class RegexGrammar : public boost::spirit::grammar<RegexGrammar<Iterator> >
 {
     public:
         typedef Iterator iterator;
@@ -1037,9 +1037,9 @@ void RegexParser::print_positions( const std::set<RegexNode*, RegexNodeLess>& po
 // @param level
 //  The recursion level to use when identing lines.
 */
-void RegexParser::print_nodes( const vector<ptr<RegexNode>>& nodes, int level ) const
+void RegexParser::print_nodes( const vector<ptr<RegexNode> >& nodes, int level ) const
 {
-    for ( vector<ptr<RegexNode>>::const_iterator i = nodes.begin(); i != nodes.end(); ++i )
+    for ( vector<ptr<RegexNode> >::const_iterator i = nodes.begin(); i != nodes.end(); ++i )
     {
         static const char* LEXER_NODE_TYPES [LEXER_NODE_COUNT] =
         {

@@ -1,6 +1,6 @@
 //
 // Type.hpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_RTTI_TYPE_HPP_INCLUDED
@@ -34,8 +34,8 @@ class SWEET_RTTI_DECLSPEC Type
         bool operator<( const Type& type ) const;
 };
 
-};
+}
 
-};
+}
 
-#endif // #ifndef SWEET_RTTI_RTTI_TYPE_HPP_INCLUDED
+#endif

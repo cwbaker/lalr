@@ -1,12 +1,14 @@
 //
 // AddMemberHelper.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_ADDMEMBERHELPER_HPP_INCLUDED
 #define SWEET_LUA_ADDMEMBERHELPER_HPP_INCLUDED
 
 #include "declspec.hpp"
+
+struct lua_State;
 
 namespace sweet
 {

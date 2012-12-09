@@ -53,9 +53,9 @@ template <class ReturnType>
 int LuaReturner<ReturnType, LUA_POLICY_WEAKEN>::return_( lua_State* lua_state, typename traits::traits<ReturnType>::parameter_type value )
 {
     SWEET_ASSERT( lua_state );
-    typedef traits::traits<ReturnType>::base_type base_type;
-    LuaObjectConverter<ReturnType, LuaTraits<base_type>::storage_type>::weaken( lua_state, value );
-    LuaObjectConverter<ReturnType, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<ReturnType>::base_type base_type;
+    LuaObjectConverter<ReturnType, typename LuaTraits<base_type>::storage_type>::weaken( lua_state, value );
+    LuaObjectConverter<ReturnType, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
     return 1;
 }
 
@@ -63,9 +63,9 @@ template <class ReturnType>
 int LuaReturner<ReturnType, LUA_POLICY_YIELD | LUA_POLICY_WEAKEN>::return_( lua_State* lua_state, typename traits::traits<ReturnType>::parameter_type value )
 {
     SWEET_ASSERT( lua_state );
-    typedef traits::traits<ReturnType>::base_type base_type;
-    LuaObjectConverter<ReturnType, LuaTraits<base_type>::storage_type>::weaken( lua_state, value );
-    LuaObjectConverter<ReturnType, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<ReturnType>::base_type base_type;
+    LuaObjectConverter<ReturnType, typename LuaTraits<base_type>::storage_type>::weaken( lua_state, value );
+    LuaObjectConverter<ReturnType, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
     return lua_yield( lua_state, 1 );
 }
 

@@ -14,6 +14,7 @@
 #include <sweet/lexer/LexerErrorPolicy.hpp>
 #include <boost/bind.hpp>
 #include <sweet/unit/UnitTest.h>
+#include <string.h>
 
 using boost::bind;
 using namespace sweet;
@@ -930,31 +931,31 @@ SUITE( Parsers )
         CHECK( error_policy.errors_ == 1 );                
     }
 
+    struct LexerConflictResolutionActionHandler
+    {
+        void* prototype_symbol_;
+        void* value_symbol_;
+
+        LexerConflictResolutionActionHandler( const ParserStateMachine& parser_state_machine )
+        : prototype_symbol_( (void*) parser_state_machine.find_symbol_by_identifier("prototype") ),
+          value_symbol_( (void*) parser_state_machine.find_symbol_by_identifier("value") )
+        {
+            SWEET_ASSERT( prototype_symbol_ );
+            SWEET_ASSERT( value_symbol_ );
+        }
+
+        void prototype( const char** begin, const char* end, std::string* lexeme, const void** symbol ) const
+        {
+            SWEET_ASSERT( begin && *begin );
+            SWEET_ASSERT( end );
+            SWEET_ASSERT( lexeme );
+            SWEET_ASSERT( symbol );
+            *symbol = *lexeme == "prototype" ? prototype_symbol_ : value_symbol_;
+        }
+    };
+    
     TEST( LexerConflictResolution )
     {
-        struct LexerConflictResolutionActionHandler
-        {
-            void* prototype_symbol_;
-            void* value_symbol_;
-
-            LexerConflictResolutionActionHandler( const ParserStateMachine& parser_state_machine )
-            : prototype_symbol_( (void*) parser_state_machine.find_symbol_by_identifier("prototype") ),
-              value_symbol_( (void*) parser_state_machine.find_symbol_by_identifier("value") )
-            {
-                SWEET_ASSERT( prototype_symbol_ );
-                SWEET_ASSERT( value_symbol_ );
-            }
-
-            void prototype( const char** begin, const char* end, std::string* lexeme, const void** symbol ) const
-            {
-                SWEET_ASSERT( begin && *begin );
-                SWEET_ASSERT( end );
-                SWEET_ASSERT( lexeme );
-                SWEET_ASSERT( symbol );
-                *symbol = *lexeme == "prototype" ? prototype_symbol_ : value_symbol_;
-            }
-        };
-        
         const char* grammar = 
             "LexerSymbolConflictResolvedByAction {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
@@ -969,7 +970,7 @@ SUITE( Parsers )
         CheckParserErrorPolicy error_policy( PARSER_ERROR_NONE );
         ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar), &error_policy );
         CHECK( error_policy.errors_ == 0 );
-        
+
         if ( error_policy.errors_ == 0 )
         {
             Parser<const char*> parser( &parser_state_machine );

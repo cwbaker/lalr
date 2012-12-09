@@ -17,6 +17,7 @@
 #include <sweet/lexer/LexerTransition.hpp>
 #include <sweet/lexer/LexerAction.hpp>
 #include <sweet/cmdline/Parser.hpp>
+#include <sweet/pointer/ptr.hpp>
 #include <sweet/lua/ptr.hpp>
 #include <sweet/lua/vector.hpp>
 #include <sweet/lua/set.hpp>
@@ -41,6 +42,36 @@ SWEET_LUA_TYPE_CONVERSION( LexerStateMachine, LuaByReference );
 SWEET_LUA_TYPE_CONVERSION( LexerState, LuaByReference );
 SWEET_LUA_TYPE_CONVERSION( LexerTransition, LuaByReference );
 SWEET_LUA_TYPE_CONVERSION( LexerAction, LuaByReference );
+
+namespace sweet
+{
+
+namespace parser
+{
+
+struct ParserStateMachineDeleter
+{
+    Application* application_;
+
+    ParserStateMachineDeleter( Application* application )
+    : application_( application )
+    {
+        SWEET_ASSERT( application_ );            
+    }
+    
+    void operator()( ParserStateMachine* parser_state_machine ) const
+    {
+        SWEET_ASSERT( parser_state_machine );
+        SWEET_ASSERT( application_ );            
+        application_->remove_parser_state_machine( parser_state_machine );
+        delete parser_state_machine;
+        parser_state_machine = NULL;
+    }
+};
+
+}
+
+}
 
 Application::Application( int argc, char** argv )
 : result_( EXIT_SUCCESS ),
@@ -149,26 +180,6 @@ ptr<ParserStateMachine> Application::parser_state_machine( const std::string& gr
         void parser_error( int line, const error::Error& error )
         {
             fprintf( stderr, "parser: %s(%d) : %s.\n", filename_, line, error.what() );
-        }
-    };
-
-    struct ParserStateMachineDeleter
-    {
-        Application* application_;
-
-        ParserStateMachineDeleter( Application* application )
-        : application_( application )
-        {
-            SWEET_ASSERT( application_ );            
-        }
-        
-        void operator()( ParserStateMachine* parser_state_machine ) const
-        {
-            SWEET_ASSERT( parser_state_machine );
-            SWEET_ASSERT( application_ );            
-            application_->remove_parser_state_machine( parser_state_machine );
-            delete parser_state_machine;
-            parser_state_machine = NULL;
         }
     };
 
@@ -357,40 +368,40 @@ void Application::add_parser_state_machine( ptr<ParserStateMachine> parser_state
         ( "ptr", value(parser_state_machine) )
     ;
     
-    const vector<ptr<ParserState>>& states = parser_state_machine->states();
-    for ( vector<ptr<ParserState>>::const_iterator i = states.begin(); i != states.end(); ++i )
+    const vector<ptr<ParserState> >& states = parser_state_machine->states();
+    for ( vector<ptr<ParserState> >::const_iterator i = states.begin(); i != states.end(); ++i )
     {
         ParserState* state = i->get();
         SWEET_ASSERT( state );
         add_parser_state( state );
     }
     
-    const vector<ptr<ParserAction>>& actions = parser_state_machine->actions();
-    for ( vector<ptr<ParserAction>>::const_iterator i = actions.begin(); i != actions.end(); ++i )
+    const vector<ptr<ParserAction> >& actions = parser_state_machine->actions();
+    for ( vector<ptr<ParserAction> >::const_iterator i = actions.begin(); i != actions.end(); ++i )
     {
         ParserAction* action = i->get();
         SWEET_ASSERT( action );
         add_parser_action( action );
     }
     
-    const vector<ptr<ParserProduction>>& productions = parser_state_machine->productions();
-    for ( vector<ptr<ParserProduction>>::const_iterator i = productions.begin(); i != productions.end(); ++i )
+    const vector<ptr<ParserProduction> >& productions = parser_state_machine->productions();
+    for ( vector<ptr<ParserProduction> >::const_iterator i = productions.begin(); i != productions.end(); ++i )
     {
         ParserProduction* production = i->get();
         SWEET_ASSERT( production );
         add_parser_production( production );
     }
 
-    const vector<ptr<ParserSymbol>>& symbols = parser_state_machine->symbols();
-    for ( vector<ptr<ParserSymbol>>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
+    const vector<ptr<ParserSymbol> >& symbols = parser_state_machine->symbols();
+    for ( vector<ptr<ParserSymbol> >::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
         ParserSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         add_parser_symbol( symbol );
     }
     
-    const vector<ptr<LexerAction>>& lexer_actions = parser_state_machine->lexer_state_machine()->actions();
-    for ( vector<ptr<LexerAction>>::const_iterator i = lexer_actions.begin(); i != lexer_actions.end(); ++i )
+    const vector<ptr<LexerAction> >& lexer_actions = parser_state_machine->lexer_state_machine()->actions();
+    for ( vector<ptr<LexerAction> >::const_iterator i = lexer_actions.begin(); i != lexer_actions.end(); ++i )
     {
         LexerAction* lexer_action = i->get();
         SWEET_ASSERT( lexer_action );
@@ -408,40 +419,40 @@ void Application::remove_parser_state_machine( ParserStateMachine* parser_state_
     {
         remove_lexer_state_machine( parser_state_machine->lexer_state_machine() );
 
-        const vector<ptr<LexerAction>>& lexer_actions = parser_state_machine->lexer_state_machine()->actions();
-        for ( vector<ptr<LexerAction>>::const_reverse_iterator i = lexer_actions.rbegin(); i != lexer_actions.rend(); ++i )
+        const vector<ptr<LexerAction> >& lexer_actions = parser_state_machine->lexer_state_machine()->actions();
+        for ( vector<ptr<LexerAction> >::const_reverse_iterator i = lexer_actions.rbegin(); i != lexer_actions.rend(); ++i )
         {
             LexerAction* lexer_action = i->get();
             SWEET_ASSERT( lexer_action );
             remove_lexer_action( lexer_action );
         }
 
-        const vector<ptr<ParserSymbol>>& symbols = parser_state_machine->symbols();
-        for ( vector<ptr<ParserSymbol>>::const_reverse_iterator i = symbols.rbegin(); i != symbols.rend(); ++i )
+        const vector<ptr<ParserSymbol> >& symbols = parser_state_machine->symbols();
+        for ( vector<ptr<ParserSymbol> >::const_reverse_iterator i = symbols.rbegin(); i != symbols.rend(); ++i )
         {
             ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             remove_parser_symbol( symbol );
         }
 
-        const vector<ptr<ParserProduction>>& productions = parser_state_machine->productions();
-        for ( vector<ptr<ParserProduction>>::const_reverse_iterator i = productions.rbegin(); i != productions.rend(); ++i )
+        const vector<ptr<ParserProduction> >& productions = parser_state_machine->productions();
+        for ( vector<ptr<ParserProduction> >::const_reverse_iterator i = productions.rbegin(); i != productions.rend(); ++i )
         {
             ParserProduction* production = i->get();
             SWEET_ASSERT( production );
             remove_parser_production( production );
         }
         
-        const vector<ptr<ParserAction>>& actions = parser_state_machine->actions();
-        for ( vector<ptr<ParserAction>>::const_reverse_iterator i = actions.rbegin(); i != actions.rend(); ++i )
+        const vector<ptr<ParserAction> >& actions = parser_state_machine->actions();
+        for ( vector<ptr<ParserAction> >::const_reverse_iterator i = actions.rbegin(); i != actions.rend(); ++i )
         {
             ParserAction* action = i->get();
             SWEET_ASSERT( action );
             remove_parser_action( action );
         }
         
-        const vector<ptr<ParserState>>& states = parser_state_machine->states();
-        for ( vector<ptr<ParserState>>::const_reverse_iterator i = states.rbegin(); i != states.rend(); ++i )
+        const vector<ptr<ParserState> >& states = parser_state_machine->states();
+        for ( vector<ptr<ParserState> >::const_reverse_iterator i = states.rbegin(); i != states.rend(); ++i )
         {
             ParserState* state = i->get();
             SWEET_ASSERT( state );
@@ -561,16 +572,16 @@ void Application::add_lexer_state_machine( const LexerStateMachine* lexer_state_
             .this_pointer( const_cast<LexerStateMachine*>(lexer_state_machine) )
         ;
         
-        const vector<ptr<LexerState>>& states = lexer_state_machine->states();
-        for ( vector<ptr<LexerState>>::const_iterator i = states.begin(); i != states.end(); ++i )
+        const vector<ptr<LexerState> >& states = lexer_state_machine->states();
+        for ( vector<ptr<LexerState> >::const_iterator i = states.begin(); i != states.end(); ++i )
         {
             LexerState* state = i->get();
             SWEET_ASSERT( state );
             add_lexer_state( state );
         }
         
-        const vector<ptr<LexerState>>& whitespace_states = lexer_state_machine->whitespace_states();
-        for ( vector<ptr<LexerState>>::const_iterator i = whitespace_states.begin(); i != whitespace_states.end(); ++i )
+        const vector<ptr<LexerState> >& whitespace_states = lexer_state_machine->whitespace_states();
+        for ( vector<ptr<LexerState> >::const_iterator i = whitespace_states.begin(); i != whitespace_states.end(); ++i )
         {
             LexerState* state = i->get();
             SWEET_ASSERT( state );
@@ -583,16 +594,16 @@ void Application::remove_lexer_state_machine( const LexerStateMachine* lexer_sta
 {
     if ( lexer_state_machine )
     {
-        const vector<ptr<LexerState>>& states = lexer_state_machine->states();
-        for ( vector<ptr<LexerState>>::const_reverse_iterator i = states.rbegin(); i != states.rend(); ++i )
+        const vector<ptr<LexerState> >& states = lexer_state_machine->states();
+        for ( vector<ptr<LexerState> >::const_reverse_iterator i = states.rbegin(); i != states.rend(); ++i )
         {
             LexerState* state = i->get();
             SWEET_ASSERT( state );
             remove_lexer_state( state );
         }
 
-        const vector<ptr<LexerState>>& whitespace_states = lexer_state_machine->whitespace_states();
-        for ( vector<ptr<LexerState>>::const_reverse_iterator i = whitespace_states.rbegin(); i != whitespace_states.rend(); ++i )
+        const vector<ptr<LexerState> >& whitespace_states = lexer_state_machine->whitespace_states();
+        for ( vector<ptr<LexerState> >::const_reverse_iterator i = whitespace_states.rbegin(); i != whitespace_states.rend(); ++i )
         {
             LexerState* state = i->get();
             SWEET_ASSERT( state );

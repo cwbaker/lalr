@@ -3,13 +3,15 @@ Executable {
     id = "cmdline_test";
 
     libraries = {
-        "assert/assert",
+        "cmdline/cmdline",
         "error/error",
+        "assert/assert",
         "unit/libUnitTest"
     };
 
-    Cc {
+    Source {
         "main.cpp",
-        "TestParser.cpp"
+        "TestParser.cpp",
+        "TestSplitter.cpp"
     };
 }

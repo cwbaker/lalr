@@ -35,7 +35,7 @@ class RegexParser
     LexerGenerator* lexer_generator_; ///< The LexerGenerator to retrieve actions from and report errors and debug information to.
     std::set<RegexCharacter> bracket_expression_characters_; ///< The characters in the current bracket expression.
     int index_; ///< The current node index.
-    std::vector<ptr<RegexNode>> nodes_; ///< The current nodes.
+    std::vector<ptr<RegexNode> > nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
     public:
@@ -96,7 +96,7 @@ class RegexParser
         ptr<RegexNode> regex_node( const LexerAction* action );
 
         void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
-        void print_nodes( const std::vector<ptr<RegexNode>>& nodes, int level ) const;
+        void print_nodes( const std::vector<ptr<RegexNode> >& nodes, int level ) const;
 
         void calculate_symbols_for_characters_start_and_end();
         void calculate_combined_parse_tree( const std::vector<LexerToken>& tokens );

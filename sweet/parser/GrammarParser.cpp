@@ -37,7 +37,7 @@ namespace parser
 // ParserGrammar for grammars.
 */
 template <class Iterator>
-class GrammarGrammar : public boost::spirit::grammar<GrammarGrammar<Iterator>>
+class GrammarGrammar : public boost::spirit::grammar<GrammarGrammar<Iterator> >
 {
     public:
         typedef Iterator iterator;
@@ -350,7 +350,7 @@ const std::string& GrammarGrammar<Iterator>::convert_escape_characters( std::str
 {
     string::iterator destination = lexeme.begin();
     string::const_iterator source = lexeme.begin();
-    string::const_iterator end = lexeme.end();
+    string::iterator end = lexeme.end();
     
     while ( source != end )
     {
@@ -431,7 +431,7 @@ GrammarParser::GrammarParser( const char* filename, ParserErrorPolicy* error_pol
         SWEET_ERROR( OpeningFileFailedError("Opening '%s' failed", filename) );
     }
 
-    typedef boost::spirit::position_iterator<boost::spirit::file_iterator<char>> iterator;
+    typedef boost::spirit::position_iterator<boost::spirit::file_iterator<char> > iterator;
     iterator first( file_first, file_first.make_end() );
     iterator last;
 

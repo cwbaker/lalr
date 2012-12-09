@@ -6,7 +6,7 @@ Executable {
         "unit/libUnitTest"
     };
 
-    Cc {
+    Source {
         "Main.cpp",
         "TestAssertHandler.cpp",
         "TestCheckMacros.cpp",

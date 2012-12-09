@@ -8,6 +8,8 @@
 #include <sweet/parser/ParserErrorPolicy.hpp>
 #include <sweet/parser/Error.hpp>
 #include <sweet/unit/UnitTest.h>
+#include <stdio.h>
+#include <string.h>
 
 using namespace sweet;
 using namespace sweet::parser;

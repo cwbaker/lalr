@@ -21,6 +21,8 @@ namespace lua
 */
 class SWEET_LUA_DECLSPEC LuaGlobalEnvironment
 {
+public:
+    LuaGlobalEnvironment();
 };
 
 SWEET_LUA_DECLSPEC extern const LuaGlobalEnvironment global_environment;

@@ -1,13 +1,12 @@
 //
 // Lua.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUA_HPP_INCLUDED
 #define SWEET_LUA_LUA_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "AddParameterHelper.ipp"
 #include "AddMemberHelper.hpp"
 #include "AddGlobal.ipp"
 #include "AddMember.ipp"
@@ -87,5 +86,7 @@ class SWEET_LUA_DECLSPEC Lua
 }
 
 #include "Lua.ipp"
+#include "AddParameterHelper.ipp"
+#include "lua_functions.ipp"
 
 #endif

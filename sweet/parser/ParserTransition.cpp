@@ -9,8 +9,13 @@
 #include "ParserSymbol.hpp"
 #include "ParserItem.hpp"
 #include "ParserState.hpp"
+#include <stdio.h>
 
 using namespace sweet::parser;
+
+#if defined(BUILD_PLATFORM_MSVC)
+#define snprintf _snprintf
+#endif
 
 /**
 // Constructor.
@@ -128,7 +133,7 @@ void ParserTransition::describe( std::string* description ) const
         {
             SWEET_ASSERT( state_ );
             char buffer [512];
-            _snprintf( buffer, sizeof(buffer), "shift to %d on ", state_->get_index() );
+            snprintf( buffer, sizeof(buffer), "shift to %d on ", state_->get_index() );
             buffer [sizeof(buffer) - 1] = '\0';
             description->append( buffer );
             break;
@@ -138,7 +143,7 @@ void ParserTransition::describe( std::string* description ) const
             SWEET_ASSERT( reduced_production_ );
             SWEET_ASSERT( reduced_production_->get_symbol() );
             char buffer [512];
-            _snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_production_->get_symbol()->get_identifier().c_str() );
+            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_production_->get_symbol()->get_identifier().c_str() );
             buffer [sizeof(buffer) - 1] = '\0';
             description->append( buffer );
             break;

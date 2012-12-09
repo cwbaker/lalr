@@ -8,6 +8,7 @@
 #include <sweet/lexer/LexerStateMachine.hpp>
 #include <sweet/lexer/Lexer.ipp>
 #include <sweet/lexer/PositionIterator.hpp>
+#include <string.h>
 
 using namespace sweet::lexer;
 
@@ -1219,7 +1220,7 @@ SUITE( RegularExpressions )
     {
         void* whitespace;
         LexerStateMachine lexer_state_machine( "[ \\t\\r\\n]", &whitespace );
-        Lexer<PositionIterator<const char*>> lexer( &lexer_state_machine, NULL );
+        Lexer<PositionIterator<const char*> > lexer( &lexer_state_machine, NULL );
         
         const char* regex = "\n \r\n \r \r\n";
         lexer.reset( PositionIterator<const char*>(regex, regex + strlen(regex)), PositionIterator<const char*>() );

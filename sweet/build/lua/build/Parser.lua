@@ -1,12 +1,12 @@
 
-Parser = Rule( "Parser", BIND_PHONY );
+ParserPrototype = TargetPrototype { "Parser", BIND_PHONY };
 
-function parser( settings )
-    putenv( "LUA_PATH", settings.parser.lua_path );
+function ParserPrototype.clone( self )
+    return self;
 end
 
-function Parser:static_depend()
-    if built_for_platform_and_variant(self) then        
+function ParserPrototype.static_depend( self )
+    if build.built_for_platform_and_variant(self) then        
         for _, value in ipairs(self) do
             local grammar = SourceFile( value );    
             grammar:set_required_to_exist( true );
@@ -21,8 +21,8 @@ function Parser:static_depend()
     end    
 end
 
-function Parser:build()
-    if self:is_outdated() and built_for_platform_and_variant(self) then
+function ParserPrototype.build( self )
+    if self:is_outdated() and build.built_for_platform_and_variant(self) then
         local parser = self.settings.parser.executable;
         for dependency in self:get_dependencies() do
             if dependency:is_outdated() then
@@ -36,12 +36,46 @@ function Parser:build()
     end
 end
 
-function Parser:clean()
-    if built_for_platform_and_variant(self) then    
+function ParserPrototype.generate( self )
+    self:build();
+end
+
+function ParserPrototype.clean( self )
+    if build.built_for_platform_and_variant(self) and exists(settings.parser.executable) then    
         for dependency in self:get_dependencies() do
-            if dependency:rule() == HeaderFile then
+            if dependency:prototype() == HeaderFilePrototype then
                 rm( dependency:path() );
             end
         end
     end
+end
+
+function Parser( parser )
+    assert( type(parser) == "table" );
+    return target( "", ParserPrototype, parser );
+end
+
+parser = {};
+
+function parser.configure( settings )
+    local local_settings = build.local_settings;
+    if not local_settings.parser then
+        local_settings.updated = true;
+        if operating_system() == "windows" then
+            local_settings.parser = {
+                executable = "d:/usr/local/bin/parser.exe";
+                lua_path = "d:/usr/local/lua/?.lua";
+            };
+        else
+            local_settings.parser = {
+                executable = "/usr/local/bin/parser.exe";
+                lua_path = "/usr/local/lua/?.lua";
+            };
+        end
+    end
+end
+
+function parser.initialize( settings )
+    parser.configure( settings );
+    putenv( "LUA_PATH", settings.parser.lua_path );
 end

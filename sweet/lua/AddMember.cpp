@@ -1,13 +1,13 @@
 //
 // AddMember.cpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "AddMember.hpp"
 #include "AddMemberHelper.hpp"
 #include "LuaStackGuard.hpp"
 #include "lua_types.hpp"
-#include "lua_functions.hpp"
+#include "lua_functions.ipp"
 #include <sweet/assert/assert.hpp>
 
 using namespace sweet;

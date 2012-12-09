@@ -2,7 +2,7 @@
 Library {
     id = "assert";
 
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "assert.cpp"
     }

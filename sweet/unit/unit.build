@@ -4,7 +4,7 @@ buildfile "unit_test/unit_test.build";
 Library {
     id = "libUnitTest";
     
-    Cc {
+    Source {
         "AssertException.cpp",
         "Checks.cpp",
         "CurrentTest.cpp",
@@ -23,17 +23,17 @@ Library {
         "XmlTestReporter.cpp"
     };
 
-    Cc {
+    Source {
         settings = {
-            platforms = { "msvc" };
+            platforms = { "msvc", "mingw" };
         };
         
         "Win32/TimeHelpers.cpp"
     };
 
-    Cc {
+    Source {
         settings = {
-            platforms = { "posix" };
+            platforms = { "llvmgcc" };
         };
 
         "Posix/SignalTranslator.cpp",

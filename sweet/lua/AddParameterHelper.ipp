@@ -1,6 +1,6 @@
 //
 // AddParameterHelper.ipp
-// Copyright (c) 2007  - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_ADDPARAMETERHELPER_IPP_INCLUDED
@@ -8,7 +8,9 @@
 
 #include "AddParameterHelper.hpp"
 #include "LuaStackGuard.hpp"
+#include "LuaConverter.hpp"
 #include "Error.hpp"
+#include "Lua.hpp"
 #include <sweet/traits/traits.hpp>
 #include <sweet/assert/assert.hpp>
 
@@ -78,7 +80,7 @@ void AddParameterHelper::end( Type* return_value )
     SWEET_ASSERT( return_value );
     LuaStackGuard guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
     internal_end( 1 );
-    *return_value = LuaConverter<traits::traits<Type>::value_type>::to( lua_state_, -1 );
+    *return_value = LuaConverter<typename traits::traits<Type>::value_type>::to( lua_state_, -1 );
     lua_pop( lua_state_, 1 );
 }
 

@@ -1,6 +1,6 @@
 //
 // macros.hpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_RTTI_MACROS_HPP_INCLUDED
@@ -24,7 +24,7 @@ namespace sweet
 namespace rtti
 {
 
-typedef type_info TypeInfo;
+typedef std::type_info TypeInfo;
 #define SWEET_TYPEID(x) typeid(x)
 #define SWEET_STATIC_TYPEID(x) typeid(x)
 

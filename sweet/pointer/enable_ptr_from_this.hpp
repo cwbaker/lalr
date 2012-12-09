@@ -1,6 +1,6 @@
 //
 // enable_ptr_from_this.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_POINTER_ENABLE_PTR_FROM_THIS_HPP_INCLUDED

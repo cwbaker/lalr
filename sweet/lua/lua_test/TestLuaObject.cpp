@@ -1,6 +1,6 @@
 //
 // TestLuaObject.cpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include <sweet/unit/UnitTest.h>
@@ -175,23 +175,23 @@ SUITE( TestLuaObject )
         CHECK( lua.is_value(object, "other_object") );
     }
 
+    struct Foo
+    {
+        bool* destroyed_;
+
+        Foo( bool* destroyed )
+        : destroyed_( destroyed )
+        {
+        }
+
+        ~Foo()
+        {
+            *destroyed_ = true;
+        }
+    };
+
     TEST_FIXTURE( Fixture, TestAddCxxObject )
     {
-        struct Foo
-        {
-            bool* destroyed_;
-
-            Foo( bool* destroyed )
-            : destroyed_( destroyed )
-            {
-            }
-
-            ~Foo()
-            {
-                *destroyed_ = true;
-            }
-        };
-
         bool destroyed = false;
         Foo foo( &destroyed );
 

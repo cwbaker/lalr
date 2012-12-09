@@ -1,39 +1,36 @@
 
-DynamicLibrary = Rule( "DynamicLibrary", BIND_GENERATED_FILE );
+DynamicLibraryPrototype = TargetPrototype { "DynamicLibrary", BIND_PHONY };
 
-function DynamicLibrary:load()    
-    load_module( self );
-    self:set_filename( self.settings.bin.."/"..dll_name(self:id()) );
-end
-
-function DynamicLibrary:static_depend()
-    if built_for_platform_and_variant(self) then
-        self:add_dependency( Directory(self.settings.lib) );
-        self:add_dependency( Directory(self.settings.bin) );
-
-        local libraries = {};
-        if self.libraries then
-            for _, value in ipairs(self.libraries) do
-                local library = find_target( root(value) );
-                assert( library, "Failed to find library '"..value.."'" );
-                if built_for_platform_and_variant(library) then
-                    table.insert( libraries, library );
-                    self:add_dependency( library );
-                end
-            end
+function DynamicLibraryPrototype.load_windows( dynamic_library )
+    if build.load_target(dynamic_library) then
+        if build.built_for_platform_and_variant(dynamic_library) then
+            local link = Link( dll_name("%s/%s" % {dynamic_library.settings.bin, dynamic_library:id()}), dynamic_library );
+            link.architecture = "";
+            link.module = dynamic_library;
+            link:add_dependency( Directory(dynamic_library.settings.lib) );
+            dynamic_library:add_dependency( link );
         end
-        self.libraries = libraries;
     end
 end
 
-function DynamicLibrary:build()
-    if self:is_outdated() and built_for_platform_and_variant(self) then
-        build_executable( self );
-    end    
+function DynamicLibraryPrototype.load_macosx( dynamic_library )
+    if build.load_target(dynamic_library) then
+        if build.built_for_platform_and_variant(dynamic_library) then
+            local lipo = Lipo( dll_name("%s/%s" % {dynamic_library.settings.bin, dynamic_library:id()}), dynamic_library );
+            lipo.module = dynamic_library;
+            dynamic_library:add_dependency( lipo );
+        end
+    end
 end
 
-function DynamicLibrary:clean()
-    if built_for_platform_and_variant(self) then
-        clean_executable( self );
-    end
+function DynamicLibrary( dynamic_library )
+    local id = dynamic_library.id;
+    dynamic_library.id = nil;
+    return target( id, DynamicLibraryPrototype, dynamic_library );
+end
+
+if operating_system() == "macosx" then
+    DynamicLibraryPrototype.load = DynamicLibraryPrototype.load_macosx;
+else
+    DynamicLibraryPrototype.load = DynamicLibraryPrototype.load_windows;
 end

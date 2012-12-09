@@ -1,21 +1,4 @@
 
-require "build/Cc";
-require "build/Parser";
-require "build/File";
-require "build/SourceFile";
-require "build/HeaderFile";
-require "build/PrecompiledHeader";
-require "build/Directory";
-require "build/StaticLibrary";
-require "build/DynamicLibrary";
-require "build/Executable";
-require "build/CcScanner";
-require "build/QtMoc";
-require "build/AsciiDoc";
-require "build/Project";
-require "build/msvc";
-require "build/visual_studio";
-
 -- Provide python like syntax for string interpolation.
 getmetatable("").__mod = function( format, args )
     if args then
@@ -29,198 +12,60 @@ getmetatable("").__mod = function( format, args )
     end
 end
 
--- Setup the build system.
-function setup( settings )
-    command  = command or "build";
-    platform = platform or "msvc";
-    source = source or "";
-    target = target or "";
+require "build/File";
+require "build/SourceFile";
+require "build/HeaderFile";
+require "build/PrecompiledHeader";
+require "build/Directory";
+require "build/Compile";
+require "build/Archive";
+require "build/Link";
+require "build/Lipo";
+require "build/Source";
+require "build/StaticLibrary";
+require "build/DynamicLibrary";
+require "build/Executable";
+require "build/CcScanner";
+require "build/commands";
+
+build = {};
+
+-- Perform per run initialization of the build system.
+function build.initialize( project_settings )
+    platform = platform or build.switch { operating_system(); windows = "msvc"; macosx = "llvmgcc" };
     variant = variant or "debug";
-    version = version or os.date( "%Y.%m.%d %H:%M:%S "..platform.." "..variant );
+    version = version or "%s %s %s" % { os.date("%Y.%m.%d %H:%M:%S"), platform, variant };
+    goal = goal or "";
     jobs = jobs or 4;
 
     set_maximum_parallel_jobs( jobs );
 
-    local default_settings = {
-        bin = root();
-        lib = root();
-        obj = root();
+    local default_settings = build.default_settings;
+    build.merge_settings( default_settings, project_settings );
 
-        msvc = {
-            visual_studio_directory = autodetect_visual_studio_directory() or "C:/Program Files/Microsoft Visual Studio 9.0";
-            windows_sdk_directory = autodetect_windows_sdk_directory() or "C:/Program Files/Microsoft SDKs/Windows/v6.0A";
-        };
+    local local_settings = {};
+    setmetatable( local_settings, {__index = default_settings} );
 
-        parser = {
-            executable = "d:/usr/local/bin/parser.exe";
-            lua_path = "d:/usr/local/lua/?.lua";
-        };
-
-        python = {
-            executable = "c:/Python26/python.exe";
-        };
-
-        asciidoc = {
-            executable = "c:/asciidoc/asciidoc.py";
-            conf_file = root( "build/lua/build/sweet.conf" );
-        };
-
-        include_directories = {
-        };
-        
-        library_directories = { 
-        };
-
-        platforms = {
-            "msvc"
-        };
-
-        variants = {
-            ["debug"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = true;
-                library_type = "static";
-                link_time_code_generation = false;
-                minimal_rebuild = true;
-                optimization = false;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = false;
-                run_time_checks = true;
-                runtime_library = "static_debug";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };
-
-            ["debug_dll"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = true;
-                library_type = "dynamic";
-                link_time_code_generation = false;
-                minimal_rebuild = true;
-                optimization = false;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = false;
-                run_time_checks = true;
-                runtime_library = "dynamic_debug";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };
-
-            ["release"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = false;
-                library_type = "static";
-                link_time_code_generation = true;
-                minimal_rebuild = false;
-                optimization = true;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = false;
-                run_time_checks = false;
-                runtime_library = "static";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };
-
-            ["release_dll"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = false;
-                library_type = "dynamic";
-                link_time_code_generation = true;
-                minimal_rebuild = false;
-                optimization = true;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = false;
-                run_time_checks = false;
-                runtime_library = "dynamic";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };
-            
-            ["shipping"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = false;
-                library_type = "static";
-                link_time_code_generation = true;
-                minimal_rebuild = false;
-                optimization = true;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = true;
-                run_time_checks = false;
-                runtime_library = "static";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };
-            
-            ["shipping_dll"] = {
-                compile_as_c = false;
-                debug = true;
-                exceptions = true;
-                generate_map_file = true;
-                incremental_linking = false;
-                library_type = "dynamic";
-                link_time_code_generation = true;
-                minimal_rebuild = false;
-                optimization = true;
-                pre_compiled_headers = true;
-                preprocess = false;
-                profiling = true;
-                run_time_checks = false;
-                runtime_library = "dynamic";
-                run_time_type_info = true;
-                stack_size = 1048576;        
-                string_pooling = false;
-                subsystem = "CONSOLE";
-                verbose_linking = false;
-            };    
-        };
-    };
-
-    if settings then
-        setmetatable( settings, {__index = default_settings} );
-    else
-        settings = default_settings;
+    local user_settings_filename = default_settings.user_settings_filename;
+    if exists(user_settings_filename) then
+        build.merge_settings( local_settings, dofile(user_settings_filename) );
     end
 
-    local variant_settings = settings.variants[variant];
-    assert( variant_settings, "The variant '"..tostring(variant).."' is not supported" );
-    for key, value in pairs(variant_settings) do
-        settings[key] = value;
+    local local_settings_filename = default_settings.local_settings_filename;
+    if exists(local_settings_filename) then
+        build.merge_settings( local_settings, dofile(local_settings_filename) );
     end
+
+    local settings = {};
+    setmetatable( settings, {__index = local_settings} );
+
+    local platform_settings = settings.settings_by_platform[platform];
+    assert( platform_settings, "The platform '%s' is not supported" % platform );
+    build.merge_settings( settings, platform_settings );
+
+    local variant_settings = settings.settings_by_variant[variant];
+    assert( variant_settings, "The variant '%s' is not supported" % variant );
+    build.merge_settings( settings, variant_settings );
 
     if settings.library_type == "static" then
         Library = StaticLibrary;
@@ -230,70 +75,16 @@ function setup( settings )
         error( string.format("The library type '%s' is not 'static' or 'dynamic'", settings.library_type) );
     end
 
-    default_settings.root = root();
-    default_settings.cache = root( "%s/%s_%s.cache" % {settings.obj, platform, variant} );
-
-    load_binary( settings.cache, initial(target) );
+    build.default_settings.cache = root( "%s/%s_%s.cache" % {settings.obj, platform, variant} );
     _G.settings = settings;
-end
-
-function build()
-    local total_start = 0;
-
-    parser( settings );
-    msvc( settings );
-    
-    local load_start = ticks();
-    load_project( project );
-    local load_finish = ticks();
-
-    local bind_start = ticks();
-    local all = find_target( initial(target) );
-    assert( all, "No target found at '"..tostring(initial(target)).."'" );
-    preorder( visit("depend"), all );
-    bind( all );
-    local bind_finish = ticks();
-
-    local build_start = ticks();
-    if command == "build" then
-        postorder( visit("build"), all );
-    elseif command == "generate" then
-        postorder( visit("generate"), all );
-    elseif command == "document" then
-        postorder( visit("document"), all );
-    elseif command == "clean" then
-        postorder( visit("clean"), all );
-        rm( settings.cache );
-    elseif command == "compile" then
-        compile( source );
-    elseif command == "projects" then
-        postorder( visit("projects"), all );
-    elseif command == "dependencies" then
-        print_dependencies( all );
-    elseif command == "namespace" then
-        print_namespace( all );
-    end    
-    local build_finish = ticks();
-
-    local save_start = ticks();
-    if command == "build" then
-        mkdir( branch(settings.cache) );
-        save_binary( settings.cache );
-    end    
-    local save_finish = ticks();
-
-    local total_finish = ticks();
-    local load_time = load_finish - load_start;
-    local bind_time = bind_finish - bind_start;
-    local build_time = build_finish - build_start;
-    local save_time = save_finish - save_start;
-    local total_time = total_finish - total_start;
-    local unknown_time = total_time - (load_time + bind_time + build_time + save_time);
-    print( "build: load="..tostring(load_time).."ms, bind="..tostring(bind_time).."ms, build="..tostring(build_time).."ms, save="..tostring(save_time).."ms, unknown="..tostring(unknown_time).."ms, total="..tostring(total_time).."ms" );
+    build.default_settings = default_settings;
+    build.local_settings = local_settings;
+    build.settings = settings;
+    return settings;
 end
 
 -- Visit a target by calling a member function /pass/ if it has one.
-function visit( pass, ... )
+function build.visit( pass, ... )
     local args = {...};
     return function( target )
         local fn = target[pass];
@@ -309,7 +100,7 @@ end
 --
 -- @return
 --  True if \e target should be built otherwise false.
-function built_for_platform_and_variant( target )
+function build.built_for_platform_and_variant( target )
     function contains( value, values )
         for _, v in ipairs(values) do
             if v == value then
@@ -318,36 +109,24 @@ function built_for_platform_and_variant( target )
         end        
         return false;
     end    
-    return (target.settings.platforms == nil or contains(platform, target.settings.platforms)) and (target.settings.variants == nil or target.settings.variants[variant]);
-end
-
--- Compile the single source file /source/ in /graph/.
-function compile( source )
-    local source_file = find_target( initial(source) );
-    assert( source_file, "No compilable source file found at '"..initial(source).."'" );
-    local object_file = source_file.object;
-    assert( object_file, "No object file found at '"..obj_directory(source_file.unit)..obj_name(source_file:id()).."'" );
-    local unit = source_file.unit;
-    for dependency in unit:get_dependencies() do
-        if dependency:rule() == File and dependency ~= unit.precompiled_header then
-            dependency:set_outdated( false );
-        end
-    end
-    unit:set_outdated( true );
-    object_file:set_outdated( true );
-    postorder( visit("build"), unit );
+    return (target.settings.platforms == nil or contains(platform, target.settings.platforms)) and (target.settings.variants == nil or contains(variant, target.settings.variants));
 end
 
 -- Execute command with arguments and optional filter and raise an error if 
 -- it doesn't return 0.
-function system( command, arguments, filter )
+function build.system( command, arguments, filter )
     if execute(command, arguments, filter) ~= 0 then       
-        error( arguments.." failed" );
+        error( arguments.." failed", 0 );
     end
 end
 
+-- Return a value from a table using the first key as a lookup.
+function build.switch( values )
+    return values[values[1]];
+end
+
 -- Dump the keys, values, and prototype of a table for debugging.
-function dump( t )
+function build.dump( t )
     print( tostring(t) );
     if t ~= nil then
         if getmetatable(t) ~= nil then
@@ -359,64 +138,151 @@ function dump( t )
     end
 end
 
--- Load a project.
-function load_project( project )
-    local root_target = find_target( root() );
-    assert( root_target , "No root target found at '"..tostring(root()).."'" );
-    if not root_target.loaded then
-        root_target.loaded = true;
-        preorder( visit("load"), root_target );
-        preorder( visit("static_depend"), root_target );
-
-        local cache = find_target( settings.cache );
-        cache.loaded = true;
-        cache:add_dependency( SourceFile("build.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/Cc.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/CcScanner.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/settings.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/Directory.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/Executable.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/File.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/HeaderFile.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/init.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/StaticLibrary.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/DynamicLibrary.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/Parser.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/Project.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/SourceFile.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/QtMoc.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/AsciiDoc.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/msvc.lua") );
-        cache:add_dependency( SourceFile("build/lua/build/visual_studio.lua") );
-        local user_settings = home( "user_settings.lua" );
-        if exists(user_settings) then
-            cache:add_dependency( SourceFile(user_settings) );
+-- Serialize values to to a Lua file (typically the local settings table).
+function build.serialize( file, value, level )
+    local function indent( level )
+        for i = 0, level - 1 do
+            file:write( "  " );
         end
+    end
+
+    if type(value) == "boolean" then
+        file:write( tostring(value) );
+    elseif type(value) == "number" then
+        file:write( value );
+    elseif type(value) == "string" then
+        file:write( string.format("%q", value) );
+    elseif type(value) == "table" then
+        file:write( "{\n" );
+        for _, v in ipairs(value) do
+            build.serialize( file, v, level + 1 );
+            file:write( ", " );
+        end
+        for k, v in pairs(value) do
+            if type(k) == "string" then
+                indent( level + 1 );
+                file:write( "%s = " % k );
+                build.serialize( file, v, level + 1 );
+                file:write( ";\n" );
+            end
+        end
+        indent( level );
+        file:write( "}" );
     end
 end
 
--- Load a module.
-function load_module( module )
-    if module.settings then
-        setmetatable( module.settings, {__index = settings} );
+-- Save a settings table to a file.
+function build.save_settings( settings, filename )
+    local file = io.open( filename, "wb" );
+    assert( file, "Opening %s to write settings failed" % filename );
+    file:write( "\nreturn " );
+    build.serialize( file, settings, 0 );
+    file:write( "\n" );
+    file:close();
+end
+
+-- Merge settings from /source_settings/ into /settings/.
+function build.merge_settings( settings, source_settings )
+    settings = settings or {};
+    for _, v in ipairs(source_settings) do
+        table.insert( settings, v );
+    end
+    for k, v in pairs(source_settings) do
+        if type(k) == "string" then
+            if type(v) == "table" then
+                settings[k] = build.merge_settings( settings[k], v );
+            else
+                settings[k] = v;
+            end
+        end
+    end
+    return settings;
+end
+
+-- Inherit settings from /settings/ to /target/.
+function build.inherit_settings( target, settings )
+    local inherited = false;
+    if target.settings then
+        if not getmetatable(target.settings) then
+            setmetatable( target.settings, {__index = settings} );
+            inherited = true;
+        end
     else
-        module.settings = settings;
+        target.settings = settings;
+        inherited = true;
     end
-    
-    local settings = module.settings;
-    for _, unit in ipairs(module) do        
-        if unit.settings then
-            setmetatable( unit.settings, {__index = settings} );        
-        else
-            unit.settings = settings;
+    return inherited;
+end
+
+-- Load a target.
+function build.load_target( target )
+    local inherited = build.inherit_settings( target, build.settings );
+    for _, value in ipairs(target) do
+        if type(value) == "table" then
+            build.inherit_settings( value, target.settings );
         end
-        module:add_dependency( unit );
-        unit.module = module;
+    end
+    return inherited;
+end
+
+-- Load the dependency graph from the file specified by /settings.cache/.
+function build.load()
+    assert( initialize and type(initialize) == "function", "The 'initialize' function is not defined" );
+    assert( buildfiles and type(buildfiles) == "function", "The 'buildfiles' function is not defined" );
+
+    initialize();
+
+    local cache_target = load_binary( settings.cache, initial(goal) );
+    if cache_target == nil or cache_target:is_outdated() or build.local_settings.updated then
+        clear();
+        buildfiles();
+
+        local root_target = find_target( root() );
+        assert( root_target , "No root target found at '"..tostring(root()).."'" );
+        preorder( build.visit("load"), root_target );
+        preorder( build.visit("static_depend"), root_target );
+        bind( root_target );
+
+        cache_target = find_target( settings.cache );
+        assert( cache_target, "No cache target found at '%s' after loading buildfiles" % settings.cache );
+        cache_target:add_dependency( SourceFile(root("build.lua")) );
+        cache_target:add_dependency( SourceFile(root("local_settings.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/init.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/File.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/SourceFile.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/HeaderFile.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/PrecompiledHeader.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Directory.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Compile.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Archive.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Link.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Lipo.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Source.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/StaticLibrary.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/DynamicLibrary.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/Executable.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/CcScanner.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/ObjCScanner.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/default_settings.lua")) );
+        cache_target:add_dependency( SourceFile(root("build/lua/build/commands.lua")) );
     end
 
-    local project = Project( absolute(string.format("%s.project", module.project_name or module:id())) );
-    project.module = module;
-    
-    local working_directory = module:get_working_directory();
-    working_directory:add_dependency( project );
+    local all = find_target( initial(goal) );
+    assert( all, "No target found at '"..tostring(initial(goal)).."'" );
+    bind( all );
+    preorder( build.visit("depend"), all );
+    bind( all );
 end
+
+-- Save the dependency graph to the file specified by /settings.cache/.
+function build.save()
+    if build.local_settings.updated then
+        build.local_settings.updated = nil;
+        build.save_settings( build.local_settings, build.settings.local_settings_filename );
+    end
+    mkdir( branch(settings.cache) );
+    save_binary( settings.cache );
+end
+
+-- Set default settings (all other settings inherit from this table).
+build.default_settings = dofile( root("build/lua/build/default_settings.lua") );

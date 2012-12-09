@@ -9,7 +9,7 @@ Library {
         "error/error"
     };
 
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "ReferenceCount.cpp"
     };

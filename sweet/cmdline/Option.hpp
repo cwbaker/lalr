@@ -1,6 +1,6 @@
 //
 // Option.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_CMDLINE_OPTION_HPP_INCLUDED

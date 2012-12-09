@@ -1,7 +1,8 @@
 
-#include <stdio.h>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 using namespace sweet::lua;

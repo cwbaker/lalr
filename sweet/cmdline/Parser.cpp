@@ -1,9 +1,13 @@
 //
 // Parser.cpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "Parser.hpp"
+#include "Error.hpp"
+#include <sweet/assert/assert.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 
 using std::vector;
 using namespace sweet::cmdline;
@@ -17,6 +21,10 @@ Parser::Parser()
 {
 }
 
+void Parser::parse( int argc, char** argv ) const
+{
+    parse( argc, const_cast<const char**>(argv) );
+}
 
 /**
 // Parse a command line using the Options that have been added to this 
@@ -31,8 +39,7 @@ Parser::Parser()
 // @return
 //  True if parsing the command line succeeded otherwise false.
 */
-void 
-Parser::parse( int argc, char** argv ) const
+void Parser::parse( int argc, const char** argv ) const
 {
     int argi = 1;
     while ( argi < argc )
@@ -96,7 +103,6 @@ Parser::parse( int argc, char** argv ) const
     }
 }
 
-
 /**
 // Print the Options that this Parser recognises to a stream.
 //
@@ -109,8 +115,7 @@ Parser::parse( int argc, char** argv ) const
 // @return
 //  Nothing.
 */
-void 
-Parser::print( FILE* stream, int width ) const
+void Parser::print( FILE* stream, int width ) const
 {
     SWEET_ASSERT( stream );
 
@@ -138,7 +143,6 @@ Parser::print( FILE* stream, int width ) const
     }
 }
 
-
 /**
 // Add Options to this Parser.
 //
@@ -146,12 +150,10 @@ Parser::print( FILE* stream, int width ) const
 //  An AddOption helper object that provides a convenient syntax for adding
 //  Options to this Parser.
 */
-AddOption 
-Parser::add_options()
+AddOption Parser::add_options()
 {
     return AddOption( &options_, &operands_ );
 }
-
 
 /**
 // Is a command line argument a short option?
@@ -162,13 +164,11 @@ Parser::add_options()
 // @return
 //  True if \e argument is a short option otherwise false.
 */
-bool 
-Parser::is_short_option( const char* argument ) const
+bool Parser::is_short_option( const char* argument ) const
 {
     SWEET_ASSERT( argument != 0 );
     return argument[0] == '-' && argument[1] != '-';
 }
-
 
 /**
 // Is a command line argument a long option?
@@ -179,13 +179,11 @@ Parser::is_short_option( const char* argument ) const
 // @return
 //  True if \e argument is a long option otherwise false.
 */
-bool 
-Parser::is_long_option( const char* argument ) const
+bool Parser::is_long_option( const char* argument ) const
 {
     SWEET_ASSERT( argument != 0 );
     return argument[0] == '-' && argument[1] == '-';
 }
-
 
 /**
 // Find an Option by name.
@@ -196,8 +194,7 @@ Parser::is_long_option( const char* argument ) const
 // @return
 //  The Option or null if no matching Option was found.
 */
-const Option* 
-Parser::find_option_by_name( const std::string& name ) const
+const Option* Parser::find_option_by_name( const std::string& name ) const
 {
     vector<Option>::const_iterator option = options_.begin();
     while ( option != options_.end() && option->get_name() != name )
@@ -208,7 +205,6 @@ Parser::find_option_by_name( const std::string& name ) const
     return option != options_.end() ? &(*option) : 0;
 }
 
-
 /**
 // Find an Option by its short name.
 //
@@ -218,8 +214,7 @@ Parser::find_option_by_name( const std::string& name ) const
 // @return
 //  The Option or null if no matching Option was found.
 */ 
-const Option* 
-Parser::find_option_by_short_name( const std::string& short_name ) const
+const Option* Parser::find_option_by_short_name( const std::string& short_name ) const
 {
     vector<Option>::const_iterator option = options_.begin();
     while ( option != options_.end() && option->get_short_name() != short_name )
@@ -229,7 +224,6 @@ Parser::find_option_by_short_name( const std::string& short_name ) const
 
     return option != options_.end() ? &(*option) : 0;
 }
-
 
 /**
 // Find the end of a name in a command line argument.
@@ -243,10 +237,9 @@ Parser::find_option_by_short_name( const std::string& short_name ) const
 // @return 
 //  The end of the name in \e name.
 */
-const char* 
-Parser::find_end_of_name( const char* name ) const
+const char* Parser::find_end_of_name( const char* name ) const
 {
-    SWEET_ASSERT( name != 0 );
+    SWEET_ASSERT( name );
 
     while ( *name != 0 && *name != '=' )
     {
@@ -255,7 +248,6 @@ Parser::find_end_of_name( const char* name ) const
 
     return name;
 }
-
 
 /**
 // Find the beginning of the argument (if there is one) in a command line
@@ -270,10 +262,9 @@ Parser::find_end_of_name( const char* name ) const
 // @return
 //  The beginning of the argument after \e name_end.
 */
-const char* 
-Parser::find_argument( const char* name_end ) const
+const char* Parser::find_argument( const char* name_end ) const
 {
-    SWEET_ASSERT( name_end != 0 );
+    SWEET_ASSERT( name_end );
 
     if ( *name_end != '=' )
     {
@@ -282,7 +273,6 @@ Parser::find_argument( const char* name_end ) const
 
     return name_end;
 }
-
 
 /**
 // Parse an Option.
@@ -306,12 +296,11 @@ Parser::find_argument( const char* name_end ) const
 //  argument that was contained within the argument following the argument 
 //  that the Option was in).
 */
-int 
-Parser::parse_option( const Option* option, const char* argument, const char* next_argument ) const
+int Parser::parse_option( const Option* option, const char* argument, const char* next_argument ) const
 {
-    SWEET_ASSERT( option != 0 );
-    SWEET_ASSERT( option->get_address() != 0 );
-    SWEET_ASSERT( argument != 0 );
+    SWEET_ASSERT( option );
+    SWEET_ASSERT( option->get_address() );
+    SWEET_ASSERT( argument );
 
 //
 // If the Option is not a boolean option then it must have an argument that

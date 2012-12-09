@@ -10,7 +10,7 @@ Executable {
         "pointer/pointer"
     };
 
-    Cc {
+    Source {
         "main.cpp",
         "parser_hello_world_example.cpp",
         "parser_hello_world_with_grammar_example.cpp",

@@ -7,11 +7,16 @@
 #include "ParserState.hpp"
 #include "ParserItem.hpp"
 #include "ParserTransition.hpp"
+#include <stdio.h>
 
 using namespace sweet;
 using namespace sweet::parser;
 
 using std::set;
+
+#if defined(BUILD_PLATFORM_MSVC)
+#define snprintf _snprintf
+#endif
 
 /**
 // Constructor.
@@ -89,7 +94,7 @@ void ParserState::describe( std::string* description ) const
     SWEET_ASSERT( description );
 
     char buffer [32];
-    _snprintf( buffer, sizeof(buffer), "%d:\n", get_index() );
+    snprintf( buffer, sizeof(buffer), "%d:\n", get_index() );
     buffer [sizeof(buffer) - 1] = '\0';
     description->append( buffer );
 

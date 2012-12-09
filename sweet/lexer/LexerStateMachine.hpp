@@ -29,9 +29,9 @@ class LexerErrorPolicy;
 class SWEET_LEXER_DECLSPEC LexerStateMachine
 {
     std::string identifier_; ///< The identifier of this LexerStateMachine.
-    std::vector<ptr<lexer::LexerAction>> actions_; ///< The lexer actions for this ParserStateMachine.
-    std::vector<ptr<LexerState>> states_; ///< The states that make up the state machine for this LexerStateMachine.
-    std::vector<ptr<LexerState>> whitespace_states_; ///< The states that make up the state machine for whitespace in this LexerStateMachine.
+    std::vector<ptr<lexer::LexerAction> > actions_; ///< The lexer actions for this ParserStateMachine.
+    std::vector<ptr<LexerState> > states_; ///< The states that make up the state machine for this LexerStateMachine.
+    std::vector<ptr<LexerState> > whitespace_states_; ///< The states that make up the state machine for whitespace in this LexerStateMachine.
     const LexerState* start_state_; ///< The starting state for the state machine.
     const LexerState* whitespace_start_state_; ///< The starting state for the whitespace state machine.
 
@@ -40,9 +40,9 @@ class SWEET_LEXER_DECLSPEC LexerStateMachine
         LexerStateMachine( const std::string& identifier, const std::vector<LexerToken>& tokens, const std::vector<LexerToken>& whitespace_tokens = std::vector<LexerToken>(), LexerErrorPolicy* event_sink = NULL );
 
         const std::string& identifier() const;
-        const std::vector<ptr<LexerAction>>& actions() const;
-        const std::vector<ptr<LexerState>>& states() const;
-        const std::vector<ptr<LexerState>>& whitespace_states() const;
+        const std::vector<ptr<LexerAction> >& actions() const;
+        const std::vector<ptr<LexerState> >& states() const;
+        const std::vector<ptr<LexerState> >& whitespace_states() const;
         const LexerState* start_state() const;
         const LexerState* whitespace_start_state() const;
         void describe( std::string* description ) const;

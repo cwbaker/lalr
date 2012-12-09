@@ -1,5 +1,5 @@
 
-void main()
+int main()
 {
     extern void parser_xml_example();
     parser_xml_example();
@@ -18,4 +18,6 @@ void main()
     
     extern void parser_calculator_with_grammar_example();
     parser_calculator_with_grammar_example();
+
+    return 0;
 }

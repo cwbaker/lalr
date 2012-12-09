@@ -6,9 +6,15 @@
 #include "stdafx.hpp"
 #include "LexerItem.hpp"
 #include "RegexNode.hpp"
+#include <string>
+#include <stdio.h>
 
 using namespace sweet;
 using namespace sweet::lexer;
+
+#if defined(BUILD_PLATFORM_MSVC)
+#define snprintf _snprintf
+#endif
 
 /**
 // Constructor.
@@ -159,7 +165,7 @@ void LexerItem::describe( std::string* description ) const
         const RegexNode* node = *i;
         SWEET_ASSERT( node );
         char buffer [32];
-        _snprintf( buffer, sizeof(buffer), "%d ", node->get_index() );
+        snprintf( buffer, sizeof(buffer), "%d ", node->get_index() );
         buffer [sizeof(buffer) - 1] = '\0';
         description->append( buffer );
     }

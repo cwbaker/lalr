@@ -17,31 +17,19 @@
 ** Search for "@@" to find all configurable definitions.
 ** ===================================================================
 */
-// SWEET begin
-// 
+// Make sure that project wide preprocessor settings are included.
+#include <sweet/build.hpp>
+
 // Add automatic linking pragma.
-//
 #ifndef BUILD_MODULE_LIBLUA
 #pragma comment( lib, "liblua" BUILD_LIBRARY_SUFFIX )
 #endif
-// SWEET end
 
-// SWEET begin
-//
-// Make sure that project wide preprocessor settings are included.
-//
-#include <sweet/build.hpp>
-// SWEET end
-
-// SWEET begin
-//
-// Add support for assertions if the macro SWEET_ASSERT_ENABLED is defined.
-//
+// Add support for asserts if the macro SWEET_ASSERT_ENABLED is defined.
 #if defined(SWEET_ASSERT_ENABLED)
 #include <sweet/assert/assert.hpp>
 #define lua_assert( x ) sweet::assert::sweet_assert( (x), #x, __FILE__, __LINE__ )
 #endif
-// SWEET end
 
 /*
 @@ LUA_ANSI controls the use of non-ansi features.

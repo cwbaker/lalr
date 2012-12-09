@@ -13,6 +13,7 @@
 #include "LexerErrorPolicy.hpp"
 #include "RegexNode.hpp"
 #include "RegexParser.hpp"
+#include <limits.h>
 
 using std::pair;
 using std::vector;
@@ -63,7 +64,7 @@ LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, const std
 // @return
 //  The actions.
 */
-std::vector<ptr<LexerAction>>& LexerGenerator::actions()
+std::vector<ptr<LexerAction> >& LexerGenerator::actions()
 {
     return actions_;
 }
@@ -74,7 +75,7 @@ std::vector<ptr<LexerAction>>& LexerGenerator::actions()
 // @return
 //  The generated states.
 */
-std::set<ptr<LexerState>, ptr_less<LexerState>>& LexerGenerator::states()
+std::set<ptr<LexerState>, ptr_less<LexerState> >& LexerGenerator::states()
 {
     return states_;
 }
@@ -85,7 +86,7 @@ std::set<ptr<LexerState>, ptr_less<LexerState>>& LexerGenerator::states()
 // @return
 //  The generated whitespace states.
 */
-std::set<ptr<LexerState>, ptr_less<LexerState>>& LexerGenerator::whitespace_states()
+std::set<ptr<LexerState>, ptr_less<LexerState> >& LexerGenerator::whitespace_states()
 {
     return whitespace_states_;
 }
@@ -135,7 +136,7 @@ const lexer::LexerAction* LexerGenerator::add_lexer_action( const std::string& i
 
     if ( !identifier.empty() )
     {    
-        std::vector<ptr<lexer::LexerAction>>::const_iterator i = actions_.begin();
+        std::vector<ptr<lexer::LexerAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
@@ -247,7 +248,7 @@ ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int e
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<ptr<LexerState>, ptr_less<LexerState>>* states, const LexerState** start_state )
+void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<ptr<LexerState>, ptr_less<LexerState> >* states, const LexerState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
@@ -266,7 +267,7 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<ptr<LexerState>, ptr_less<LexerState>>::const_iterator i = states->begin(); i != states->end(); ++i )
+            for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::const_iterator i = states->begin(); i != states->end(); ++i )
             {
                 LexerState* state = i->get();
                 SWEET_ASSERT( state );
@@ -299,7 +300,7 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
                 // Create a goto state and a transition from the current 
                 // state for each distinct range.
                 //                    
-                    vector<pair<int, bool>>::const_iterator j = ranges_.begin();
+                    vector<pair<int, bool> >::const_iterator j = ranges_.begin();
                     while ( j != ranges_.end() )
                     {               
                         int begin = (j + 0)->first;
@@ -340,7 +341,7 @@ void LexerGenerator::generate_indices_for_states()
 {
     int index = 0;
     
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState>>::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = states_.begin(); i != states_.end(); ++i )
     {
         LexerState* state = i->get();
         SWEET_ASSERT( state );
@@ -348,7 +349,7 @@ void LexerGenerator::generate_indices_for_states()
         ++index;
     }
 
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState>>::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
+    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
     {
         LexerState* state = i->get();
         SWEET_ASSERT( state );
@@ -443,7 +444,7 @@ void LexerGenerator::insert( int begin, int end )
 {
     bool in = false;        
 
-    vector<pair<int, bool>>::iterator i = ranges_.begin();
+    vector<pair<int, bool> >::iterator i = ranges_.begin();
     while ( i != ranges_.end() && i->first < begin )
     {
         in = i->second;

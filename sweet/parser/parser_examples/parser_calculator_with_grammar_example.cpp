@@ -7,6 +7,7 @@
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserGrammar.hpp>
 #include <sweet/parser/Parser.ipp>
+#include <string.h>
 
 using namespace std;
 using namespace sweet;

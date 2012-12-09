@@ -14,7 +14,7 @@ Library {
         "rtti/rtti"
     };
     
-    Cc {
+    Source {
         "AddGlobal.cpp", 
         "AddMember.cpp",
         "AddMemberHelper.cpp",

@@ -1,6 +1,6 @@
 //
 // error_functions.cpp
-// Copyright (c) 2001 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2001 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "stdafx.hpp"
@@ -68,9 +68,9 @@ void error( const Error& error )
     }
     else
     {
-        ::fputs( error.what(), stderr );
-        ::fputs( ".\n", stderr );
-        ::exit( EXIT_FAILURE );
+        fputs( error.what(), stderr );
+        fputs( ".\n", stderr );
+        exit( EXIT_FAILURE );
     }
 }
 
@@ -93,9 +93,9 @@ void error( const std::exception& exception )
     }
     else
     {
-        ::fputs( exception.what(), stderr );
-        ::fputs( ".\n", stderr );
-        ::exit( EXIT_FAILURE );
+        fputs( exception.what(), stderr );
+        fputs( ".\n", stderr );
+        exit( EXIT_FAILURE );
     }
 }
 

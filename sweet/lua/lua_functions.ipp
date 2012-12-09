@@ -1,11 +1,14 @@
 //
 // lua_functions.ipp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_FUNCTIONS_IPP_INCLUDED
 #define SWEET_LUA_FUNCTIONS_IPP_INCLUDED
 
+#include "LuaConverter.hpp"
+#include "LuaObjectConverter.hpp"
+#include "LuaTraits.hpp"
 #include "LuaUserDataTemplate.ipp"
 #include <sweet/assert/assert.hpp>
 
@@ -29,8 +32,8 @@ namespace lua
 template <class Type> 
 void lua_push( lua_State* lua_state, Type* value )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type*, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type*, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
 }
 
 /**
@@ -47,8 +50,8 @@ void lua_push( lua_State* lua_state, Type* value )
 template <class Type> 
 void lua_push( lua_State* lua_state, const Type* value )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<const Type*, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<const Type*, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
 }
 
 /**
@@ -70,11 +73,11 @@ void lua_push( lua_State* lua_state, const Type* value )
 template <class Type> 
 void lua_push_value( lua_State* lua_state, typename traits::traits<Type>::parameter_type value )
 {
-    typedef traits::traits<Type>::value_type value_type;
+    typedef typename traits::traits<Type>::value_type value_type;
     SWEET_ASSERT( lua_state );
     void* copied_value = lua_newuserdata( lua_state, sizeof(LuaUserDataTemplate<value_type>) );
     lua_newtable( lua_state );
-    lua_pushcfunction( lua_state, &lua_gc<LuaUserDataTemplate<value_type>> );
+    lua_pushcfunction( lua_state, &lua_gc<LuaUserDataTemplate<value_type> > );
     lua_setfield( lua_state, -2, "__gc" );
     lua_setmetatable( lua_state, -2 );
     SWEET_ASSERT( copied_value != NULL );
@@ -123,8 +126,7 @@ lua_to_value( lua_State* lua_state, int position )
 //  The value to push.
 */
 template <class Type> 
-sweet::lua::LuaValueWrapper<Type> 
-sweet::lua::value( Type value )
+LuaValueWrapper<Type> value( Type value )
 {
     return LuaValueWrapper<Type>( value );
 }
@@ -179,7 +181,7 @@ weaken( Function function )
 //  Always returns 0.
 */
 template <class Object> 
-int sweet::lua::lua_gc( lua_State* lua_state )
+int lua_gc( lua_State* lua_state )
 {
     SWEET_ASSERT( lua_state );
     SWEET_ASSERT( lua_isuserdata(lua_state, 1) );
@@ -242,6 +244,36 @@ int lua_iterator( lua_State* lua_state )
     return 1;
 }
 
+template <class Iterator, class Function> 
+int lua_iterator_with_function( lua_State* lua_state )
+{
+    SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( lua_isuserdata(lua_state, lua_upvalueindex(1)) );
+    SWEET_ASSERT( lua_isuserdata(lua_state, lua_upvalueindex(2)) );
+    SWEET_ASSERT( lua_isuserdata(lua_state, lua_upvalueindex(3)) );
+
+    Iterator& iterator = LuaConverter<Iterator&>::to( lua_state, lua_upvalueindex(1) );
+    Iterator end = LuaConverter<Iterator>::to( lua_state, lua_upvalueindex(2) );
+    Function& function = LuaConverter<Function&>::to( lua_state, lua_upvalueindex(3) );
+    while ( iterator != end && !function(*iterator) )
+    {
+        ++iterator;
+    }
+    
+    if ( iterator != end )
+    {
+        typedef typename Iterator::value_type value_type;
+        LuaConverter<value_type>::push( lua_state, *iterator );
+        ++iterator;
+    }
+    else
+    {
+        lua_pushnil( lua_state );
+    }
+
+    return 1;
+}
+
 /**
 // @internal
 //
@@ -254,7 +286,7 @@ int lua_iterator( lua_State* lua_state )
 // collected.
 //
 // The user data values containing the copied iterators are then bound as 
-// up values to an iterator function (see lua::lua_iterator()) that iterates
+// up values to an iterator function (see lua_iterator()) that iterates
 // over the range returning nil when the end is reached.
 //
 // @param lua_state
@@ -273,6 +305,16 @@ void lua_push_iterator( lua_State* lua_state, Iterator start, Iterator finish )
     lua_push_value<Iterator>( lua_state, start );
     lua_push_value<Iterator>( lua_state, finish );
     lua_pushcclosure( lua_state, &lua_iterator<Iterator>, 2 );
+}
+
+template <class Iterator, class Function> 
+void lua_push_iterator( lua_State* lua_state, Iterator start, Iterator finish, const Function& function )
+{
+    SWEET_ASSERT( lua_state );
+    lua_push_value<Iterator>( lua_state, start );
+    lua_push_value<Iterator>( lua_state, finish );
+    lua_push_value<Function>( lua_state, function );
+    lua_pushcclosure( lua_state, &lua_iterator_with_function<Iterator, Function>, 3 );
 }
 
 }

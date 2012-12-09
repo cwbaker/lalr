@@ -65,6 +65,7 @@ class Application
         int get_result() const;
         
     private:
+        friend class ParserStateMachineDeleter;
         ptr<ParserStateMachine> parser_state_machine( const std::string& grammar, const std::string& filename );
         void prototypes();
         void add_parser_state_machine( ptr<ParserStateMachine> parser_state_machine );

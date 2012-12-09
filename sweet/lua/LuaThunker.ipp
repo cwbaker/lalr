@@ -42,7 +42,7 @@ int LuaThunker<R (*)(A0), Returner, P0, P1, P2, P3, P4, P5, P6>::function( lua_S
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
 
     typedef R (*Function)(A0);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -61,8 +61,8 @@ int LuaThunker<R (*)(A0, A1), Returner, P0, P1, P2, P3, P4, P5, P6>::function( l
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
 
     typedef R (*Function)(A0, A1);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -81,9 +81,9 @@ int LuaThunker<R (*)(A0, A1, A2), Returner, P0, P1, P2, P3, P4, P5, P6>::functio
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
 
     typedef R (*Function)(A0, A1, A2);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -102,10 +102,10 @@ int LuaThunker<R (*)(A0, A1, A2, A3), Returner, P0, P1, P2, P3, P4, P5, P6>::fun
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
 
     typedef R (*Function)(A0, A1, A2, A3);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -124,11 +124,11 @@ int LuaThunker<R (*)(A0, A1, A2, A3, A4), Returner, P0, P1, P2, P3, P4, P5, P6>:
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
 
     typedef R (*Function)(A0, A1, A2, A3, A4);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -147,12 +147,12 @@ int LuaThunker<R (*)(A0, A1, A2, A3, A4, A5), Returner, P0, P1, P2, P3, P4, P5, 
 {
     using traits::traits;
 
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
-    traits<A5>::value_type a5 = LuaConverter<traits<A5>::value_type>::to( lua_state, P5 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
 
     typedef R (*Function)(A0, A1, A2, A3, A4, A5);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -210,7 +210,7 @@ int LuaThunker<R (T::*)(A0), Returner, PT, P0, P1, P2, P3, P4, P5>::function( lu
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
 
     typedef R (T::* Function)(A0);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -230,7 +230,7 @@ int LuaThunker<R (T::*)(A0) const, Returner, PT, P0, P1, P2, P3, P4, P5>::functi
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
 
     typedef R (T::* Function)(A0) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -250,8 +250,8 @@ int LuaThunker<R (T::*)(A0, A1), Returner, PT, P0, P1, P2, P3, P4, P5>::function
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
 
     typedef R (T::* Function)(A0, A1);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -271,8 +271,8 @@ int LuaThunker<R (T::*)(A0, A1) const, Returner, PT, P0, P1, P2, P3, P4, P5>::fu
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
 
     typedef R (T::* Function)(A0, A1) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -292,9 +292,9 @@ int LuaThunker<R (T::*)(A0, A1, A2), Returner, PT, P0, P1, P2, P3, P4, P5>::func
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
 
     typedef R (T::* Function)(A0, A1, A2);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -314,9 +314,9 @@ int LuaThunker<R (T::*)(A0, A1, A2) const, Returner, PT, P0, P1, P2, P3, P4, P5>
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
 
     typedef R (T::* Function)(A0, A1, A2) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -336,10 +336,10 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3), Returner, PT, P0, P1, P2, P3, P4, P5>::
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
 
     typedef R (T::* Function)(A0, A1, A2, A3);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -359,10 +359,10 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3) const, Returner, PT, P0, P1, P2, P3, P4,
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
 
     typedef R (T::* Function)(A0, A1, A2, A3) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -382,11 +382,11 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4), Returner, PT, P0, P1, P2, P3, P4, P
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
 
     typedef R (T::* Function)(A0, A1, A2, A3, A4);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -406,11 +406,11 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4) const, Returner, PT, P0, P1, P2, P3,
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
 
     typedef R (T::* Function)(A0, A1, A2, A3, A4) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -430,12 +430,12 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5), Returner, PT, P0, P1, P2, P3, P
     using traits::traits;
 
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
-    traits<A5>::value_type a5 = LuaConverter<traits<A5>::value_type>::to( lua_state, P5 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
 
     typedef R (T::* Function)(A0, A1, A2, A3, A4, A5);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
@@ -455,12 +455,12 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5) const, Returner, PT, P0, P1, P2,
     using traits::traits;
 
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    traits<A0>::value_type a0 = LuaConverter<traits<A0>::value_type>::to( lua_state, P0 );
-    traits<A1>::value_type a1 = LuaConverter<traits<A1>::value_type>::to( lua_state, P1 );
-    traits<A2>::value_type a2 = LuaConverter<traits<A2>::value_type>::to( lua_state, P2 );
-    traits<A3>::value_type a3 = LuaConverter<traits<A3>::value_type>::to( lua_state, P3 );
-    traits<A4>::value_type a4 = LuaConverter<traits<A4>::value_type>::to( lua_state, P4 );
-    traits<A5>::value_type a5 = LuaConverter<traits<A5>::value_type>::to( lua_state, P5 );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
+    typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
+    typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
+    typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
+    typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
 
     typedef R (T::* Function)(A0, A1, A2, A3, A4, A5) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );

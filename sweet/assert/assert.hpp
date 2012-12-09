@@ -1,6 +1,6 @@
 //
 // assert.hpp
-// Copyright (c) 2006 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2006 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_ASSERT_ASSERT_HPP_INCLUDED
@@ -38,11 +38,18 @@ namespace sweet
 namespace assert
 {
 
+SWEET_ASSERT_DECLSPEC void sweet_break();
 SWEET_ASSERT_DECLSPEC void sweet_assert( bool expression, const char* description, const char* file, int line );
 
 }
 
 }
+
+#ifdef _MSC_VER
+#define SWEET_BREAK() __debugbreak()
+#else
+#define SWEET_BREAK() sweet::assert::sweet_break()
+#endif
 
 #ifdef SWEET_ASSERT_ENABLED
 
@@ -51,7 +58,7 @@ do { \
     if ( !(x) ) \
     { \
         sweet::assert::sweet_assert( false, #x, __FILE__, __LINE__ ); \
-        __debugbreak(); \
+        SWEET_BREAK(); \
     } \
 } while ( false )
 

@@ -7,6 +7,7 @@
 #define SWEET_LUA_LUACONVERTER_IPP_INCLUDED
 
 #include "LuaConverter.hpp"
+#include "LuaObjectConverter.hpp"
 #include "LuaThunker.ipp"
 
 namespace sweet
@@ -16,36 +17,35 @@ namespace lua
 {
 
 template <class Type>
-void 
-sweet::lua::LuaConverter<Type>::create( lua_State* lua_state, typename traits::traits<Type>::parameter_type value )
+void sweet::lua::LuaConverter<Type>::create( lua_State* lua_state, typename traits::traits<Type>::parameter_type value )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::create( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::create( lua_state, value );
 }
 
 template <class Type>
 void sweet::lua::LuaConverter<Type>::destroy( lua_State* lua_state, typename traits::traits<Type>::parameter_type value )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::destroy( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::destroy( lua_state, value );
 }
 
 template <class Type>
 void LuaConverter<Type>::push( lua_State* lua_state, typename traits::traits<Type>::parameter_type value )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
 }
 
 template <class Type>
 Type LuaConverter<Type>::to( lua_State* lua_state, int position )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    return LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::to( lua_state, position );
+    typedef typename traits::traits<Type>::base_type base_type;
+    return LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::to( lua_state, position );
 }
 
 template <class Type>
-void LuaConverter<sweet::lua::LuaValueWrapper<Type>>::push( lua_State* lua_state, const LuaValueWrapper<Type>& value )
+void LuaConverter<sweet::lua::LuaValueWrapper<Type> >::push( lua_State* lua_state, const LuaValueWrapper<Type>& value )
 {
     LuaObjectConverter<Type, LuaByValue>::push( lua_state, value.get_value() );
 }

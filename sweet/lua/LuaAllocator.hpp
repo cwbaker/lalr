@@ -1,12 +1,13 @@
 //
 // LuaAllocator.hpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUAALLOCATOR_HPP_INCLUDED
 #define SWEET_LUA_LUAALLOCATOR_HPP_INCLUDED
 
 #include "declspec.hpp"
+#include <sys/types.h>
 
 namespace sweet
 {

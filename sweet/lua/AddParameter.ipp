@@ -1,12 +1,13 @@
 //
 // AddParameter.ipp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_ADDPARAMETER_IPP_INCLUDED
 #define SWEET_LUA_ADDPARAMETER_IPP_INCLUDED
 
 #include "AddParameter.hpp"
+#include "AddParameterHelper.hpp"
 
 /**
 // Push an arbitrary value onto the Lua stack.
@@ -28,8 +29,8 @@ sweet::lua::AddParameter& sweet::lua::AddParameter::operator()( const Type& valu
 /**
 // Call the function and retrieve an arbitrary return value.
 //
-// This is done in a separate function (instead of the destructor) because 
-// calling the function can throw an exception.
+// This is done in this function instead of the destructor because calling 
+// the function can throw an exception.
 //
 // @param return_value
 //  A pointer to the variable to place the return value into (assumed not 

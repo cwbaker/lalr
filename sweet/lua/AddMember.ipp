@@ -132,7 +132,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     void* copied_function = lua_newuserdata( lua_state, sizeof(Function) );
     *reinterpret_cast<Function*>(copied_function) = function;
     LuaConverter<P0>::push( lua_state, p0 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, 1, 2, 3, 4, 5, 6>::function, 2 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, 1, 2, 3, 4, 5, 6>::function, 2 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -172,7 +172,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     *reinterpret_cast<Function*>(copied_function) = function;
     LuaConverter<P0>::push( lua_state, p0 );
     LuaConverter<P1>::push( lua_state, p1 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, 1, 2, 3, 4, 5>::function, 3 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, 1, 2, 3, 4, 5>::function, 3 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -216,7 +216,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     LuaConverter<P0>::push( lua_state, p0 );
     LuaConverter<P1>::push( lua_state, p1 );
     LuaConverter<P2>::push( lua_state, p2 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, 1, 2, 3, 4>::function, 4 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, 1, 2, 3, 4>::function, 4 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -264,7 +264,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     LuaConverter<P1>::push( lua_state, p1 );
     LuaConverter<P2>::push( lua_state, p2 );
     LuaConverter<P3>::push( lua_state, p3 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, 1, 2, 3>::function, 5 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, 1, 2, 3>::function, 5 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -316,7 +316,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     LuaConverter<P2>::push( lua_state, p2 );
     LuaConverter<P3>::push( lua_state, p3 );
     LuaConverter<P4>::push( lua_state, p4 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, 1, 2>::function, 6 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, 1, 2>::function, 6 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -372,7 +372,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     LuaConverter<P3>::push( lua_state, p3 );
     LuaConverter<P4>::push( lua_state, p4 );
     LuaConverter<P5>::push( lua_state, p5 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, 1>::function, 7 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, 1>::function, 7 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -432,7 +432,7 @@ sweet::lua::AddMember::operator()( const char* name, const Function& function, c
     LuaConverter<P4>::push( lua_state, p4 );
     LuaConverter<P5>::push( lua_state, p5 );
     LuaConverter<P6>::push( lua_state, p6 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, LuaPosition<P6, 8>::position>::function, 8 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, LuaPosition<P6, 8>::position>::function, 8 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -464,7 +464,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaStackGuard guard( lua_state );
     void* copied_function = lua_newuserdata( lua_state, sizeof(Function) );
     *reinterpret_cast<Function*>(copied_function) = policy_wrapper.get_function();
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, 1, 2, 3, 4, 5, 6, 7>::function, 1 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, 1, 2, 3, 4, 5, 6, 7>::function, 1 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -500,7 +500,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     void* copied_function = lua_newuserdata( lua_state, sizeof(Function) );
     *reinterpret_cast<Function*>(copied_function) = policy_wrapper.get_function();
     LuaConverter<P0>::push( lua_state, p0 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, 1, 2, 3, 4, 5, 6>::function, 2 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, 1, 2, 3, 4, 5, 6>::function, 2 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -540,7 +540,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     *reinterpret_cast<Function*>(copied_function) = policy_wrapper.get_function();
     LuaConverter<P0>::push( lua_state, p0 );
     LuaConverter<P1>::push( lua_state, p1 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, 1, 2, 3, 4, 5>::function, 3 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, 1, 2, 3, 4, 5>::function, 3 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -584,7 +584,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaConverter<P0>::push( lua_state, p0 );
     LuaConverter<P1>::push( lua_state, p1 );
     LuaConverter<P2>::push( lua_state, p2 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, 1, 2, 3, 4>::function, 4 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, 1, 2, 3, 4>::function, 4 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -632,7 +632,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaConverter<P1>::push( lua_state, p1 );
     LuaConverter<P2>::push( lua_state, p2 );
     LuaConverter<P3>::push( lua_state, p3 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, 1, 2, 3>::function, 5 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, 1, 2, 3>::function, 5 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -684,7 +684,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaConverter<P2>::push( lua_state, p2 );
     LuaConverter<P3>::push( lua_state, p3 );
     LuaConverter<P4>::push( lua_state, p4 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, 1, 2>::function, 6 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, 1, 2>::function, 6 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -740,7 +740,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaConverter<P3>::push( lua_state, p3 );
     LuaConverter<P4>::push( lua_state, p4 );
     LuaConverter<P5>::push( lua_state, p5 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, 1>::function, 7 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, 1>::function, 7 );
     lua_setfield( lua_state, -2, name );
 
     return *this;
@@ -800,7 +800,7 @@ sweet::lua::AddMember::operator()( const char* name, const LuaPolicyWrapper<Func
     LuaConverter<P4>::push( lua_state, p4 );
     LuaConverter<P5>::push( lua_state, p5 );
     LuaConverter<P6>::push( lua_state, p6 );
-    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, LuaPosition<P6, 8>::position>::function, 8 );
+    lua_pushcclosure( lua_state, &LuaThunker<Function, LuaReturner<typename traits<Function>::return_type, POLICY>, LuaPosition<P0, 2>::position, LuaPosition<P1, 3>::position, LuaPosition<P2, 4>::position, LuaPosition<P3, 5>::position, LuaPosition<P4, 6>::position, LuaPosition<P5, 7>::position, LuaPosition<P6, 8>::position>::function, 8 );
     lua_setfield( lua_state, -2, name );
 
     return *this;

@@ -94,7 +94,7 @@ AddParameter& AddParameter::operator()( bool value )
 */
 AddParameter& AddParameter::operator()( int value )
 {
-    add_parameter_helper_->push( static_cast<lua_Integer>(value) );
+    add_parameter_helper_->push( value );
     return *this;
 }
 

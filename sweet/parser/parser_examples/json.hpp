@@ -705,11 +705,19 @@ extern const sweet::parser::ParserState json_parser_state_22;
 extern const sweet::parser::ParserState json_parser_state_23;
 extern const sweet::parser::ParserState json_parser_state_24;
 
+/*
+0:
+. left_curly_brace_terminal element right_curly_brace_terminal ; dot_end
+. document ; dot_end
+shift to 4 on document ; 
+shift to 1 on left_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_0_transitions[] = 
 {
-    { json_SYMBOL_document, sweet::parser::TRANSITION_SHIFT, &json_parser_state_1, NULL },
-    { json_SYMBOL_left_curly_brace_terminal, sweet::parser::TRANSITION_SHIFT, &json_parser_state_2, NULL },
+    { json_SYMBOL_document, sweet::parser::TRANSITION_SHIFT, &json_parser_state_4, NULL },
+    { json_SYMBOL_left_curly_brace_terminal, sweet::parser::TRANSITION_SHIFT, &json_parser_state_1, NULL },
 };
 
 
@@ -719,37 +727,57 @@ const sweet::parser::ParserState json_parser_state_0 =
     json_parser_state_0_transitions + 2
 };
 
+/*
+1:
+left_curly_brace_terminal . element right_curly_brace_terminal ; dot_end
+. string colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal ; right_curly_brace_terminal
+shift to 2 on element ; 
+shift to 7 on string ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_1_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_0 },
+    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_2, NULL },
+    { json_SYMBOL_string, sweet::parser::TRANSITION_SHIFT, &json_parser_state_7, NULL },
 };
 
 
 const sweet::parser::ParserState json_parser_state_1 =
 {
     json_parser_state_1_transitions,
-    json_parser_state_1_transitions + 1
+    json_parser_state_1_transitions + 2
 };
 
+/*
+2:
+left_curly_brace_terminal element . right_curly_brace_terminal ; dot_end
+shift to 3 on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_2_transitions[] = 
 {
-    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_3, NULL },
-    { json_SYMBOL_string, sweet::parser::TRANSITION_SHIFT, &json_parser_state_7, NULL },
+    { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_SHIFT, &json_parser_state_3, NULL },
 };
 
 
 const sweet::parser::ParserState json_parser_state_2 =
 {
     json_parser_state_2_transitions,
-    json_parser_state_2_transitions + 2
+    json_parser_state_2_transitions + 1
 };
 
+/*
+3:
+left_curly_brace_terminal element right_curly_brace_terminal . ; dot_end
+reduce to document on dot_end ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_3_transitions[] = 
 {
-    { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_SHIFT, &json_parser_state_4, NULL },
+    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_1 },
 };
 
 
@@ -759,10 +787,16 @@ const sweet::parser::ParserState json_parser_state_3 =
     json_parser_state_3_transitions + 1
 };
 
+/*
+4:
+document . ; dot_end
+reduce to dot_start on dot_end ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_4_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_1 },
+    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_0 },
 };
 
 
@@ -772,13 +806,29 @@ const sweet::parser::ParserState json_parser_state_4 =
     json_parser_state_4_transitions + 1
 };
 
+/*
+5:
+. string colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+string colon_terminal left_curly_brace_terminal . contents right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+. contents comma_terminal content ; comma_terminal, right_curly_brace_terminal
+. content ; comma_terminal, right_curly_brace_terminal
+. attribute ; comma_terminal, right_curly_brace_terminal
+. element ; comma_terminal, right_curly_brace_terminal
+. string colon_terminal value ; comma_terminal, right_curly_brace_terminal
+shift to 11 on contents ; 
+shift to 14 on content ; 
+shift to 15 on attribute ; 
+shift to 16 on element ; 
+shift to 8 on string ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_5_transitions[] = 
 {
-    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_16, NULL },
     { json_SYMBOL_contents, sweet::parser::TRANSITION_SHIFT, &json_parser_state_11, NULL },
     { json_SYMBOL_content, sweet::parser::TRANSITION_SHIFT, &json_parser_state_14, NULL },
     { json_SYMBOL_attribute, sweet::parser::TRANSITION_SHIFT, &json_parser_state_15, NULL },
+    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_16, NULL },
     { json_SYMBOL_string, sweet::parser::TRANSITION_SHIFT, &json_parser_state_8, NULL },
 };
 
@@ -789,12 +839,25 @@ const sweet::parser::ParserState json_parser_state_5 =
     json_parser_state_5_transitions + 5
 };
 
+/*
+6:
+. string colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+contents comma_terminal . content ; comma_terminal, right_curly_brace_terminal
+. attribute ; comma_terminal, right_curly_brace_terminal
+. element ; comma_terminal, right_curly_brace_terminal
+. string colon_terminal value ; comma_terminal, right_curly_brace_terminal
+shift to 13 on content ; 
+shift to 15 on attribute ; 
+shift to 16 on element ; 
+shift to 8 on string ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_6_transitions[] = 
 {
-    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_16, NULL },
     { json_SYMBOL_content, sweet::parser::TRANSITION_SHIFT, &json_parser_state_13, NULL },
     { json_SYMBOL_attribute, sweet::parser::TRANSITION_SHIFT, &json_parser_state_15, NULL },
+    { json_SYMBOL_element, sweet::parser::TRANSITION_SHIFT, &json_parser_state_16, NULL },
     { json_SYMBOL_string, sweet::parser::TRANSITION_SHIFT, &json_parser_state_8, NULL },
 };
 
@@ -805,6 +868,12 @@ const sweet::parser::ParserState json_parser_state_6 =
     json_parser_state_6_transitions + 4
 };
 
+/*
+7:
+string . colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal ; right_curly_brace_terminal
+shift to 9 on colon_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_7_transitions[] = 
 {
@@ -818,6 +887,13 @@ const sweet::parser::ParserState json_parser_state_7 =
     json_parser_state_7_transitions + 1
 };
 
+/*
+8:
+string . colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+string . colon_terminal value ; comma_terminal, right_curly_brace_terminal
+shift to 10 on colon_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_8_transitions[] = 
 {
@@ -831,6 +907,12 @@ const sweet::parser::ParserState json_parser_state_8 =
     json_parser_state_8_transitions + 1
 };
 
+/*
+9:
+string colon_terminal . left_curly_brace_terminal contents right_curly_brace_terminal ; right_curly_brace_terminal
+shift to 5 on left_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_9_transitions[] = 
 {
@@ -844,6 +926,28 @@ const sweet::parser::ParserState json_parser_state_9 =
     json_parser_state_9_transitions + 1
 };
 
+/*
+10:
+string colon_terminal . left_curly_brace_terminal contents right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+string colon_terminal . value ; comma_terminal, right_curly_brace_terminal
+. null ; comma_terminal, right_curly_brace_terminal
+. boolean ; comma_terminal, right_curly_brace_terminal
+. integer ; comma_terminal, right_curly_brace_terminal
+. real ; comma_terminal, right_curly_brace_terminal
+. string ; comma_terminal, right_curly_brace_terminal
+. true_terminal ; comma_terminal, right_curly_brace_terminal
+. false_terminal ; comma_terminal, right_curly_brace_terminal
+shift to 5 on left_curly_brace_terminal ; 
+shift to 17 on value ; 
+shift to 19 on boolean ; 
+shift to 22 on string ; 
+shift to 18 on null ; 
+shift to 23 on true_terminal ; 
+shift to 24 on false_terminal ; 
+shift to 20 on integer ; 
+shift to 21 on real ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_10_transitions[] = 
 {
@@ -865,6 +969,14 @@ const sweet::parser::ParserState json_parser_state_10 =
     json_parser_state_10_transitions + 9
 };
 
+/*
+11:
+string colon_terminal left_curly_brace_terminal contents . right_curly_brace_terminal ; comma_terminal, right_curly_brace_terminal
+contents . comma_terminal content ; comma_terminal, right_curly_brace_terminal
+shift to 6 on comma_terminal ; 
+shift to 12 on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_11_transitions[] = 
 {
@@ -879,10 +991,16 @@ const sweet::parser::ParserState json_parser_state_11 =
     json_parser_state_11_transitions + 2
 };
 
+/*
+12:
+string colon_terminal left_curly_brace_terminal contents right_curly_brace_terminal . ; comma_terminal, right_curly_brace_terminal
+reduce to element on comma_terminal ; 
+reduce to element on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_12_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_2 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_2 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_2 },
 };
@@ -891,9 +1009,16 @@ const sweet::parser::ParserTransition json_parser_state_12_transitions[] =
 const sweet::parser::ParserState json_parser_state_12 =
 {
     json_parser_state_12_transitions,
-    json_parser_state_12_transitions + 3
+    json_parser_state_12_transitions + 2
 };
 
+/*
+13:
+contents comma_terminal content . ; comma_terminal, right_curly_brace_terminal
+reduce to contents on comma_terminal ; 
+reduce to contents on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_13_transitions[] = 
 {
@@ -908,6 +1033,13 @@ const sweet::parser::ParserState json_parser_state_13 =
     json_parser_state_13_transitions + 2
 };
 
+/*
+14:
+content . ; comma_terminal, right_curly_brace_terminal
+reduce to contents on comma_terminal ; 
+reduce to contents on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_14_transitions[] = 
 {
@@ -922,10 +1054,16 @@ const sweet::parser::ParserState json_parser_state_14 =
     json_parser_state_14_transitions + 2
 };
 
+/*
+15:
+attribute . ; comma_terminal, right_curly_brace_terminal
+reduce to content on comma_terminal ; 
+reduce to content on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_15_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_5 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_5 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_5 },
 };
@@ -934,13 +1072,19 @@ const sweet::parser::ParserTransition json_parser_state_15_transitions[] =
 const sweet::parser::ParserState json_parser_state_15 =
 {
     json_parser_state_15_transitions,
-    json_parser_state_15_transitions + 3
+    json_parser_state_15_transitions + 2
 };
 
+/*
+16:
+element . ; comma_terminal, right_curly_brace_terminal
+reduce to content on comma_terminal ; 
+reduce to content on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_16_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_6 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_6 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_6 },
 };
@@ -949,13 +1093,19 @@ const sweet::parser::ParserTransition json_parser_state_16_transitions[] =
 const sweet::parser::ParserState json_parser_state_16 =
 {
     json_parser_state_16_transitions,
-    json_parser_state_16_transitions + 3
+    json_parser_state_16_transitions + 2
 };
 
+/*
+17:
+string colon_terminal value . ; comma_terminal, right_curly_brace_terminal
+reduce to attribute on comma_terminal ; 
+reduce to attribute on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_17_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_7 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_7 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_7 },
 };
@@ -964,13 +1114,19 @@ const sweet::parser::ParserTransition json_parser_state_17_transitions[] =
 const sweet::parser::ParserState json_parser_state_17 =
 {
     json_parser_state_17_transitions,
-    json_parser_state_17_transitions + 3
+    json_parser_state_17_transitions + 2
 };
 
+/*
+18:
+null . ; comma_terminal, right_curly_brace_terminal
+reduce to value on comma_terminal ; 
+reduce to value on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_18_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_8 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_8 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_8 },
 };
@@ -979,13 +1135,19 @@ const sweet::parser::ParserTransition json_parser_state_18_transitions[] =
 const sweet::parser::ParserState json_parser_state_18 =
 {
     json_parser_state_18_transitions,
-    json_parser_state_18_transitions + 3
+    json_parser_state_18_transitions + 2
 };
 
+/*
+19:
+boolean . ; comma_terminal, right_curly_brace_terminal
+reduce to value on comma_terminal ; 
+reduce to value on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_19_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_9 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_9 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_9 },
 };
@@ -994,13 +1156,19 @@ const sweet::parser::ParserTransition json_parser_state_19_transitions[] =
 const sweet::parser::ParserState json_parser_state_19 =
 {
     json_parser_state_19_transitions,
-    json_parser_state_19_transitions + 3
+    json_parser_state_19_transitions + 2
 };
 
+/*
+20:
+integer . ; comma_terminal, right_curly_brace_terminal
+reduce to value on comma_terminal ; 
+reduce to value on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_20_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_10 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_10 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_10 },
 };
@@ -1009,13 +1177,19 @@ const sweet::parser::ParserTransition json_parser_state_20_transitions[] =
 const sweet::parser::ParserState json_parser_state_20 =
 {
     json_parser_state_20_transitions,
-    json_parser_state_20_transitions + 3
+    json_parser_state_20_transitions + 2
 };
 
+/*
+21:
+real . ; comma_terminal, right_curly_brace_terminal
+reduce to value on comma_terminal ; 
+reduce to value on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_21_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_11 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_11 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_11 },
 };
@@ -1024,13 +1198,19 @@ const sweet::parser::ParserTransition json_parser_state_21_transitions[] =
 const sweet::parser::ParserState json_parser_state_21 =
 {
     json_parser_state_21_transitions,
-    json_parser_state_21_transitions + 3
+    json_parser_state_21_transitions + 2
 };
 
+/*
+22:
+string . ; comma_terminal, right_curly_brace_terminal
+reduce to value on comma_terminal ; 
+reduce to value on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_22_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_12 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_12 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_12 },
 };
@@ -1039,13 +1219,19 @@ const sweet::parser::ParserTransition json_parser_state_22_transitions[] =
 const sweet::parser::ParserState json_parser_state_22 =
 {
     json_parser_state_22_transitions,
-    json_parser_state_22_transitions + 3
+    json_parser_state_22_transitions + 2
 };
 
+/*
+23:
+true_terminal . ; comma_terminal, right_curly_brace_terminal
+reduce to boolean on comma_terminal ; 
+reduce to boolean on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_23_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_15 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_15 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_15 },
 };
@@ -1054,13 +1240,19 @@ const sweet::parser::ParserTransition json_parser_state_23_transitions[] =
 const sweet::parser::ParserState json_parser_state_23 =
 {
     json_parser_state_23_transitions,
-    json_parser_state_23_transitions + 3
+    json_parser_state_23_transitions + 2
 };
 
+/*
+24:
+false_terminal . ; comma_terminal, right_curly_brace_terminal
+reduce to boolean on comma_terminal ; 
+reduce to boolean on right_curly_brace_terminal ; 
+
+*/
 
 const sweet::parser::ParserTransition json_parser_state_24_transitions[] = 
 {
-    { json_SYMBOL_dot_end, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_16 },
     { json_SYMBOL_comma_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_16 },
     { json_SYMBOL_right_curly_brace_terminal, sweet::parser::TRANSITION_REDUCE, NULL, &json_parser_production_16 },
 };
@@ -1069,7 +1261,7 @@ const sweet::parser::ParserTransition json_parser_state_24_transitions[] =
 const sweet::parser::ParserState json_parser_state_24 =
 {
     json_parser_state_24_transitions,
-    json_parser_state_24_transitions + 3
+    json_parser_state_24_transitions + 2
 };
 
 

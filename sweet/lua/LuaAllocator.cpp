@@ -4,7 +4,11 @@
 //
 
 #include "LuaAllocator.hpp"
+#if defined(BUILD_OS_WINDOWS)
 #include <malloc.h>
+#elif defined(BUILD_OS_MACOSX)
+#include <stdlib.h>
+#endif
 
 using namespace sweet::lua;
 
@@ -26,11 +30,11 @@ void* LuaAllocator::allocate( void* context, void* ptr, size_t osize, size_t nsi
 {
     if ( nsize == 0 ) 
     {
-        ::free( ptr );
+        free( ptr );
         return 0;
     }
     else
     {
-        return ::realloc( ptr, nsize );
+        return realloc( ptr, nsize );
     }
 }

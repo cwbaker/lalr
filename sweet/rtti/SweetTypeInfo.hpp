@@ -1,6 +1,6 @@
 //
 // UserDefinedTypeInfo.hpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_RTTI_SWEETTYPEINFO_HPP_INCLUDED
@@ -26,14 +26,14 @@ class SWEET_RTTI_DECLSPEC SweetTypeInfo
 
         const char* name() const;
         const char* raw_name() const;
-        bool        before( const SweetTypeInfo& type_info ) const;
+        bool before( const SweetTypeInfo& type_info ) const;
 
         bool operator==( const SweetTypeInfo& type_info ) const;
         bool operator!=( const SweetTypeInfo& type_info ) const;
 };
 
-};
+}
 
-};
+}
 
-#endif // #ifndef SWEET_RTTI_RTTI_SWEETDEFINEDTYPEINFO_HPP_INCLUDED
+#endif

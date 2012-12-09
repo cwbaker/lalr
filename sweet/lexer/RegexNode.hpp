@@ -71,7 +71,7 @@ class RegexNode : public pointer::enable_ptr_from_this<RegexNode>
     int end_character_; ///< One past the last character in the interval of characters represented by the node.
     const LexerToken* token_; ///< The token recognized at the node or null if the node doesn't recognize a token.
     const LexerAction* action_; ///< The action taken at the node or null if no action is taken at the node.
-    std::vector<ptr<RegexNode>> nodes_; ///< The child nodes.
+    std::vector<ptr<RegexNode> > nodes_; ///< The child nodes.
     bool nullable_; ///< True if the node is nullable otherwise false.
     std::set<RegexNode*, RegexNodeLess> first_positions_; ///< The first positions at the node.
     std::set<RegexNode*, RegexNodeLess> last_positions_; ///< The last positions at the node.
@@ -96,7 +96,7 @@ class RegexNode : public pointer::enable_ptr_from_this<RegexNode>
 
         void add_node( const ptr<RegexNode>& node );
         RegexNode* get_node( int index ) const;
-        const std::vector<ptr<RegexNode>>& get_nodes() const;
+        const std::vector<ptr<RegexNode> >& get_nodes() const;
 
         bool is_nullable() const;
         const std::set<RegexNode*, RegexNodeLess>& get_first_positions() const;

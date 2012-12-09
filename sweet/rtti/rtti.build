@@ -6,7 +6,7 @@ Library {
         "assert/assert"
     };
     
-    Cc {
+    Source {
         "Type.cpp",
         "SweetTypeInfo.cpp"
     };

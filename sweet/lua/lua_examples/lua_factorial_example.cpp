@@ -1,5 +1,6 @@
 
 #include <sweet/lua/Lua.hpp>
+#include <string.h>
 
 using namespace sweet::lua;
 

@@ -43,7 +43,7 @@ struct LuaConverter
 };
 
 template <class Type>
-struct LuaConverter<LuaValueWrapper<Type>>
+struct LuaConverter<LuaValueWrapper<Type> >
 {
     static void push( lua_State* lua_state, const LuaValueWrapper<Type>& value );
 };

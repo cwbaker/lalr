@@ -22,7 +22,9 @@
 #include <string>
 #include <fstream>
 
+#if defined(BUILD_OS_WINDOWS)
 #include <windows.h>
+#endif
 
 #include <sweet/lua/lua_/lua.h>
 #include <sweet/lua/lua_/lualib.h>

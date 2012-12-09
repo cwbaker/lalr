@@ -7,6 +7,7 @@
 #include <sweet/pointer/ptr.hpp>
 #include "parser.hpp"
 #include "json.hpp"
+#include <string.h>
 
 using namespace std;
 using namespace sweet;
@@ -27,8 +28,8 @@ struct Attribute
 struct Element
 {
     std::string name_;
-    std::list<ptr<Attribute>> attributes_;
-    std::list<ptr<Element>> elements_;
+    std::list<ptr<Attribute> > attributes_;
+    std::list<ptr<Element> > elements_;
     
     Element()
     : name_(),
@@ -160,7 +161,7 @@ static void print( const Element* element, int level )
     indent( level );
     printf( "%s\n", element->name_.c_str() );
     
-    for ( list<ptr<Attribute>>::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
+    for ( list<ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
     {
         const Attribute* attribute = i->get();
         SWEET_ASSERT( attribute );
@@ -168,7 +169,7 @@ static void print( const Element* element, int level )
         printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_.c_str() );
     }
     
-    for ( list<ptr<Element>>::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
+    for ( list<ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
     {
         const Element* element = i->get();
         SWEET_ASSERT( element );

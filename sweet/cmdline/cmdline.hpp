@@ -1,15 +1,10 @@
 //
 // cmdline.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_CMDLINE_HPP_INCLUDED
 #define SWEET_CMDLINE_HPP_INCLUDED
-
-#include <sweet/build.hpp>
-#include <vector>
-#include <sweet/assert/assert.hpp>
-#include <sweet/error/Error.hpp>
 
 #ifndef BUILD_MODULE_CMDLINE
 #pragma comment( lib, "cmdline" BUILD_LIBRARY_SUFFIX )

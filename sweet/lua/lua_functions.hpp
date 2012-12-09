@@ -1,6 +1,6 @@
 //
 // lua_functions.hpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_FUNCTIONS_HPP_INCLUDED
@@ -58,12 +58,12 @@ template <class Function> LuaPolicyWrapper<Function, LUA_POLICY_WEAKEN> weaken( 
 
 template <class Type> int lua_gc( lua_State* lua );
 template <class Iterator> int lua_iterator( lua_State* lua );
+template <class Iterator, class Function> int lua_iterator_with_function( lua_State* lua );
 template <class Iterator> void lua_push_iterator( lua_State* lua, Iterator start, Iterator finish );
+template <class Iterator, class Function> void lua_push_iterator( lua_State* lua, Iterator start, Iterator finish, const Function& function );
 
 }
 
 }
-
-#include "lua_functions.ipp"
 
 #endif

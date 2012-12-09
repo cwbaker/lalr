@@ -19,7 +19,7 @@ namespace lua
 //
 // Thunk C++ functions called from Lua.
 */
-template <class Function, class Returner = LuaReturner<traits::traits<Function>::return_type>, int P0 = 1, int P1 = 2, int P2 = 3, int P3 = 4, int P4 = 5, int P5 = 6, int P6 = 7>
+template <class Function, class Returner = LuaReturner<typename traits::traits<Function>::return_type>, int P0 = 1, int P1 = 2, int P2 = 3, int P3 = 4, int P4 = 5, int P5 = 6, int P6 = 7>
 struct LuaThunker
 {
 };

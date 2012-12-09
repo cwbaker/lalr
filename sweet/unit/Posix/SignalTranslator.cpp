@@ -1,4 +1,4 @@
-#include <UnitTest/Posix/SignalTranslator.h>
+#include "SignalTranslator.h"
 
 namespace UnitTest {
 

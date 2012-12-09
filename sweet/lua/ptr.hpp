@@ -1,6 +1,6 @@
 //
 // ptr.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_PTR_HPP_INCLUDED
@@ -53,7 +53,7 @@ struct LuaObjectConverter<ptr<Type>, LuaByReference>
             lua_validate_type( lua_state, position, SWEET_STATIC_TYPEID(Type) );
             lua_getfield( lua_state, position, lua::PTR_KEYWORD );
             SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
-            value = lua_to_value<ptr<Type>>( lua_state, -1 );
+            value = lua_to_value<ptr<Type> >( lua_state, -1 );
             lua_pop( lua_state, 1 );
         }
         return value;
@@ -63,8 +63,8 @@ struct LuaObjectConverter<ptr<Type>, LuaByReference>
 template <class Type>
 void lua_push( lua_State* lua_state, ptr<Type> value )
 {    
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<ptr<Type>, LuaTraits<base_type>::storage_type>::push( lua_state, value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<ptr<Type>, typename LuaTraits<base_type>::storage_type>::push( lua_state, value );
 }
 
 template <class Type>
@@ -111,7 +111,7 @@ struct LuaObjectConverter<weak_ptr<Type>, LuaByReference>
             lua_validate_type( lua_state, position, SWEET_STATIC_TYPEID(Type) );
             lua_getfield( lua_state, position, lua::PTR_KEYWORD );
             SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
-            weak_value = lua_to_value<ptr<Type>>( lua_state, -1 );
+            weak_value = lua_to_value<ptr<Type> >( lua_state, -1 );
         }
         return weak_value;
     }
@@ -120,8 +120,8 @@ struct LuaObjectConverter<weak_ptr<Type>, LuaByReference>
 template <class Type>
 void lua_push( lua_State* lua_state, weak_ptr<Type> weak_value )
 {    
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<weak_ptr<Type>, LuaTraits<base_type>::storage_type>::push( lua_state, weak_value );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<weak_ptr<Type>, typename LuaTraits<base_type>::storage_type>::push( lua_state, weak_value );
 }
 
 }

@@ -9,6 +9,12 @@
 #include "LuaValue.hpp"
 #include "Lua.hpp"
 #include <sweet/error/macros.hpp>
+#include <memory.h>
+#include <stdio.h>
+
+#if defined(BUILD_OS_WINDOWS)
+#define snprintf _snprintf
+#endif
 
 using namespace sweet::lua;
 
@@ -755,15 +761,14 @@ const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bo
 
     size_t written = 0;
     memset( message, 0, length );
-
-    written += _snprintf( message + written, length - written, "%s", lua_isstring(lua_state, -1) ? lua_tostring(lua_state, -1) : "Unknown error" );
+    written += snprintf( message + written, length - written, "%s", lua_isstring(lua_state, -1) ? lua_tostring(lua_state, -1) : "Unknown error" );
 
     if ( stack_trace_enabled )
     {
         static const int STACK_TRACE_BEGIN = 0;
         static const int STACK_TRACE_END   = 6;
 
-        written += _snprintf( message + written, length - written, ".\nstack trace:" );
+        written += snprintf( message + written, length - written, ".\nstack trace:" );
 
         lua_Debug debug;
         memset( &debug, 0, sizeof(debug) );
@@ -776,14 +781,14 @@ const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bo
         //
         // Source and line number.
         //
-            written += _snprintf( message + written, length - written, "\n  " );        
+            written += snprintf( message + written, length - written, "\n  " );        
             if ( debug.currentline > 0 )
             {
-                written += _snprintf( message + written, length - written, "%s(%d) : ", debug.source, debug.currentline );
+                written += snprintf( message + written, length - written, "%s(%d) : ", debug.source, debug.currentline );
             }
             else
             {
-                written += _snprintf( message + written, length - written, "%s(1) : ", debug.source, debug.currentline );
+                written += snprintf( message + written, length - written, "%s(1) : ", debug.source, debug.currentline );
             }
 
         //
@@ -791,18 +796,18 @@ const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bo
         //
             if ( *debug.namewhat != '\0' )
             {
-                written += _snprintf( message + written, length - written, "in function " LUA_QS, debug.name );
+                written += snprintf( message + written, length - written, "in function " LUA_QS, debug.name );
             }
             else 
             {
                 switch ( *debug.what )
                 {
                     case 'm':
-                        written += _snprintf( message + written, length - written, "main");
+                        written += snprintf( message + written, length - written, "main");
                         break;
 
                     default:
-                        written += _snprintf( message + written, length - written, "in function <%s(%d)>", debug.source, debug.linedefined );
+                        written += snprintf( message + written, length - written, "in function <%s(%d)>", debug.source, debug.linedefined );
                         break;
                 }
             }

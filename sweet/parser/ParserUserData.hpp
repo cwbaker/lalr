@@ -17,18 +17,19 @@ namespace parser
 {
 
 class ParserSymbol;
+template <class UserData, class Char, class Traits, class Allocator> class ParserNode;
 
 /**
 // The default implementation for data stored in a parser's stack.
 */
-template <class Char, class Traits = std::char_traits<Char>, class Allocator = std::allocator<Char>>
+template <class Char, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class ParserUserData
 {
     typedef ParserNode<ptr<ParserUserData>, Char, Traits, Allocator> ParserNode;
 
     const ParserSymbol* symbol_; ///< The symbol at this user data's node.
     std::basic_string<Char, Traits, Allocator> lexeme_; ///< The lexeme at this user data's node.
-    std::vector<ptr<ParserUserData<Char, Traits, Allocator>>> user_datas_; ///< Children in the parse tree.
+    std::vector<ptr<ParserUserData<Char, Traits, Allocator> > > user_datas_; ///< Children in the parse tree.
         
     public:
         ParserUserData( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme );  
@@ -38,7 +39,7 @@ class ParserUserData
         const ParserSymbol* get_symbol() const;
         const std::basic_string<Char, Traits, Allocator>& get_lexeme() const;        
         void append_user_data( ptr<ParserUserData> user_data );
-        const std::vector<ptr<ParserUserData<Char, Traits, Allocator>>>& get_user_datas() const;
+        const std::vector<ptr<ParserUserData<Char, Traits, Allocator> > >& get_user_datas() const;
 };
 
 }

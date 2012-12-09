@@ -1,8 +1,9 @@
 
-#include <string>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/vector.hpp>
 #include <sweet/rtti/macros.hpp>
+#include <string>
+#include <string.h>
 
 using std::string;
 using std::vector;

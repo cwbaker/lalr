@@ -1,6 +1,6 @@
 //
 // rtti.hpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_RTTI_RTTI_HPP_INCLUDED

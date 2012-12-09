@@ -13,6 +13,7 @@
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserErrorPolicy.hpp"
+#include "ParserStateMachine.hpp"
 #include "Error.hpp"
 #include "ParserNode.ipp"
 #include "ParserUserData.ipp"
@@ -21,6 +22,7 @@
 #include <sweet/lexer/AddLexerActionHandler.ipp>
 #include <sweet/assert/assert.hpp>
 #include <stdarg.h>
+#include <stdio.h>
 
 namespace sweet
 {
@@ -74,7 +76,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     SWEET_ASSERT( state_machine_ );
     
     action_handlers_.reserve( state_machine_->actions().size() );
-    for ( std::vector<ptr<ParserAction>>::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
+    for ( std::vector<ptr<ParserAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
     {
         ParserAction* action = i->get();
         SWEET_ASSERT( action );
@@ -295,7 +297,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
 {
     SWEET_ASSERT( identifier );
     
-    vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
+    typename std::vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
     while ( action_handler != action_handlers_.end() && action_handler->action_->get_identifier() != identifier )
     {
         ++action_handler;
@@ -418,10 +420,10 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 //  if no Node to reduce to could be found.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-typename std::vector<ParserNode<UserData, Char, Traits, Allocator>>::const_iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserProduction* production, const std::vector<ParserNode>& nodes ) const
+typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserProduction* production, std::vector<ParserNode>& nodes )
 {
     SWEET_ASSERT( production->get_length() < nodes.size() );
-    std::vector<ParserNode>::const_reverse_iterator node = nodes.rbegin() + production->get_length();
+    typename std::vector<ParserNode>::reverse_iterator node = nodes.rbegin() + production->get_length();
     return node != nodes.rend() ? node.base() : nodes_.begin();
 }
 
@@ -567,7 +569,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
     if ( symbol != state_machine_->start_symbol() )
     {
         const ParserProduction* reduced_production = transition->get_reduced_production();
-        typename std::vector<ParserNode>::const_iterator i = find_node_to_reduce_to( transition->get_reduced_production(), nodes_ );
+        typename std::vector<ParserNode>::iterator i = find_node_to_reduce_to( transition->get_reduced_production(), nodes_ );
         const ParserNode* start = i != nodes_.end() ? &(*i) : &nodes_.back() + 1;
         const ParserNode* finish = &nodes_.back() + 1;
 

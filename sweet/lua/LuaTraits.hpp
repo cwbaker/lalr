@@ -1,6 +1,6 @@
 //
 // LuaTraits.hpp
-// Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUATRAITS_HPP_INCLUDED

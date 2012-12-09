@@ -1,6 +1,6 @@
 //
 // AddGlobal.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_ADDGLOBAL_HPP_INCLUDED

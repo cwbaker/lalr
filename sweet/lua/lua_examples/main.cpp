@@ -1,5 +1,5 @@
 
-void main()
+int main()
 {
     extern void lua_hello_world_example();
     lua_hello_world_example();
@@ -18,4 +18,6 @@ void main()
 
     extern void lua_vector_example();
     lua_vector_example();
+    
+    return 0;
 }

@@ -6,16 +6,17 @@
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserGrammar.hpp>
 #include <sweet/parser/Parser.ipp>
+#include <string.h>
 
 using namespace std;
 using namespace sweet;
 using namespace sweet::lexer;
 using namespace sweet::parser;
 
-static ptr<ParserUserData<char>> hello_world( const ParserSymbol* symbol, const ParserNode<>* start, const ParserNode<>* finish )
+static ptr<ParserUserData<char> > hello_world( const ParserSymbol* symbol, const ParserNode<>* start, const ParserNode<>* finish )
 {
     printf( "Hello World!\n" );
-    return ptr<ParserUserData<char>>();
+    return ptr<ParserUserData<char> >();
 }
 
 void parser_hello_world_with_grammar_example()

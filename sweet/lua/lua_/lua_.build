@@ -7,7 +7,7 @@ Library {
         "error/error";
     };
         
-    Cc {
+    Source {
         defines = { "_CRT_SECURE_NO_DEPRECATE" };
         "lapi.c",
         "lcode.c",
@@ -45,19 +45,15 @@ Executable {
     id = "luac";    
     
     settings = {
-        variants = { 
-            ["debug"] = settings.variants.debug;
-            ["release"] = settings.variants.release;
-            ["shipping"] = settings.variants.shipping
-        };
+        variants = { "debug", "release", "shipping" };
     };
-    
+        
     libraries = {
         "assert/assert",
         "lua/lua_/liblua"
     };
     
-    Cc {
+    Source {
         defines = { "_CRT_SECURE_NO_DEPRECATE" };
         "luac.c",
         "print.c"
@@ -69,11 +65,7 @@ Executable {
     project_name = "lua_";
     
     settings = {
-        variants = { 
-            ["debug"] = settings.variants.debug;
-            ["release"] = settings.variants.release;
-            ["shipping"] = settings.variants.shipping
-        };
+        variants = { "debug", "release", "shipping" };
     };
     
     libraries = {
@@ -81,7 +73,7 @@ Executable {
         "lua/lua_/liblua"
     };
     
-    Cc {
+    Source {
         defines = { "_CRT_SECURE_NO_DEPRECATE" };
         "lua.c",
     };

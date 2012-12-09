@@ -6,7 +6,11 @@
 #ifndef SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
 #define SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
 
+#if defined(BUILD_PLATFORM_MSVC)
 #include <functional>
+#else
+#include <tr1/functional>
+#endif
 
 namespace sweet
 {

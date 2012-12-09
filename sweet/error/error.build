@@ -8,7 +8,7 @@ Library {
         "assert/assert"
     };
 
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "boost_integration.cpp",
         "dinkumware_integration.cpp",

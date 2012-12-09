@@ -10,7 +10,7 @@ Library {
         "pointer/pointer"
     };
 
-    Cc {
+    Source {
         pch = "stdafx.hpp";
         "Error.cpp",        
         "LexerAction.cpp",

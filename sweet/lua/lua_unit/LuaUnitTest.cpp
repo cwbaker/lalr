@@ -8,15 +8,25 @@
 #include <sweet/unit/TestReporter.h>
 #include <sweet/unit/Checks.h>
 #include <sweet/unit/MemoryOutStream.h>
-#include <sweet/unit/Win32/TimeHelpers.h>
 #include <sweet/unit/CurrentTest.h>
 #include <string>
+#include <stdio.h>
+
+#if defined(BUILD_OS_WINDOWS)
+#include <sweet/unit/Win32/TimeHelpers.h>
+#else 
+#include <sweet/unit/Posix/TimeHelpers.h>
+#endif 
 
 using std::string;
 using namespace UnitTest;
 using namespace sweet;
 using namespace sweet::lua;
 using namespace sweet::sheet;
+
+#if defined(BUILD_OS_WINDOWS)
+#define snprintf _snprintf
+#endif
 
 LuaUnitTest::LuaUnitTest( UnitTest::TestReporter* reporter )
 : reporter_( reporter )
@@ -228,7 +238,7 @@ int LuaUnitTest::check_equal( lua_State* lua_state )
         {
             SWEET_ASSERT( false );
             char message [256];
-            _snprintf( message, sizeof(message), "CHECK_EQUAL() passed an unexpected type, type=%s '%s'", lua_type(lua_state, EXPECTED), lua_typename(lua_state, lua_type(lua_state, EXPECTED)) );
+            snprintf( message, sizeof(message), "CHECK_EQUAL() passed an unexpected type, type=%d '%s'", lua_type(lua_state, EXPECTED), lua_typename(lua_state, lua_type(lua_state, EXPECTED)) );
             UnitTest::CurrentTest::Results()->OnTestFailure( UnitTest::TestDetails(*UnitTest::CurrentTest::Details(), LuaUnitTest::line(lua_state)), message );
             break;
         }
@@ -269,7 +279,7 @@ int LuaUnitTest::check_close( lua_State* lua_state )
         default:
             SWEET_ASSERT( false );
             char message [256];
-            _snprintf( message, sizeof(message), "CHECK_CLOSE() passed an unexpected type, type=%s '%s'", lua_type(lua_state, EXPECTED), lua_typename(lua_state, lua_type(lua_state, EXPECTED)) );
+            snprintf( message, sizeof(message), "CHECK_CLOSE() passed an unexpected type, type=%d '%s'", lua_type(lua_state, EXPECTED), lua_typename(lua_state, lua_type(lua_state, EXPECTED)) );
             UnitTest::CurrentTest::Results()->OnTestFailure( UnitTest::TestDetails(*UnitTest::CurrentTest::Details(), LuaUnitTest::line(lua_state)), message );
             break;
     }

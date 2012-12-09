@@ -6,6 +6,7 @@
 #ifndef SWEET_PARSER_PARSERNODE_HPP_INCLUDED
 #define SWEET_PARSER_PARSERNODE_HPP_INCLUDED
 
+#include "ParserUserData.hpp"
 #include <sweet/pointer/ptr.hpp>
 #include <string>
 #include <set>
@@ -23,7 +24,7 @@ class ParserState;
 /**
 // An element in the parser's stack when parsing.
 */
-template <class UserData = ptr<ParserUserData<char>>, class Char = char, class Traits = std::char_traits<Char>, class Allocator = std::allocator<Char>>
+template <class UserData = ptr<ParserUserData<char> >, class Char = char, class Traits = std::char_traits<Char>, class Allocator = std::allocator<Char> >
 class ParserNode
 {
     const ParserState* state_; ///< The state at this node.

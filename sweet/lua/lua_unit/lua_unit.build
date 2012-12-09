@@ -10,7 +10,7 @@ Library {
         "unit/libUnitTest"
     };
         
-    Cc {
+    Source {
         "LuaUnitTest.cpp"
     };
 }

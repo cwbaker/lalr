@@ -1,11 +1,12 @@
 //
 // LuaPreprocessReader.cpp
-// Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "lua_types.hpp"
 #include "LuaPreprocessReader.hpp"
 #include <sweet/assert/assert.hpp>
+#include <string.h>
 
 using namespace sweet;
 using namespace sweet::lua;

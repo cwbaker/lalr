@@ -9,10 +9,11 @@ Library {
         "error/error"
     };
 
-    Cc {
+    Source {
         "AddOption.cpp",
         "Error.cpp",
         "Option.cpp",
-        "Parser.cpp"
+        "Parser.cpp",
+        "Splitter.cpp"
     };
 }

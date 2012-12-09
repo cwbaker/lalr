@@ -1,6 +1,6 @@
 //
 // LuaOutOfOrderParameter.hpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUAOUTOFORDERPARAMETER_HPP_INCLUDED
@@ -23,6 +23,8 @@ namespace lua
 template <int POSITION>
 class LuaOutOfOrderParameter
 {
+public:
+    LuaOutOfOrderParameter();
 };
 
 SWEET_LUA_DECLSPEC extern const LuaOutOfOrderParameter<1> _1;

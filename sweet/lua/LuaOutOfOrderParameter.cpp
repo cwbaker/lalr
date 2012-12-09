@@ -1,6 +1,6 @@
 //
 // LuaOutOfOrderParameter.cpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include "LuaOutOfOrderParameter.hpp"
@@ -44,3 +44,7 @@ const sweet::lua::LuaOutOfOrderParameter<6> sweet::lua::_6;
 // functions.
 */
 const sweet::lua::LuaOutOfOrderParameter<7> sweet::lua::_7;
+
+template <int POSITION> LuaOutOfOrderParameter<POSITION>::LuaOutOfOrderParameter()
+{
+}

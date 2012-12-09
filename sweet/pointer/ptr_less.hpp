@@ -1,6 +1,6 @@
 //
 // ptr_less.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_POINTER_PTR_LESS_HPP_INCLUDED

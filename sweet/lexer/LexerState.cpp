@@ -7,9 +7,14 @@
 #include "LexerState.hpp"
 #include "LexerItem.hpp"
 #include "LexerTransition.hpp"
+#include <stdio.h>
 
 using namespace sweet;
 using namespace sweet::lexer;
+
+#if defined(BUILD_PLATFORM_MSVC)
+#define snprintf _snprintf
+#endif
 
 /**
 // Constructor.
@@ -201,7 +206,7 @@ void LexerState::describe( std::string* description ) const
     SWEET_ASSERT( description );
 
     char buffer [512];
-    _snprintf( buffer, sizeof(buffer), "%d (0x%08x):\n", index_, symbol_ );
+    snprintf( buffer, sizeof(buffer), "%d (%p):\n", index_, symbol_ );
     buffer [sizeof(buffer) - 1] = '\0';
     description->append( buffer );
 

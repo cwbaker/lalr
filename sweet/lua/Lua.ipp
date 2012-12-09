@@ -1,6 +1,6 @@
 //
 // Lua.ipp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUA_IPP_INCLUDED
@@ -27,8 +27,8 @@ namespace lua
 template <class Type> 
 void Lua::create( const Type& object )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::create( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::create( lua_state_, object );
 }
 
 /**
@@ -43,8 +43,8 @@ void Lua::create( const Type& object )
 template <class Type> 
 void Lua::create_with_existing_table( const Type& object )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::create_with_existing_table( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::create_with_existing_table( lua_state_, object );
 }
 
 /**
@@ -56,8 +56,8 @@ void Lua::create_with_existing_table( const Type& object )
 template <class Type> 
 void Lua::destroy( const Type& object )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::destroy( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::destroy( lua_state_, object );
 }
 
 /**
@@ -70,8 +70,8 @@ void Lua::destroy( const Type& object )
 template <class Type>
 AddMember Lua::members( const Type& object )
 {
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     return AddMember( &add_member_helper_ );
 }
 
@@ -94,8 +94,8 @@ bool Lua::is_value( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return !lua_isnil( lua_state_, -1 ) ? true : false;
 }
@@ -118,8 +118,8 @@ bool Lua::is_boolean( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_isboolean( lua_state_, -1 ) ? true : false;
 }
@@ -143,8 +143,8 @@ bool Lua::is_number( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_isnumber( lua_state_, -1 ) ? true : false;
 }
@@ -169,8 +169,8 @@ bool Lua::is_string( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_isstring( lua_state_, -1 ) ? true : false;
 }
@@ -194,8 +194,8 @@ bool Lua::is_function( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_isfunction( lua_state_, -1 ) ? true : false;
 }
@@ -219,8 +219,8 @@ bool Lua::boolean( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_toboolean( lua_state_, -1 ) ? true : false;
 }
@@ -244,8 +244,8 @@ int Lua::integer( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_tointeger( lua_state_, -1 );
 }
@@ -270,8 +270,8 @@ Lua::number( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return static_cast<float>( lua_tonumber(lua_state_, -1) );
 }
@@ -295,8 +295,8 @@ std::string Lua::string( const Type& object, const char* field ) const
     SWEET_ASSERT( field );
 
     LuaStackGuard guard( lua_state_ );
-    typedef traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
     return lua_tostring( lua_state_, -1 );
 }

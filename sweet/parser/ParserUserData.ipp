@@ -84,7 +84,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
         }
         else
         {
-            ptr<ParserUserData<char>> user_data( new ParserUserData(node->get_symbol(), node->get_lexeme()) );
+            ptr<ParserUserData<char> > user_data( new ParserUserData(node->get_symbol(), node->get_lexeme()) );
             user_datas_.push_back( user_data );
         }
     }
@@ -134,7 +134,7 @@ void ParserUserData<Char, Traits, Allocator>::append_user_data( ptr<ParserUserDa
 //  The user datas.
 */
 template <class Char, class Traits, class Allocator>
-const std::vector<ptr<ParserUserData<Char, Traits, Allocator>>>& ParserUserData<Char, Traits, Allocator>::get_user_datas() const
+const std::vector<ptr<ParserUserData<Char, Traits, Allocator> > >& ParserUserData<Char, Traits, Allocator>::get_user_datas() const
 {
     return user_datas_;
 }

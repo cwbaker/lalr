@@ -1,6 +1,6 @@
 //
 // TestLuaObject.cpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
 //
 
 #include <sweet/unit/UnitTest.h>

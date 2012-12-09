@@ -1,6 +1,6 @@
 //
 // ErrorPolicy.hpp
-// Copyright (c) 2001 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2001 - 2012 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_ERROR_ERRORPOLICY_HPP_INCLUDED
