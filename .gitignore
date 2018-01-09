@@ -1,0 +1,9 @@
+
+/bin
+/lib
+/obj
+/sweet/parser.html
+/sweet/local_settings.lua
+/sweet_parser.xcodeproj
+/sweet/sweet_parser.sln
+/*.sln
