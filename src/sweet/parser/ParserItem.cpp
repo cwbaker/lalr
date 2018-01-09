@@ -192,7 +192,8 @@ const std::set<const ParserSymbol*>& ParserItem::get_lookahead_symbols() const
 */
 bool ParserItem::operator<( const ParserItem& item ) const
 {
-    return production_ < item.production_
-        || (production_ == item.production_ && position_ < item.position_)
+    return 
+        production_->get_index() < item.production_->get_index() || 
+        (production_->get_index() == item.production_->get_index() && position_ < item.position_)
     ;
 }

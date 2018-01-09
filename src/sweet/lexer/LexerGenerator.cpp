@@ -195,6 +195,18 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
     }
 }
 
+/**
+// Create a new LexerState.
+//
+// @return
+//  The new LexerState.
+*/
+ptr<LexerState> LexerGenerator::create_lexer_state()
+{
+    int index = int(states_.size()) + int(whitespace_states_.size());
+    ptr<LexerState> lexer_state( new LexerState(index) );
+    return lexer_state;
+}
 
 /**
 // Generate the state that results from accepting any character in the range
@@ -215,11 +227,11 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
 ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int end )
 {
     SWEET_ASSERT( state );
+    SWEET_ASSERT( index >= 0 );
     SWEET_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
     SWEET_ASSERT( begin <= end );
 
-    ptr<LexerState> goto_state( new LexerState() );
-
+    ptr<LexerState> goto_state = create_lexer_state();
     const std::set<LexerItem>& items = state->get_items();
     for ( std::set<LexerItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
@@ -229,7 +241,6 @@ ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int e
             goto_state->add_item( next_nodes );
         }
     }
-
     return goto_state;
 }
 
@@ -240,6 +251,9 @@ ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int e
 //  The RegexParser to get the RegexNodes from that are then used to generate 
 //  states.
 //
+// @param index
+//  The index to start from when assigning indices to states (assumed >= 0).
+//
 // @param states
 //  The set of states to populate from the output of the RegexParser (assumed
 //  not null).
@@ -247,6 +261,9 @@ ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int e
 // @param start_state
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
+//
+// @param index
+//  A 
 */
 void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<ptr<LexerState>, ptr_less<LexerState> >* states, const LexerState** start_state )
 {
@@ -257,7 +274,7 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
 
     if ( !regex_parser.empty() && regex_parser.errors() == 0 )
     {
-        ptr<LexerState> state( new LexerState() );    
+        ptr<LexerState> state = create_lexer_state();    
         state->add_item( regex_parser.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         states->insert( state );
@@ -329,32 +346,6 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
                 }
             }
         }
-    }
-
-    generate_indices_for_states();
-}
-
-/**
-// Generate indices for the generated states.
-*/
-void LexerGenerator::generate_indices_for_states()
-{
-    int index = 0;
-    
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = states_.begin(); i != states_.end(); ++i )
-    {
-        LexerState* state = i->get();
-        SWEET_ASSERT( state );
-        state->set_index( index );
-        ++index;
-    }
-
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
-    {
-        LexerState* state = i->get();
-        SWEET_ASSERT( state );
-        state->set_index( index );
-        ++index;
     }
 }
 
