@@ -1,0 +1,93 @@
+
+local settings = build.push_settings {
+    warning_level = 0;
+};
+
+for _, architecture in ipairs(settings.architectures) do
+    build.Library ("liblua", architecture) {
+        libraries = {
+            "sweet/assert/assert";
+            "sweet/error/error";
+        };
+
+        build.Cc (architecture) {
+            defines = build.switch { 
+                build.operating_system();
+                windows = { "_CRT_SECURE_NO_DEPRECATE" };
+                macosx = { "LUA_USE_POSIX", "LUA_USE_DLOPEN" };
+            };
+            "lapi.c",
+            "lauxlib.c",
+            "lbaselib.c",
+            "lbitlib.c",
+            "lcode.c",
+            "lcorolib.c",
+            "lctype.c",
+            "ldblib.c",
+            "ldebug.c",
+            "ldo.c",
+            "ldump.c",
+            "lfunc.c",
+            "lgc.c",
+            "linit.c",
+            "liolib.c",
+            "llex.c",
+            "lmathlib.c",
+            "lmem.c",
+            "loadlib.c",
+            "lobject.c",
+            "lopcodes.c",
+            "loslib.c",
+            "lparser.c",
+            "lstate.c",
+            "lstring.c",
+            "lstrlib.c",
+            "ltable.c",
+            "ltablib.c",
+            "ltm.c",
+            "lundump.c",
+            "lutf8lib.c",
+            "lvm.c",
+            "lzio.c"
+        };
+    };
+end
+
+if build.platform_matches("macosx") or build.platform_matches("windows") then
+    if variant == "debug" or variant == "release" or variant == "shipping" then
+        for _, architecture in ipairs(settings.architectures) do
+            build.all {
+                build.Executable (("${bin}/luac_%s"):format(architecture), architecture) {
+                    libraries = {
+                        "sweet/assert/assert",
+                        "lua/liblua"
+                    };
+                    build.Cc (architecture) {
+                        defines = { 
+                            "_CRT_SECURE_NO_DEPRECATE" 
+                        };
+                        "luac.c"
+                    };
+                };        
+            };
+        end
+
+        build.all {
+            build.Executable "${bin}/lua" {
+                project_name = "lua_";
+                libraries = {
+                    "sweet/assert/assert",
+                    "lua/liblua"
+                };        
+                build.Cc () {
+                    defines = { 
+                        "_CRT_SECURE_NO_DEPRECATE" 
+                    };
+                    "lua.c"
+                };
+            };
+        };
+    end
+end
+
+build.pop_settings();
