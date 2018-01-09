@@ -6,10 +6,10 @@
 #include "stdafx.hpp"
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
+#include <sweet/assert/assert.hpp>
 
 using std::vector;
 using namespace sweet::parser;
-using namespace sweet::pointer;
 
 /*
 // Constructor.

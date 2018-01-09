@@ -6,6 +6,7 @@
 #include "stdafx.hpp"
 #include "LexerItem.hpp"
 #include "RegexNode.hpp"
+#include <sweet/assert/assert.hpp>
 #include <string>
 #include <stdio.h>
 

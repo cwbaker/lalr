@@ -6,6 +6,7 @@
 #include "stdafx.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserProduction.hpp"
+#include <sweet/assert/assert.hpp>
 
 using std::vector;
 using std::set;
@@ -130,7 +131,7 @@ int ParserSymbol::get_line() const
 // @param production
 //  The production to append (assumed not null).
 */
-void ParserSymbol::append_production( ptr<ParserProduction> production )
+void ParserSymbol::append_production( std::shared_ptr<ParserProduction> production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -142,7 +143,7 @@ void ParserSymbol::append_production( ptr<ParserProduction> production )
 // @return
 //  The productions that reduce to this symbol.
 */
-const std::vector<ptr<ParserProduction> >& ParserSymbol::get_productions() const
+const std::vector<std::shared_ptr<ParserProduction> >& ParserSymbol::get_productions() const
 {
     return productions_;
 }
@@ -393,7 +394,7 @@ int ParserSymbol::calculate_first()
 
     if ( type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
             const ParserProduction* production = i->get();
             SWEET_ASSERT( production );  
@@ -439,7 +440,7 @@ int ParserSymbol::calculate_follow()
 {
     int added = 0;
 
-    for ( std::vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         const ParserProduction* production = i->get();
         SWEET_ASSERT( production );

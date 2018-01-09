@@ -9,9 +9,9 @@
 #include "ParserNode.hpp"
 #include "ParserUserData.hpp"
 #include "AddParserActionHandler.hpp"
-#include <sweet/pointer/ptr.hpp>
 #include <sweet/lexer/Lexer.hpp>
 #include <sweet/lexer/AddLexerActionHandler.hpp>
+#include <memory>
 #include <functional>
 #include <vector>
 
@@ -40,7 +40,7 @@ class ParserErrorPolicy;
 /**
 // A %parser.
 */
-template <class Iterator, class UserData = ptr<ParserUserData<typename std::iterator_traits<Iterator>::value_type> >, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
+template <class Iterator, class UserData = std::shared_ptr<ParserUserData<typename std::iterator_traits<Iterator>::value_type> >, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class Parser
 {
     public:

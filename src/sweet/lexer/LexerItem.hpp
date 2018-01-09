@@ -8,7 +8,6 @@
 
 #include "declspec.hpp"
 #include "RegexNodeLess.hpp"
-#include <sweet/pointer/ptr.hpp>
 #include <string>
 #include <set>
 

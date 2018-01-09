@@ -7,7 +7,6 @@
 #define SWEET_PARSER_PRODUCTION_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include <sweet/pointer/ptr.hpp>
 #include <string>
 #include <vector>
 #include <set>

@@ -8,7 +8,7 @@
 
 #include "declspec.hpp"
 #include "ParserSymbol.hpp"
-#include <sweet/pointer/ptr.hpp>
+#include <memory>
 #include <vector>
 #include <set>
 #include <string>
@@ -30,9 +30,9 @@ class GrammarNode;
 class SWEET_PARSER_DECLSPEC ParserGrammar
 {
     std::string identifier_; ///< The identifier of the grammar.
-    std::vector<ptr<ParserAction> > actions_; ///< The actions in the grammar.
-    std::vector<ptr<ParserProduction> > productions_; ///< The productions in the grammar.
-    std::vector<ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar.
+    std::vector<std::shared_ptr<ParserAction> > actions_; ///< The actions in the grammar.
+    std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions in the grammar.
+    std::vector<std::shared_ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar.
     ParserSymbol* start_symbol_; ///< The start symbol.
     ParserSymbol* end_symbol_; ///< The end symbol.
     ParserSymbol* error_symbol_; ///< The error symbol.
@@ -41,9 +41,9 @@ class SWEET_PARSER_DECLSPEC ParserGrammar
         ParserGrammar( size_t actions_reserve = 32, size_t productions_reserve = 64, size_t symbols_reserve = 64 );
 
         std::string& identifier();
-        std::vector<ptr<ParserAction> >& actions();
-        std::vector<ptr<ParserProduction> >& productions();
-        std::vector<ptr<ParserSymbol> >& symbols();
+        std::vector<std::shared_ptr<ParserAction> >& actions();
+        std::vector<std::shared_ptr<ParserProduction> >& productions();
+        std::vector<std::shared_ptr<ParserSymbol> >& symbols();
         ParserSymbol* start_symbol() const;
         ParserSymbol* end_symbol() const;
         ParserSymbol* error_symbol() const;

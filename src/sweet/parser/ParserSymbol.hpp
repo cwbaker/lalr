@@ -7,8 +7,7 @@
 #define SWEET_PARSER_SYMBOL_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include <sweet/pointer/ptr.hpp>
-#include <sweet/pointer/enable_ptr_from_this.hpp>
+#include <memory>
 #include <set>
 #include <vector>
 #include <string>
@@ -50,7 +49,7 @@ class ParserProduction;
 /**
 // A symbol parsed as part of a grammar rule.
 */
-class SWEET_PARSER_DECLSPEC ParserSymbol : public pointer::enable_ptr_from_this<ParserSymbol>
+class SWEET_PARSER_DECLSPEC ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
 {
     public:
         static const int INVALID_INDEX = -1;
@@ -60,7 +59,7 @@ class SWEET_PARSER_DECLSPEC ParserSymbol : public pointer::enable_ptr_from_this<
         std::string lexeme_; ///< The lexeme for this symbol.
         std::string identifier_; ///< The identifier for this symbol (generated from its lexeme).
         int line_; ///< The line that this symbol was defined on.
-        std::vector<ptr<ParserProduction> > productions_; ///< The productions for this symbol.
+        std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions for this symbol.
         int precedence_; ///< The precedence of this symbol (0 indicates no precedence).
         SymbolAssociativity associativity_; ///< The associativity of this symbol.
         bool nullable_; ///< True if this symbol is nullable otherwise false.
@@ -81,8 +80,8 @@ class SWEET_PARSER_DECLSPEC ParserSymbol : public pointer::enable_ptr_from_this<
         void set_line( int line );
         int get_line() const;
 
-        void append_production( ptr<ParserProduction> production );
-        const std::vector<ptr<ParserProduction> >& get_productions() const;
+        void append_production( std::shared_ptr<ParserProduction> production );
+        const std::vector<std::shared_ptr<ParserProduction> >& get_productions() const;
 
         bool is_nullable() const;
         void replace_by_non_terminal( const ParserSymbol* non_terminal_symbol );

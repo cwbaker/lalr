@@ -7,7 +7,7 @@
 #define SWEET_PARSER_PARSERSTATEMACHINE_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include <sweet/pointer/ptr.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -38,15 +38,15 @@ class ParserErrorPolicy;
 class SWEET_PARSER_DECLSPEC ParserStateMachine
 {
     std::string identifier_; ///< The identifier of this ParserStateMachine.
-    std::vector<ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.
-    std::vector<ptr<ParserProduction> > productions_; ///< The productions in the grammar for this ParserStateMachine.
-    std::vector<ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar for this ParserStateMachine.
-    std::vector<ptr<ParserState> > states_; ///< The states in the state machine for this ParserStateMachine.
+    std::vector<std::shared_ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.
+    std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions in the grammar for this ParserStateMachine.
+    std::vector<std::shared_ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar for this ParserStateMachine.
+    std::vector<std::shared_ptr<ParserState> > states_; ///< The states in the state machine for this ParserStateMachine.
     const ParserSymbol* start_symbol_; ///< The start symbol.
     const ParserSymbol* end_symbol_; ///< The end symbol.
     const ParserSymbol* error_symbol_; ///< The error symbol.
     ParserState* start_state_; ///< The start state.
-    ptr<lexer::LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
+    std::shared_ptr<lexer::LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
 
     public:
         ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = NULL );
@@ -54,10 +54,10 @@ class SWEET_PARSER_DECLSPEC ParserStateMachine
         ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy = NULL, lexer::LexerErrorPolicy* lexer_error_policy = NULL );
 
         const std::string& identifier() const;
-        const std::vector<ptr<ParserAction> >& actions() const;
-        const std::vector<ptr<ParserProduction> >& productions() const;        
-        const std::vector<ptr<ParserSymbol> >& symbols() const;
-        const std::vector<ptr<ParserState> >& states() const;
+        const std::vector<std::shared_ptr<ParserAction> >& actions() const;
+        const std::vector<std::shared_ptr<ParserProduction> >& productions() const;        
+        const std::vector<std::shared_ptr<ParserSymbol> >& symbols() const;
+        const std::vector<std::shared_ptr<ParserState> >& states() const;
         const ParserSymbol* start_symbol() const;
         const ParserSymbol* end_symbol() const;
         const ParserSymbol* error_symbol() const;

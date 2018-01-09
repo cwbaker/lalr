@@ -12,6 +12,7 @@
 #include "LexerToken.hpp"
 #include "LexerGenerator.hpp"
 #include "Error.hpp"
+#include <sweet/assert/assert.hpp>
 
 using namespace sweet;
 using namespace sweet::lexer;
@@ -101,7 +102,7 @@ const std::string& LexerStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<ptr<LexerAction> >& LexerStateMachine::actions() const
+const std::vector<std::shared_ptr<LexerAction> >& LexerStateMachine::actions() const
 {
     return actions_;
 }
@@ -112,7 +113,7 @@ const std::vector<ptr<LexerAction> >& LexerStateMachine::actions() const
 // @return
 //  The states.
 */
-const std::vector<ptr<LexerState> >& LexerStateMachine::states() const
+const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::states() const
 {
     return states_;
 }
@@ -123,7 +124,7 @@ const std::vector<ptr<LexerState> >& LexerStateMachine::states() const
 // @return
 //  The whitespace states.
 */
-const std::vector<ptr<LexerState> >& LexerStateMachine::whitespace_states() const
+const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::whitespace_states() const
 {
     return whitespace_states_;
 }
@@ -159,7 +160,7 @@ const LexerState* LexerStateMachine::whitespace_start_state() const
 void LexerStateMachine::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
-    std::vector<ptr<LexerState> >::const_iterator i = states_.begin(); 
+    std::vector<std::shared_ptr<LexerState> >::const_iterator i = states_.begin(); 
     while ( i != states_.end() )
     {
         const LexerState* state = i->get();

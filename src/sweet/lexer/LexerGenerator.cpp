@@ -1,6 +1,6 @@
 //
 // LexerGenerator.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #include "stdafx.hpp"
@@ -13,6 +13,8 @@
 #include "LexerErrorPolicy.hpp"
 #include "RegexNode.hpp"
 #include "RegexParser.hpp"
+#include <sweet/utility/shared_ptr_less.hpp>
+#include <sweet/assert/assert.hpp>
 #include <limits.h>
 
 using std::pair;
@@ -64,7 +66,7 @@ LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, const std
 // @return
 //  The actions.
 */
-std::vector<ptr<LexerAction> >& LexerGenerator::actions()
+std::vector<std::shared_ptr<LexerAction> >& LexerGenerator::actions()
 {
     return actions_;
 }
@@ -75,7 +77,7 @@ std::vector<ptr<LexerAction> >& LexerGenerator::actions()
 // @return
 //  The generated states.
 */
-std::set<ptr<LexerState>, ptr_less<LexerState> >& LexerGenerator::states()
+std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerator::states()
 {
     return states_;
 }
@@ -86,7 +88,7 @@ std::set<ptr<LexerState>, ptr_less<LexerState> >& LexerGenerator::states()
 // @return
 //  The generated whitespace states.
 */
-std::set<ptr<LexerState>, ptr_less<LexerState> >& LexerGenerator::whitespace_states()
+std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerator::whitespace_states()
 {
     return whitespace_states_;
 }
@@ -132,11 +134,11 @@ const lexer::LexerAction* LexerGenerator::add_lexer_action( const std::string& i
 {
     SWEET_ASSERT( !identifier.empty() );
     
-    ptr<lexer::LexerAction> lexer_action;
+    std::shared_ptr<lexer::LexerAction> lexer_action;
 
     if ( !identifier.empty() )
     {    
-        std::vector<ptr<lexer::LexerAction> >::const_iterator i = actions_.begin();
+        std::vector<std::shared_ptr<lexer::LexerAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
@@ -212,13 +214,13 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
 // @return
 //  The state generated when accepting [\e begin, \e end) from \e state.
 */
-ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int end )
+std::shared_ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int end )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
     SWEET_ASSERT( begin <= end );
 
-    ptr<LexerState> goto_state( new LexerState() );
+    std::shared_ptr<LexerState> goto_state( new LexerState() );
 
     const std::set<LexerItem>& items = state->get_items();
     for ( std::set<LexerItem>::const_iterator item = items.begin(); item != items.end(); ++item )
@@ -248,7 +250,7 @@ ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int e
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<ptr<LexerState>, ptr_less<LexerState> >* states, const LexerState** start_state )
+void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
@@ -257,7 +259,7 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
 
     if ( !regex_parser.empty() && regex_parser.errors() == 0 )
     {
-        ptr<LexerState> state( new LexerState() );    
+        std::shared_ptr<LexerState> state( new LexerState() );    
         state->add_item( regex_parser.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         states->insert( state );
@@ -267,7 +269,7 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::const_iterator i = states->begin(); i != states->end(); ++i )
+            for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::const_iterator i = states->begin(); i != states->end(); ++i )
             {
                 LexerState* state = i->get();
                 SWEET_ASSERT( state );
@@ -307,10 +309,10 @@ void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<
                         int end = (j + 1)->first;
                         SWEET_ASSERT( begin < end );
                         
-                        ptr<LexerState> goto_state = goto_( state, begin, end );
+                        std::shared_ptr<LexerState> goto_state = goto_( state, begin, end );
                         if ( !goto_state->get_items().empty() )
                         {                    
-                            ptr<LexerState> actual_goto_state = *states->insert( goto_state ).first;
+                            std::shared_ptr<LexerState> actual_goto_state = *states->insert( goto_state ).first;
                             if ( goto_state == actual_goto_state )
                             {
                                 added += 1;
@@ -341,7 +343,7 @@ void LexerGenerator::generate_indices_for_states()
 {
     int index = 0;
     
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
         LexerState* state = i->get();
         SWEET_ASSERT( state );
@@ -349,7 +351,7 @@ void LexerGenerator::generate_indices_for_states()
         ++index;
     }
 
-    for ( std::set<ptr<LexerState>, ptr_less<LexerState> >::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
+    for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
     {
         LexerState* state = i->get();
         SWEET_ASSERT( state );

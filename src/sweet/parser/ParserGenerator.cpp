@@ -12,6 +12,7 @@
 #include "ParserErrorPolicy.hpp"
 #include "ParserGrammar.hpp"
 #include "Error.hpp"
+#include <sweet/assert/assert.hpp>
 #include <boost/spirit/include/classic_file_iterator.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
 
@@ -63,7 +64,7 @@ std::string& ParserGenerator::identifier()
 // @return
 //  The actions.
 */
-std::vector<ptr<ParserAction> >& ParserGenerator::actions()
+std::vector<std::shared_ptr<ParserAction> >& ParserGenerator::actions()
 {
     return actions_;
 }
@@ -74,7 +75,7 @@ std::vector<ptr<ParserAction> >& ParserGenerator::actions()
 // @return
 //  The productions.
 */
-std::vector<ptr<ParserProduction> >& ParserGenerator::productions()
+std::vector<std::shared_ptr<ParserProduction> >& ParserGenerator::productions()
 {
     return productions_;
 }
@@ -85,7 +86,7 @@ std::vector<ptr<ParserProduction> >& ParserGenerator::productions()
 // @return
 //  The symbols.
 */
-std::vector<ptr<ParserSymbol> >& ParserGenerator::symbols()
+std::vector<std::shared_ptr<ParserSymbol> >& ParserGenerator::symbols()
 {
     return symbols_;
 }
@@ -96,7 +97,7 @@ std::vector<ptr<ParserSymbol> >& ParserGenerator::symbols()
 // @return
 //  The states.
 */
-std::set<ptr<ParserState>, ptr_less<ParserState> >& ParserGenerator::states()
+std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>& ParserGenerator::states()
 {
     return states_;
 }
@@ -290,7 +291,7 @@ std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item
 // @param state
 //  The ParserState that contains the items to generate the closure of.
 */
-void ParserGenerator::closure( const ptr<ParserState>& state )
+void ParserGenerator::closure( const std::shared_ptr<ParserState>& state )
 {
     SWEET_ASSERT( state );
 
@@ -304,10 +305,10 @@ void ParserGenerator::closure( const ptr<ParserState>& state )
             const ParserSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
             if ( symbol )
             {
-                const vector<ptr<ParserProduction> >& productions = symbol->get_productions();
-                for ( vector<ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
+                const vector<std::shared_ptr<ParserProduction> >& productions = symbol->get_productions();
+                for ( vector<std::shared_ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
-                    const ptr<ParserProduction>& production = *j;
+                    const std::shared_ptr<ParserProduction>& production = *j;
                     SWEET_ASSERT( production );
                     added += state->add_item( production, 0 );
                 }
@@ -328,11 +329,11 @@ void ParserGenerator::closure( const ptr<ParserState>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-ptr<ParserState> ParserGenerator::goto_( const ptr<ParserState>& state, const ParserSymbol& symbol )
+std::shared_ptr<ParserState> ParserGenerator::goto_( const std::shared_ptr<ParserState>& state, const ParserSymbol& symbol )
 {
     SWEET_ASSERT( state );
 
-    ptr<ParserState> goto_state( new ParserState() );
+    std::shared_ptr<ParserState> goto_state( new ParserState() );
 
     const set<ParserItem>& items = state->get_items();
     for ( set<ParserItem>::const_iterator item = items.begin(); item != items.end(); ++item )
@@ -372,10 +373,10 @@ int ParserGenerator::lookahead_closure( ParserState* state ) const
         if ( symbol )
         {
             std::set<const ParserSymbol*> lookahead_symbols = lookahead( *item );        
-            const std::vector<ptr<ParserProduction> >& productions = symbol->get_productions();
-            for ( std::vector<ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
+            const std::vector<std::shared_ptr<ParserProduction> >& productions = symbol->get_productions();
+            for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
-                const ptr<ParserProduction>& production = *j;
+                const std::shared_ptr<ParserProduction>& production = *j;
                 added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
             }
         }
@@ -439,7 +440,7 @@ int ParserGenerator::lookahead_goto( ParserState* state ) const
 // @param symbols
 //  The symbols in the grammar.
 */
-void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<ptr<ParserSymbol> >& symbols )
+void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::shared_ptr<ParserSymbol> >& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -447,7 +448,7 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
 
     if ( !start_symbol->get_productions().empty() )
     {
-        ptr<ParserState> start_state( new ParserState() );
+        std::shared_ptr<ParserState> start_state( new ParserState() );
         start_state->add_item( start_symbol->get_productions().front(), 0 );
         closure( start_state );
         states_.insert( start_state );
@@ -461,24 +462,24 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<ptr<ParserState>, ptr_less<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                const ptr<ParserState>& state = *i;
+                const std::shared_ptr<ParserState>& state = *i;
                 SWEET_ASSERT( state );
 
                 if ( !state->is_processed() )
                 {
                     state->set_processed( true );
-                    for ( vector<ptr<ParserSymbol> >::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                    for ( vector<std::shared_ptr<ParserSymbol> >::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                     {
                         ParserSymbol* symbol = j->get();
                         SWEET_ASSERT( symbol );
                         if ( symbol != end_symbol )
                         {
-                            ptr<ParserState> goto_state = goto_( state, *symbol );
+                            std::shared_ptr<ParserState> goto_state = goto_( state, *symbol );
                             if ( !goto_state->get_items().empty() )
                             {                    
-                                ptr<ParserState> actual_goto_state = *states_.insert( goto_state ).first;
+                                std::shared_ptr<ParserState> actual_goto_state = *states_.insert( goto_state ).first;
                                 added += goto_state == actual_goto_state ? 1 : 0;
                                 state->add_transition( symbol, actual_goto_state.get() );
                             }
@@ -494,7 +495,7 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<ptr<ParserState>, ptr_less<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
                 ParserState* state = i->get();
                 SWEET_ASSERT( state );
@@ -514,7 +515,7 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
 void ParserGenerator::generate_indices_for_states()
 {
     int index = 0;
-    for ( std::set<ptr<ParserState>, ptr_less<ParserState> >::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
         ParserState* state = i->get();
         SWEET_ASSERT( state );
@@ -528,7 +529,7 @@ void ParserGenerator::generate_indices_for_states()
 */
 void ParserGenerator::generate_reduce_transitions()
 {
-    for ( std::set<ptr<ParserState>, ptr_less<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         ParserState* state = i->get();
         SWEET_ASSERT( state );
@@ -618,7 +619,7 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
 */
 void ParserGenerator::generate_indices_for_transitions()
 {
-    for ( std::set<ptr<ParserState>, ptr_less<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         ParserState* state = i->get();
         SWEET_ASSERT( state );

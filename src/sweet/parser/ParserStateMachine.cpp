@@ -12,6 +12,7 @@
 #include "ParserState.hpp"
 #include <sweet/lexer/LexerAction.hpp>
 #include <sweet/lexer/LexerStateMachine.hpp>
+#include <sweet/assert/assert.hpp>
 
 using std::vector;
 using std::copy;
@@ -156,7 +157,7 @@ const std::string& ParserStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<ptr<ParserAction> >& ParserStateMachine::actions() const
+const std::vector<std::shared_ptr<ParserAction> >& ParserStateMachine::actions() const
 {
     return actions_;
 }
@@ -167,7 +168,7 @@ const std::vector<ptr<ParserAction> >& ParserStateMachine::actions() const
 // @return
 //  The productions.
 */
-const std::vector<ptr<ParserProduction> >& ParserStateMachine::productions() const
+const std::vector<std::shared_ptr<ParserProduction> >& ParserStateMachine::productions() const
 {
     return productions_;
 }
@@ -178,7 +179,7 @@ const std::vector<ptr<ParserProduction> >& ParserStateMachine::productions() con
 // @return
 //  The symbols.
 */
-const std::vector<ptr<ParserSymbol> >& ParserStateMachine::symbols() const
+const std::vector<std::shared_ptr<ParserSymbol> >& ParserStateMachine::symbols() const
 {
     return symbols_;
 }
@@ -189,7 +190,7 @@ const std::vector<ptr<ParserSymbol> >& ParserStateMachine::symbols() const
 // @return
 //  The states.
 */
-const std::vector<ptr<ParserState> >& ParserStateMachine::states() const
+const std::vector<std::shared_ptr<ParserState> >& ParserStateMachine::states() const
 {
     return states_;
 }
@@ -264,7 +265,7 @@ const ParserSymbol* ParserStateMachine::find_symbol_by_identifier( const char* i
 {
     SWEET_ASSERT( identifier );
 
-    std::vector<ptr<ParserSymbol> >::const_iterator i = symbols_.begin();
+    std::vector<std::shared_ptr<ParserSymbol> >::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->get_identifier() != identifier )
     {
         ++i;
@@ -283,7 +284,7 @@ std::string ParserStateMachine::description() const
     std::string description;
     description.reserve( 1024 );
     
-    for ( std::vector<ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         const ParserProduction* production = i->get();
         SWEET_ASSERT( production );
@@ -291,7 +292,7 @@ std::string ParserStateMachine::description() const
         description.append( "\n" );
     }
     
-    for ( std::vector<ptr<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::vector<std::shared_ptr<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         const ParserState* state = i->get();
         SWEET_ASSERT( state );

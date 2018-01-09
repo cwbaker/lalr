@@ -1,5 +1,5 @@
 
-buildfile "parser_/parser_.build";
+-- buildfile "parser_/parser_.build";
 buildfile "parser_examples/parser_examples.build";
 buildfile "parser_test/parser_test.build";
 

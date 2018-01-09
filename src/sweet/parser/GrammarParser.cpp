@@ -11,6 +11,7 @@
 #include "ParserAction.hpp"
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
+#include <sweet/assert/assert.hpp>
 #include <sweet/lexer/LexerToken.hpp>
 #include <boost/spirit/include/classic.hpp>
 #include <boost/spirit/include/classic_file_iterator.hpp>

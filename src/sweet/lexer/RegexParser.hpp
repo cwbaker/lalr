@@ -10,7 +10,7 @@
 #include "RegexNodeLess.hpp"
 #include "RegexNodeType.hpp"
 #include "LexerToken.hpp"
-#include <sweet/pointer/ptr.hpp>
+#include <memory>
 #include <string>
 #include <vector>
 #include <set>
@@ -35,7 +35,7 @@ class RegexParser
     LexerGenerator* lexer_generator_; ///< The LexerGenerator to retrieve actions from and report errors and debug information to.
     std::set<RegexCharacter> bracket_expression_characters_; ///< The characters in the current bracket expression.
     int index_; ///< The current node index.
-    std::vector<ptr<RegexNode> > nodes_; ///< The current nodes.
+    std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
     public:
@@ -44,7 +44,7 @@ class RegexParser
 
         bool empty() const;
         int errors() const;
-        const ptr<RegexNode>& node() const;
+        const std::shared_ptr<RegexNode>& node() const;
         void print() const;
 
         void cat_expression();
@@ -90,13 +90,13 @@ class RegexParser
         void negative_item_xdigit();
 
     private:
-        ptr<RegexNode> regex_node( RegexNodeType type );
-        ptr<RegexNode> regex_node( int begin, int end );
-        ptr<RegexNode> regex_node( int begin, int end, const LexerToken* token );
-        ptr<RegexNode> regex_node( const LexerAction* action );
+        std::shared_ptr<RegexNode> regex_node( RegexNodeType type );
+        std::shared_ptr<RegexNode> regex_node( int begin, int end );
+        std::shared_ptr<RegexNode> regex_node( int begin, int end, const LexerToken* token );
+        std::shared_ptr<RegexNode> regex_node( const LexerAction* action );
 
         void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
-        void print_nodes( const std::vector<ptr<RegexNode> >& nodes, int level ) const;
+        void print_nodes( const std::vector<std::shared_ptr<RegexNode> >& nodes, int level ) const;
 
         void calculate_symbols_for_characters_start_and_end();
         void calculate_combined_parse_tree( const std::vector<LexerToken>& tokens );

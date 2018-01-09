@@ -10,6 +10,7 @@
 #include "RegexCharacter.hpp"
 #include "LexerGenerator.hpp"
 #include "Error.hpp"
+#include <sweet/assert/assert.hpp>
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_file_iterator.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
@@ -516,7 +517,7 @@ int RegexParser::errors() const
 // @return
 //  The RegexNode.
 */
-const ptr<RegexNode>& RegexParser::node() const
+const std::shared_ptr<RegexNode>& RegexParser::node() const
 {
     SWEET_ASSERT( !nodes_.empty() );
     SWEET_ASSERT( nodes_.front() );
@@ -537,13 +538,13 @@ void RegexParser::print() const
 */
 void RegexParser::cat_expression()
 {
-    ptr<RegexNode> right_node( nodes_.back() );
+    std::shared_ptr<RegexNode> right_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> left_node( nodes_.back() );
+    std::shared_ptr<RegexNode> left_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> node = regex_node( LEXER_NODE_CAT );
+    std::shared_ptr<RegexNode> node = regex_node( LEXER_NODE_CAT );
     node->add_node( left_node );
     node->add_node( right_node );
     nodes_.push_back( node );
@@ -554,13 +555,13 @@ void RegexParser::cat_expression()
 */
 void RegexParser::or_expression()
 {
-    ptr<RegexNode> right_node( nodes_.back() );
+    std::shared_ptr<RegexNode> right_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> left_node( nodes_.back() );
+    std::shared_ptr<RegexNode> left_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> node = regex_node( LEXER_NODE_OR );
+    std::shared_ptr<RegexNode> node = regex_node( LEXER_NODE_OR );
     node->add_node( left_node );
     node->add_node( right_node );
     nodes_.push_back( node );
@@ -571,10 +572,10 @@ void RegexParser::or_expression()
 */
 void RegexParser::star_expression()
 {
-    ptr<RegexNode> star_node( nodes_.back() );
+    std::shared_ptr<RegexNode> star_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> node = regex_node( LEXER_NODE_STAR );
+    std::shared_ptr<RegexNode> node = regex_node( LEXER_NODE_STAR );
     node->add_node( star_node );
     nodes_.push_back( node );
 }
@@ -584,10 +585,10 @@ void RegexParser::star_expression()
 */
 void RegexParser::plus_expression()
 {
-    ptr<RegexNode> plus_node( nodes_.back() );
+    std::shared_ptr<RegexNode> plus_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> node = regex_node( LEXER_NODE_PLUS );
+    std::shared_ptr<RegexNode> node = regex_node( LEXER_NODE_PLUS );
     node->add_node( plus_node );
     nodes_.push_back( node );
 }
@@ -597,10 +598,10 @@ void RegexParser::plus_expression()
 */
 void RegexParser::optional_expression()
 {
-    ptr<RegexNode> optional_node( nodes_.back() );
+    std::shared_ptr<RegexNode> optional_node( nodes_.back() );
     nodes_.pop_back();
 
-    ptr<RegexNode> node = regex_node( LEXER_NODE_OPTIONAL );
+    std::shared_ptr<RegexNode> node = regex_node( LEXER_NODE_OPTIONAL );
     node->add_node( optional_node );
     nodes_.push_back( node );
 }
@@ -628,7 +629,7 @@ void RegexParser::begin_negative_bracket_expression()
 void RegexParser::end_bracket_expression()
 {
     set<RegexCharacter>::const_iterator character = bracket_expression_characters_.begin();
-    ptr<RegexNode> node = regex_node( character->get_begin_character(), character->get_end_character() );
+    std::shared_ptr<RegexNode> node = regex_node( character->get_begin_character(), character->get_end_character() );
     nodes_.push_back( node );
     ++character;
     
@@ -648,7 +649,7 @@ void RegexParser::action_expression( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );
     SWEET_ASSERT( lexer_generator_ );
-    ptr<RegexNode> node = regex_node( lexer_generator_->add_lexer_action(identifier) );
+    std::shared_ptr<RegexNode> node = regex_node( lexer_generator_->add_lexer_action(identifier) );
     nodes_.push_back( node );
 }
 
@@ -657,7 +658,7 @@ void RegexParser::action_expression( const std::string& identifier )
 */
 void RegexParser::character( int character )
 {
-    ptr<RegexNode> node = regex_node( character, character + 1 );
+    std::shared_ptr<RegexNode> node = regex_node( character, character + 1 );
     nodes_.push_back( node );
 }
 
@@ -666,7 +667,7 @@ void RegexParser::character( int character )
 */
 void RegexParser::dot()
 {
-    ptr<RegexNode> node = regex_node( BEGIN_CHARACTER, END_CHARACTER );
+    std::shared_ptr<RegexNode> node = regex_node( BEGIN_CHARACTER, END_CHARACTER );
     nodes_.push_back( node );
     
 }
@@ -938,9 +939,9 @@ void RegexParser::negative_item_xdigit()
 // @return
 //  The RegeNode.
 */
-ptr<RegexNode> RegexParser::regex_node( RegexNodeType type )
+std::shared_ptr<RegexNode> RegexParser::regex_node( RegexNodeType type )
 {
-    ptr<RegexNode> node( new RegexNode(index_, type) );
+    std::shared_ptr<RegexNode> node( new RegexNode(index_, type) );
     ++index_;
     return node;
 }
@@ -958,9 +959,9 @@ ptr<RegexNode> RegexParser::regex_node( RegexNodeType type )
 // @return
 //  The RegexNode.
 */
-ptr<RegexNode> RegexParser::regex_node( int begin, int end )
+std::shared_ptr<RegexNode> RegexParser::regex_node( int begin, int end )
 {
-    ptr<RegexNode> node( new RegexNode(index_, begin, end) );
+    std::shared_ptr<RegexNode> node( new RegexNode(index_, begin, end) );
     ++index_;
     return node;
 }
@@ -981,9 +982,9 @@ ptr<RegexNode> RegexParser::regex_node( int begin, int end )
 // @return
 //  The RegexNode.
 */
-ptr<RegexNode> RegexParser::regex_node( int begin, int end, const LexerToken* token )
+std::shared_ptr<RegexNode> RegexParser::regex_node( int begin, int end, const LexerToken* token )
 {
-    ptr<RegexNode> node( new RegexNode(index_, begin, end, token) );
+    std::shared_ptr<RegexNode> node( new RegexNode(index_, begin, end, token) );
     ++index_;
     return node;
 }
@@ -996,9 +997,9 @@ ptr<RegexNode> RegexParser::regex_node( int begin, int end, const LexerToken* to
 // @return
 //  The RegexNode.
 */
-ptr<RegexNode> RegexParser::regex_node( const LexerAction* action )
+std::shared_ptr<RegexNode> RegexParser::regex_node( const LexerAction* action )
 {
-    ptr<RegexNode> node( new RegexNode(index_, action) );
+    std::shared_ptr<RegexNode> node( new RegexNode(index_, action) );
     ++index_;
     return node;
 }
@@ -1038,9 +1039,9 @@ void RegexParser::print_positions( const std::set<RegexNode*, RegexNodeLess>& po
 // @param level
 //  The recursion level to use when identing lines.
 */
-void RegexParser::print_nodes( const vector<ptr<RegexNode> >& nodes, int level ) const
+void RegexParser::print_nodes( const vector<std::shared_ptr<RegexNode> >& nodes, int level ) const
 {
-    for ( vector<ptr<RegexNode> >::const_iterator i = nodes.begin(); i != nodes.end(); ++i )
+    for ( vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes.begin(); i != nodes.end(); ++i )
     {
         static const char* LEXER_NODE_TYPES [LEXER_NODE_COUNT] =
         {
@@ -1118,7 +1119,7 @@ void RegexParser::calculate_nullable_first_last_and_follow()
         SWEET_ASSERT( nodes_.size() == 1 );
         SWEET_ASSERT( nodes_.back() );
 
-        ptr<RegexNode> node( nodes_.back() );
+        std::shared_ptr<RegexNode> node( nodes_.back() );
         node->calculate_nullable();
         node->calculate_first_positions();
         node->calculate_last_positions();
@@ -1172,7 +1173,7 @@ void RegexParser::parse_regular_expression( const LexerToken& token )
     //
         SWEET_ASSERT( nodes_.size() == 1 || nodes_.size() == 2 );
         SWEET_ASSERT( nodes_.back() );
-        ptr<RegexNode> node = regex_node( INVALID_BEGIN_CHARACTER, INVALID_END_CHARACTER, &token );
+        std::shared_ptr<RegexNode> node = regex_node( INVALID_BEGIN_CHARACTER, INVALID_END_CHARACTER, &token );
         nodes_.push_back( node );
         cat_expression();
         while ( nodes_.size() > 1 )
@@ -1209,7 +1210,7 @@ void RegexParser::parse_literal( const LexerToken& token )
     const std::string& literal = token.lexeme();
     std::string::const_iterator i = literal.begin();
     int character = escape( i, literal.end(), &i );
-    ptr<RegexNode> node = regex_node( character, character + 1 );
+    std::shared_ptr<RegexNode> node = regex_node( character, character + 1 );
     nodes_.push_back( node );
     ++i;
 

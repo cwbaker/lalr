@@ -6,6 +6,7 @@
 #include "stdafx.hpp"
 #include "RegexNode.hpp"
 #include "LexerAction.hpp"
+#include <sweet/assert/assert.hpp>
 #include <algorithm>
 #include <stdio.h>
 #include <limits.h>
@@ -295,7 +296,7 @@ bool RegexNode::is_action() const
 //  The node to add to this node (assumed not null and not already a child
 //  of this node).
 */
-void RegexNode::add_node( const ptr<RegexNode>& node )
+void RegexNode::add_node( const std::shared_ptr<RegexNode>& node )
 {
     SWEET_ASSERT( node.get() );
     SWEET_ASSERT( find(nodes_.begin(), nodes_.end(), node) == nodes_.end() );
@@ -324,7 +325,7 @@ RegexNode* RegexNode::get_node( int n ) const
 // @return
 //  The child nodes.
 */
-const std::vector<ptr<RegexNode> >& RegexNode::get_nodes() const
+const std::vector<std::shared_ptr<RegexNode> >& RegexNode::get_nodes() const
 {
     return nodes_;
 }
@@ -394,7 +395,7 @@ const std::set<RegexNode*, RegexNodeLess>& RegexNode::get_next_positions() const
 */
 void RegexNode::calculate_nullable()
 {
-    for ( std::vector<ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
+    for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
         SWEET_ASSERT( node );
@@ -447,7 +448,7 @@ void RegexNode::calculate_nullable()
 */
 void RegexNode::calculate_first_positions()
 {
-    for ( std::vector<ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
+    for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
         SWEET_ASSERT( node );
@@ -499,7 +500,7 @@ void RegexNode::calculate_first_positions()
 */
 void RegexNode::calculate_last_positions()
 {
-    for ( std::vector<ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
+    for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
         SWEET_ASSERT( node );
@@ -551,7 +552,7 @@ void RegexNode::calculate_last_positions()
 */
 void RegexNode::calculate_follow_positions()
 {
-    for ( std::vector<ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
+    for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
         SWEET_ASSERT( node );
@@ -663,9 +664,9 @@ void RegexNode::print( const std::set<RegexNode*>& dot_nodes ) const
         printf( "%s", action_ != NULL ? action_->get_identifier().c_str() : "null" );
     }    
 
-    for ( std::vector<ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
+    for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
-        const ptr<RegexNode>& node = *i;        
+        const std::shared_ptr<RegexNode>& node = *i;        
         node->print( dot_nodes );
     }
 }

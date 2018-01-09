@@ -7,7 +7,6 @@
 #define SWEET_PARSER_PARSERITEM_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include <sweet/pointer/ptr.hpp>
 #include <string>
 #include <set>
 
@@ -26,15 +25,15 @@ class ParserProduction;
 */
 class SWEET_PARSER_DECLSPEC ParserItem
 {
-    ptr<ParserProduction> production_; ///< The production that this item is for.
+    std::shared_ptr<ParserProduction> production_; ///< The production that this item is for.
     int position_; ///< The position of the dot in this item.
     mutable std::set<const ParserSymbol*> lookahead_symbols_; ///< The lookahead Symbols for this item.
 
     public:
         ParserItem();
-        ParserItem( ptr<ParserProduction> production, int position );
+        ParserItem( std::shared_ptr<ParserProduction> production, int position );
 
-        ptr<ParserProduction> get_production() const;
+        std::shared_ptr<ParserProduction> get_production() const;
         int get_position() const;
         bool is_dot_at_beginning() const;
         bool is_dot_at_end() const;

@@ -2,9 +2,9 @@
 #define APPLICATION_HPP_INCLUDED
 
 #include <sweet/error/ErrorPolicy.hpp>
-#include <sweet/pointer/ptr.hpp>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
+#include <memory>
 
 namespace sweet
 {
@@ -63,9 +63,9 @@ class Application
         
     private:
         friend class ParserStateMachineDeleter;
-        ptr<ParserStateMachine> parser_state_machine( const std::string& grammar, const std::string& filename );
+        std::shared_ptr<ParserStateMachine> parser_state_machine( const std::string& grammar, const std::string& filename );
         void prototypes();
-        void add_parser_state_machine( ptr<ParserStateMachine> parser_state_machine );
+        void add_parser_state_machine( std::shared_ptr<ParserStateMachine> parser_state_machine );
         void remove_parser_state_machine( ParserStateMachine* parser_state_machine );
         void add_parser_state( ParserState* state );
         void remove_parser_state( ParserState* state );

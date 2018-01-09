@@ -7,6 +7,7 @@
 #include "ParserItem.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserProduction.hpp"
+#include <sweet/assert/assert.hpp>
 
 using std::vector;
 using namespace sweet;
@@ -31,7 +32,7 @@ ParserItem::ParserItem()
 // @param position
 //  The position of the dot in this item.
 */
-ParserItem::ParserItem( ptr<ParserProduction> production, int position )
+ParserItem::ParserItem( std::shared_ptr<ParserProduction> production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +44,7 @@ ParserItem::ParserItem( ptr<ParserProduction> production, int position )
 /**
 // Get the production for this item.
 */
-ptr<ParserProduction> ParserItem::get_production() const
+std::shared_ptr<ParserProduction> ParserItem::get_production() const
 {
     return production_;
 }

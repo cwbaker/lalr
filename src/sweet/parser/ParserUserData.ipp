@@ -84,7 +84,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
         }
         else
         {
-            ptr<ParserUserData<char> > user_data( new ParserUserData(node->get_symbol(), node->get_lexeme()) );
+            std::shared_ptr<ParserUserData<char> > user_data( new ParserUserData(node->get_symbol(), node->get_lexeme()) );
             user_datas_.push_back( user_data );
         }
     }
@@ -121,7 +121,7 @@ const std::basic_string<Char, Traits, Allocator>& ParserUserData<Char, Traits, A
 //  The user data to append to this user data.
 */
 template <class Char, class Traits, class Allocator>
-void ParserUserData<Char, Traits, Allocator>::append_user_data( ptr<ParserUserData> user_data )
+void ParserUserData<Char, Traits, Allocator>::append_user_data( std::shared_ptr<ParserUserData> user_data )
 {
     SWEET_ASSERT( std::find(user_datas_.begin(), user_datas_.end(), user_data) == user_datas_.end() );
     user_datas_.push_back( user_data );
@@ -134,7 +134,7 @@ void ParserUserData<Char, Traits, Allocator>::append_user_data( ptr<ParserUserDa
 //  The user datas.
 */
 template <class Char, class Traits, class Allocator>
-const std::vector<ptr<ParserUserData<Char, Traits, Allocator> > >& ParserUserData<Char, Traits, Allocator>::get_user_datas() const
+const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& ParserUserData<Char, Traits, Allocator>::get_user_datas() const
 {
     return user_datas_;
 }
