@@ -1,11 +1,10 @@
 
-package.path = build:root("build/lua/?.lua")..";"..build:root("build/lua/?/init.lua");
 require "build";
 require "build.cc";
 require "build.parser";
 require "build.visual_studio";
 require "build.xcode";
-require "build.macosx";
+require "build.macos";
 require "build.windows";
 
 platform = platform or build:operating_system();
@@ -15,15 +14,16 @@ goal = goal or "";
 jobs = jobs or 4;
 
 local boost_include_directory, boost_library_directory;
-if build:operating_system() == "windows" then
+if build:operating_system() == 'windows' then
     boost_include_directory = "C:/boost/include/boost-1_62";
     boost_library_directory = "C:/boost/lib";
-elseif build:operating_system() == "macosx" then
+elseif build:operating_system() == 'macos' then
     boost_include_directory = "/usr/local/include";
     boost_library_directory = "/usr/local/lib";
 end
 
 build:initialize {
+    variants = { 'debug', 'release', 'shipping' };
     bin = build:root( ("../%s/bin"):format(variant) );
     lib = build:root( ("../%s/lib"):format(variant) );
     obj = build:root( ("../%s/obj"):format(variant) );
