@@ -1,5 +1,5 @@
 
-local Html = build.TargetPrototype( "asciidoc.Html" );
+local Html = build:TargetPrototype( "asciidoc.Html" );
 
 function Html.build( html )
     local settings = html.settings;
@@ -14,5 +14,5 @@ function Html.build( html )
     local environment = {
         PATH = os.getenv( "PATH" );
     };
-    build.system( python, arguments, environment, build.dependencies_filter(html) );
+    build:system( python, arguments, environment, build:dependencies_filter(html) );
 end

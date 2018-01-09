@@ -9,7 +9,7 @@ local function uuid()
     local uuids = {};
     local uuidgen = ("%s/bin/x64/uuidgen.exe"):format( settings.msvc.windows_sdk_directory );
     local arguments = "uuidgen";
-    build.system( uuidgen, arguments, nil, nil, function(line)
+    build:system( uuidgen, arguments, nil, nil, function(line)
         local uuid = line:match( "[%w-_]+" );
         if uuid then 
             table.insert( uuids, uuid );
@@ -113,7 +113,7 @@ end
 
 local function ls( path, includes, excludes )
     local files = {};
-    for filename in build.ls(path or pwd()) do 
+    for filename in build:ls(path or pwd()) do 
         if filter(filename, includes, excludes) then
             table.insert( files, filename );
         end
@@ -127,9 +127,9 @@ end
 function visual_studio.solution()
     platform = "";
     variant = "";
-    build.load();    
-    local all = find_target( root() );
-    assertf( all, "Missing target at '%s' to generate Visual Studio solution from", root() );
+    build:load();    
+    local all = build:find_target( build:root() );
+    assertf( all, "Missing target at '%s' to generate Visual Studio solution from", build:root() );
     assertf( build.settings.visual_studio, "Missing Visual Studio settings in 'settings.visual_studio'" );
     assertf( build.settings.visual_studio.sln, "Missing solution filename in 'settings.visual_studio.sln'" );
 
@@ -143,11 +143,11 @@ function visual_studio.solution()
     for _, project in pairs(projects) do 
         local target = project.target;
         target.uuid = project.uuid;
-    	pushd( target:working_directory():path() );
+    	build:pushd( target:working_directory():path() );
 		local DEFAULT_SOURCE = { "^.*%.cp?p?$", "^.*%.hp?p?$", "^.*%.mm?$", "^.*%.java$" };
-		local files = ls( pwd(), DEFAULT_SOURCE );
+		local files = build:ls( build:pwd(), DEFAULT_SOURCE );
 		build.visual_studio.vcxproj.generate( target, files );
-		popd();
+		build:popd();
     end
 
     build.visual_studio.sln.generate( build.settings.visual_studio.sln, projects, directories[all:path()].children );

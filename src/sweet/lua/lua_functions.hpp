@@ -12,6 +12,7 @@
 #include "LuaPolicyWrapper.hpp"
 #include "LuaReturnerPolicy.hpp"
 #include <sweet/traits/traits.hpp>
+#include <sweet/rtti/Type.hpp>
 #include <string>
 
 namespace sweet

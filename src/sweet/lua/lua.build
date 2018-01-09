@@ -3,9 +3,8 @@ buildfile "lua_examples/lua_examples.build";
 buildfile "lua_test/lua_test.build";
 buildfile "lua_unit/lua_unit.build";
 
-local settings = build.current_settings();
-for _, architecture in ipairs(settings.architectures) do
-    build.Library ("lua", architecture) {
+for _, build in build:default_builds() do
+    build:Library "lua" {
         libraries = {
             "sweet/error/error",
             "sweet/rtti/rtti",
@@ -13,7 +12,7 @@ for _, architecture in ipairs(settings.architectures) do
             "sweet/assert/assert",
         };
 
-        build.Cxx (architecture) {
+        build:Cxx () {
             "AddGlobal.cpp", 
             "AddMember.cpp",
             "AddMemberHelper.cpp",

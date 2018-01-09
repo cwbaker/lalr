@@ -15,4 +15,4 @@ end
 require "build.asciidoc.Html";
 require "build.asciidoc.Pdf";
 
-build.register_module( asciidoc );
+build:register_module( asciidoc );

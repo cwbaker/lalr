@@ -1,10 +1,10 @@
 
-local Generate = build.TargetPrototype( "Generate" );
+local Generate = build:TargetPrototype( "Generate" );
 
 function Generate:build()
     local outputs = {};
     for _, dependency in self:dependencies() do 
-        local template = assert( loadfile(build.native(build.absolute(dependency))) );
+        local template = assert( loadfile(build:native(build:absolute(dependency))) );
         local success, output_or_error_message = pcall( template, self );
         assert( success, output_or_error_message );
         table.insert( outputs, output_or_error_message );

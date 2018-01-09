@@ -1,24 +1,26 @@
 
-local R = build.TargetPrototype( "android.R" );
+local R = build:TargetPrototype( "android.R" );
 
 function R.create( settings, packages )
-    local r = build.Target( build.anonymous(), R );
+    local r = build:Target( build:anonymous(), R );
     r.settings = settings;
     r.packages = packages;
     for index, package in ipairs(packages) do 
-        local filename = ("%s/R.java"):format( package:gsub("%.", "/") );
-        r:set_filename( build.generated(filename), index );
+        local filename = build:generated( ("%s/R.java"):format(package:gsub("%.", "/")) );
+        r:set_filename( filename, index );
+        r:add_ordering_dependency( build:Directory(build:branch(filename)) );
     end
+    r:add_implicit_dependency( build:current_buildfile() );
     return r;
 end
 
 function R:build()
     local android_manifest = self:dependency( 1 );
-    assertf( android_manifest and build.leaf(android_manifest) == "AndroidManifest.xml", "Android R '%s' does not specify 'AndroidManifest.xml' as its first dependency", self:path() );
+    assertf( android_manifest and build:leaf(android_manifest) == "AndroidManifest.xml", "Android R '%s' does not specify 'AndroidManifest.xml' as its first dependency", self:path() );
 
     local settings = self.settings;
     local working_directory = self:working_directory();
-    local gen_directory = ("%s/%s"):format( settings.gen, build.relative(working_directory:path(), build.root()) );
+    local gen_directory = ("%s/%s"):format( settings.gen, build:relative(working_directory:path(), build:root()) );
 
     local command_line = {
         'aapt',
@@ -33,11 +35,11 @@ function R:build()
     };
 
     for _, dependency in self:dependencies( 2 ) do
-        table.insert( command_line, ('-S "%s"'):format(build.relative(dependency)) );
+        table.insert( command_line, ('-S "%s"'):format(build:relative(dependency)) );
     end
 
     local aapt = ('%s/aapt'):format( settings.android.build_tools_directory );
-    build.system( aapt, command_line );
+    build:system( aapt, command_line );
 end
 
 android.R = R;

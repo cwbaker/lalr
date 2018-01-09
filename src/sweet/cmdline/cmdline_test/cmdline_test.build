@@ -1,6 +1,6 @@
 
-build.all {
-    build.Executable "${bin}/cmdline_test" {
+build:all {
+    build:Executable "${bin}/cmdline_test" {
         libraries = {
             "sweet/cmdline/cmdline",
             "sweet/error/error",
@@ -8,7 +8,7 @@ build.all {
             "unit/libUnitTest"
         };
 
-        build.Cxx () {
+        build:Cxx () {
             "main.cpp",
             "TestParser.cpp",
             "TestSplitter.cpp"

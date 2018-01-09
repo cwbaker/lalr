@@ -1,5 +1,5 @@
 
-local Css = build.TargetPrototype( "sass.Css" );
+local Css = build:TargetPrototype( "sass.Css" );
 
 function Css.build( css )
     local settings = css.settings;
@@ -21,12 +21,12 @@ function Css.build( css )
         ruby,
         settings.sass.executable,
         table.concat( load_paths, " " ),
-        ('--cache-location "%s"'):format( build.interpolate("${obj}/.sass-cache", settings) ),
+        ('--cache-location "%s"'):format( build:interpolate("${obj}/.sass-cache", settings) ),
         ('"%s"'):format( css:dependency():filename() ),
         ('"%s"'):format( css:filename() ),
     };
     local environment = {
         PATH = os.getenv( "PATH" );
     };
-    build.system( ruby, arguments, environment, build.dependencies_filter(css) );
+    build:system( ruby, arguments, environment, build:dependencies_filter(css) );
 end

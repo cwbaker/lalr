@@ -1,28 +1,31 @@
 
-local Java = build.TargetPrototype( "Java" );
+local Java = build:TargetPrototype( "Java" );
 
-function Java.create( settings, definition )
-    local java_ = build.Target( build.anonymous(), Java, definition );
+function Java.create( settings )
+    local java_ = build:Target( build:anonymous(), Java );
     java_.settings = settings;
-    java_:set_filename( ("%s/Java.%s.timestamp"):format(build.classes_directory(java_), java_:id()) );
-    java_:add_ordering_dependency( build.Directory(build.classes_directory(java_)) );
-
-    build.pushd( java_.sourcepath or "." );
-    for _, value in ipairs(definition) do
-        if type(value) == "string" then
-            local source = build.file( value );
-            source:set_required_to_exist( true );
-            java_:add_dependency( source );
-        elseif type(value) == "table" then
-            java_:add_dependency( value );
-        end
-    end
-    build.popd();
-
-    java.add_jar_dependencies( java_, java_.settings.jars );
-    java.add_jar_dependencies( java_, definition.jars );
-
+    java_:set_filename( ("%s/Java.%s.timestamp"):format(settings.classes_directory(java_), java_:id()) );
+    java_:add_ordering_dependency( build:Directory(settings.classes_directory(java_)) );
+    java.add_jar_dependencies( java_, settings.jars );
     return java_;
+end
+
+function Java:depend( dependencies )
+    build:pushd( dependencies.sourcepath or "." );
+    for _, value in ipairs(dependencies) do
+        local source = build:SourceFile( value, settings );
+        self:add_dependency( source );
+    end
+    build:popd();
+
+    local jars = dependencies.jars;
+    if jars then 
+        java.add_jar_dependencies( self, jars );
+        dependencies.jars = nil;
+    end
+
+    build:merge( self, dependencies );
+    return self
 end
 
 function Java.build( java )
@@ -44,16 +47,16 @@ function Java.build( java )
     for _, dependency in java:dependencies() do 
         local prototype = dependency:prototype();
         if prototype == nil then
-            table.insert( source_files, build.relative(dependency:filename()) );
+            table.insert( source_files, build:relative(dependency:filename()) );
         elseif prototype == build.Jar then
-            table.insert( jars, build.relative(dependency:filename()) );
+            table.insert( jars, build:relative(dependency:filename()) );
         end
     end
 
     if #source_files > 0 then
         local settings = java.settings;
         local javac = ("%s/bin/javac"):format( settings.java.jdk_directory );
-        local output = build.classes_directory( java );
+        local output = settings.classes_directory( java );
         local classpath = output;
 
         local sourcepaths = {};
@@ -68,7 +71,7 @@ function Java.build( java )
             end
         end
         table.insert( sourcepaths, java.sourcepath or "." );
-        table.insert( sourcepaths, build.gen_directory(java) );
+        table.insert( sourcepaths, settings.gen_directory(java) );
         
         local command_line = {
             'javac',
@@ -83,8 +86,7 @@ function Java.build( java )
             '-source 1.7',
             ('%s'):format(table.concat(source_files, ' '))
         };
-
-        build.system( javac, command_line );
+        build:system( javac, command_line );
 
         local timestamp_file = io.open( java:filename(), "wb" );
         assertf( timestamp_file, "Opening '%s' to write generated text failed", java:filename() );
@@ -95,8 +97,8 @@ function Java.build( java )
 end
 
 function Java.clean( java )
-    build.rm( java:filename() );
-    build.rmdir( build.classes_directory(java) )
+    build:rm( java:filename() );
+    build:rmdir( settings.classes_directory(java) )
 end
 
 java.Java = Java;

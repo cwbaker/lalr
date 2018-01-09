@@ -7,9 +7,9 @@
 /sweet_parser.xcodeproj
 /sweet/sweet_parser.sln
 /*.sln
-macosx_debug
-macosx_release
-macosx_shipping
+debug
+release
+shipping
 local_settings.lua
 *.sublime-project
 *.sublime-workspace

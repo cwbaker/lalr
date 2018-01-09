@@ -1,15 +1,15 @@
 
-local settings = build.current_settings();
+local settings = build:current_settings();
 for _, architecture in ipairs(settings.architectures) do
-    build.all {
-        build.Executable ("${bin}/error_test", architecture) {
+    build:all {
+        build:Executable ("${bin}/error_test", architecture) {
             libraries = {
                 "sweet/error/error",
                 "sweet/assert/assert",
                 "unit/libUnitTest"
             };
 
-            build.Cxx (architecture) {
+            build:Cxx (architecture) {
                 precompiled_header = "stdafx.hpp";
                 "main.cpp"
             };

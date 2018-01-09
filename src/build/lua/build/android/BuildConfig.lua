@@ -1,15 +1,16 @@
 
-local BuildConfig = build.TargetPrototype( "android.BuildConfig" );
+local BuildConfig = build:TargetPrototype( "android.BuildConfig" );
 
 function BuildConfig.create( settings, packages )
-    local build_config = build.Target( build.anonymous(), BuildConfig );
+    local build_config = build:Target( build:anonymous(), BuildConfig );
     build_config.settings = settings;
     build_config.packages = packages;
     for index, package in ipairs(packages) do 
-        local filename = ("%s/BuildConfig.java"):format( package:gsub("%.", "/") );
-        build_config:set_filename( build.generated(filename), index );
+        local filename = build:generated( ("%s/BuildConfig.java"):format(package:gsub("%.", "/")) );
+        build_config:set_filename( filename, index );
+        build_config:add_ordering_dependency( build:Directory(build:branch(filename)) );
     end
-    build_config:add_dependency( build.current_buildfile() );
+    build_config:add_implicit_dependency( build:current_buildfile() );
     return build_config;
 end
 
@@ -41,8 +42,9 @@ public final class BuildConfig {
 }
 ]];
 
-    for index, package in ipairs(self.packages) do 
-        local output_file = io.open( self:filename(index), "wb" );
+    for index, package in ipairs(self.packages) do
+        local filename = self:filename( index );
+        local output_file = io.open( filename, "wb" );
         assert( output_file, ("Opening '%s' to write generated text failed"):format(filename) );
         output_file:write( HEADER:format(package) );
         if self.DEBUG == nil then 
@@ -50,7 +52,7 @@ public final class BuildConfig {
         end
         for key, value in pairs(self) do 
             if type(value) == "boolean" then
-                output_file:write( BOOLEAN_BODY:format(key, tostring(self.settings.debug)) );
+                output_file:write( BOOLEAN_BODY:format(key, tostring(value)) );
             elseif type(value) == "number" then
                 if math.floor(value) == value then 
                     output_file:write( INT_BODY:format(key, value) );

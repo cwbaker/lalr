@@ -1,56 +1,59 @@
 
 clang = {};
 
-function clang.append_defines( target, defines )
-    table.insert( defines, ('-DBUILD_PLATFORM_%s'):format(build.upper(platform)) );
-    table.insert( defines, ('-DBUILD_VARIANT_%s'):format(build.upper(variant)) );
-    table.insert( defines, ('-DBUILD_LIBRARY_TYPE_%s'):format(build.upper(target.settings.library_type)) );
-    table.insert( defines, ('-DBUILD_BIN_DIRECTORY="\\"%s\\""'):format(target.settings.bin) );
-    table.insert( defines, ('-DBUILD_MODULE_DIRECTORY="\\"%s\\""'):format(target:working_directory():path()) );
-    table.insert( defines, ('-DBUILD_VERSION="\\"%s\\""'):format(version) );
+function clang.append_defines( target, flags )
+    local settings = target.settings;
+    table.insert( flags, ('-DBUILD_PLATFORM_%s'):format(build:upper(settings.platform)) );
+    table.insert( flags, ('-DBUILD_VARIANT_%s'):format(build:upper(variant)) );
+    table.insert( flags, ('-DBUILD_LIBRARY_TYPE_%s'):format(build:upper(settings.library_type)) );
+    table.insert( flags, ('-DBUILD_BIN_DIRECTORY="\\"%s\\""'):format(settings.bin) );
+    table.insert( flags, ('-DBUILD_MODULE_DIRECTORY="\\"%s\\""'):format(target:working_directory():path()) );
+    table.insert( flags, ('-DBUILD_VERSION="\\"%s\\""'):format(version) );
 
-    if string.find(target.settings.runtime_library, "debug", 1, true) then
-        table.insert( defines, "-D_DEBUG" );
-        table.insert( defines, "-DDEBUG" );
+    if string.find(settings.runtime_library, "debug", 1, true) then
+        table.insert( flags, "-D_DEBUG" );
+        table.insert( flags, "-DDEBUG" );
     else 
-        table.insert( defines, "-DNDEBUG" );
+        table.insert( flags, "-DNDEBUG" );
     end
 
-    if target.settings.defines then
-        for _, define in ipairs(target.settings.defines) do
-            table.insert( defines, ("-D%s"):format(define) );
+    local defines = settings.defines;
+    if defines then
+        for _, define in ipairs(defines) do
+            table.insert( flags, ("-D%s"):format(define) );
         end
     end
     
-    if target.defines then
-        for _, define in ipairs(target.defines) do
-            table.insert( defines, ("-D%s"):format(define) );
+    local defines = target.defines;
+    if defines then
+        for _, define in ipairs(defines) do
+            table.insert( flags, ("-D%s"):format(define) );
         end
     end
 end
 
-function clang.append_include_directories( target, include_directories )
+function clang.append_include_directories( target, flags )
     if target.include_directories then
         for _, directory in ipairs(target.include_directories) do
-            table.insert( include_directories, ('-I "%s"'):format(relative(directory)) );
+            table.insert( flags, ('-I "%s"'):format(relative(directory)) );
         end
     end
 
     if target.settings.include_directories then
         for _, directory in ipairs(target.settings.include_directories) do
-            table.insert( include_directories, ('-I "%s"'):format(directory) );
+            table.insert( flags, ('-I "%s"'):format(directory) );
         end
     end
 
     if target.framework_directories then 
         for _, directory in ipairs(target.framework_directories) do
-            table.insert( include_directories, ('-F "%s"'):format(directory) );
+            table.insert( flags, ('-F "%s"'):format(directory) );
         end
     end
 
     if target.settings.framework_directories then 
         for _, directory in ipairs(target.settings.framework_directories) do
-            table.insert( include_directories, ('-F "%s"'):format(directory) );
+            table.insert( flags, ('-F "%s"'):format(directory) );
         end
     end
 end
@@ -160,27 +163,29 @@ function clang.append_link_flags( target, flags )
     table.insert( flags, "-std=c++11" );
     table.insert( flags, "-stdlib=libc++" );
 
+    local settings = target.settings;
+
     if target:prototype() == build.DynamicLibrary then
         table.insert( flags, "-Xlinker -dylib" );
     end
     
-    if target.settings.verbose_linking then
+    if settings.verbose_linking then
         table.insert( flags, "-Wl,--verbose=31" );
     end
     
-    if target.settings.generate_map_file then
-        table.insert( flags, ('-Wl,-map,"%s"'):format(build.native(("%s/%s.map"):format(obj_directory(target), target:id()))) );
+    if settings.generate_map_file then
+        table.insert( flags, ('-Wl,-map,"%s"'):format(build:native(("%s/%s.map"):format(settings.obj_directory(target), target:id()))) );
     end
 
-    if target.settings.strip and not target.settings.generate_dsym_bundle then
+    if settings.strip and not settings.generate_dsym_bundle then
         table.insert( flags, "-Wl,-dead_strip" );
     end
 
-    if target.settings.exported_symbols_list then
-        table.insert( flags, ('-exported_symbols_list "%s"'):format(absolute(target.settings.exported_symbols_list)) );
+    if settings.exported_symbols_list then
+        table.insert( flags, ('-exported_symbols_list "%s"'):format(absolute(settings.exported_symbols_list)) );
     end
 
-    table.insert( flags, ('-o "%s"'):format(build.native(target:filename())) );
+    table.insert( flags, ('-o "%s"'):format(build:native(target:filename())) );
 end
 
 function clang.append_link_libraries( target, libraries )
@@ -231,9 +236,9 @@ function clang.parse_dependencies_file( filename, object )
         local start, finish, path = dependencies:find( DEPENDENCY_PATTERN, finish + 1 );
         while start and finish do 
             local filename = path:gsub( "\\ ", " " );
-            local within_source_tree = build.relative( build.absolute(filename), build.root() ):find( "..", 1, true ) == nil;
+            local within_source_tree = build:relative( build:absolute(filename), build:root() ):find( "..", 1, true ) == nil;
             if within_source_tree then 
-                local dependency = build.ImplicitSourceFile( path:gsub("\\ ", " ") );
+                local dependency = build:SourceFile( path:gsub("\\ ", " ") );
                 object:add_implicit_dependency( dependency );
             end
             start, finish, path = dependencies:find( DEPENDENCY_PATTERN, finish + 1 );
@@ -241,4 +246,4 @@ function clang.parse_dependencies_file( filename, object )
     end
 end
 
-build.register_module( clang );
+build:register_module( clang );

@@ -1,5 +1,5 @@
 
-package.path = build.root("build/lua/?.lua")..";"..build.root("build/lua/?/init.lua");
+package.path = build:root("build/lua/?.lua")..";"..build:root("build/lua/?/init.lua");
 require "build";
 require "build.cc";
 require "build.parser";
@@ -8,42 +8,42 @@ require "build.xcode";
 require "build.macosx";
 require "build.windows";
 
-platform = platform or build.operating_system();
+platform = platform or build:operating_system();
 variant = variant or "debug";
 version = version or ("%s %s %s"):format(os.date("%Y.%m.%d %H:%M:%S"), platform, variant );
 goal = goal or "";
 jobs = jobs or 4;
 
 local boost_include_directory, boost_library_directory;
-if build.operating_system() == "windows" then
+if build:operating_system() == "windows" then
     boost_include_directory = "C:/boost/include/boost-1_62";
     boost_library_directory = "C:/boost/lib";
-elseif build.operating_system() == "macosx" then
+elseif build:operating_system() == "macosx" then
     boost_include_directory = "/usr/local/include";
     boost_library_directory = "/usr/local/lib";
 end
 
-build.initialize {
-    bin = build.root( ("../%s_%s/bin"):format(platform, variant) );
-    lib = build.root( ("../%s_%s/lib"):format(platform, variant) );
-    obj = build.root( ("../%s_%s/obj"):format(platform, variant) );
+build:initialize {
+    bin = build:root( ("../%s/bin"):format(variant) );
+    lib = build:root( ("../%s/lib"):format(variant) );
+    obj = build:root( ("../%s/obj"):format(variant) );
     include_directories = {
-        build.root(),
+        build:root(),
         boost_include_directory
     };
     library_directories = {
-        build.root( ("../%s_%s/lib"):format(platform, variant) ),
+        build:root( ("../%s/lib"):format(variant) ),
         boost_library_directory
     };
     visual_studio = {
-        sln = build.root( "../sweet_parser.sln" );
+        sln = build:root( "../sweet_parser.sln" );
     };
     xcode = {
-        xcodeproj = build.root( "../sweet_parser.xcodeproj" );
+        xcodeproj = build:root( "../sweet_parser.xcodeproj" );
     };
 };
 
-build.default_targets {
+build:default_targets {
     "sweet/lexer/lexer_test",    
     "sweet/parser/parser_test",
     "sweet/parser/parser_"

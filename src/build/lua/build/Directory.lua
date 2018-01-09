@@ -1,13 +1,13 @@
 
-Directory = build.TargetPrototype( "Directory" );
+local Directory = build:TargetPrototype( "Directory" );
 
-function Directory.create( settings, id )
-	return build.File( id, Directory );
+function Directory.create( settings, identifier )
+	return build:File( identifier, Directory );
 end
 
-function Directory.build( directory )
-    build.mkdir( directory:filename() );
+function Directory:build()
+    build:mkdir( self );
 end
 
-function Directory.clean( directory )
+function Directory:clean()
 end

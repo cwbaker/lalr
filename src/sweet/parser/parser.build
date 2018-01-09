@@ -3,10 +3,9 @@ buildfile "parser_/parser_.build";
 buildfile "parser_examples/parser_examples.build";
 buildfile "parser_test/parser_test.build";
 
-local settings = build.current_settings();
-for _, architecture in ipairs(settings.architectures) do    
-    local parser = build.Library ("parser", architecture) {
-        build.Cxx (architecture) {
+for _, build in build:default_builds() do    
+    local parser = build:Library "parser" {
+        build:Cxx () {
             pch = "stdafx.hpp";
             "Error.cpp",        
             "ParserAction.cpp",
@@ -23,15 +22,13 @@ for _, architecture in ipairs(settings.architectures) do
         };
     };
 
-    build.push_settings {
+    local build = build:configure {
         warning_level = 0;
     };
 
     parser {
-        build.Cxx (architecture) {
+        build:Cxx () {
             "GrammarParser.cpp",
         };
     };
-
-    build.pop_settings();
 end

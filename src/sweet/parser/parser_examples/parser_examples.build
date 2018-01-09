@@ -1,6 +1,6 @@
 
-build.all {
-    build.Executable "parser_examples" {
+build:all {
+    build:Executable "parser_examples" {
         libraries = {
             "assert/assert",
             "error/error",
@@ -9,7 +9,7 @@ build.all {
             "pointer/pointer"
         };
 
-        build.Cxx () {
+        build:Cxx () {
             "main.cpp",
             "parser_hello_world_example.cpp",
             "parser_hello_world_with_grammar_example.cpp",
@@ -19,6 +19,10 @@ build.all {
             "parser_xml_example.cpp"        
         };
 
-        build.Parser "json.g";
+        build:Cxx () {
+            build:Parser (build:absolute("json.cpp")) {
+                "json.g";
+            };
+        };
     };
 };

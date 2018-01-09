@@ -1,5 +1,5 @@
 
-local Xib = build.TargetPrototype( "xcode.Xib" );
+local Xib = build:TargetPrototype( "xcode.Xib" );
 
 function Xib.build( xib )
     local command_line = {
@@ -10,7 +10,7 @@ function Xib.build( xib )
         ('--compile "%s"'):format( xib );
         ('"%s"'):format( xib:dependency() );
     };
-    build.system( 
+    build:system( 
         xib.settings.ios.xcrun, 
         command_line
     );

@@ -16,4 +16,4 @@ end
 
 require "build.sass.Css";
 
-build.register_module( sass );
+build:register_module( sass );

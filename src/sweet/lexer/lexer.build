@@ -1,10 +1,9 @@
 
 buildfile "lexer_test/lexer_test.build";
 
-local settings = build.current_settings();
-for _, architecture in ipairs(settings.architectures) do    
-    local lexer = build.Library ("lexer", architecture) {
-        build.Cxx (architecture) {
+for _, build in build:default_builds() do    
+    local lexer = build:Library "lexer" {
+        build:Cxx () {
             "Error.cpp",        
             "LexerAction.cpp",
             "LexerErrorPolicy.cpp",
@@ -20,15 +19,13 @@ for _, architecture in ipairs(settings.architectures) do
         };
     };
 
-    build.push_settings {
+    local build = build:configure {
         warning_level = 0;
     };
 
     lexer {
-        build.Cxx (architecture) {
+        build:Cxx () {
             "RegexParser.cpp",
         };
     };
-
-    build.pop_settings();
 end

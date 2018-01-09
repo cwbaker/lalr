@@ -15,4 +15,4 @@ end
 require "build.pandoc.Html";
 require "build.pandoc.Pdf";
 
-build.register_module( pandoc );
+build:register_module( pandoc );

@@ -1,6 +1,6 @@
 
-build.all {
-    build.Executable "parser_test" {
+build:all {
+    build:Executable "parser_test" {
         third_party_libraries = {
             "boost_system"
         };
@@ -14,7 +14,7 @@ build.all {
             "unit/libUnitTest"
         };
 
-        build.Cxx () {
+        build:Cxx () {
             "main.cpp",
             "TestParsers.cpp",
             "TestPrecedenceDirectives.cpp"

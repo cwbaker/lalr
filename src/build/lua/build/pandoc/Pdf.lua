@@ -1,5 +1,5 @@
 
-local Pdf = build.TargetPrototype( "pandoc.Pdf" );
+local Pdf = build:TargetPrototype( "pandoc.Pdf" );
 
 function Pdf.build( pdf )
     local settings = pdf.settings;
@@ -13,5 +13,5 @@ function Pdf.build( pdf )
     local environment = {
         PATH = os.getenv( "PATH" );
     };
-    build.system( pandoc, arguments, environment, build.dependencies_filter(html) );
+    build:system( pandoc, arguments, environment, build:dependencies_filter(html) );
 end

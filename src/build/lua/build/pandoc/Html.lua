@@ -1,5 +1,5 @@
 
-local Html = build.TargetPrototype( "pandoc.Html" );
+local Html = build:TargetPrototype( "pandoc.Html" );
 
 function Html.build( html )
     local append_arguments = function( arguments, prefix, other_arguments )
@@ -33,15 +33,15 @@ function Html.build( html )
     append_arguments( arguments, "-c ", html.stylesheets );
     append_arguments( arguments, "-c ", settings.stylesheets );
 
-    local output = build.relative( html );
+    local output = build:relative( html );
     table.insert( arguments, ('-o "%s"'):format(output) );
 
-    local input = build.relative( html:dependency() );
+    local input = build:relative( html:dependency() );
     table.insert( arguments, ('"%s"'):format(input) );
 
     local environment = {
         PATH = os.getenv( "PATH" );
     };
 
-    build.system( pandoc, arguments, environment, build.dependencies_filter(html) );
+    build:system( pandoc, arguments, environment, build:dependencies_filter(html) );
 end

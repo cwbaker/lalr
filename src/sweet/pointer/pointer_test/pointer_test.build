@@ -1,6 +1,6 @@
 
-build.all {
-    build.Executable "${bin}/pointer_test" {
+build:all {
+    build:Executable "${bin}/pointer_test" {
         libraries = {
             "sweet/pointer/pointer",
             "sweet/error/error",
@@ -8,7 +8,7 @@ build.all {
             "unit/libUnitTest"
         };
 
-        build.Cxx () {
+        build:Cxx () {
             "main.cpp",
             "TestPointer.cpp",
             "TestPointerCast.cpp"

@@ -1,12 +1,11 @@
 
-local settings = build.current_settings();
-for _, architecture in ipairs(settings.architectures) do
-    build.Library ("rtti", architecture) {
+for _, build in build:default_builds() do
+    build:Library "rtti" {
         libraries = {
             "sweet/assert/assert"
         };
 
-        build.Cxx (architecture) {
+        build:Cxx () {
             "Type.cpp",
             "SweetTypeInfo.cpp"
         };

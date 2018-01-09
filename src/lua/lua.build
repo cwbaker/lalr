@@ -1,18 +1,18 @@
 
-local settings = build.push_settings {
-    warning_level = 0;
-};
+for _, build in build:default_builds() do
+    local build = build:configure {
+        warning_level = 0;
+    };
 
-for _, architecture in ipairs(settings.architectures) do
-    build.Library ("liblua", architecture) {
+    build:Library "liblua" {
         libraries = {
             "sweet/assert/assert";
             "sweet/error/error";
         };
 
-        build.Cc (architecture) {
-            defines = build.switch { 
-                build.operating_system();
+        build:Cc () {
+            defines = build:switch { 
+                build:operating_system();
                 windows = { "_CRT_SECURE_NO_DEPRECATE" };
                 macosx = { "LUA_USE_POSIX", "LUA_USE_DLOPEN" };
             };
@@ -53,41 +53,44 @@ for _, architecture in ipairs(settings.architectures) do
     };
 end
 
-if build.platform_matches("macosx") or build.platform_matches("windows") then
-    if variant == "debug" or variant == "release" or variant == "shipping" then
-        for _, architecture in ipairs(settings.architectures) do
-            build.all {
-                build.Executable (("${bin}/luac_%s"):format(architecture), architecture) {
-                    libraries = {
-                        "sweet/assert/assert",
-                        "lua/liblua"
-                    };
-                    build.Cc (architecture) {
-                        defines = { 
-                            "_CRT_SECURE_NO_DEPRECATE" 
-                        };
-                        "luac.c"
-                    };
-                };        
-            };
-        end
-
-        build.all {
-            build.Executable "${bin}/lua" {
-                project_name = "lua_";
+if build:platform_matches("macosx") or build:platform_matches("windows") then
+    for _, build in build:default_builds(("%s-.*"):format(platform)) do
+        local build = build:configure {
+            warning_level = 0;
+        };
+        local architecture = build.settings.architecture;
+        build:all {
+            build:Executable (("${bin}/luac_%s"):format(architecture)) {
                 libraries = {
                     "sweet/assert/assert",
                     "lua/liblua"
-                };        
-                build.Cc () {
+                };
+                build:Cc () {
                     defines = { 
                         "_CRT_SECURE_NO_DEPRECATE" 
                     };
-                    "lua.c"
+                    "luac.c"
                 };
-            };
+            };        
         };
     end
-end
 
-build.pop_settings();
+    local build = build:configure {
+        warning_level = 0;
+    };
+    build:all {
+        build:Executable "${bin}/lua" {
+            project_name = "lua_";
+            libraries = {
+                "sweet/assert/assert",
+                "lua/liblua"
+            };        
+            build:Cc () {
+                defines = { 
+                    "_CRT_SECURE_NO_DEPRECATE" 
+                };
+                "lua.c"
+            };
+        };
+    };
+end

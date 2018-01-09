@@ -1,6 +1,6 @@
 
-build.all {
-    build.Executable "${bin}/lua_test" {
+build:all {
+    build:Executable "${bin}/lua_test" {
         libraries = {
             "lua/liblua",
             "sweet/assert/assert",
@@ -10,7 +10,7 @@ build.all {
             "unit/libUnitTest"
         };
 
-        build.Cxx () {
+        build:Cxx () {
             "main.cpp",
             "TestLua.cpp",
             "TestLuaObject.cpp",

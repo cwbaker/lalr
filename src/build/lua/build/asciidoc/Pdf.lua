@@ -1,5 +1,5 @@
 
-local Pdf = build.TargetPrototype( "asciidoc.Pdf" );
+local Pdf = build:TargetPrototype( "asciidoc.Pdf" );
 
 function Pdf.build( pdf )
     local settings = pdf.settings;
@@ -11,5 +11,5 @@ function Pdf.build( pdf )
         ('-o "%s"'):format( pdf ),
         ('"%s"'):format( pdf:dependency() )
     };
-    build.system( python, arguments, nil, build.dependencies_filter(pdf) );
+    build:system( python, arguments, nil, build:dependencies_filter(pdf) );
 end;
