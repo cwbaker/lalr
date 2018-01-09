@@ -59,5 +59,4 @@ buildfile "sweet/lua/lua.build";
 buildfile "sweet/parser/parser.build";
 buildfile "sweet/rtti/rtti.build";
 buildfile "sweet/traits/traits.build";
-buildfile "sweet/utility/utility.build";
 buildfile "unit/unit.build";
