@@ -25,14 +25,14 @@ class RegexNode;
 */
 class SWEET_LEXER_DECLSPEC LexerState
 {
-    std::set<LexerItem> items_; ///< The items that define the positions within the regular expressions that this state represents.
+    std::set<LexerItem>       items_;       ///< The items that define the positions within the regular expressions that this state represents.
     std::set<LexerTransition> transitions_; ///< The available transitions from this state to other states.
-    const void* symbol_; ///< The symbol that this state recognizes or null if this state doesn't recognize a symbol.
-    bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
-    int index_; ///< The index of this state.
+    const void*               symbol_;      ///< The symbol that this state recognizes or null if this state doesn't recognize a symbol.
+    bool                      processed_;   ///< True if this state has been processed during state machine generation otherwise false.
+    int                       index_;       ///< The index of this state.
 
     public:
-        LexerState( int index );
+        LexerState();
 
         int add_item( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
         const std::set<LexerItem>& get_items() const;
@@ -50,8 +50,8 @@ class SWEET_LEXER_DECLSPEC LexerState
         void set_index( int index );
         int get_index() const;
         
-        bool operator<( const LexerState& state ) const;
         void describe( std::string* description ) const;
+        bool operator<( const LexerState& state ) const;
 };
 
 }

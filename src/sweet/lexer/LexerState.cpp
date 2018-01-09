@@ -19,14 +19,13 @@ using namespace sweet::lexer;
 /**
 // Constructor.
 */
-LexerState::LexerState( int index )
+LexerState::LexerState()
 : items_(),
   transitions_(),
   symbol_( NULL ),
   processed_( false ),
-  index_( index )
+  index_( -1 )
 {
-    SWEET_ASSERT( index_ >= 0 );
 }
 
 /**
