@@ -7,3 +7,7 @@
 /sweet_parser.xcodeproj
 /sweet/sweet_parser.sln
 /*.sln
+macosx_debug
+macosx_release
+macosx_shipping
+local_settings.lua
