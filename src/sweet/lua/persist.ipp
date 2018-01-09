@@ -1,12 +1,9 @@
-//
-// persist.ipp
-// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_PERSIST_IPP_INCLUDED
 #define SWEET_LUA_PERSIST_IPP_INCLUDED
 
 #include <sweet/persist/lua.hpp>
+#include <sweet/lua/Lua.hpp>
+#include <sweet/lua/LuaObject.hpp>
 
 namespace sweet
 {
@@ -87,7 +84,7 @@ void persist( Archive& archive, const char* name, typename traits::traits<Type>:
 
     sweet::persist::persist_lua_table( archive, "table", lua_state, false );
 
-    if ( archive.is_reading() )
+    if ( archive.is_reading() && lua_istable(lua_state, -1) )
     {
         LuaObjectConverter<Type, Storage>::create_with_existing_table( lua_state, object );
     }
@@ -117,7 +114,7 @@ void LuaObject::persist( Archive& archive )
 
     sweet::persist::persist_lua_table( archive, "table", lua_state, false );
 
-    if ( archive.is_reading() )
+    if ( archive.is_reading() && lua_istable(lua_state, -1) )
     {
         lua_create_object_with_existing_table( lua_state, this );
     }

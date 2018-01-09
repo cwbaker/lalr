@@ -10,9 +10,10 @@
 #include "RegexCharacter.hpp"
 #include "LexerGenerator.hpp"
 #include "Error.hpp"
-#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_file_iterator.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
+#include <boost/spirit/include/classic_chset.hpp>
 #include <boost/bind.hpp>
 
 using std::set;

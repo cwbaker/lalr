@@ -1,4 +1,4 @@
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 
 // We're really testing if it's possible to use the same suite in two files
 // to compile and link successfuly (TestTestSuite.cpp has suite with the same name)

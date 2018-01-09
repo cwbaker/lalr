@@ -1,11 +1,11 @@
 //
 // main.cpp
-// Copyright (c) 2008 Charles Baker.  All rights reserved.
+// Copyright (c) 2008 - 2015 Charles Baker.  All rights reserved.
 //
 
 #include "stdafx.hpp"
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestReporterStdout.h>
+#include <unit/UnitTest.h>
+#include <unit/TestReporterStdout.h>
 
 int main( int argc, char** argv )
 {

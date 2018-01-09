@@ -11,6 +11,7 @@
 #ifdef SWEET_EXCEPTIONS_ENABLED
 #define SWEET_ERROR( e ) throw e;
 #else
+#include "functions.hpp"
 #define SWEET_ERROR( e ) sweet::error::error( e );
 #endif
 

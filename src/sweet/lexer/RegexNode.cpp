@@ -633,7 +633,7 @@ void RegexNode::calculate_follow_positions()
 bool RegexNode::operator<( const RegexNode& node ) const
 {
     return type_ < node.type_
-        || type_ == node.type_ && index_ < node.index_
+        || (type_ == node.type_ && index_ < node.index_)
          ;
 }
 

@@ -1,10 +1,10 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/TestRunner.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/TestReporter.h>
-#include <sweet/unit/TestReporterStdout.h>
-#include <sweet/unit/TimeHelpers.h>
-#include <sweet/unit/MemoryOutStream.h>
+#include <unit/Config.h>
+#include <unit/TestRunner.h>
+#include <unit/TestResults.h>
+#include <unit/TestReporter.h>
+#include <unit/TestReporterStdout.h>
+#include <unit/TimeHelpers.h>
+#include <unit/MemoryOutStream.h>
 #include <cstring>
 
 

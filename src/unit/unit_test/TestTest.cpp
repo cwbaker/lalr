@@ -1,6 +1,6 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestReporter.h>
-#include <sweet/unit/TimeHelpers.h>
+#include <unit/UnitTest.h>
+#include <unit/TestReporter.h>
+#include <unit/TimeHelpers.h>
 #include "ScopedCurrentTest.h"
 
 using namespace UnitTest;

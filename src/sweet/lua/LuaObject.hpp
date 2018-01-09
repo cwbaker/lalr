@@ -30,6 +30,8 @@ class SWEET_LUA_DECLSPEC LuaObject
         LuaObject( Lua& lua );
         ~LuaObject();
 
+        Lua* lua() const;
+        lua_State* lua_state() const;
         AddMember members();
         bool is_value( const char* field ) const;
         bool is_boolean( const char* field ) const;

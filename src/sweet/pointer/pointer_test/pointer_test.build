@@ -1,17 +1,17 @@
 
-Executable {
-    id = "pointer_test";
-    
-    libraries = {
-        "pointer/pointer",
-        "error/error",
-        "assert/assert",
-        "unit/libUnitTest"
-    };
+build.all {
+    build.Executable "${bin}/pointer_test" {
+        libraries = {
+            "sweet/pointer/pointer",
+            "sweet/error/error",
+            "sweet/assert/assert",
+            "unit/libUnitTest"
+        };
 
-    Source {
-        "main.cpp",
-        "TestPointer.cpp",
-        "TestPointerCast.cpp"
+        build.Cxx () {
+            "main.cpp",
+            "TestPointer.cpp",
+            "TestPointerCast.cpp"
+        };
     };
-}
+};

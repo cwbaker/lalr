@@ -1,68 +1,59 @@
 
 #include "LuaUnitTest.hpp"
 #include <sweet/lua/Lua.hpp>
-#include <sweet/lua/Error.hpp>
-#include <sweet/lua/lua_/lua.h>
-#include <sweet/unit/TestDetails.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/TestReporter.h>
-#include <sweet/unit/Checks.h>
-#include <sweet/unit/MemoryOutStream.h>
-#include <sweet/unit/CurrentTest.h>
+#include <sweet/lua/LuaFileReader.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
+#include <lua/lua.hpp>
+#include <unit/TestDetails.h>
+#include <unit/TestResults.h>
+#include <unit/TestReporter.h>
+#include <unit/Checks.h>
+#include <unit/MemoryOutStream.h>
+#include <unit/CurrentTest.h>
+#include <unit/UnitTest.h>
 #include <string>
 #include <stdio.h>
 
 #if defined(BUILD_OS_WINDOWS)
-#include <sweet/unit/Win32/TimeHelpers.h>
+#include <unit/Win32/TimeHelpers.h>
 #else 
-#include <sweet/unit/Posix/TimeHelpers.h>
+#include <unit/Posix/TimeHelpers.h>
 #endif 
 
 using std::string;
 using namespace UnitTest;
 using namespace sweet;
 using namespace sweet::lua;
-using namespace sweet::sheet;
 
 #if defined(BUILD_OS_WINDOWS)
 #define snprintf _snprintf
 #endif
 
-LuaUnitTest::LuaUnitTest( UnitTest::TestReporter* reporter )
-: reporter_( reporter )
+LuaUnitTest::LuaUnitTest( Lua& lua )
+: lua_( lua )
 {
-    SWEET_ASSERT( reporter_ );
-}
-
-int LuaUnitTest::run_all_tests( const char* filename )
-{
-    SWEET_ASSERT( filename );
-
-    lua::Lua lua;
-    lua.globals()
+    lua_.globals()
         ( "TestSuite", raw(&LuaUnitTest::test_suite), this )
         ( "CHECK", raw(&LuaUnitTest::check) )
         ( "CHECK_EQUAL", raw(&LuaUnitTest::check_equal) )
         ( "CHECK_CLOSE", raw(&LuaUnitTest::check_close) )
     ;
-    
-    TestResults results( reporter_ );
-    CurrentTest::Results() = &results;
+}
 
-    Timer timer;
-    timer.Start();
-    lua.set_stack_trace_enabled( true );
-    lua.call( filename, filename ).end();
-    const float total_time = timer.GetTimeInMs() / 1000.0f;
-    reporter_->ReportSummary( results.GetTotalTestCount(), results.GetFailedTestCount(), results.GetFailureCount(), total_time );
-
-    CurrentTest::Results() = NULL;
-    return results.GetFailureCount();
+void LuaUnitTest::run_tests( const char* filename )
+{
+    SWEET_ASSERT( filename );
+    error::ErrorPolicy& error_policy = lua_.error_policy();
+    error_policy.push_errors();
+    LuaFileReader reader( filename, error_policy );
+    CHECK_EQUAL( 0, error_policy.pop_errors() );
+    lua_.call( &LuaFileReader::reader, &reader, filename ).end();
 }
 
 int LuaUnitTest::test_suite( lua_State* lua_state )
 {
     SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( CurrentTest::Details() );
     SWEET_ASSERT( CurrentTest::Results() );
     
     const int TEST_SUITE = 1;
@@ -73,12 +64,8 @@ int LuaUnitTest::test_suite( lua_State* lua_state )
         // when it is passed an invalid parameter instead of calling
         // lua_error()?
         lua_pushfstring( lua_state, "TestSuite expects a table not a '%s' as its first parameter", lua_typename(lua_state, lua_type(lua_state, TEST_SUITE)) );
-        lua_error( lua_state );
+        return lua_error( lua_state );
     }
-
-    SWEET_ASSERT( lua_islightuserdata(lua_state, lua_upvalueindex(1)) );
-    LuaUnitTest* unit_test = reinterpret_cast<LuaUnitTest*>( lua_touserdata(lua_state, lua_upvalueindex(1)) );
-    SWEET_ASSERT( unit_test );
 
     lua_getfield( lua_state, TEST_SUITE, "name" );    
     string suite_name = lua_isstring( lua_state, -1 ) ? lua_tostring( lua_state, -1 ) : "??";
@@ -96,7 +83,8 @@ int LuaUnitTest::test_suite( lua_State* lua_state )
             int line = debug.linedefined;
 
             string test_name = lua_tostring( lua_state, -2 );
-            UnitTest::TestDetails details( test_name.c_str(), suite_name.c_str(), file.c_str(), line );
+	        const UnitTest::TestDetails* current_details = UnitTest::CurrentTest::Details();
+	        UnitTest::TestDetails details( test_name.c_str(), current_details->suiteName, file.c_str(), line );
 	        UnitTest::CurrentTest::Details() = &details;
 
 	        Timer test_timer;
@@ -164,7 +152,9 @@ int LuaUnitTest::test_suite( lua_State* lua_state )
 	            CurrentTest::Results()->OnTestFailure( details, stream.GetText() );
 	        }
 	        CurrentTest::Results()->OnTestFinish( details, static_cast<float>(time) / 1000.0f );
-	        CurrentTest::Details() = NULL;
+	        CurrentTest::Details() = current_details;
+            lua_gc( lua_state, LUA_GCCOLLECT, 0 );
+            lua_gc( lua_state, LUA_GCCOLLECT, 0 );
         }
         else
         {
@@ -211,8 +201,8 @@ int LuaUnitTest::check_equal( lua_State* lua_state )
         
         case LUA_TNUMBER:
         {
-            int expected = lua_tointeger( lua_state, EXPECTED );
-            int actual = lua_tointeger( lua_state, ACTUAL );
+            int expected = luaL_checkinteger( lua_state, EXPECTED );
+            int actual = luaL_checkinteger( lua_state, ACTUAL );
             UnitTest::CheckEqual( *UnitTest::CurrentTest::Results(), expected, actual, UnitTest::TestDetails(*UnitTest::CurrentTest::Details(), LuaUnitTest::line(lua_state)) );
             break;
         }

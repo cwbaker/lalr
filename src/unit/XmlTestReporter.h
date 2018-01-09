@@ -1,7 +1,7 @@
 #ifndef UNITTEST_XMLTESTREPORTER_H
 #define UNITTEST_XMLTESTREPORTER_H
 
-#include <sweet/unit/DeferredTestReporter.h>
+#include <unit/DeferredTestReporter.h>
 
 #include <iosfwd>
 

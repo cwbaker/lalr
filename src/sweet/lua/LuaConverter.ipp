@@ -1,8 +1,3 @@
-//
-// LuaConverter.ipp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_LUACONVERTER_IPP_INCLUDED
 #define SWEET_LUA_LUACONVERTER_IPP_INCLUDED
 
@@ -230,10 +225,9 @@ void LuaConverter<R (T::*)(A0)>::push( lua_State* lua_state, Function function )
 
 template <class R, class T, class A0>
 typename LuaConverter<R (T::*)(A0)>::Function 
-LuaConverter<R (T::*)(A0)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -252,10 +246,9 @@ void LuaConverter<R (T::*)(A0) const>::push( lua_State* lua_state, Function func
 
 template <class R, class T, class A0>
 typename LuaConverter<R (T::*)(A0) const>::Function 
-LuaConverter<R (T::*)(A0) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -274,10 +267,9 @@ void LuaConverter<R (T::*)(A0, A1)>::push( lua_State* lua_state, Function functi
 
 template <class R, class T, class A0, class A1>
 typename LuaConverter<R (T::*)(A0, A1)>::Function 
-LuaConverter<R (T::*)(A0, A1)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -296,10 +288,9 @@ void LuaConverter<R (T::*)(A0, A1) const>::push( lua_State* lua_state, Function 
 
 template <class R, class T, class A0, class A1>
 typename LuaConverter<R (T::*)(A0, A1) const>::Function 
-LuaConverter<R (T::*)(A0, A1) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -318,10 +309,9 @@ void LuaConverter<R (T::*)(A0, A1, A2)>::push( lua_State* lua_state, Function fu
 
 template <class R, class T, class A0, class A1, class A2>
 typename LuaConverter<R (T::*)(A0, A1, A2)>::Function 
-LuaConverter<R (T::*)(A0, A1, A2)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -340,10 +330,9 @@ void LuaConverter<R (T::*)(A0, A1, A2) const>::push( lua_State* lua_state, Funct
 
 template <class R, class T, class A0, class A1, class A2>
 typename LuaConverter<R (T::*)(A0, A1, A2) const>::Function 
-LuaConverter<R (T::*)(A0, A1, A2) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -362,10 +351,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3)>::push( lua_State* lua_state, Functio
 
 template <class R, class T, class A0, class A1, class A2, class A3>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3)>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -384,10 +372,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3) const>::push( lua_State* lua_state, F
 
 template <class R, class T, class A0, class A1, class A2, class A3>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3) const>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -406,10 +393,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3, A4)>::push( lua_State* lua_state, Fun
 
 template <class R, class T, class A0, class A1, class A2, class A3, class A4>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3, A4)>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3, A4)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3, A4)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -428,10 +414,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3, A4) const>::push( lua_State* lua_stat
 
 template <class R, class T, class A0, class A1, class A2, class A3, class A4>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3, A4) const>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3, A4) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3, A4) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -450,10 +435,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5)>::push( lua_State* lua_state,
 
 template <class R, class T, class A0, class A1, class A2, class A3, class A4, class A5>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5)>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5)>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5)>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );
@@ -472,10 +456,9 @@ void LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5) const>::push( lua_State* lua_
 
 template <class R, class T, class A0, class A1, class A2, class A3, class A4, class A5>
 typename LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5) const>::Function 
-LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5) const>::to( lua_State* lua_state, int position )
+LuaConverter<R (T::*)(A0, A1, A2, A3, A4, A5) const>::to( lua_State* lua_state, int /*position*/ )
 {
     SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
     lua_pushvalue( lua_state, lua_upvalueindex(1) );
     SWEET_ASSERT( lua_isuserdata(lua_state, -1) );
     Function function = *reinterpret_cast<Function*>( lua_touserdata(lua_state, -1) );

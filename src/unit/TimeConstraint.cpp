@@ -1,8 +1,8 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/TimeConstraint.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/MemoryOutStream.h>
-#include <sweet/unit/CurrentTest.h>
+#include <unit/Config.h>
+#include <unit/TimeConstraint.h>
+#include <unit/TestResults.h>
+#include <unit/MemoryOutStream.h>
+#include <unit/CurrentTest.h>
 
 namespace UnitTest {
 

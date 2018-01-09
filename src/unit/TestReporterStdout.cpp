@@ -1,7 +1,7 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/TestReporterStdout.h>
+#include <unit/Config.h>
+#include <unit/TestReporterStdout.h>
 #include <cstdio>
-#include <sweet/unit/TestDetails.h>
+#include <unit/TestDetails.h>
 
 #if defined(BUILD_OS_WINDOWS)
 #include <windows.h>

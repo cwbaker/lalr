@@ -1,8 +1,3 @@
-//
-// LuaThread.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_LUATHREAD_HPP_INCLUDED
 #define SWEET_LUA_LUATHREAD_HPP_INCLUDED
 
@@ -12,7 +7,8 @@
 #include "AddParameter.ipp"
 #include "LuaInvoker.ipp"
 #include "LuaReturner.ipp"
-#include "lua_/lua.h"
+
+struct lua_State;
 
 namespace sweet
 {
@@ -22,6 +18,7 @@ namespace lua
 
 class Lua;
 class LuaValue;
+class LuaThreadEventSink;
 
 /**
 // @internal
@@ -51,18 +48,28 @@ class SWEET_LUA_DECLSPEC LuaThread
         Lua* get_lua() const;
         lua_State* get_lua_state() const;
         LuaThreadState get_state() const;
+        LuaThreadEventSink* event_sink() const;
+        void* context() const;
+
+        void mobdebug_on();
+        void mobdebug_off();
+        void fire_returned();
+        void fire_errored();
+        void reset_event_sink_and_context();
 
         AddParameter call( lua_Reader reader, void* context, const char* name );
         AddParameter call( const char* filename, const char* name );
         AddParameter call( const char* first, const char* last, const char* name );
         AddParameter call( const char* function );
         AddParameter call( const LuaValue& function );
+        AddParameter call( lua_State* lua_state, int position );
         template <class Type> AddParameter call( const char* function, const Type& object );
 
         AddParameter resume( const char* filename, const char* name );
         AddParameter resume( const char* first, const char* last, const char* name );
         AddParameter resume( const char* function );
         AddParameter resume( const LuaValue& function );
+        AddParameter resume( lua_State* lua_state, int position );
         template <class Type> AddParameter resume( const char* function, const Type& object );
         AddParameter resume();
 };

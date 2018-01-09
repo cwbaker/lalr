@@ -36,7 +36,6 @@ class SWEET_PARSER_DECLSPEC ParserGrammar
     ParserSymbol* start_symbol_; ///< The start symbol.
     ParserSymbol* end_symbol_; ///< The end symbol.
     ParserSymbol* error_symbol_; ///< The error symbol.
-    int index_; ///< The next available index for nodes in this grammar.
 
     public:
         ParserGrammar( size_t actions_reserve = 32, size_t productions_reserve = 64, size_t symbols_reserve = 64 );

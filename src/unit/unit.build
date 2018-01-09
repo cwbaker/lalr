@@ -1,42 +1,48 @@
 
 buildfile "unit_test/unit_test.build";
 
-Library {
-    id = "libUnitTest";
-    
-    Source {
-        "AssertException.cpp",
-        "Checks.cpp",
-        "CurrentTest.cpp",
-        "DeferredTestReporter.cpp",
-        "DeferredTestResult.cpp",
-        "MemoryOutStream.cpp",
-        "ReportAssert.cpp",
-        "Test.cpp",
-        "TestDetails.cpp",
-        "TestList.cpp",
-        "TestReporter.cpp",
-        "TestReporterStdout.cpp",
-        "TestResults.cpp",
-        "TestRunner.cpp",
-        "TimeConstraint.cpp",
-        "XmlTestReporter.cpp"
+local settings = build.push_settings {
+    warning_level = 0;
+};
+
+for _, architecture in ipairs(settings.architectures) do 
+    local libUnitTest = build.Library ("libUnitTest", architecture) {
+        build.Cxx (architecture) {
+            "AssertException.cpp",
+            "Checks.cpp",
+            "CurrentTest.cpp",
+            "DeferredTestReporter.cpp",
+            "DeferredTestResult.cpp",
+            "MemoryOutStream.cpp",
+            "ReportAssert.cpp",
+            "Test.cpp",
+            "TestDetails.cpp",
+            "TestList.cpp",
+            "TestReporter.cpp",
+            "TestReporterStdout.cpp",
+            "TestResults.cpp",
+            "TestRunner.cpp",
+            "TimeConstraint.cpp",
+            "XmlTestReporter.cpp"
+        };    
     };
 
-    Source {
-        settings = {
-            platforms = { "msvc", "mingw" };
+    if platform == "windows" then
+        libUnitTest {
+            build.Cxx (architecture) {
+                "Win32/TimeHelpers.cpp"
+            };
         };
-        
-        "Win32/TimeHelpers.cpp"
-    };
+    end
 
-    Source {
-        settings = {
-            platforms = { "llvmgcc" };
+    if platform == "macosx" then
+        libUnitTest {
+            build.Cxx (architecture) {
+                "Posix/SignalTranslator.cpp",
+                "Posix/TimeHelpers.cpp"
+            };
         };
+    end
+end
 
-        "Posix/SignalTranslator.cpp",
-        "Posix/TimeHelpers.cpp"
-    };
-}
+build.pop_settings();

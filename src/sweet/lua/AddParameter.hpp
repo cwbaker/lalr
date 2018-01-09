@@ -1,13 +1,10 @@
-//
-// AddParameter.hpp
-// Copyright (c) 2007  - 2010 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_ADDPARAMETER_HPP_INCLUDED
 #define SWEET_LUA_ADDPARAMETER_HPP_INCLUDED
 
 #include "declspec.hpp"
 #include <string>
+
+struct lua_State;
 
 namespace sweet
 {
@@ -16,12 +13,13 @@ namespace lua
 {
 
 class AddParameterHelper;
+class Lua;
 class LuaNil;
 class LuaGlobalEnvironment;
 class LuaValue;
 class LuaObject;
 class LuaThread;
-class Lua;
+class LuaThreadEventSink;
 
 /**
 // A helper that provides a convenient syntax for calling functions.
@@ -41,7 +39,9 @@ class SWEET_LUA_DECLSPEC AddParameter
         AddParameter& operator()( float value );
         AddParameter& operator()( const char* value );
         AddParameter& operator()( const std::string& value );
+        AddParameter& operator()( void* value );
         AddParameter& copy_values_from_stack( int begin, int end );
+        AddParameter& copy_values_from_stack( lua_State* lua_state, int begin, int end );
 
         void end();
         void end( bool* return_value );
@@ -49,9 +49,12 @@ class SWEET_LUA_DECLSPEC AddParameter
         void end( float* return_value );
         void end( std::string* return_value );
         void end( void** return_value );
+        void end( LuaValue* return_value );
+        void end( LuaThreadEventSink* event_sink, void* context );
         template <class Type> void end( Type* return_value );
         
         template <typename Type> AddParameter& operator()( const Type& value );
+        template <typename Type> AddParameter& operator()( const Type& value, LuaObject* metatable );
 };
 
 }

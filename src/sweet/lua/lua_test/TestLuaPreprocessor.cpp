@@ -1,21 +1,26 @@
 //
 // TestLuaPreprocessor.cpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lua/Lua.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <string.h>
 
+using namespace sweet;
 using namespace sweet::lua;
 
 SUITE( TestLuaPreprocessor )
 {
     struct Fixture
     {
+        error::ErrorPolicy error_policy;
         Lua lua;
         
         Fixture()
+        : error_policy(),
+          lua( error_policy )
         {
             const char* script = "io.write = print;";
             lua.globals()( "print", &Fixture::print );

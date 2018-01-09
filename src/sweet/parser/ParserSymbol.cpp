@@ -18,8 +18,8 @@ using namespace sweet::parser;
 ParserSymbol::ParserSymbol()
 : type_( SYMBOL_NULL ),
   lexeme_(),
-  line_( 0 ),
   identifier_(),
+  line_( 0 ),
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),
@@ -45,8 +45,8 @@ ParserSymbol::ParserSymbol()
 ParserSymbol::ParserSymbol( SymbolType type, const std::string& lexeme, int line )
 : type_( type ),
   lexeme_( lexeme ),
-  line_( line ),
   identifier_(),
+  line_( line ),
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),

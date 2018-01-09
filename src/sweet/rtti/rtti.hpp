@@ -1,8 +1,3 @@
-//
-// rtti.hpp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_RTTI_RTTI_HPP_INCLUDED
 #define SWEET_RTTI_RTTI_HPP_INCLUDED
 
@@ -10,7 +5,7 @@
 #include "macros.hpp"
 #include "Type.hpp"
 
-#ifndef BUILD_MODULE_RTTI
+#if !defined BUILD_MODULE_RTTI && defined _MSC_VER
 #pragma comment( lib, "rtti" BUILD_LIBRARY_SUFFIX )
 #endif
 
@@ -59,4 +54,4 @@ namespace rtti
 
 };
 
-#endif  // #ifndef SWEET_RTTI_HPP_INCLUDED
+#endif

@@ -1,13 +1,14 @@
 
-Library {
-    id = "rtti";
-    
-    libraries = {
-        "assert/assert"
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do
+    build.Library ("rtti", architecture) {
+        libraries = {
+            "sweet/assert/assert"
+        };
+
+        build.Cxx (architecture) {
+            "Type.cpp",
+            "SweetTypeInfo.cpp"
+        };
     };
-    
-    Source {
-        "Type.cpp",
-        "SweetTypeInfo.cpp"
-    };
-}
+end

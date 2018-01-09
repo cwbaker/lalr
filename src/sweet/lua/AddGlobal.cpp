@@ -34,7 +34,7 @@ AddGlobal::AddGlobal( lua_State* lua )
 // @return
 //  This AddGlobal.
 */
-AddGlobal& AddGlobal::operator()( const char* name, const LuaNil& nil )
+AddGlobal& AddGlobal::operator()( const char* name, const LuaNil& /*nil*/ )
 {
     SWEET_ASSERT( lua_state_ );
     SWEET_ASSERT( name );
@@ -57,13 +57,13 @@ AddGlobal& AddGlobal::operator()( const char* name, const LuaNil& nil )
 // @return
 //  This AddGlobal.
 */
-AddGlobal& AddGlobal::operator()( const char* name, const LuaGlobalEnvironment& global_environment )
+AddGlobal& AddGlobal::operator()( const char* name, const LuaGlobalEnvironment& /*global_environment*/ )
 {
     SWEET_ASSERT( lua_state_ );
     SWEET_ASSERT( name );
 
     LuaStackGuard guard( lua_state_ );
-    lua_pushvalue( lua_state_, LUA_GLOBALSINDEX );
+    lua_pushglobaltable( lua_state_ );
     lua_setglobal( lua_state_, name );
     return *this;
 }

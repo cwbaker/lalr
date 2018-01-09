@@ -1,16 +1,7 @@
-//
-// AddParserActionHandler.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
 #define SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
 
-#if defined(BUILD_PLATFORM_MSVC)
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 namespace sweet
 {
@@ -27,8 +18,8 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 class AddParserActionHandler
 {
-    typedef std::tr1::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const ParserSymbol** symbol)> LexerActionFunction;
-    typedef std::tr1::function<UserData (const ParserSymbol* symbol, const ParserNode<UserData, Char, Traits, Allocator>* start, const ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
+    typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const ParserSymbol** symbol)> LexerActionFunction;
+    typedef std::function<UserData (const ParserSymbol* symbol, const ParserNode<UserData, Char, Traits, Allocator>* start, const ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
 
     Parser<Iterator, UserData, Char, Traits, Allocator>* parser_; ///< The Parser to add handlers to.
 

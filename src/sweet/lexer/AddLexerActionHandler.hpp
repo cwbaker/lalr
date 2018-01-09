@@ -22,7 +22,7 @@ template <class Iterator, class Char, class Traits, class Allocator> class Lexer
 template <class Iterator, class Char, class Traits, class Allocator>
 class AddLexerActionHandler
 {
-    typedef std::tr1::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
+    typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
 
     Lexer<Iterator, Char, Traits, Allocator>* lexer_; ///< The Lexer to add handlers to.
 

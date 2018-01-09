@@ -1,15 +1,16 @@
 //
 // TestLuaObject.cpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
 #include <sweet/lua/LuaTraits.hpp>
-#include <sweet/lua/Error.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <float.h>
 
+using namespace sweet;
 using namespace sweet::lua;
 
 struct Object
@@ -41,11 +42,13 @@ SUITE( TestLuaObject )
 {
     struct Fixture
     {
+        error::ErrorPolicy error_policy;
         Lua lua;
         Object object;
 
         Fixture()
-        : lua(),
+        : error_policy(),
+          lua( error_policy ),
           object()
         {
             lua.create( object );
@@ -461,6 +464,59 @@ SUITE( TestLuaObject )
         ;
 
         const char SCRIPT[] = "lua_object:function_1( {} );";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunction1").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunction1" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
+    
+    TEST_FIXTURE( Fixture, TestPassingDestroyedObjectGeneratesError )
+    {
+        lua.members( object )
+            ( "function_int", &Object::function_int )
+        ;        
+
+        lua.globals()( "lua_object", object );
+        CHECK( lua.is_value("lua_object") );
+        CHECK( lua.is_value(object, lua::THIS_KEYWORD) );
+
+        lua.destroy( object );
+        CHECK( lua.is_value("lua_object") );
+        
+        const char SCRIPT[] = "return lua_object:function_int( 0 ) == 0;";
+        bool result = false;
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionInt" ).end( &result );
+        CHECK( !result );
+        CHECK_EQUAL( 1, error_policy.errors() );
+   }
+    
+    TEST_FIXTURE( Fixture, TestPassingDestroyedObjectWithPrototypeThisPointerGeneratesError )
+    {
+        Object prototype;
+        lua.create( prototype );
+        lua.members( prototype )
+            .this_pointer( &prototype )
+        ;
+        
+        LuaObject metatable( lua );
+        metatable.members()
+            ( "__index", prototype )
+        ;
+    
+        lua.members( object )
+            .metatable( metatable )
+            ( "function_int", &Object::function_int )
+        ;        
+
+        lua.globals()( "lua_object", object );
+        CHECK( lua.is_value("lua_object") );
+        CHECK( lua.is_value(object, lua::THIS_KEYWORD) );
+
+        lua.destroy( object );
+        CHECK( lua.is_value("lua_object") );
+        
+        const char SCRIPT[] = "return lua_object:function_int( 0 ) == 0;";
+        bool result = false;
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionInt" ).end( &result );
+        CHECK( !result );
+        CHECK_EQUAL( 1, error_policy.errors() );
+   }
 }

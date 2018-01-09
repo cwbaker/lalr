@@ -1,12 +1,7 @@
-//
-// cmdline.hpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_CMDLINE_HPP_INCLUDED
 #define SWEET_CMDLINE_HPP_INCLUDED
 
-#ifndef BUILD_MODULE_CMDLINE
+#if defined(_MSC_VER) && !defined(BUILD_MODULE_CMDLINE)
 #pragma comment( lib, "cmdline" BUILD_LIBRARY_SUFFIX )
 #endif
 

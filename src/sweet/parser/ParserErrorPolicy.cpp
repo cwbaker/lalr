@@ -26,7 +26,7 @@ ParserErrorPolicy::~ParserErrorPolicy()
 //  The %Error that describes the %error that has occured.
 */
 void 
-ParserErrorPolicy::parser_error( int line, const error::Error& error )
+ParserErrorPolicy::parser_error( int /*line*/, const error::Error& /*error*/ )
 {
 }
 
@@ -40,6 +40,6 @@ ParserErrorPolicy::parser_error( int line, const error::Error& error )
 //  Arguments as described by \e format.
 */
 void 
-ParserErrorPolicy::parser_vprintf( const char* format, va_list args )
+ParserErrorPolicy::parser_vprintf( const char* /*format*/, va_list /*args*/ )
 {
 }

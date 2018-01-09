@@ -38,8 +38,7 @@ ParserGrammar::ParserGrammar( size_t actions_reserve, size_t productions_reserve
   symbols_(),
   start_symbol_( NULL ),
   end_symbol_( NULL ),
-  error_symbol_( NULL ),
-  index_( 0 )
+  error_symbol_( NULL )
 {
     actions_.reserve( actions_reserve );
     productions_.reserve( productions_reserve );
@@ -597,8 +596,6 @@ void ParserGrammar::check_for_error_symbol_on_left_hand_side_errors( ParserGener
     const vector<ptr<ParserProduction> >& productions = error_symbol_->get_productions();
     for ( vector<ptr<ParserProduction> >::const_iterator i = productions.begin(); i != productions.end(); ++i )
     {
-        const ParserProduction* production = i->get();
-        SWEET_ASSERT( production );
         generator->fire_error( 1, ErrorSymbolOnLeftHandSideError("The 'error' symbol appears on the left hand side of a production") );
     }
 }

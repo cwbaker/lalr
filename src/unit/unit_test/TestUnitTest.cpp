@@ -1,5 +1,5 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/ReportAssert.h>
+#include <unit/UnitTest.h>
+#include <unit/ReportAssert.h>
 #include "ScopedCurrentTest.h"
 
 #include <vector>

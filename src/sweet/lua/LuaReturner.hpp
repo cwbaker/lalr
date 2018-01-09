@@ -7,8 +7,9 @@
 #define SWEET_LUA_LUARETURNER_INCLUDED
 
 #include "LuaReturnerPolicy.hpp"
-#include "lua_/lua.h"
 #include <sweet/traits/traits.hpp>
+
+struct lua_State;
 
 namespace sweet
 {

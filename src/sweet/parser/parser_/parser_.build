@@ -1,27 +1,34 @@
 
-Executable {
-    id = "parser";
-    project_name = "parser_";
+build.push_settings {
+    subsystem = "CONSOLE"; 
+}; 
 
-    settings = { 
-        subsystem = "CONSOLE"; 
-    }; 
+build.all {
+    build.Executable "parser" {
+        project_name = "parser_";
 
-    libraries = {
-        "assert/assert",
-        "cmdline/cmdline",
-        "error/error",
-        "lexer/lexer",
-        "lua/lua",
-        "lua/lua_/liblua",
-        "parser/parser",
-        "pointer/pointer",
-        "rtti/rtti"
+        third_party_libraries = {
+            "boost_system"
+        };
+
+        libraries = {
+            "sweet/assert/assert",
+            "sweet/cmdline/cmdline",
+            "sweet/error/error",
+            "sweet/lexer/lexer",
+            "sweet/lua/lua",
+            "sweet/parser/parser",
+            "sweet/pointer/pointer",
+            "sweet/rtti/rtti",
+            "lua/liblua",
+        };
+        
+        build.Cxx () {
+            pch = "stdafx.hpp";
+            "Application.cpp", 
+            "main.cpp"
+        };
     };
-    
-    Source {
-        pch = "stdafx.hpp";
-        "Application.cpp", 
-        "main.cpp"
-    };
-}
+};
+
+build.pop_settings();

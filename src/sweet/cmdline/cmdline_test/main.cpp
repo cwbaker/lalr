@@ -1,12 +1,12 @@
 //
 // main.cpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestReporterStdout.h>
+#include <unit/UnitTest.h>
+#include <unit/TestReporterStdout.h>
 
-int main( int argc, char** argv )
+int main( int /*argc*/, char** /*argv*/ )
 {
     return UnitTest::RunAllTests();
 }

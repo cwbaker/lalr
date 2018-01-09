@@ -1,8 +1,3 @@
-//
-// assert.hpp
-// Copyright (c) 2006 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_ASSERT_ASSERT_HPP_INCLUDED
 #define SWEET_ASSERT_ASSERT_HPP_INCLUDED
 
@@ -16,12 +11,9 @@
 
 #include <sweet/build.hpp>
 
-#ifndef BUILD_MODULE_ASSERT
+#if !defined BUILD_MODULE_ASSERT && defined _MSC_VER
 #pragma comment( lib, "assert" BUILD_LIBRARY_SUFFIX )
 #endif
-
-namespace sweet
-{
 
 /**
  Assertion library.
@@ -35,20 +27,26 @@ namespace sweet
  doesn't work.  Lua code uses assertions in expressions in a way that requires
  they be in a function. 
 */
-namespace assert
+
+#ifdef __cplusplus
+extern "C"
 {
+#endif
 
-SWEET_ASSERT_DECLSPEC void sweet_break();
-SWEET_ASSERT_DECLSPEC void sweet_assert( bool expression, const char* description, const char* file, int line );
-
+SWEET_ASSERT_DECLSPEC void sweet_break( void );
+SWEET_ASSERT_DECLSPEC void sweet_assert( int expression, const char* description, const char* file, int line );
+SWEET_ASSERT_DECLSPEC void sweet_assert_with_break( int expression, const char* description, const char* file, int line );
+   
+#ifdef __cplusplus
 }
-
-}
+#endif
 
 #ifdef _MSC_VER
 #define SWEET_BREAK() __debugbreak()
+#elif defined(BUILD_OS_MACOSX)
+#define SWEET_BREAK() __asm__("int $3")
 #else
-#define SWEET_BREAK() sweet::assert::sweet_break()
+#define SWEET_BREAK() sweet_break()
 #endif
 
 #ifdef SWEET_ASSERT_ENABLED
@@ -57,14 +55,17 @@ SWEET_ASSERT_DECLSPEC void sweet_assert( bool expression, const char* descriptio
 do { \
     if ( !(x) ) \
     { \
-        sweet::assert::sweet_assert( false, #x, __FILE__, __LINE__ ); \
+        sweet_assert( false, #x, __FILE__, __LINE__ ); \
         SWEET_BREAK(); \
     } \
 } while ( false )
 
 #else
 
+#ifdef _MSC_VER
 #pragma warning( disable: 4127 )
+#endif
+
 #define SWEET_ASSERT( x )
 
 #endif

@@ -1,8 +1,3 @@
-//
-// declspec.hpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef UNITTEST_DECLSPEC_HPP
 #define UNITTEST_DECLSPEC_HPP
 

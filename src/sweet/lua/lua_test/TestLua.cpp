@@ -1,21 +1,30 @@
 //
 // TestLua.cpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
-#include <sweet/lua/Error.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
+
 #include <float.h>
 
+using namespace sweet;
 using namespace sweet::lua;
 
 SUITE( TestLua )
 {
     struct Fixture
     {
+        error::ErrorPolicy error_policy;
         Lua lua;
+
+        Fixture()
+        : error_policy(),
+          lua( error_policy )
+        {
+        }
 
         static void void_function() {};
         static bool bool_function() { return true; };
@@ -378,7 +387,8 @@ SUITE( TestLua )
         ;
 
         const char SCRIPT[] = "return function_bool({}, false);";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionBool").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionBool" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
 
     TEST_FIXTURE( Fixture, TestIntTypeError )
@@ -388,7 +398,8 @@ SUITE( TestLua )
         ;
 
         const char SCRIPT[] = "return function_int({}, 2);";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionInt").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionInt" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
 
     TEST_FIXTURE( Fixture, TestFloatTypeError )
@@ -398,7 +409,8 @@ SUITE( TestLua )
         ;
 
         const char SCRIPT[] = "return function_float({}, 2.0) == 1.0 + 2.0;";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionFloat").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionFloat" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
 
     TEST_FIXTURE( Fixture, TestStringTypeError )
@@ -408,18 +420,21 @@ SUITE( TestLua )
         ;
 
         const char SCRIPT[] = "return function_string({}, \"bar\");";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionString").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "TestFunctionString" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
     
     TEST_FIXTURE( Fixture, AssertIsHandledByCxx )
     {
         const char SCRIPT[] = "assert( false, 'Assert in Lua script test' );";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "AssertIsHandledByCxx").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "AssertIsHandledByCxx" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
 
     TEST_FIXTURE( Fixture, AssertWithoutErrorMessageIsHandledByCxx )
     {
         const char SCRIPT[] = "assert( false );";
-        CHECK_THROW( lua.call(SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "AssertWithoutErrorMessageIsHandledByCxx").end(), RuntimeError );
+        lua.call( SCRIPT, SCRIPT + sizeof(SCRIPT) - 1, "AssertWithoutErrorMessageIsHandledByCxx" ).end();
+        CHECK_EQUAL( 1, error_policy.errors() );
     }
 }

@@ -1,6 +1,6 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/TestList.h>
-#include <sweet/unit/Test.h>
+#include <unit/Config.h>
+#include <unit/TestList.h>
+#include <unit/Test.h>
 
 #include <cassert>
 

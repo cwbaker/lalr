@@ -1,4 +1,5 @@
 
-Library {
-    id = "utility";
-}
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do    
+    build.Library ("utility", architecture);
+end

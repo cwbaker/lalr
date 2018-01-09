@@ -1,5 +1,5 @@
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/cmdline/Splitter.hpp>
 #include <sweet/assert/assert.hpp>
 #include <string.h>

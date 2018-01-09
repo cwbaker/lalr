@@ -1,5 +1,5 @@
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/cmdline/Parser.hpp>
 
 using namespace sweet::cmdline;

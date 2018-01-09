@@ -1,6 +1,6 @@
 //
 // LuaThread.ipp
-// Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2009 - 2014 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_LUATHREAD_IPP_INCLUDED

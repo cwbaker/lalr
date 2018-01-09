@@ -1,6 +1,6 @@
 //
 // LuaMemoryReader.cpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
 #include "LuaMemoryReader.hpp"
@@ -44,7 +44,9 @@ const char* LuaMemoryReader::read( size_t* size )
 }
 
 /**
-// @param lua
+// Read data from this LuaMemoryReader.
+//
+// @param lua_state
 //  The lua_State.
 //
 // @param context
@@ -58,7 +60,7 @@ const char* LuaMemoryReader::read( size_t* size )
 // @return
 //  A pointer to the begining of the block.
 */
-const char* LuaMemoryReader::reader( lua_State* lua, void* context, size_t* size )
+const char* LuaMemoryReader::reader( lua_State* /*lua_state*/, void* context, size_t* size )
 {
     SWEET_ASSERT( context );
     LuaMemoryReader* reader = reinterpret_cast<LuaMemoryReader*>( context );

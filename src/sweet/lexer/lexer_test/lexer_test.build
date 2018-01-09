@@ -1,18 +1,21 @@
 
-Executable {
-    id = "lexer_test";
+build.all {
+    build.Executable "lexer_test" {
+        third_party_libraries = {
+            "boost_system"
+        };
 
-    libraries = {
-        "assert/assert",
-        "error/error",
-        "lexer/lexer",
-        "pointer/pointer",
-        "unit/libUnitTest"
-    };
+        libraries = {
+            "sweet/assert/assert",
+            "sweet/error/error",
+            "sweet/lexer/lexer",
+            "sweet/pointer/pointer",
+            "unit/libUnitTest"
+        };
 
-    Source {
-        pch = "stdafx.hpp";
-        "main.cpp",
-        "TestRegularExpressions.cpp"
+        build.Cxx () {
+            "main.cpp",
+            "TestRegularExpressions.cpp"
+        };
     };
-}
+};

@@ -1,11 +1,7 @@
-//
-// Application.hpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
-//
-
 #ifndef APPLICATION_HPP_INCLUDED
 #define APPLICATION_HPP_INCLUDED
 
+#include <sweet/error/ErrorPolicy.hpp>
 #include <sweet/pointer/ptr.hpp>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
@@ -38,6 +34,7 @@ class ParserProduction;
 class Application
 {
     int result_;
+    error::ErrorPolicy error_policy_;
     lua::Lua lua_;
     lua::LuaObject parser_state_machine_prototype_;
     lua::LuaObject parser_state_machine_metatable_;

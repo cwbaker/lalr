@@ -4,6 +4,7 @@
 //
 
 #include "LuaStackGuard.hpp"
+#include <lua/lua.hpp>
 #include <sweet/assert/assert.hpp>
 
 using namespace sweet::lua;

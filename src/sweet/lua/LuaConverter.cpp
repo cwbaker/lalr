@@ -1,10 +1,12 @@
 //
 // LuaConverter.cpp
-// Copyright (c) 2007 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2013 Charles Baker.  All rights reserved.
 //
 
 #include "LuaConverter.hpp"
+#include <lua/lua.hpp>
 #include <sweet/assert/assert.hpp>
+#include <math.h>
 
 using namespace sweet::lua;
 
@@ -87,7 +89,7 @@ int LuaConverter<int>::to( lua_State* lua, int position )
         lua_pushfstring( lua, "The type '%s' is not an integer as expected", lua_typename(lua, lua_type(lua, position)) );
         lua_error( lua );
     }
-    return lua_tointeger( lua, position );
+    return static_cast<int>(floorf(float(lua_tonumber(lua, position))));
 }
 
 /**
@@ -146,6 +148,31 @@ void LuaConverter<std::string>::push( lua_State* lua_state, const std::string& v
     lua_pushlstring( lua_state, value.c_str(), value.length() );
 }
 
+/**
+// Push the Lua value corresponding to \e value onto the Lua stack.
+//
+// @param lua_state
+//  The lua_State to push the value onto the stack of.
+//
+// @param value
+//  The value to push
+*/
+void LuaConverter<LuaValue>::push( lua_State* lua_state, const LuaValue& value )
+{
+    SWEET_ASSERT( lua_state );
+    lua_pushlightuserdata( lua_state, const_cast<LuaValue*>(&value) );
+    lua_gettable( lua_state, LUA_REGISTRYINDEX );
+}
+
+/**
+// Push the Lua value corresponding to \e value onto the Lua stack.
+//
+// @param lua_state
+//  The lua_State to push the value onto the stack of.
+//
+// @param value
+//  The value to push
+*/
 void LuaConverter<const LuaValue&>::push( lua_State* lua_state, const LuaValue& value )
 {
     SWEET_ASSERT( lua_state );

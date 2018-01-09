@@ -6,11 +6,7 @@
 #ifndef SWEET_LEXER_LEXER_HPP_INCLUDED
 #define SWEET_LEXER_LEXER_HPP_INCLUDED
 
-#if defined(BUILD_PLATFORM_MSVC)
 #include <functional>
-#else
-#include <tr1/functional>
-#endif
 
 namespace sweet
 {
@@ -29,7 +25,7 @@ class LexerErrorPolicy;
 template <class Iterator, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class Lexer
 {
-    typedef std::tr1::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
+    typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
 
     struct LexerActionHandler
     {

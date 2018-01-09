@@ -63,10 +63,10 @@ ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy*
   actions_(),
   productions_(),
   symbols_(),
+  states_(),
   start_symbol_( NULL ),
   end_symbol_( NULL ),
   error_symbol_( NULL ),
-  states_(),
   start_state_( NULL ),
   lexer_state_machine_()
 {
@@ -111,10 +111,10 @@ ParserStateMachine::ParserStateMachine( const char* start, const char* finish, P
   actions_(),
   productions_(),
   symbols_(),
+  states_(),
   start_symbol_( NULL ),
   end_symbol_( NULL ),
   error_symbol_( NULL ),
-  states_(),
   start_state_( NULL ),
   lexer_state_machine_()
 {

@@ -578,14 +578,11 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
         {
             case TRANSITION_SHIFT:
             {
-                const ParserProduction* other_production = transition->get_reduced_production();
-                SWEET_ASSERT( !other_production );
-
-                if ( production->get_precedence() == 0 || symbol->get_precedence() == 0 || symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_NULL )
+                if ( production->get_precedence() == 0 || symbol->get_precedence() == 0 || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_NULL) )
                 {
                     fire_error( production->get_line(), ParseTableConflictError("Shift/reduce conflict on '%s' for '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str()) );
                 }
-                else if ( production->get_precedence() > symbol->get_precedence() || symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_RIGHT )
+                else if ( production->get_precedence() > symbol->get_precedence() || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_RIGHT) )
                 {
                     transition->override_shift_to_reduce( production );
                 }

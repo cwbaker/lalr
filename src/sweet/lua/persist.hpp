@@ -1,10 +1,7 @@
-//
-// persist.hpp
-// Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_PERSIST_HPP_INCLUDED
 #define SWEET_LUA_PERSIST_HPP_INCLUDED
+
+#include <sweet/traits/traits.hpp>
 
 namespace sweet
 {

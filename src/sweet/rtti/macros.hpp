@@ -1,8 +1,3 @@
-//
-// macros.hpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_RTTI_MACROS_HPP_INCLUDED
 #define SWEET_RTTI_MACROS_HPP_INCLUDED
 

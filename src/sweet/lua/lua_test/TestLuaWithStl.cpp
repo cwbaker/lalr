@@ -1,22 +1,25 @@
 //
 // TestLuaWithStl.cpp
-// Copyright (c) 2008 - 2010 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/vector.hpp>
 #include <sweet/lua/list.hpp>
 #include <sweet/lua/set.hpp>
 #include <sweet/lua/map.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 
 using std::make_pair;
+using namespace sweet;
 using namespace sweet::lua;
 
 SUITE( TestLuaWithStl )
 {
     struct Fixture
     {
+        error::ErrorPolicy error_policy_;
         Lua lua_;
         std::vector<int> int_vector_;
         std::list<int> int_list_;
@@ -24,6 +27,18 @@ SUITE( TestLuaWithStl )
         std::multiset<int> int_multiset_;
         std::map<int, int> int_map_;
         std::multimap<int, int> int_multimap_;
+
+        Fixture()
+        : error_policy_(),
+          lua_( error_policy_ ),
+          int_vector_(),
+          int_list_(),
+          int_set_(),
+          int_multiset_(),
+          int_map_(),
+          int_multimap_()
+        {
+        }
 
         const std::vector<int>& int_vector() const
         {

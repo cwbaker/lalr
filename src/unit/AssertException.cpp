@@ -1,5 +1,5 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/AssertException.h>
+#include <unit/Config.h>
+#include <unit/AssertException.h>
 #include <cstring>
 
 namespace UnitTest {

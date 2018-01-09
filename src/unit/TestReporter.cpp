@@ -1,5 +1,5 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/TestReporter.h>
+#include <unit/Config.h>
+#include <unit/TestReporter.h>
 
 namespace UnitTest {
 

@@ -1,6 +1,6 @@
 //
 // AddParameter.cpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2014 Charles Baker.  All rights reserved.
 //
 
 #include "AddParameter.hpp"
@@ -144,6 +144,22 @@ AddParameter& AddParameter::operator()( const std::string& value )
 }
 
 /**
+// Push an object (identified by its address) onto the stack.
+//
+// @param value
+//  The address of the object to push onto the stack.
+//
+// @return
+//  This AddParameter.
+*/
+AddParameter& AddParameter::operator()( void* value )
+{
+    add_parameter_helper_->push( value );
+    return *this;
+}
+
+
+/**
 // Copy the values on the stack in the range [\e begin, \e end) onto the top 
 // of the stack to act as parameters to this call.
 //
@@ -160,6 +176,29 @@ AddParameter& AddParameter::operator()( const std::string& value )
 AddParameter& AddParameter::copy_values_from_stack( int begin, int end )
 {
     add_parameter_helper_->copy_values_from_stack( begin, end );
+    return *this;
+}
+
+/**
+// Copy the values on the stack in \e lua_state in the range [\e begin, 
+// \e end) onto the top of the stack to act as parameters to this call.
+//
+// Relative offsets represented by negative stack indices cannot be passed as
+// the value of \e begin or \e end.  They must be positive values.
+//
+// @param lua_state
+//  The Lua state whose stack the values are copied from (assumed not null).
+//
+// @param begin
+//  The position on the stack to start copying values from (assumed >= 1).
+//
+// @param end
+//  One past the last position on the stack to copy values from 
+//  (assumed >= \e begin).
+*/
+AddParameter& AddParameter::copy_values_from_stack( lua_State* lua_state, int begin, int end )
+{
+    add_parameter_helper_->copy_values_from_stack( lua_state, begin, end );
     return *this;
 }
 
@@ -262,4 +301,42 @@ void AddParameter::end( void** return_value )
 {
     SWEET_ASSERT( return_value );
     add_parameter_helper_->end( return_value );
+}
+
+/**
+// Call the function and retrieve an arbitrary return value.
+//
+// @param return_value
+//  A pointer to the LuaValue to store a reference to the returned value with
+//  (assumed not null).
+*/
+void AddParameter::end( LuaValue* return_value )
+{
+    SWEET_ASSERT( return_value );
+    add_parameter_helper_->end( return_value );
+}
+
+/**
+// Call the function and add an event sink to be handle returns and errors.
+//
+// This is only valid for calls that are resumed (not those that are called
+// and expected to return immediately).  Multiple calls will simply overwrite
+// the previous return function and/or context.
+//
+// The events are dispatched when the LuaThread returns successfully or 
+// generates an error as detected by LuaThreadPool::end_call().  The callback
+// is never dispatched if the LuaThread isn't passed through 
+// LuaThreadPool::end_call().
+//
+// @param event_sink
+//  The event sink to fire events at when the call returns or generates an 
+//  error (assumed not null).
+//
+// @param context
+//  The context to pass to the call.
+*/
+void AddParameter::end( LuaThreadEventSink* event_sink, void* context )
+{
+    SWEET_ASSERT( event_sink );
+    add_parameter_helper_->end( event_sink, context );
 }

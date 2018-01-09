@@ -4,7 +4,7 @@
 //
 
 #include "stdafx.hpp"
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lexer/LexerStateMachine.hpp>
 #include <sweet/lexer/Lexer.ipp>
 #include <sweet/lexer/PositionIterator.hpp>

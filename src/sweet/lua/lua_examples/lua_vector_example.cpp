@@ -2,11 +2,13 @@
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/vector.hpp>
 #include <sweet/rtti/macros.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <string>
 #include <string.h>
 
 using std::string;
 using std::vector;
+using namespace sweet;
 using namespace sweet::lua;
 
 struct Target
@@ -38,7 +40,8 @@ void lua_vector_example()
     target.add_value( "two" );
     target.add_value( "three" );
 
-    Lua lua;
+    error::ErrorPolicy error_policy;
+    Lua lua( error_policy );
     lua.create( target );
     lua.members( target )
         .type( SWEET_STATIC_TYPEID(Target) )

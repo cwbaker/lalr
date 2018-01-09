@@ -132,6 +132,36 @@ AddOption& AddOption::operator()( const std::string& name, const std::string& sh
 }
 
 /**
+// Add a vector of string Options.
+//
+// This allows the option to specified multiple times on the command line 
+// with each subsequent specification appending its value to the vector of 
+// strings provided.
+//
+// @param name
+//  The name of the Option to add (or an empty string if the Option
+//  doesn't have a name).
+//
+// @param short_name
+//  The short name of the Option to add (or an empty string if the Option
+//  doesn't have a short name).
+//
+// @param description
+//  The description of the Option to be displayed when it is printed.
+//
+// @param address
+//  The address of the std::string that the Option sets the value of.
+//
+// @return
+//  This AddOption.
+*/
+AddOption& AddOption::operator()( const std::string& name, const std::string& short_name, const std::string& description, std::vector<std::string>* values )
+{
+    options_->push_back( Option(name, short_name, description, values, OPTION_STRING_VECTOR) );
+    return *this;
+}
+
+/**
 // Set the vector of strings to store operands from the command line in.
 //
 // @param operands

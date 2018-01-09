@@ -1,29 +1,34 @@
 
 buildfile "lexer_test/lexer_test.build";
 
-Library {
-    id = "lexer";
-    
-    libraries = {
-        "assert/assert",
-        "error/error",
-        "pointer/pointer"
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do    
+    local lexer = build.Library ("lexer", architecture) {
+        build.Cxx (architecture) {
+            "Error.cpp",        
+            "LexerAction.cpp",
+            "LexerErrorPolicy.cpp",
+            "LexerGenerator.cpp",
+            "LexerItem.cpp",
+            "LexerState.cpp",
+            "LexerStateMachine.cpp",
+            "LexerToken.cpp",
+            "LexerTransition.cpp",
+            "RegexCharacter.cpp",
+            "RegexNode.cpp",
+            "RegexNodeLess.cpp"
+        };
     };
 
-    Source {
-        pch = "stdafx.hpp";
-        "Error.cpp",        
-        "LexerAction.cpp",
-        "LexerErrorPolicy.cpp",
-        "LexerGenerator.cpp",
-        "LexerItem.cpp",
-        "LexerState.cpp",
-        "LexerStateMachine.cpp",
-        "LexerToken.cpp",
-        "LexerTransition.cpp",
-        "RegexCharacter.cpp",
-        "RegexNode.cpp",
-        "RegexNodeLess.cpp",
-        "RegexParser.cpp"
+    build.push_settings {
+        warning_level = 0;
     };
-}
+
+    lexer {
+        build.Cxx (architecture) {
+            "RegexParser.cpp",
+        };
+    };
+
+    build.pop_settings();
+end

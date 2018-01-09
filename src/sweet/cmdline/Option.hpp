@@ -25,7 +25,8 @@ enum OptionType
     OPTION_BOOL,
     OPTION_INT,
     OPTION_FLOAT,
-    OPTION_STRING
+    OPTION_STRING,
+    OPTION_STRING_VECTOR
 };
 
 /**

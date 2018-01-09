@@ -1,12 +1,15 @@
 
 #include <sweet/lua/Lua.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <string.h>
 
+using namespace sweet;
 using namespace sweet::lua;
 
 void lua_factorial_example()
 {
-    Lua lua;
+    error::ErrorPolicy error_policy;
+    Lua lua( error_policy );
 
     const char* script = 
         "function factorial(n) \n"

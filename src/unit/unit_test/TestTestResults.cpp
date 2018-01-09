@@ -1,5 +1,5 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestResults.h>
+#include <unit/UnitTest.h>
+#include <unit/TestResults.h>
 #include "RecordingReporter.h"
 
 using namespace UnitTest;

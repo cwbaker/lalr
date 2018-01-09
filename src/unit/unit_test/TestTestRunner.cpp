@@ -1,9 +1,9 @@
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include "RecordingReporter.h"
-#include <sweet/unit/ReportAssert.h>
-#include <sweet/unit/TestList.h>
-#include <sweet/unit/TimeHelpers.h>
-#include <sweet/unit/TimeConstraint.h>
+#include <unit/ReportAssert.h>
+#include <unit/TestList.h>
+#include <unit/TimeHelpers.h>
+#include <unit/TimeConstraint.h>
 
 using namespace UnitTest;
 

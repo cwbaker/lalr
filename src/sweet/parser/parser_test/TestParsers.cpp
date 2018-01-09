@@ -1,6 +1,6 @@
 //
 // TestParsers.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #include "stdafx.hpp"
@@ -12,11 +12,12 @@
 #include <sweet/parser/Error.hpp>
 #include <sweet/lexer/Error.hpp>
 #include <sweet/lexer/LexerErrorPolicy.hpp>
-#include <boost/bind.hpp>
-#include <sweet/unit/UnitTest.h>
+#include <functional>
+#include <unit/UnitTest.h>
 #include <string.h>
 
-using boost::bind;
+using std::bind;
+using namespace std::placeholders;
 using namespace sweet;
 using namespace sweet::lexer;
 using namespace sweet::parser;
@@ -26,7 +27,7 @@ SUITE( Parsers )
     class IgnoreParserErrorPolicy : public ParserErrorPolicy
     {
         public:
-            void parser_error( int line, const error::Error& error )
+            void parser_error( int /*line*/, const error::Error& /*error*/ )
             {
             }
     };
@@ -56,8 +57,9 @@ SUITE( Parsers )
         {
         }
 
-        void parser_error( int line, const error::Error& error )
+        void parser_error( int /*line*/, const error::Error& error )
         {
+            (void) error;
             ++errors_;
             CHECK( error.error() == expected_error_ );
         }
@@ -74,8 +76,9 @@ SUITE( Parsers )
         {
         }
 
-        void lexer_error( int line, const error::Error& error )
+        void lexer_error( int /*line*/, const error::Error& error )
         {
+            (void) error;
             ++errors_;
             CHECK( error.error() == expected_error_ );
         }
@@ -976,7 +979,7 @@ SUITE( Parsers )
             Parser<const char*> parser( &parser_state_machine );
             LexerConflictResolutionActionHandler action_handler( parser_state_machine );
             parser.lexer_action_handlers()
-                ( "prototype", boost::bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4) )
+                ( "prototype", bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4) )
             ;
 
             const char* input = "prototype { prototype { value value } value value }";

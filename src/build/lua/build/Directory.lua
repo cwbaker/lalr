@@ -1,12 +1,13 @@
 
-DirectoryPrototype = TargetPrototype { "Directory", BIND_DIRECTORY };
+Directory = build.TargetPrototype( "Directory" );
 
-function DirectoryPrototype.build( directory )
-    if directory:is_outdated() then
-        mkdir( directory:get_filename() );
-    end
+function Directory.create( settings, id )
+	return build.File( id, Directory );
 end
 
-function Directory( directory )
-	return target( directory, DirectoryPrototype );
+function Directory.build( directory )
+    build.mkdir( directory:filename() );
+end
+
+function Directory.clean( directory )
 end

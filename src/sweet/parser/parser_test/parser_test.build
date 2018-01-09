@@ -1,20 +1,23 @@
 
-Executable {
-    id = "parser_test";
-    
-    libraries = {
-        "assert/assert", 
-        "error/error",
-        "lexer/lexer",
-        "parser/parser",
-        "pointer/pointer",
-        "unit/libUnitTest"
-    };
+build.all {
+    build.Executable "parser_test" {
+        third_party_libraries = {
+            "boost_system"
+        };
 
-    Source {
-        pch = "stdafx.hpp";
-        "main.cpp",
-        "TestParsers.cpp",
-        "TestPrecedenceDirectives.cpp"
+        libraries = {
+            "sweet/assert/assert", 
+            "sweet/error/error",
+            "sweet/lexer/lexer",
+            "sweet/parser/parser",
+            "sweet/pointer/pointer",
+            "unit/libUnitTest"
+        };
+
+        build.Cxx () {
+            "main.cpp",
+            "TestParsers.cpp",
+            "TestPrecedenceDirectives.cpp"
+        };
     };
-}
+};

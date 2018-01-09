@@ -1,16 +1,17 @@
 
 buildfile "pointer_test/pointer_test.build";
 
-Library {
-    id = "pointer";
-    
-    libraries = {
-        "assert/assert",
-        "error/error"
-    };
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do
+    build.Library ("pointer", architecture) {
+        libraries = {
+            "sweet/assert/assert",
+            "sweet/error/error"
+        };
 
-    Source {
-        pch = "stdafx.hpp";
-        "ReferenceCount.cpp"
+        build.Cxx (architecture) {
+            precompiled_header = "stdafx.hpp";
+            "ReferenceCount.cpp"
+        };
     };
-}
+end

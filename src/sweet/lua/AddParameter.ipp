@@ -1,6 +1,6 @@
 //
 // AddParameter.ipp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) 2007 - 2014 Charles Baker.  All rights reserved.
 //
 
 #ifndef SWEET_LUA_ADDPARAMETER_IPP_INCLUDED
@@ -23,6 +23,24 @@ sweet::lua::AddParameter& sweet::lua::AddParameter::operator()( const Type& valu
 {
     SWEET_ASSERT( add_parameter_helper_ );
     add_parameter_helper_->push<Type>( value );
+    return *this;
+}
+
+/**
+// Push a value onto the Lua stack as userdata with a metatable.
+//
+// @param value
+//  The value to push onto the Lua stack as userdata.
+//
+// @param metatable
+//  The LuaObject for the Lua table to set as the value's metatable (assumed 
+//  not null).
+*/
+template <typename Type> 
+sweet::lua::AddParameter& sweet::lua::AddParameter::operator()( const Type& value, LuaObject* metatable )
+{
+    SWEET_ASSERT( metatable );
+    add_parameter_helper_->push<Type>( value, metatable );
     return *this;
 }
 

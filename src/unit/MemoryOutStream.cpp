@@ -1,5 +1,5 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/MemoryOutStream.h>
+#include <unit/Config.h>
+#include <unit/MemoryOutStream.h>
 
 #ifndef UNITTEST_USE_CUSTOM_STREAMS
 

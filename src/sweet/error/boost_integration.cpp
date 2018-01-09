@@ -5,6 +5,7 @@
 
 #include "stdafx.hpp"
 #include <sweet/build.hpp>
+#include <sweet/error/functions.hpp>
 #include <sweet/assert/assert.hpp>
 
 #ifndef SWEET_EXCEPTIONS_ENABLED

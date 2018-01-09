@@ -1,22 +1,25 @@
 
-Executable {
-    id = "lua_examples";
-    
-    libraries = {
-        "lua/lua",
-        "lua/lua_/liblua",
-        "rtti/rtti",
-        "error/error",
-        "assert/assert"
-    };
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do
+    build.all {
+        build.Executable ("${bin}/lua_examples", architecture) {
+            libraries = {
+                "lua/liblua",
+                "sweet/lua/lua",
+                "sweet/rtti/rtti",
+                "sweet/error/error",
+                "sweet/assert/assert"
+            };
 
-    Source {
-        "lua_factorial_example.cpp",
-        "lua_hello_world_example.cpp",
-        "lua_logging_example.cpp",
-        "lua_logging_owned_by_lua_example.cpp",
-        "lua_logging_prototype_example.cpp",
-        "lua_vector_example.cpp",
-        "main.cpp"
+            build.Cxx (architecture) {
+                "lua_factorial_example.cpp",
+                "lua_hello_world_example.cpp",
+                "lua_logging_example.cpp",
+                "lua_logging_owned_by_lua_example.cpp",
+                "lua_logging_prototype_example.cpp",
+                "lua_vector_example.cpp",
+                "main.cpp"
+            };
+        };
     };
-}
+end

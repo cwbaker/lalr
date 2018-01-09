@@ -31,6 +31,7 @@ class LuaUserDataTemplate : public LuaUserData
         LuaUserDataTemplate( const LuaUserDataTemplate& user_data );
         LuaUserDataTemplate& operator=( const LuaUserDataTemplate& user_data );
         typename traits::traits<UserType>::reference_type value();
+        UserType* address();
 };
 
 }

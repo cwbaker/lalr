@@ -1,6 +1,6 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/TimeHelpers.h>
+#include <unit/UnitTest.h>
+#include <unit/TestResults.h>
+#include <unit/TimeHelpers.h>
 #include "RecordingReporter.h"
 #include "ScopedCurrentTest.h"
 

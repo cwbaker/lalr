@@ -1,5 +1,5 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/CurrentTest.h>
+#include <unit/Config.h>
+#include <unit/CurrentTest.h>
 #include <cstddef>
 
 namespace UnitTest {

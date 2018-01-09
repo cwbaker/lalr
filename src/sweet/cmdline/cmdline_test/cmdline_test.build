@@ -1,17 +1,17 @@
 
-Executable {
-    id = "cmdline_test";
+build.all {
+    build.Executable "${bin}/cmdline_test" {
+        libraries = {
+            "sweet/cmdline/cmdline",
+            "sweet/error/error",
+            "sweet/assert/assert",
+            "unit/libUnitTest"
+        };
 
-    libraries = {
-        "cmdline/cmdline",
-        "error/error",
-        "assert/assert",
-        "unit/libUnitTest"
+        build.Cxx () {
+            "main.cpp",
+            "TestParser.cpp",
+            "TestSplitter.cpp"
+        };
     };
-
-    Source {
-        "main.cpp",
-        "TestParser.cpp",
-        "TestSplitter.cpp"
-    };
-}
+};

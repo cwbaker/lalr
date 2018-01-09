@@ -1,5 +1,5 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestList.h>
+#include <unit/UnitTest.h>
+#include <unit/TestList.h>
 
 using namespace UnitTest;
 

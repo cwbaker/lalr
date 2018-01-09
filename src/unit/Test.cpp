@@ -1,13 +1,13 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/Test.h>
-#include <sweet/unit/TestList.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/AssertException.h>
-#include <sweet/unit/MemoryOutStream.h>
-#include <sweet/unit/ExecuteTest.h>
+#include <unit/Config.h>
+#include <unit/Test.h>
+#include <unit/TestList.h>
+#include <unit/TestResults.h>
+#include <unit/AssertException.h>
+#include <unit/MemoryOutStream.h>
+#include <unit/ExecuteTest.h>
 
 #ifdef UNITTEST_POSIX
-    #include <sweet/unit/Posix/SignalTranslator.h>
+    #include <unit/Posix/SignalTranslator.h>
 #endif
 
 namespace UnitTest {

@@ -1,6 +1,6 @@
 //
 // Parser.cpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
 #include "Parser.hpp"
@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+using std::string;
 using std::vector;
 using namespace sweet::cmdline;
 
@@ -123,8 +124,10 @@ void Parser::print( FILE* stream, int width ) const
     {
         fprintf( stream, "  " );
 
+        int width_adjustment = 4;
         if ( !option->get_short_name().empty() )
         {
+            width_adjustment = 0;
             fprintf( stream, "-%s", option->get_short_name().c_str() );
         }
 
@@ -135,7 +138,7 @@ void Parser::print( FILE* stream, int width ) const
                 fprintf( stream, ", " );
             }
 
-            fprintf( stream, "--%-*s", width, option->get_name().c_str() );
+            fprintf( stream, "--%-*s", width + width_adjustment, option->get_name().c_str() );
         }
 
         fprintf( stream, " %s.", option->get_description().c_str() );
@@ -359,6 +362,13 @@ int Parser::parse_option( const Option* option, const char* argument, const char
         {
             std::string* address = static_cast<std::string*>( option->get_address() );
             *address = argument;
+            break;
+        }
+
+        case OPTION_STRING_VECTOR:
+        {
+            vector<string>* address = static_cast<vector<string>*>( option->get_address() );
+            address->push_back( string(argument) );
             break;
         }
 

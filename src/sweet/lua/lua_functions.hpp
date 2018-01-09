@@ -1,6 +1,6 @@
 //
 // lua_functions.hpp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #ifndef SWEET_LUA_FUNCTIONS_HPP_INCLUDED
@@ -11,7 +11,6 @@
 #include "LuaValueWrapper.hpp"
 #include "LuaPolicyWrapper.hpp"
 #include "LuaReturnerPolicy.hpp"
-#include "lua_/lua.h"
 #include <sweet/traits/traits.hpp>
 #include <string>
 
@@ -44,9 +43,15 @@ template <class Type> void lua_push( lua_State* lua_state, const Type* value );
 SWEET_LUA_DECLSPEC void lua_create_object( lua_State* lua_state, void* object );
 SWEET_LUA_DECLSPEC void lua_create_object_with_existing_table( lua_State* lua_state, void* object );
 SWEET_LUA_DECLSPEC void lua_destroy_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC void lua_remove_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC void lua_swap_object( lua_State* lua_state, void* object, void* other_object );
+SWEET_LUA_DECLSPEC bool lua_is_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC bool lua_is_weak_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC bool lua_is_object( lua_State* lua, int position, const rtti::Type& type );
 SWEET_LUA_DECLSPEC void lua_weaken_object( lua_State* lua_state, void* object );
 SWEET_LUA_DECLSPEC void lua_strengthen_object( lua_State* lua_state, void* object );
-SWEET_LUA_DECLSPEC void lua_push_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC bool lua_push_object( lua_State* lua_state, void* object );
+SWEET_LUA_DECLSPEC void* lua_to_object( lua_State* lua_state, int position );
 SWEET_LUA_DECLSPEC void* lua_to_object( lua_State* lua_state, int position, const rtti::Type& type );
 template <class Type> void lua_push_value( lua_State* lua_state, typename traits::traits<Type>::parameter_type value );
 template <class Type> typename traits::traits<Type>::reference_type lua_to_value( lua_State* lua_state, int position );

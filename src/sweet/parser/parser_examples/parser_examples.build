@@ -1,26 +1,24 @@
 
-Executable {
-    id = "parser_examples";
-    
-    libraries = {
-        "assert/assert",
-        "error/error",
-        "lexer/lexer",
-        "parser/parser",
-        "pointer/pointer"
-    };
+build.all {
+    build.Executable "parser_examples" {
+        libraries = {
+            "assert/assert",
+            "error/error",
+            "lexer/lexer",
+            "parser/parser",
+            "pointer/pointer"
+        };
 
-    Source {
-        "main.cpp",
-        "parser_hello_world_example.cpp",
-        "parser_hello_world_with_grammar_example.cpp",
-        "parser_json_example.cpp",
-        "parser_calculator_example.cpp",
-        "parser_calculator_with_grammar_example.cpp",
-        "parser_xml_example.cpp"        
-    };
+        build.Cxx () {
+            "main.cpp",
+            "parser_hello_world_example.cpp",
+            "parser_hello_world_with_grammar_example.cpp",
+            "parser_json_example.cpp",
+            "parser_calculator_example.cpp",
+            "parser_calculator_with_grammar_example.cpp",
+            "parser_xml_example.cpp"        
+        };
 
-    Parser {
-        "json.g"
+        build.Parser "json.g";
     };
-}
+};

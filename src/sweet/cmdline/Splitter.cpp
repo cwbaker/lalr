@@ -27,8 +27,8 @@ Splitter::Splitter( const char* command_line )
 
     bool ended = true;
     char quote = 0;
-    unsigned int length = strlen( command_line );
-    command_line_.insert( command_line_.end(), 0, length );
+    size_t length = strlen( command_line );
+    command_line_.insert( command_line_.end(), length, 0 );
     char* destination = &command_line_[0];
     const char* i = command_line;
     const char* end = i + length;

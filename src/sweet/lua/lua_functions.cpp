@@ -9,7 +9,6 @@
 #include "LuaConverter.hpp"
 #include "LuaStackGuard.hpp"
 #include "LuaUserDataTemplate.ipp"
-#include "Error.hpp"
 #include <sweet/rtti/Type.hpp>
 #include <sweet/assert/assert.hpp>
 #include <stdio.h>
@@ -29,12 +28,16 @@ namespace lua
 void lua_dump_stack( lua_State* lua_state )
 {
     SWEET_ASSERT( lua_state );
-    
+
     for ( int i = lua_gettop(lua_state); i > 0; --i )
     {
         if ( lua_type(lua_state, i) == LUA_TSTRING )
         {
             printf( "%d, %s, '%s'\n", i, lua_typename(lua_state, lua_type(lua_state, i)), lua_tostring(lua_state, i) );
+        }
+        else if ( lua_type(lua_state, i) == LUA_TNUMBER )
+        {
+            printf( "%d, %s, %d %.02f\n", i, lua_typename(lua_state, lua_type(lua_state, i)), static_cast<int>(lua_tointeger(lua_state, i)), static_cast<float>(lua_tonumber(lua_state, i)) );
         }
         else
         {
@@ -263,6 +266,13 @@ void lua_destroy_object( lua_State* lua_state, void* object )
 //
     lua_pushlightuserdata( lua_state, object );
     lua_gettable( lua_state, LUA_REGISTRYINDEX );
+    if ( !lua_istable(lua_state, -1) )
+    {
+        lua_pop( lua_state, 1 );
+        lua_getfield( lua_state, LUA_REGISTRYINDEX, WEAK_OBJECTS_KEYWORD );
+        lua_pushlightuserdata( lua_state, object );
+        lua_gettable( lua_state, -2 );
+    }
     if ( lua_istable(lua_state, -1) )
     {
         lua_pushstring( lua_state, THIS_KEYWORD );
@@ -271,16 +281,27 @@ void lua_destroy_object( lua_State* lua_state, void* object )
     }   
     lua_pop( lua_state, 1 );
 
+    lua_remove_object( lua_state, object );
+}
+
+/**
+// Remove references to Lua tables from \e object.
 //
-// Remove any reference to the object object from the Lua registry.
+// @param lua_state
+//  The lua_State to remove references to Lua tables from \e object in 
+//  (assumed not null).
 //
+// @param object
+//  The address to remove the associated Lua tables of.
+*/
+void lua_remove_object( lua_State* lua_state, void* object )
+{
+    // Remove any reference to the object object from the Lua registry.
     lua_pushlightuserdata( lua_state, object );
     lua_pushnil( lua_state );
     lua_settable( lua_state, LUA_REGISTRYINDEX );
 
-//
-// Remove any reference to the object from the weak objects table.
-//
+    // Remove any reference to the object from the weak objects table.
     lua_getfield( lua_state, LUA_REGISTRYINDEX, WEAK_OBJECTS_KEYWORD );
     if ( lua_istable(lua_state, -1) )
     {
@@ -288,6 +309,145 @@ void lua_destroy_object( lua_State* lua_state, void* object )
         lua_pushnil( lua_state );
         lua_settable( lua_state, -3 );    
     }
+    lua_pop( lua_state, 1 );
+}
+
+/**
+// Swap the Lua objects associated with \e object and \e other_object.
+//
+// Swaps the values referenced by the two addresses in the Lua registry so 
+// that the Lua table that is associated with \e object is swapped with the
+// Lua table that is associated with \e other_object and vice versa.
+//
+// The strong/weak relationship from the C++ address to the Lua table is 
+// *not* swapped.  For example if \e object has a strong relationship from 
+// C++ to the first Lua table and \e other_object has a weak relationship 
+// from C++ to the second Lua table then, after swapping, \e object has a 
+// strong relationship from C++ to the second Lua table and \e other_object 
+// has a weak relationship from C++ to the first Lua table.  The values are 
+// swapped but the strength/weakness of the relationship from \e object and
+// \e other_object to their Lua tables remains unchanged.
+//
+// @param object
+//  The address used to associate with the first Lua object.
+//
+// @param other_object
+//  The address used to associate with the second Lua object.
+*/
+void lua_swap_object( lua_State* lua_state, void* object, void* other_object )
+{
+    LuaStackGuard guard( lua_state );
+
+    // Record the strength of the relationships from the first and second 
+    // objects in C++ to their Lua tables are weak so that it can be
+    // restored after swapping.
+    bool object_weak = lua_is_weak_object( lua_state, object );
+    bool other_object_weak = lua_is_weak_object( lua_state, other_object );
+
+    // Push the Lua table associated with the first object onto the stack and 
+    // remove it from the Lua registry or weak objects table.
+    lua_pushlightuserdata( lua_state, other_object );
+    lua_push_object( lua_state, object );
+    lua_remove_object( lua_state, object );
+
+    // Push the Lua table associated with the second object onto the stack and
+    // remove it from the Lua registry or weak objects table.
+    lua_pushlightuserdata( lua_state, object );
+    lua_push_object( lua_state, other_object );
+    lua_remove_object( lua_state, other_object );
+
+    // Associate the Lua table previously associated with the second object 
+    // with the first object.
+    lua_settable( lua_state, LUA_REGISTRYINDEX );
+    
+    // Associate the Lua table previously associated with the first object 
+    // with the second object.
+    lua_settable( lua_state, LUA_REGISTRYINDEX );
+
+    // Restore weak relationships from the first and second objects to their
+    // associated Lua tables.  The strength of the relationship remains as it
+    // was before this function was called; i.e. the values are swapped but 
+    // the strengths of the relationships from C++ to those values are not.   
+    if ( object_weak )
+    {
+        lua_weaken_object( lua_state, object );
+    }
+    
+    if ( other_object_weak )
+    {
+        lua_weaken_object( lua_state, other_object );
+    }
+}
+
+/**
+// Is there an object created for \e object in \e lua_state?
+//
+// @return
+//  True if there is a table in the Lua registry under the lightuserdata key
+//  \e object otherwise false.
+*/
+bool lua_is_object( lua_State* lua_state, void* object )
+{
+    LuaStackGuard guard( lua_state );
+    lua_pushlightuserdata( lua_state, object );
+    lua_gettable( lua_state, LUA_REGISTRYINDEX );
+    if ( lua_isnil(lua_state, -1) )
+    {
+        lua_getfield( lua_state, LUA_REGISTRYINDEX, WEAK_OBJECTS_KEYWORD );
+        lua_pushlightuserdata( lua_state, object );
+        lua_gettable( lua_state, -2 );
+    }    
+    return lua_istable( lua_state, -1 );
+}
+
+/**
+// Is there a weak object created for \e object in \e lua_state?
+//
+// @return
+//  True if there is a table in the Lua weak objects table under the 
+//  lightuserdata key \e object otherwise false.
+*/
+bool lua_is_weak_object( lua_State* lua_state, void* object )
+{
+    LuaStackGuard guard( lua_state );
+    lua_getfield( lua_state, LUA_REGISTRYINDEX, WEAK_OBJECTS_KEYWORD );
+    lua_pushlightuserdata( lua_state, object );
+    lua_gettable( lua_state, -2 );
+    return lua_istable( lua_state, -1 );
+}
+
+/**
+// Is the value at \e position a table related to an object of type \e type?
+//
+// @param lua_state
+//  The lua_State to check the type of the table/object in.
+//
+// @param position
+//  The stack position to check the type of the table/object at.
+//
+// @param type
+//  The type to check for.
+//
+// @return
+//  True if the value at \e position is a table for a C++ object of type 
+//  \e type otherwise false.
+*/
+bool lua_is_object( lua_State* lua_state, int position, const rtti::Type& type )
+{
+    SWEET_ASSERT( lua_state );
+    
+    if ( lua_istable(lua_state, position) )
+    {
+        LuaStackGuard guard( lua_state );
+        lua_getfield( lua_state, position, TYPE_KEYWORD );        
+        if ( !lua_isnoneornil(lua_state, -1) && lua_isuserdata(lua_state, -1) )
+        {
+            LuaUserDataTemplate<rtti::Type>* type_user_data = static_cast<LuaUserDataTemplate<rtti::Type>*>( lua_touserdata(lua_state, -1) );
+            SWEET_ASSERT( type_user_data );
+            return type_user_data->type() == SWEET_STATIC_TYPEID(rtti::Type) && type_user_data->value() == type;
+        }               
+    }
+    return false;
 }
 
 /**
@@ -320,25 +480,25 @@ void lua_weaken_object( lua_State* lua_state, void* object )
         SWEET_ASSERT( lua_istable(lua_state, -1) );
 
     //
-    // Get the object's table from the Lua registry.
+    // If there is a table for the object in the Lua registry then move that
+    // table from the registry to the weak objects table otherwise assume that
+    // the object is already weakened and its table already exists in the
+    // weak objects table and quietly do nothing.
     //
         lua_pushlightuserdata( lua_state, object );
         lua_gettable( lua_state, LUA_REGISTRYINDEX );
-        SWEET_ASSERT( lua_istable(lua_state, -1) );
+        if ( lua_istable(lua_state, -1) )
+        {
+            // Add the object's table to the weak objects table.
+            lua_pushlightuserdata( lua_state, object );
+            lua_pushvalue( lua_state, -2 );
+            lua_settable( lua_state, -4 );
 
-    //
-    // Add the object's table to the weak objects table.
-    //
-        lua_pushlightuserdata( lua_state, object );
-        lua_pushvalue( lua_state, -2 );
-        lua_settable( lua_state, -4 );
-
-    //
-    // Remove the object's table from the Lua registry.
-    //
-        lua_pushlightuserdata( lua_state, object );
-        lua_pushnil( lua_state );
-        lua_settable( lua_state, LUA_REGISTRYINDEX );
+            // Remove the object's table from the Lua registry.
+            lua_pushlightuserdata( lua_state, object );
+            lua_pushnil( lua_state );
+            lua_settable( lua_state, LUA_REGISTRYINDEX );
+        }
     }
 }
 
@@ -369,15 +529,16 @@ void lua_strengthen_object( lua_State* lua_state, void* object )
         lua_pushlightuserdata( lua_state, object );
         lua_rawget( lua_state, WEAK_OBJECTS );
         const int OBJECT = lua_gettop( lua_state );
-        SWEET_ASSERT( lua_istable(lua_state, OBJECT) );
+        if ( lua_istable(lua_state, OBJECT) )
+        {
+            lua_pushlightuserdata( lua_state, object );
+            lua_pushvalue( lua_state, OBJECT );
+            lua_rawset( lua_state, LUA_REGISTRYINDEX );
 
-        lua_pushlightuserdata( lua_state, object );
-        lua_pushvalue( lua_state, OBJECT );
-        lua_rawset( lua_state, LUA_REGISTRYINDEX );
-
-        lua_pushlightuserdata( lua_state, object );
-        lua_pushnil( lua_state );
-        lua_rawset( lua_state, WEAK_OBJECTS );
+            lua_pushlightuserdata( lua_state, object );
+            lua_pushnil( lua_state );
+            lua_rawset( lua_state, WEAK_OBJECTS );
+        }
     }
 }
 
@@ -391,8 +552,12 @@ void lua_strengthen_object( lua_State* lua_state, void* object )
 //
 // @param object
 //  The address to use to identify the object.
+//
+// @return
+//  True if there was a table corresponding to \e object in \e lua_state otherwise
+//  false.
 */
-void lua_push_object( lua_State* lua_state, void* object )
+bool lua_push_object( lua_State* lua_state, void* object )
 {
     SWEET_ASSERT( lua_state );
     
@@ -412,7 +577,12 @@ void lua_push_object( lua_State* lua_state, void* object )
             lua_remove( lua_state, -2 );
             if ( !lua_istable(lua_state, -1) )
             {
-                SWEET_ERROR( RuntimeError("No entry in the Lua registry for the object with address 0x%p", object) );
+                // There is no entry in the Lua registry for the object at 
+                // this address so just push nil and let the type checking
+                // handle reporting an error.  This is usually due to no Lua 
+                // table having been created for the C++ object.
+                lua_pop( lua_state, 1 );
+                lua_pushnil( lua_state );
             }         
         }
     }
@@ -420,6 +590,54 @@ void lua_push_object( lua_State* lua_state, void* object )
     {
         lua_pushnil( lua_state );
     }
+    return lua_istable( lua_state, -1 );
+}
+
+/**
+// @internal
+//
+// Get the address of the object at \e position in \e lua_state's stack 
+// without doing any type checking.
+//
+// @param lua_state
+//  The lua_State to push the object onto the stack of.
+//
+// @param position
+//  The absolute position in the stack to get the object from (it is assumed
+//  that this position is an absolute position; that is \e position > 0 or
+//  position < LUA_REGISTRYINDEX (-10000)).
+//
+// @return
+//  The address of the object or null if there is no value at that position
+//  on the stack or if the value at that position is nil.
+*/
+void* lua_to_object( lua_State* lua_state, int position )
+{
+    SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( position > 0 || position < LUA_REGISTRYINDEX );
+
+    void* object = NULL;
+    if ( !lua_isnoneornil(lua_state, position) )
+    {
+        lua_pushstring( lua_state, lua::THIS_KEYWORD );
+        lua_rawget( lua_state, position );
+        if ( lua_islightuserdata(lua_state, -1) )
+        {
+            object = lua_touserdata( lua_state, -1 );
+            lua_pop( lua_state, 1 );
+        }
+        else if ( lua_isnil(lua_state, -1) )
+        {
+            lua_pushfstring( lua_state, "Missing this pointer for Lua object at position %d (not set or C++ object has been destroyed)", position );
+            lua_error( lua_state );
+        }
+        else
+        {
+            lua_pushfstring( lua_state, "Invalid this pointer for Lua object at position %d (type=%s)", position, lua_typename(lua_state, lua_type(lua_state, position)) );
+            lua_error( lua_state );
+        }
+    }
+    return object;
 }
 
 /**
@@ -431,7 +649,9 @@ void lua_push_object( lua_State* lua_state, void* object )
 //  The lua_State to push the object onto the stack of.
 //
 // @param position
-//  The position in the stack to get the object from.
+//  The absolute position in the stack to get the object from (it is assumed
+//  that this position is an absolute position; that is \e position > 0 or
+//  position < LUA_REGISTRYINDEX (-10000)).
 //
 // @param type
 //  The type to check that the object is (passed to lua_validate_type()).
@@ -443,18 +663,30 @@ void lua_push_object( lua_State* lua_state, void* object )
 void* lua_to_object( lua_State* lua_state, int position, const rtti::Type& type )
 {
     SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( position > 0 || position < LUA_REGISTRYINDEX );
 
     void* object = NULL;
-
     if ( !lua_isnoneornil(lua_state, position) )
     {
         lua_validate_type( lua_state, position, type );
-        lua_getfield( lua_state, position, lua::THIS_KEYWORD );
-        SWEET_ASSERT( lua_islightuserdata(lua_state, -1) );
-        object = lua_touserdata( lua_state, -1 );
-        lua_pop( lua_state, 1 );
+        lua_pushstring( lua_state, lua::THIS_KEYWORD );
+        lua_rawget( lua_state, position );
+        if ( lua_islightuserdata(lua_state, -1) )
+        {
+            object = lua_touserdata( lua_state, -1 );
+            lua_pop( lua_state, 1 );
+        }
+        else if ( lua_isnil(lua_state, -1) )
+        {
+            lua_pushfstring( lua_state, "Missing this pointer for Lua object at position %d (not set or C++ object has been destroyed)", position );
+            lua_error( lua_state );
+        }
+        else
+        {
+            lua_pushfstring( lua_state, "Invalid this pointer for Lua object at position %d (type=%s)", position, lua_typename(lua_state, lua_type(lua_state, position)) );
+            lua_error( lua_state );
+        }
     }
-
     return object;
 }
 

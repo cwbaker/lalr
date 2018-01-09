@@ -1,13 +1,13 @@
 //
 // TestParsers.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #include "stdafx.hpp"
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserErrorPolicy.hpp>
 #include <sweet/parser/Error.hpp>
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -27,7 +27,7 @@ SUITE( PrecedenceDirectives )
             {
             }
 
-            void parser_error( int line, const error::Error& error )
+            void parser_error( int /*line*/, const error::Error& error )
             {
                 ++errors_;
                 printf( "%s\n", error.what() );

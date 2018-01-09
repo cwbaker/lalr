@@ -7,8 +7,9 @@
 #define SWEET_LUA_ADDGLOBAL_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "lua_/lua.h"
 #include <string>
+
+struct lua_State;
 
 namespace sweet
 {

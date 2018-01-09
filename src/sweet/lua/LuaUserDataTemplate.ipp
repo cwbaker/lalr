@@ -78,6 +78,19 @@ LuaUserDataTemplate<UserType>::value()
     return value_;
 }
 
+/**
+// Get the address of the value of this LuaUserData.
+//
+// @return
+//  The address of the value of this LuaUserData.
+*/
+template <class UserType>
+UserType*
+LuaUserDataTemplate<UserType>::address()
+{
+    return &value_;
+}
+
 }
 
 }

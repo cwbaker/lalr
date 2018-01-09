@@ -28,6 +28,7 @@ SWEET_ERROR_DECLSPEC void set_error_policy( ErrorPolicy* error_policy );
 SWEET_ERROR_DECLSPEC ErrorPolicy* get_error_policy();
 SWEET_ERROR_DECLSPEC void error( const Error& error );
 SWEET_ERROR_DECLSPEC void error( const std::exception& exception );
+SWEET_ERROR_DECLSPEC const char* format( int error, char* buffer, unsigned int length );
 
 }
 

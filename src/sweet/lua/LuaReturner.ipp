@@ -8,7 +8,7 @@
 
 #include "LuaReturner.hpp"
 #include "LuaReturnerPolicy.hpp"
-#include "lua_/lua.h"
+#include <lua/lua.hpp>
 
 namespace sweet
 {
@@ -16,7 +16,7 @@ namespace sweet
 namespace lua
 {
 
-inline int LuaReturner<void, LUA_POLICY_NULL>::return_( lua_State* lua_state )
+inline int LuaReturner<void, LUA_POLICY_NULL>::return_( lua_State* /*lua_state*/ )
 {
     return 0;
 }

@@ -1,8 +1,3 @@
-//
-// filesystem.hpp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_FILESYSTEM_HPP_INCLUDED
 #define SWEET_LUA_FILESYSTEM_HPP_INCLUDED
 
@@ -19,14 +14,8 @@ namespace lua
 //
 // Convert boost::filesystem::basic_directory_entries that are pushed onto
 // the Lua stack into strings.
-//
-// @todo
-//  Pushing a boost::filesystem::basic_directory_entry is currently templated
-//  on the type of path (allowing different character types) even though only 
-//  narrow character strings have been considered.
 */
-template <class Path>
-struct LuaConverter<boost::filesystem::basic_directory_entry<Path> >
+template <> struct LuaConverter<boost::filesystem::directory_entry>
 {
     /**
     // @internal
@@ -37,7 +26,7 @@ struct LuaConverter<boost::filesystem::basic_directory_entry<Path> >
     // @param value
     //  The boost::filesystem::basic_directory_entry to push.
     */
-    static void push( lua_State* lua_state, const boost::filesystem::basic_directory_entry<Path>& entry  )
+    static void push( lua_State* lua_state, const boost::filesystem::directory_entry& entry  )
     {
         SWEET_ASSERT( lua_state != NULL );
         lua_pushlstring( lua_state, entry.path().string().c_str(), entry.path().string().length() );
@@ -67,17 +56,17 @@ struct LuaConverter<boost::filesystem::basic_directory_entry<Path> >
 // @param value
 //  The boost::filesystem::basic_directory_iterator to begin the iteration at.
 */
-template <class Path>
-struct LuaConverter<boost::filesystem::basic_directory_iterator<Path> >
+template <> 
+struct LuaConverter<boost::filesystem::directory_iterator>
 {
-    static void push( lua_State* lua_state, const boost::filesystem::basic_directory_iterator<Path>& value )
+    static void push( lua_State* lua_state, const boost::filesystem::directory_iterator& value )
     {
-        lua_push_iterator( lua_state, value, boost::filesystem::basic_directory_iterator<Path>() );
+        lua_push_iterator( lua_state, value, boost::filesystem::directory_iterator() );
     }
 
-    static const boost::filesystem::basic_directory_iterator<Path>& to( lua_State* lua_state, int position )
+    static const boost::filesystem::directory_iterator& to( lua_State* lua_state, int position )
     {
-        return lua_to_value<boost::filesystem::basic_directory_iterator<Path> >( lua_state, position );
+        return lua_to_value<boost::filesystem::directory_iterator>( lua_state, position );
     }
 };
 
@@ -85,36 +74,31 @@ struct LuaConverter<boost::filesystem::basic_directory_iterator<Path> >
 /**
 // @internal
 //
-// Convert boost::filesystem::basic_recursive_directory_iterators that are 
+// Convert boost::filesystem::recursive_directory_iterators that are 
 // pushed onto the Lua stack into Lua iterator functions.
 //
 // This pushes an iterator that will iterate from the 
-// basic_recursive_directory_iterator specified by \e value to the default 
-// constructed basic_recursive_directory_iterator that marks the end of the
+// recursive_directory_iterator specified by \e value to the default 
+// constructed recursive_directory_iterator that marks the end of the
 // iteration.
-//
-// @todo
-//  Pushing a boost::filesystem::basic_recursive_directory_iterator is 
-//  currently templated on the type of path (allowing different character 
-//  types) even though only narrow character strings have been considered.
 //
 // @param lua_state
 //  The lua_State to push the iterator function onto the stack of.
 //
 // @param value
-//  The boost::filesystem::basic_directory_iterator to begin the iteration at.
+//  The boost::filesystem::directory_iterator to begin the iteration at.
 */
-template <class Path>
-struct LuaConverter<boost::filesystem::basic_recursive_directory_iterator<Path> >
+template <> 
+struct LuaConverter<boost::filesystem::recursive_directory_iterator>
 {
-    static void push( lua_State* lua_state, const boost::filesystem::basic_recursive_directory_iterator<Path>& value )
+    static void push( lua_State* lua_state, const boost::filesystem::recursive_directory_iterator& value )
     {
-        lua_push_iterator( lua_state, value, boost::filesystem::basic_recursive_directory_iterator<Path>() );
+        lua_push_iterator( lua_state, value, boost::filesystem::recursive_directory_iterator() );
     }
 
-    static const boost::filesystem::basic_recursive_directory_iterator<Path>& to( lua_State* lua_state, int position )
+    static const boost::filesystem::recursive_directory_iterator& to( lua_State* lua_state, int position )
     {
-        return lua_to_value<boost::filesystem::basic_recursive_directory_iterator<Path> >( lua_state, position );
+        return lua_to_value<boost::filesystem::recursive_directory_iterator>( lua_state, position );
     }
 };
 

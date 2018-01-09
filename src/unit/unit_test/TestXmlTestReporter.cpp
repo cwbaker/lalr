@@ -1,5 +1,5 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/XmlTestReporter.h>
+#include <unit/UnitTest.h>
+#include <unit/XmlTestReporter.h>
 
 #include <sstream>
 

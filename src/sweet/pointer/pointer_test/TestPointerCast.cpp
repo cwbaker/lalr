@@ -1,9 +1,9 @@
 //
 // TestPointerCast.cpp
-// Copyright (c) 2009 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/pointer/ptr.hpp>
 
 using namespace sweet::pointer;

@@ -143,7 +143,7 @@ void ParserState::add_transition( const ParserSymbol* symbol, ParserState* state
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
     SWEET_ASSERT( transitions_.find(ParserTransition(symbol, state)) == transitions_.end() );
-    std::set<ParserTransition>::iterator transition = transitions_.insert( ParserTransition(symbol, state) ).first;
+    transitions_.insert( ParserTransition(symbol, state) );
 }
 
 /**

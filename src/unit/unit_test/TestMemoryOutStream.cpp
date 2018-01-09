@@ -1,6 +1,6 @@
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 
-#include <sweet/unit/MemoryOutStream.h>
+#include <unit/MemoryOutStream.h>
 #include <cstring>
 
 using namespace UnitTest;

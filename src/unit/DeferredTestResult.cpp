@@ -1,5 +1,5 @@
-#include <sweet/unit/Config.h>
-#include <sweet/unit/DeferredTestResult.h>
+#include <unit/Config.h>
+#include <unit/DeferredTestResult.h>
 
 namespace UnitTest
 {

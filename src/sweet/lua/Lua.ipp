@@ -56,8 +56,11 @@ void Lua::create_with_existing_table( const Type& object )
 template <class Type> 
 void Lua::destroy( const Type& object )
 {
-    typedef typename traits::traits<Type>::base_type base_type;
-    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::destroy( lua_state_, object );
+    if ( lua_state_ )
+    {
+        typedef typename traits::traits<Type>::base_type base_type;
+        LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::destroy( lua_state_, object );
+    }
 }
 
 /**
@@ -200,6 +203,29 @@ bool Lua::is_function( const Type& object, const char* field ) const
     return lua_isfunction( lua_state_, -1 ) ? true : false;
 }
 
+/**
+// Is the field named \e field a table in the table associated with \e object?
+//
+// @param object
+//  The object to find the associated table of.
+//
+// @param field
+//  The name of the field to check for existence of.
+//
+// @return
+//  True if \e field exists and is a table otherwise false.
+*/
+template <class Type> 
+bool Lua::is_table( const Type& object, const char* field ) const
+{
+    SWEET_ASSERT( field );
+
+    LuaStackGuard guard( lua_state_ );
+    typedef typename traits::traits<Type>::base_type base_type;
+    LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
+    lua_getfield( lua_state_, -1, field );
+    return lua_istable( lua_state_, -1 ) ? true : false;
+}
 
 /**
 // Get the boolean value of a field in the table associated with \e object.
@@ -247,7 +273,7 @@ int Lua::integer( const Type& object, const char* field ) const
     typedef typename traits::traits<Type>::base_type base_type;
     LuaObjectConverter<Type, typename LuaTraits<base_type>::storage_type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, field );
-    return lua_tointeger( lua_state_, -1 );
+    return static_cast<int>( lua_tointeger(lua_state_, -1) );
 }
 
 /**

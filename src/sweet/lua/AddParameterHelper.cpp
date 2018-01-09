@@ -1,21 +1,31 @@
 //
 // AddParameterHelper.cpp
-// Copyright (c) 2008 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
 #include "AddParameterHelper.hpp"
-#include "Error.hpp"
+#include "LuaThreadEventSink.hpp"
 #include "LuaStackGuard.hpp"
 #include "LuaValue.hpp"
 #include "Lua.hpp"
-#include <sweet/error/macros.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
+#include <algorithm>
 #include <memory.h>
 #include <stdio.h>
 
 #if defined(BUILD_OS_WINDOWS)
-#define snprintf _snprintf
+static int snprintf( char* buffer, size_t size, const char* format, ... )
+{
+    va_list args;
+    va_start( args, format );
+    int written = _vsnprintf( buffer, size, format, args );
+    va_end( args );
+    return written >= 0 ? written : int(size);
+}
 #endif
 
+using std::max;
+using namespace sweet;
 using namespace sweet::lua;
 
 /**
@@ -30,12 +40,51 @@ using namespace sweet::lua;
 AddParameterHelper::AddParameterHelper( lua_State* lua_state, Lua* lua )
 : lua_state_( lua_state ),
   lua_( lua ),
+  error_policy_( lua->error_policy() ),
   error_handler_( 0 ),
   parameters_( 0 ),
-  call_type_( CALL_TYPE_NULL )
+  call_type_( CALL_TYPE_NULL ),
+  event_sink_( NULL ),
+  context_( NULL )
 {
     SWEET_ASSERT( lua_state_ );
     SWEET_ASSERT( lua_ );
+}
+
+void AddParameterHelper::fire_returned( lua::LuaThread* thread )
+{
+    SWEET_ASSERT( thread );
+    if ( event_sink_ )
+    {
+        event_sink_->lua_thread_returned( thread, context_ );
+    }
+    reset_event_sink_and_context();
+}
+
+void AddParameterHelper::fire_errored( lua::LuaThread* thread )
+{
+    SWEET_ASSERT( thread );
+    if ( event_sink_ )
+    {
+        event_sink_->lua_thread_errored( thread, context_ );
+    }
+    reset_event_sink_and_context();
+}
+
+void AddParameterHelper::reset_event_sink_and_context()
+{
+    event_sink_ = NULL;
+    context_ = NULL;
+}
+
+LuaThreadEventSink* AddParameterHelper::event_sink() const
+{
+    return event_sink_;
+}
+
+void* AddParameterHelper::context() const
+{
+    return context_;
 }
 
 /**
@@ -79,6 +128,14 @@ AddParameter AddParameterHelper::call( const LuaValue& function )
     return AddParameter( this );
 }
 
+AddParameter AddParameterHelper::call( lua_State* lua_state, int position )
+{
+    parameters_ = 0;
+    call_type_ = CALL_TYPE_CALL;
+    internal_begin( lua_state, position );
+    return AddParameter( this );
+}
+
 AddParameter AddParameterHelper::resume( lua_Reader reader, void* context, const char* name )
 {
     parameters_ = 0;
@@ -100,6 +157,14 @@ AddParameter AddParameterHelper::resume( const LuaValue& function )
     parameters_ = 0;
     call_type_ = CALL_TYPE_RESUME;
     internal_begin( function );
+    return AddParameter( this );
+}
+
+AddParameter AddParameterHelper::resume( lua_State* lua_state, int position )
+{
+    parameters_ = 0;
+    call_type_ = CALL_TYPE_RESUME;
+    internal_begin( lua_state, position );
     return AddParameter( this );
 }
 
@@ -140,17 +205,19 @@ void AddParameterHelper::end()
 */
 void AddParameterHelper::end( bool* return_value )
 {
-    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
-
-    internal_end( 1 );
-    if ( !lua_isboolean(lua_state_, -1) )
-    {
-        SWEET_ERROR( RuntimeError("Return value is not a boolean as expected") );
-    }
-
     SWEET_ASSERT( return_value );
-    *return_value = lua_toboolean( lua_state_, -1 ) == 1 ? true : false;
-    lua_pop( lua_state_, 1 );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0 && lua_isboolean( lua_state_, -1 );
+        error_policy_.error( !valid, "Return value is not a boolean as expected" );
+        if ( valid )
+        {
+            *return_value = lua_toboolean( lua_state_, -1 ) == 1 ? true : false;
+            lua_pop( lua_state_, 1 );
+        }
+    }
 }
 
 /**
@@ -164,17 +231,19 @@ void AddParameterHelper::end( bool* return_value )
 */
 void AddParameterHelper::end( int* return_value )
 {
-    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
-
-    internal_end( 1 );
-    if ( !lua_isnumber(lua_state_, -1) )
-    {
-        SWEET_ERROR( RuntimeError("Return value is not a number as expected") );
-    }
-
     SWEET_ASSERT( return_value );
-    *return_value = lua_tointeger( lua_state_, -1 );
-    lua_pop( lua_state_, 1 );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0 && lua_isnumber( lua_state_, -1 );
+        error_policy_.error( !valid, "Return value is not a number as expected" );
+        if ( valid )
+        {
+            *return_value = int( luaL_checknumber(lua_state_, -1) );
+            lua_pop( lua_state_, 1 );
+        }
+    }
 }
 
 /**
@@ -188,17 +257,19 @@ void AddParameterHelper::end( int* return_value )
 */
 void AddParameterHelper::end( float* return_value )
 {
-    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
-
-    internal_end( 1 );
-    if ( !lua_isnumber(lua_state_, -1) )
-    {
-        SWEET_ERROR( RuntimeError("Return value is not a number as expected") );
-    }
-
     SWEET_ASSERT( return_value );
-    *return_value = static_cast<float>( lua_tonumber(lua_state_, -1) );
-    lua_pop( lua_state_, 1 );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0 && lua_isnumber( lua_state_, -1 );
+        error_policy_.error( !valid, "Return value is not a number as expected" );
+        if ( valid )
+        {
+            *return_value = static_cast<float>( lua_tonumber(lua_state_, -1) );
+            lua_pop( lua_state_, 1 );
+        }
+    }
 }
 
 
@@ -213,17 +284,19 @@ void AddParameterHelper::end( float* return_value )
 */
 void AddParameterHelper::end( std::string* return_value )
 {
-    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
-
-    internal_end( 1 );
-    if ( !lua_isstring(lua_state_, -1) )
-    {
-        SWEET_ERROR( RuntimeError("Return value is not a string as expected") );
-    }
-
     SWEET_ASSERT( return_value );
-    *return_value = lua_tostring( lua_state_, -1 );
-    lua_pop( lua_state_, 1 );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0 && lua_isstring( lua_state_, -1 );
+        error_policy_.error( !valid, "Return value is not a string as expected" );
+        if ( valid )
+        {
+            *return_value = lua_tostring( lua_state_, -1 );
+            lua_pop( lua_state_, 1 );
+        }
+    }
 }
 
 /**
@@ -237,17 +310,50 @@ void AddParameterHelper::end( std::string* return_value )
 */
 void AddParameterHelper::end( void** return_value )
 {
-    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
-
-    internal_end( 1 );
-    if ( !lua_isuserdata(lua_state_, -1) )
-    {
-        SWEET_ERROR( RuntimeError("Return value is not user data as expected") );
-    }
-
     SWEET_ASSERT( return_value );
-    *return_value = lua_touserdata( lua_state_, -1 );
-    lua_pop( lua_state_, 1 );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0 && lua_isuserdata( lua_state_, -1 );
+        error_policy_.error( !valid, "Return value is not user data as expected" );
+        if ( valid )
+        {
+            *return_value = lua_touserdata( lua_state_, -1 );
+            lua_pop( lua_state_, 1 );
+        }
+    }
+}
+
+void AddParameterHelper::end( LuaValue* return_value )
+{
+    SWEET_ASSERT( return_value );
+
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(1) )
+    {
+        bool valid = lua_gettop( lua_state_ ) > 0;
+        error_policy_.error( !valid, "No return value found" );
+        if ( valid )
+        {
+            *return_value = LuaValue( *lua_, lua_state_, -1 );
+            lua_pop( lua_state_, 1 );
+        }
+    }
+}
+
+void AddParameterHelper::end( LuaThreadEventSink* event_sink, void* context )
+{
+    SWEET_ASSERT( event_sink );
+    SWEET_ASSERT( call_type_ == CALL_TYPE_NULL || call_type_ == CALL_TYPE_RESUME );
+    SWEET_ASSERT( !event_sink_ );
+    SWEET_ASSERT( !context_ );
+    LuaStackGuard stack_guard( lua_state_, error_handler_ == 0 ? parameters_ + 1 : parameters_ + 2 );
+    if ( internal_end(LUA_MULTRET) )
+    {
+        event_sink_ = event_sink;
+        context_ = context;
+    }
 }
 
 /**
@@ -255,11 +361,8 @@ void AddParameterHelper::end( void** return_value )
 //
 // @param nil
 //  The LuaNil type that is used to represent a Lua nil value (ignored).
-//
-// @return
-//  This AddParameter.
 */
-void AddParameterHelper::push( const LuaNil& nil )
+void AddParameterHelper::push( const LuaNil& /*nil*/ )
 {
     lua_pushnil( lua_state_ );
     ++parameters_;
@@ -271,13 +374,10 @@ void AddParameterHelper::push( const LuaNil& nil )
 // @param global_environment
 //  The LuaGlobalEnvironment type that is used to represent the Lua global
 //  environment (ignored).
-//
-// @return
-//  This AddParameter.
 */
-void AddParameterHelper::push( const LuaGlobalEnvironment& global_environment )
+void AddParameterHelper::push( const LuaGlobalEnvironment& /*global_environment*/ )
 {
-    lua_pushvalue( lua_state_, LUA_GLOBALSINDEX );
+    lua_pushglobaltable( lua_state_ );
     ++parameters_;
 }
 
@@ -286,9 +386,6 @@ void AddParameterHelper::push( const LuaGlobalEnvironment& global_environment )
 //
 // @param value
 //  The boolean value to push.
-//
-// @return
-//  This AddParameter.
 */
 void AddParameterHelper::push( bool value )
 {
@@ -301,9 +398,6 @@ void AddParameterHelper::push( bool value )
 //
 // @param value
 //  The integer value to push.
-//
-// @return
-//  This AddParameter.
 */
 void AddParameterHelper::push( int value )
 {
@@ -316,9 +410,6 @@ void AddParameterHelper::push( int value )
 //
 // @param value
 //  The real value to push.
-//
-// @return
-//  This AddParameter.
 */
 void AddParameterHelper::push( float value )
 {
@@ -331,9 +422,6 @@ void AddParameterHelper::push( float value )
 //
 // @param value
 //  The string value to push.
-//
-// @return
-//  This AddParameter.
 */
 void AddParameterHelper::push( const char* value )
 {
@@ -346,9 +434,6 @@ void AddParameterHelper::push( const char* value )
 //
 // @param value
 //  The string value to push.
-//
-// @return
-//  This AddParameter.
 */
 void AddParameterHelper::push( const std::string& value )
 {
@@ -357,9 +442,22 @@ void AddParameterHelper::push( const std::string& value )
 }
 
 /**
+// Push a string value onto the stack.
+//
+// @param value
+//  The string value to push.
+*/
+void AddParameterHelper::push( void* value )
+{
+    lua_push_object( lua_state_, value );
+    ++parameters_;
+}
+
+/**
 // Push the value referred to by \e value onto the stack.
 //
-// 
+// @param value
+//  The value to push onto the stack.
 */
 void AddParameterHelper::push( const LuaValue& value )
 {
@@ -395,6 +493,40 @@ void AddParameterHelper::copy_values_from_stack( int begin, int end )
 }
 
 /**
+// Copy the values on the stack in \e lua_state in the range [\e begin, 
+// \e end) onto the top of the stack to act as parameters to this call.
+//
+// Relative offsets represented by negative stack indices cannot be passed as
+// the value of \e begin or \e end.  They must be positive values.
+//
+// @param lua_state
+//  The Lua state whose stack the values are copied from (assumed not null).
+//
+// @param begin
+//  The position on the stack to start copying values from (assumed >= 1).
+//
+// @param end
+//  One past the last position on the stack to copy values from 
+//  (assumed >= \e begin).
+*/
+void AddParameterHelper::copy_values_from_stack( lua_State* lua_state, int begin, int end )
+{
+    SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( begin >= 1 );
+    SWEET_ASSERT( end >= begin );
+    
+    for ( int i = begin; i < end; ++i )
+    {
+        lua_pushvalue( lua_state, i );
+        ++parameters_;
+    }
+
+    SWEET_ASSERT( lua_state_ );
+    lua_xmove( lua_state, lua_state_, end - begin );
+}
+
+
+/**
 // Call a chunk at the top of the Lua stack.
 //
 // @param reader
@@ -427,31 +559,35 @@ void AddParameterHelper::internal_begin( lua_Reader reader, void* context, const
         error_handler_ = 0;
     }
 
-    int result = lua_load( lua_state_, reader, context, name );
+    int result = lua_load( lua_state_, reader, context, name, NULL );
     switch ( result )
     {
         case 0:
+            if ( !lua_isfunction(lua_state_, -1) )
+            {
+                call_type_ = CALL_TYPE_NULL;
+                error_handler_ = 0;
+                error_policy_.error( true, "The value at the top of the stack is not a function" );
+            }
             break;
 
         case LUA_ERRSYNTAX:
+            call_type_ = CALL_TYPE_NULL;
             error_handler_ = 0;
-            SWEET_ERROR( SyntaxError("Syntax error loading '%s' - %s", name, lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "Syntax error loading '%s' - %s", name, lua_tostring(lua_state_, -1) );
             break;
 
         case LUA_ERRMEM:
+            call_type_ = CALL_TYPE_NULL;
             error_handler_ = 0;
-            SWEET_ERROR( MemoryAllocationError("Memory allocation error loading '%s' - %s", name, lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "Memory allocation error loading '%s' - %s", name, lua_tostring(lua_state_, -1) );
             break;
 
         default:
+            call_type_ = CALL_TYPE_NULL;
+            error_policy_.error( true, "Unexpected result loading '%s'", name );
             SWEET_ASSERT( false );
             break;
-    }
-
-    if ( !lua_isfunction(lua_state_, -1) )
-    {
-        error_handler_ = 0;
-        SWEET_ERROR( RuntimeError("The value at the top of the stack is not a function") );
     }
     
     stack_guard.reset_to_top_of_stack();
@@ -485,8 +621,9 @@ void AddParameterHelper::internal_begin( const char* function )
     lua_getglobal( lua_state_, function );
     if ( !lua_isfunction(lua_state_, -1) && !lua_istable(lua_state_, -1) )
     {
+        call_type_ = CALL_TYPE_NULL;
         error_handler_ = 0;
-        SWEET_ERROR( RuntimeError("The global variable '%s' is not a function or a table", function) );
+        error_policy_.error( true, "The global variable '%s' is not a function or a table", function );
     }
     
     stack_guard.reset_to_top_of_stack();
@@ -513,8 +650,43 @@ void AddParameterHelper::internal_begin( const LuaValue& function )
     lua_push( lua_state_, function );
     if ( !lua_isfunction(lua_state_, -1) && !lua_istable(lua_state_, -1) )
     {
+        call_type_ = CALL_TYPE_NULL;
         error_handler_ = 0;
-        SWEET_ERROR( RuntimeError("The value referenced is not a function or a table") );
+        error_policy_.error( true, "The value referenced is not a function or a table" );
+    }
+    
+    stack_guard.reset_to_top_of_stack();
+}
+
+void AddParameterHelper::internal_begin( lua_State* lua_state, int position )
+{
+    SWEET_ASSERT( lua_state );
+    SWEET_ASSERT( lua_state != lua_state_ );
+    SWEET_ASSERT( lua_ );
+    SWEET_ASSERT( lua_state_ );
+    SWEET_ASSERT( error_handler_ == 0 );
+
+    LuaStackGuard stack_guard( lua_state_ );
+
+    if ( call_type_ == CALL_TYPE_CALL && lua_->is_stack_trace_enabled() )
+    {
+        lua_pushcfunction( lua_state_, &AddParameterHelper::stack_trace_for_call );
+        error_handler_ = lua_gettop( lua_state_ );
+    }
+    else
+    {
+        error_handler_ = 0;
+    }
+
+    LuaStackGuard other_stack_guard( lua_state );
+    lua_pushvalue( lua_state, position );
+    lua_xmove( lua_state, lua_state_, 1 );
+
+    if ( !lua_isfunction(lua_state_, -1) && !lua_istable(lua_state_, -1) )
+    {
+        call_type_ = CALL_TYPE_NULL;
+        error_handler_ = 0;
+        error_policy_.error( true, "The value referenced is not a function or a table" );
     }
     
     stack_guard.reset_to_top_of_stack();
@@ -525,8 +697,11 @@ void AddParameterHelper::internal_begin( const LuaValue& function )
 //
 // @param results
 //  The number of expected results.
+//
+// @return
+//  True if the call completed successfully otherwise false.
 */
-void AddParameterHelper::internal_end( int results )
+bool AddParameterHelper::internal_end( int results )
 {
     int parameters = parameters_;
     int error_handler = error_handler_;
@@ -536,20 +711,28 @@ void AddParameterHelper::internal_end( int results )
     error_handler_ = 0;
     call_type_ = CALL_TYPE_NULL;
 
+    bool successful = false;
     switch ( call_type )
     {
+        case CALL_TYPE_NULL:
+            successful = false;
+            lua_pop( lua_state_, parameters );
+            break;
+
         case CALL_TYPE_CALL:
-            internal_end_call( parameters, results, error_handler );
+            successful = internal_end_call( parameters, results, error_handler );
             break;
 
         case CALL_TYPE_RESUME:
-            internal_end_resume( parameters );
+            successful = internal_end_resume( parameters );
             break;
 
         default:
             SWEET_ASSERT( false );
+            successful = false;
             break;
     }
+    return successful;
 }
 
 /**
@@ -557,11 +740,14 @@ void AddParameterHelper::internal_end( int results )
 //
 // @param results
 //  The number of expected results.
+//
+// @return
+//  True if the call completed successfully otherwise false.
 */
-void AddParameterHelper::internal_end_call( int parameters, int results, int error_handler )
+bool AddParameterHelper::internal_end_call( int parameters, int results, int error_handler )
 {
     SWEET_ASSERT( parameters >= 0 );    
-    SWEET_ASSERT( results == 0 || results == 1 );
+    SWEET_ASSERT( results == 0 || results == 1 || results == LUA_MULTRET );
     SWEET_ASSERT( error_handler >= 0 );
     SWEET_ASSERT( lua_state_ );
 
@@ -572,26 +758,27 @@ void AddParameterHelper::internal_end_call( int parameters, int results, int err
             break;
 
         case LUA_ERRRUN:
-            SWEET_ERROR( RuntimeError("%s", lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "%s", lua_tostring(lua_state_, -1) );
             break;
 
         case LUA_ERRMEM:
-            SWEET_ERROR( MemoryAllocationError("Out of memory - %s", lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "Out of memory - %s", lua_tostring(lua_state_, -1) );
             break;
 
         case LUA_ERRERR:
-            SWEET_ERROR( RuntimeError("Error handler failed - %s", lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "Error handler failed - %s", lua_tostring(lua_state_, -1) );
             break;
 
         case -1:
-            SWEET_ERROR( RuntimeError("Execution failed due to an unhandled C++ exception") );
+            error_policy_.error( true, "Execution failed due to an unhandled C++ exception" );
             break;
 
         default:
             SWEET_ASSERT( false );
-            SWEET_ERROR( RuntimeError("Execution failed in an unexpected way - %s", lua_tostring(lua_state_, -1)) );
+            error_policy_.error( true, "Execution failed in an unexpected way - %s", lua_tostring(lua_state_, -1) );
             break;
-    }
+    }    
+    return result == 0;
 }
 
 /**
@@ -600,10 +787,13 @@ void AddParameterHelper::internal_end_call( int parameters, int results, int err
 // @param parameters
 //  The number of parameters that have been pushed onto the stack to be passed
 //  to the function.
+//
+// @return
+//  True if the resume completed successfully otherwise false.
 */
-void AddParameterHelper::internal_end_resume( int parameters )
+bool AddParameterHelper::internal_end_resume( int parameters )
 {
-    int result = lua_resume( lua_state_, parameters );
+    int result = lua_resume( lua_state_, NULL, parameters );
     switch ( result )
     {
         case 0:
@@ -615,28 +805,28 @@ void AddParameterHelper::internal_end_resume( int parameters )
         case LUA_ERRRUN:
         {
             char message [1024];                
-            SWEET_ERROR( RuntimeError("%s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message))) );
+            error_policy_.error( true, "%s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message)) );
             break;
         }
 
         case LUA_ERRMEM:
         {
             char message [1024];
-            SWEET_ERROR( MemoryAllocationError("Out of memory - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message))) );
+            error_policy_.error( true, "Out of memory - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message)) );
             break;
         }
 
         case LUA_ERRERR:
         {
             char message [1024];
-            SWEET_ERROR( RuntimeError("Error handler failed - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message))) );
+            error_policy_.error( true, "Error handler failed - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message)) );
             break;
         }
         
         case -1:
         {
             char message [1024];
-            SWEET_ERROR( RuntimeError("Execution failed due to an unhandled C++ exception - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message))) );
+            error_policy_.error( true, "Execution failed due to an unhandled C++ exception - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message)) );
             break;
         }
 
@@ -644,10 +834,11 @@ void AddParameterHelper::internal_end_resume( int parameters )
         {
             SWEET_ASSERT( false );
             char message [1024];
-            SWEET_ERROR( RuntimeError("Execution failed in an unexpected way - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message))) );
+            error_policy_.error( true, "Execution failed in an unexpected way - %s", stack_trace_for_resume(lua_state_, lua_->is_stack_trace_enabled(), message, sizeof(message)) );
             break;
         }
-    }
+    }    
+    return result == 0 || result == LUA_YIELD;
 }
 
 /**
@@ -753,42 +944,42 @@ int AddParameterHelper::stack_trace_for_call( lua_State* lua_state )
 // @return
 //  Returns the string passed in \e message for convenience.
 */
-const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bool stack_trace_enabled, char* message, size_t length )
+const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bool stack_trace_enabled, char* message, int length )
 {
     SWEET_ASSERT( lua_state != NULL );
     SWEET_ASSERT( message != NULL );
     SWEET_ASSERT( length > 0 );
 
-    size_t written = 0;
+    int written = 0;
     memset( message, 0, length );
-    written += snprintf( message + written, length - written, "%s", lua_isstring(lua_state, -1) ? lua_tostring(lua_state, -1) : "Unknown error" );
+    written += snprintf( message + written, max(length - written, 0), "%s", lua_isstring(lua_state, -1) ? lua_tostring(lua_state, -1) : "Unknown error" );
 
     if ( stack_trace_enabled )
     {
         static const int STACK_TRACE_BEGIN = 0;
         static const int STACK_TRACE_END   = 6;
 
-        written += snprintf( message + written, length - written, ".\nstack trace:" );
+        written += snprintf( message + written, max(length - written, 0), ".\nstack trace:" );
 
         lua_Debug debug;
         memset( &debug, 0, sizeof(debug) );
 
         int level = STACK_TRACE_BEGIN;
-        while ( level < STACK_TRACE_END && lua_getstack(lua_state, level, &debug) )
+        while ( level < STACK_TRACE_END && length - written > 0 && lua_getstack(lua_state, level, &debug) )
         {
             lua_getinfo( lua_state, "Snl", &debug );
         
         //
         // Source and line number.
         //
-            written += snprintf( message + written, length - written, "\n  " );        
+            written += snprintf( message + written, max(length - written, 0), "\n  " );        
             if ( debug.currentline > 0 )
             {
-                written += snprintf( message + written, length - written, "%s(%d) : ", debug.source, debug.currentline );
+                written += snprintf( message + written, max(length - written, 0), "%s(%d) : ", debug.source, debug.currentline );
             }
             else
             {
-                written += snprintf( message + written, length - written, "%s(1) : ", debug.source, debug.currentline );
+                written += snprintf( message + written, max(length - written, 0), "%s(1) : ", debug.source );
             }
 
         //
@@ -796,18 +987,18 @@ const char* AddParameterHelper::stack_trace_for_resume( lua_State* lua_state, bo
         //
             if ( *debug.namewhat != '\0' )
             {
-                written += snprintf( message + written, length - written, "in function " LUA_QS, debug.name );
+                written += snprintf( message + written, max(length - written, 0), "in function " LUA_QS, debug.name );
             }
             else 
             {
                 switch ( *debug.what )
                 {
                     case 'm':
-                        written += snprintf( message + written, length - written, "main");
+                        written += snprintf( message + written, max(length - written, 0), "main");
                         break;
 
                     default:
-                        written += snprintf( message + written, length - written, "in function <%s(%d)>", debug.source, debug.linedefined );
+                        written += snprintf( message + written, max(length - written, 0), "in function <%s(%d)>", debug.source, debug.linedefined );
                         break;
                 }
             }

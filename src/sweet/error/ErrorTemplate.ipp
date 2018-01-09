@@ -8,6 +8,7 @@
 
 #include <stdarg.h>
 #include "ErrorTemplate.hpp"
+#include "Error.hpp"
 
 namespace sweet
 {

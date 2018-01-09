@@ -1,31 +1,35 @@
 //
 // TestLuaObject.cpp
-// Copyright (c) 2008 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/unit/UnitTest.h>
+#include <unit/UnitTest.h>
 #include <sweet/lua/Lua.hpp>
 #include <sweet/lua/LuaObject.hpp>
 #include <sweet/lua/LuaThread.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 
+using namespace sweet;
 using namespace sweet::lua;
 
 SUITE( TestLuaThread )
 {
     struct Fixture
     {
-        Lua       lua;
+        error::ErrorPolicy error_policy;
+        Lua lua;
         LuaThread lua_thread;
         LuaObject lua_object;
 
         Fixture()
-        : lua(),
+        : error_policy(),
+          lua( error_policy ),
           lua_thread( lua ),
           lua_object( lua )
         {
             lua.globals()
-                ( "lua_object", lua_object                      )
-                ( "yield",      yield(&Fixture::yield_function) )
+                ( "lua_object", lua_object )
+                ( "yield", yield(&Fixture::yield_function) )
             ;
         }
 

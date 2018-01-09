@@ -42,10 +42,9 @@ int LuaThunker<R (*)(A0), Returner, P0, P1, P2, P3, P4, P5, P6>::function( lua_S
 {
     using traits::traits;
 
-    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
-
     typedef R (*Function)(A0);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0 );
 }
 
@@ -61,11 +60,10 @@ int LuaThunker<R (*)(A0, A1), Returner, P0, P1, P2, P3, P4, P5, P6>::function( l
 {
     using traits::traits;
 
-    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
-    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
-
     typedef R (*Function)(A0, A1);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0, a1 );
 }
 
@@ -81,12 +79,11 @@ int LuaThunker<R (*)(A0, A1, A2), Returner, P0, P1, P2, P3, P4, P5, P6>::functio
 {
     using traits::traits;
 
+    typedef R (*Function)(A0, A1, A2);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
-
-    typedef R (*Function)(A0, A1, A2);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0, a1, a2 );
 }
 
@@ -102,13 +99,12 @@ int LuaThunker<R (*)(A0, A1, A2, A3), Returner, P0, P1, P2, P3, P4, P5, P6>::fun
 {
     using traits::traits;
 
+    typedef R (*Function)(A0, A1, A2, A3);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
-
-    typedef R (*Function)(A0, A1, A2, A3);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0, a1, a2, a3 );
 }
 
@@ -124,14 +120,13 @@ int LuaThunker<R (*)(A0, A1, A2, A3, A4), Returner, P0, P1, P2, P3, P4, P5, P6>:
 {
     using traits::traits;
 
+    typedef R (*Function)(A0, A1, A2, A3, A4);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
-
-    typedef R (*Function)(A0, A1, A2, A3, A4);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0, a1, a2, a3, a4 );
 }
 
@@ -147,15 +142,14 @@ int LuaThunker<R (*)(A0, A1, A2, A3, A4, A5), Returner, P0, P1, P2, P3, P4, P5, 
 {
     using traits::traits;
 
+    typedef R (*Function)(A0, A1, A2, A3, A4, A5);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
     typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
-
-    typedef R (*Function)(A0, A1, A2, A3, A4, A5);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     return LuaInvoker<Returner, Function>::call( lua_state, function, a0, a1, a2, a3, a4, a5 );
 }
 
@@ -171,11 +165,18 @@ int LuaThunker<R (T::*)(), Returner, PT, P0, P1, P2, P3, P4, P5>::function( lua_
 {
     using traits::traits;
 
-    T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-
     typedef R (T::* Function)();
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer );
+    T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -190,11 +191,18 @@ int LuaThunker<R (T::*)() const, Returner, PT, P0, P1, P2, P3, P4, P5>::function
 {
     using traits::traits;
 
-    const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-
     typedef R (T::* Function)() const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer );
+    const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -209,12 +217,19 @@ int LuaThunker<R (T::*)(A0), Returner, PT, P0, P1, P2, P3, P4, P5>::function( lu
 {
     using traits::traits;
 
-    T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
-
     typedef R (T::* Function)(A0);
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0 );
+    T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -229,12 +244,19 @@ int LuaThunker<R (T::*)(A0) const, Returner, PT, P0, P1, P2, P3, P4, P5>::functi
 {
     using traits::traits;
 
-    const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
-    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
-
     typedef R (T::* Function)(A0) const;
     Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0 );
+    const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
+    typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -249,13 +271,20 @@ int LuaThunker<R (T::*)(A0, A1), Returner, PT, P0, P1, P2, P3, P4, P5>::function
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
-
-    typedef R (T::* Function)(A0, A1);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -270,13 +299,20 @@ int LuaThunker<R (T::*)(A0, A1) const, Returner, PT, P0, P1, P2, P3, P4, P5>::fu
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1) const;
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
-
-    typedef R (T::* Function)(A0, A1) const;
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -291,14 +327,21 @@ int LuaThunker<R (T::*)(A0, A1, A2), Returner, PT, P0, P1, P2, P3, P4, P5>::func
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
-
-    typedef R (T::* Function)(A0, A1, A2);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -313,14 +356,21 @@ int LuaThunker<R (T::*)(A0, A1, A2) const, Returner, PT, P0, P1, P2, P3, P4, P5>
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2) const;
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
-
-    typedef R (T::* Function)(A0, A1, A2) const;
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -335,15 +385,22 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3), Returner, PT, P0, P1, P2, P3, P4, P5>::
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -358,15 +415,22 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3) const, Returner, PT, P0, P1, P2, P3, P4,
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3) const;
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3) const;
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -381,16 +445,23 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4), Returner, PT, P0, P1, P2, P3, P4, P
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3, A4);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3, A4);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -405,16 +476,23 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4) const, Returner, PT, P0, P1, P2, P3,
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3, A4) const;
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
     typename traits<A2>::value_type a2 = LuaConverter<typename traits<A2>::value_type>::to( lua_state, P2 );
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3, A4) const;
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -429,6 +507,8 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5), Returner, PT, P0, P1, P2, P3, P
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3, A4, A5);
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
@@ -436,10 +516,15 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5), Returner, PT, P0, P1, P2, P3, P
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
     typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3, A4, A5);
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4, a5 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4, a5 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 /**
@@ -454,6 +539,8 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5) const, Returner, PT, P0, P1, P2,
 {
     using traits::traits;
 
+    typedef R (T::* Function)(A0, A1, A2, A3, A4, A5) const;
+    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
     const T* this_pointer = LuaConverter<T*>::to( lua_state, PT );
     typename traits<A0>::value_type a0 = LuaConverter<typename traits<A0>::value_type>::to( lua_state, P0 );
     typename traits<A1>::value_type a1 = LuaConverter<typename traits<A1>::value_type>::to( lua_state, P1 );
@@ -461,10 +548,15 @@ int LuaThunker<R (T::*)(A0, A1, A2, A3, A4, A5) const, Returner, PT, P0, P1, P2,
     typename traits<A3>::value_type a3 = LuaConverter<typename traits<A3>::value_type>::to( lua_state, P3 );
     typename traits<A4>::value_type a4 = LuaConverter<typename traits<A4>::value_type>::to( lua_state, P4 );
     typename traits<A5>::value_type a5 = LuaConverter<typename traits<A5>::value_type>::to( lua_state, P5 );
-
-    typedef R (T::* Function)(A0, A1, A2, A3, A4, A5) const;
-    Function function = LuaConverter<Function>::to( lua_state, lua_upvalueindex(1) );
-    return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4, a5 );
+    if ( this_pointer )
+    {
+        return LuaInvoker<Returner, Function>::call( lua_state, function, this_pointer, a0, a1, a2, a3, a4, a5 );
+    }
+    else
+    {
+        lua_pushstring( lua_state, "Missing this pointer for call to C++ method" );
+        return lua_error( lua_state );
+    }
 }
 
 }

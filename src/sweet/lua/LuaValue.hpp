@@ -24,7 +24,7 @@ class Lua;
 //
 // Stores a reference to the Lua value in the Lua registry using the address
 // of the LuaValue as a key so that Lua considers the value referenced and 
-// available for garbage collection.
+// therefore not available for garbage collection.
 */
 class SWEET_LUA_DECLSPEC LuaValue
 {

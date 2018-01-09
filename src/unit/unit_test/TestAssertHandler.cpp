@@ -1,6 +1,6 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/AssertException.h>
-#include <sweet/unit/ReportAssert.h>
+#include <unit/UnitTest.h>
+#include <unit/AssertException.h>
+#include <unit/ReportAssert.h>
 
 using namespace UnitTest;
 

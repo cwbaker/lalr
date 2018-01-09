@@ -7,12 +7,20 @@
 #define SWEET_LUA_LUAFILEREADER_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "lua_/lua.h"
 #include <fstream>
 #include <vector>
 
+struct lua_State;
+
 namespace sweet
 {
+
+namespace error
+{
+
+class ErrorPolicy;
+
+}
 
 namespace lua
 {
@@ -25,12 +33,12 @@ namespace lua
 */
 class SWEET_LUA_DECLSPEC LuaFileReader
 {
-    std::ifstream       file_;
-    int                 block_size_;
-    std::vector<char>   block_;
+    std::ifstream file_;
+    int block_size_;
+    std::vector<char> block_;
 
     public:
-        LuaFileReader( const char* filename, int block_size = 4096 );
+        LuaFileReader( const char* filename, error::ErrorPolicy& error_policy, int block_size = 4096 );
         const char* read( size_t* size );
         static const char* reader( lua_State* lua, void* context, size_t* size );
 };

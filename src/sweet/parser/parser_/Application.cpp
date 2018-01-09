@@ -21,6 +21,7 @@
 #include <sweet/lua/ptr.hpp>
 #include <sweet/lua/vector.hpp>
 #include <sweet/lua/set.hpp>
+#include <sweet/error/Error.hpp>
 #include <iostream>
 
 using std::set;
@@ -49,8 +50,9 @@ namespace sweet
 namespace parser
 {
 
-struct ParserStateMachineDeleter
+class ParserStateMachineDeleter
 {
+public:
     Application* application_;
 
     ParserStateMachineDeleter( Application* application )
@@ -75,7 +77,8 @@ struct ParserStateMachineDeleter
 
 Application::Application( int argc, char** argv )
 : result_( EXIT_SUCCESS ),
-  lua_(),
+  error_policy_(),
+  lua_( error_policy_ ),
   parser_state_machine_prototype_( lua_ ),
   parser_state_machine_metatable_( lua_ ),
   parser_state_prototype_( lua_ ),

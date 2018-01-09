@@ -34,6 +34,7 @@ class SWEET_CMDLINE_DECLSPEC AddOption
         AddOption& operator()( const std::string& name, const std::string& short_name, const std::string& description, int* address );
         AddOption& operator()( const std::string& name, const std::string& short_name, const std::string& description, float* address );
         AddOption& operator()( const std::string& name, const std::string& short_name, const std::string& description, std::string* address );
+        AddOption& operator()( const std::string& name, const std::string& short_name, const std::string& description, std::vector<std::string>* values );
         AddOption& operator()( std::vector<std::string>* operands );
 };
 

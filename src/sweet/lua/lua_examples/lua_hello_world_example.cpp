@@ -1,9 +1,11 @@
 
 #include <sweet/lua/Lua.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
+using namespace sweet;
 using namespace sweet::lua;
 
 static void print( const string& message )
@@ -13,7 +15,8 @@ static void print( const string& message )
 
 void lua_hello_world_example()
 {
-    Lua lua;
+    error::ErrorPolicy error_policy;
+    Lua lua( error_policy );
     lua.globals()
         ( "print", &print )
     ;

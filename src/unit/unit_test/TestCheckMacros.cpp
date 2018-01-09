@@ -1,5 +1,5 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/CurrentTest.h>
+#include <unit/UnitTest.h>
+#include <unit/CurrentTest.h>
 #include "RecordingReporter.h"
 #include "ScopedCurrentTest.h"
 

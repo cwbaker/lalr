@@ -1,6 +1,6 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/DeferredTestReporter.h>
-#include <sweet/unit/Config.h>
+#include <unit/UnitTest.h>
+#include <unit/DeferredTestReporter.h>
+#include <unit/Config.h>
 #include <cstring>
 
 namespace UnitTest

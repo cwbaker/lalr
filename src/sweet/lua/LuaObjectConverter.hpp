@@ -8,6 +8,7 @@
 
 #include "LuaTraits.hpp"
 #include "lua_functions.hpp"
+#include <sweet/rtti/macros.hpp>
 #include <sweet/assert/assert.hpp>
 
 namespace sweet
@@ -187,7 +188,7 @@ struct LuaObjectConverter<Type*, LuaByValue>
     
     static Type* to( lua_State* lua_state, int position )
     {
-        SWEET_ASSERT( lua_isuserdata(lua_state, position) );
+        SWEET_ASSERT( lua_isnoneornil(lua_state, position) || lua_isuserdata(lua_state, position) );
         return reinterpret_cast<Type*>( lua_touserdata(lua_state, position) );
     }
 };
@@ -237,7 +238,7 @@ struct LuaObjectConverter<const Type*, LuaByValue>
     
     static const Type* to( lua_State* lua_state, int position )
     {
-        SWEET_ASSERT( lua_isuserdata(lua_state, position) );
+        SWEET_ASSERT( lua_isuserdata(lua_state, position) || lua_isnoneornil(lua_state, position) );
         return reinterpret_cast<const Type*>( lua_touserdata(lua_state, position) );
     }
 };

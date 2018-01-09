@@ -8,9 +8,10 @@
 
 #include "declspec.hpp"
 #include "LuaValueWrapper.hpp"
-#include "lua_/lua.h"
 #include <sweet/traits/traits.hpp>
 #include <string>
+
+struct lua_State;
 
 namespace sweet
 {
@@ -80,6 +81,12 @@ template <>
 struct SWEET_LUA_DECLSPEC LuaConverter<const std::string&>
 {
     static void push( lua_State* lua_state, const std::string& value );
+};
+
+template <>
+struct SWEET_LUA_DECLSPEC LuaConverter<LuaValue>
+{
+    static void push( lua_State* lua_state, const LuaValue& value );
 };
 
 template <>

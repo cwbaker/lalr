@@ -37,6 +37,7 @@ class SWEET_LUA_DECLSPEC AddMember
 
         AddMember& this_pointer( void* value );
         AddMember& type( const rtti::Type& type );
+        AddMember& copy( const LuaObject& object );
         template <class Type> AddMember& metatable( const Type& object );
 
         AddMember& operator()( const char* name, const LuaNil& nil );

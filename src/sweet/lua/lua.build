@@ -1,43 +1,45 @@
 
-buildfile "lua_/lua_.build";
 buildfile "lua_examples/lua_examples.build";
 buildfile "lua_test/lua_test.build";
 buildfile "lua_unit/lua_unit.build";
 
-Library {
-    id = "lua";
-    
-    libraries = {
-        "assert/assert",
-        "error/error",
-        "lua/lua_/liblua",
-        "rtti/rtti"
+local settings = build.current_settings();
+for _, architecture in ipairs(settings.architectures) do
+    build.Library ("lua", architecture) {
+        libraries = {
+            "sweet/error/error",
+            "sweet/rtti/rtti",
+            "lua/liblua",
+            "sweet/assert/assert",
+        };
+
+        build.Cxx (architecture) {
+            "AddGlobal.cpp", 
+            "AddMember.cpp",
+            "AddMemberHelper.cpp",
+            "AddParameter.cpp",
+            "AddParameterHelper.cpp",
+            "Lua.cpp",
+            "LuaAllocator.cpp",
+            "LuaConverter.cpp",
+            "LuaFileReader.cpp",
+            "LuaGlobalEnvironment.cpp", 
+            "LuaMemoryReader.cpp",
+            "LuaObject.cpp",
+            "LuaOutOfOrderParameter.cpp",
+            "LuaNil.cpp",
+            "LuaPreprocessReader.cpp",
+            "LuaRawWrapper.cpp",
+            "LuaScheduler.cpp",
+            "LuaStackGuard.cpp", 
+            "LuaThread.cpp",
+            "LuaThreadEventSink.cpp",
+            "LuaThreadPool.cpp",
+            "LuaThreadPoolEventSink.cpp",
+            "LuaUserData.cpp", 
+            "LuaValue.cpp",
+            "lua_functions.cpp",
+            "lua_types.cpp"       
+        };
     };
-    
-    Source {
-        "AddGlobal.cpp", 
-        "AddMember.cpp",
-        "AddMemberHelper.cpp",
-        "AddParameter.cpp",
-        "AddParameterHelper.cpp",
-        "Error.cpp",
-        "Lua.cpp",
-        "LuaAllocator.cpp",
-        "LuaConverter.cpp",
-        "LuaFileReader.cpp",
-        "LuaGlobalEnvironment.cpp", 
-        "LuaMemoryReader.cpp",
-        "LuaObject.cpp",
-        "LuaOutOfOrderParameter.cpp",
-        "LuaNil.cpp",
-        "LuaPreprocessReader.cpp",
-        "LuaRawWrapper.cpp",
-        "LuaReturner.cpp",
-        "LuaStackGuard.cpp", 
-        "LuaThread.cpp",
-        "LuaUserData.cpp", 
-        "LuaValue.cpp",
-        "lua_functions.cpp",
-        "lua_types.cpp"       
-    };
-}
+end

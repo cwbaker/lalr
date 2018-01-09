@@ -7,7 +7,9 @@
 #define SWEET_LUA_LUAMEMORYREADER_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "lua_/lua.h"
+#include <sys/types.h>
+
+struct lua_State;
 
 namespace sweet
 {

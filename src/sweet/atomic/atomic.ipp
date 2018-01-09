@@ -32,7 +32,7 @@ inline int atomic_increment( volatile int* destination )
 #if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedIncrement(reinterpret_cast<volatile long*>(destination)) );
-#elif defined(BUILD_OS_MACOSX)
+#elif defined(BUILD_OS_MACOSX) || defined(BUILD_OS_ANDROID) || defined(BUILD_OS_IOS)
     return static_cast<int>( __sync_add_and_fetch(destination, 1) );
 #else
 #error "The function 'sweet::atomic::atomic_increment()' is not implemented for this platform."
@@ -53,7 +53,7 @@ inline int atomic_decrement( volatile int* destination )
 #if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedDecrement(reinterpret_cast<volatile long*>(destination)) );
-#elif defined(BUILD_OS_MACOSX)
+#elif defined(BUILD_OS_MACOSX) || defined(BUILD_OS_ANDROID) || defined(BUILD_OS_IOS)
     return static_cast<int>( __sync_sub_and_fetch(destination, 1) );
 #else
 #error "The function 'sweet::atomic::atomic_decrement()' is not implemented for this platform."
@@ -77,7 +77,7 @@ inline int atomic_exchange( volatile int* destination, int exchange )
 #if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedExchange(reinterpret_cast<volatile long*>(destination), exchange) );
-#elif defined(BUILD_OS_MACOSX)
+#elif defined(BUILD_OS_MACOSX) || defined(BUILD_OS_ANDROID) || defined(BUILD_OS_IOS)
     int result = static_cast<int>( __sync_lock_test_and_set(destination, exchange) );
     __sync_lock_release( destination );
     return result;
@@ -121,7 +121,7 @@ inline int atomic_compare_exchange( volatile int* destination, int exchange, int
 #if defined(BUILD_OS_WINDOWS)
     SWEET_ASSERT( destination );
     return static_cast<int>( ::InterlockedCompareExchange(reinterpret_cast<volatile long*>(destination), exchange, comparand) );
-#elif defined(BUILD_OS_MACOSX)
+#elif defined(BUILD_OS_MACOSX) || defined(BUILD_OS_ANDROID) || defined(BUILD_OS_IOS)
     return static_cast<int>( __sync_val_compare_and_swap(destination, comparand, exchange) );
 #else
 #error "The function 'sweet::atomic::atomic_compare_exchange()' is not implemented for this platform."

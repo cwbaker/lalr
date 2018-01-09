@@ -1,9 +1,9 @@
-#include <sweet/unit/UnitTest.h>
-#include <sweet/unit/TestMacros.h>
-#include <sweet/unit/TestList.h>
-#include <sweet/unit/TestResults.h>
-#include <sweet/unit/TestReporter.h>
-#include <sweet/unit/ReportAssert.h>
+#include <unit/UnitTest.h>
+#include <unit/TestMacros.h>
+#include <unit/TestList.h>
+#include <unit/TestResults.h>
+#include <unit/TestReporter.h>
+#include <unit/ReportAssert.h>
 #include "RecordingReporter.h"
 #include "ScopedCurrentTest.h"
 

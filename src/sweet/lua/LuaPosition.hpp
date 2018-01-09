@@ -7,6 +7,7 @@
 #define SWEET_LUA_LUAPOSITION_HPP_INCLUDED
 
 #include "LuaOutOfOrderParameter.hpp"
+#include <lua/lua.hpp>
 
 namespace sweet
 {

@@ -79,7 +79,7 @@ class PositionIterator
         {
             int character = *position_;
             ++position_;
-            if ( character == '\n' || character == '\r' && (position_ == end_ || *position_ != '\n') )
+            if ( character == '\n' || (character == '\r' && (position_ == end_ || *position_ != '\n')) )
             {
                 ++line_;
             }

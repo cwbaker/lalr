@@ -1,16 +1,12 @@
-//
-// AddParameterHelper.ipp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LUA_ADDPARAMETERHELPER_IPP_INCLUDED
 #define SWEET_LUA_ADDPARAMETERHELPER_IPP_INCLUDED
 
 #include "AddParameterHelper.hpp"
+#include "LuaUserDataTemplate.hpp"
 #include "LuaStackGuard.hpp"
 #include "LuaConverter.hpp"
-#include "Error.hpp"
 #include "Lua.hpp"
+#include <sweet/error/ErrorPolicy.hpp>
 #include <sweet/traits/traits.hpp>
 #include <sweet/assert/assert.hpp>
 
@@ -120,11 +116,7 @@ void AddParameterHelper::internal_begin( const char* function, typename traits::
 //
     LuaConverter<Type>::push( lua_state_, object );
     lua_getfield( lua_state_, -1, function );
-    if ( !lua_isfunction(lua_state_, -1) )
-    {
-        lua_pop( lua_state_, 2 );
-        SWEET_ERROR( RuntimeError("The member variable '%s' is not a function", function) );
-    }
+    error_policy_.error( !lua_isfunction(lua_state_, -1) && !lua_istable(lua_state_, -1), "The member variable '%s' is not a function or a table", function );
 
 //
 // Remove the table that the member function was retrieved from from the
@@ -145,6 +137,27 @@ template <typename Type>
 void AddParameterHelper::push( typename traits::traits<Type>::parameter_type value )
 {
     LuaConverter<Type>::push( lua_state_, value );
+    ++parameters_;
+}
+
+/**
+// Push a value onto the Lua stack as userdata with a metatable.
+//
+// @param value
+//  The value to push.
+//
+// @param metatable
+//  The LuaObject for the Lua table to set as the value's metatable (assumed 
+//  not null).
+*/
+template <typename Type> 
+void AddParameterHelper::push( typename traits::traits<Type>::parameter_type value, LuaObject* metatable )
+{
+    SWEET_ASSERT( metatable );
+    Type* new_value = reinterpret_cast<Type*>( lua_newuserdata(lua_state_, sizeof(lua::LuaUserDataTemplate<Type>)) );
+    new (new_value) lua::LuaUserDataTemplate<Type>( SWEET_STATIC_TYPEID(Type), value );
+    lua_push_object( lua_state_, metatable );
+    lua_setmetatable( lua_state_, -2 );
     ++parameters_;
 }
 

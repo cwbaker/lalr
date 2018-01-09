@@ -422,7 +422,7 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserProduction* production, std::vector<ParserNode>& nodes )
 {
-    SWEET_ASSERT( production->get_length() < nodes.size() );
+    SWEET_ASSERT( production->get_length() < int(nodes.size()) );
     typename std::vector<ParserNode>::reverse_iterator node = nodes.rbegin() + production->get_length();
     return node != nodes.rend() ? node.base() : nodes_.begin();
 }

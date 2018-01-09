@@ -1,6 +1,6 @@
 //
 // lua_functions.ipp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #ifndef SWEET_LUA_FUNCTIONS_IPP_INCLUDED
@@ -106,11 +106,21 @@ template <class Type>
 typename sweet::traits::traits<Type>::reference_type
 lua_to_value( lua_State* lua_state, int position )
 {
-    SWEET_ASSERT( lua_state != 0 );
-    SWEET_ASSERT( lua_isuserdata(lua_state, position) );
-    SWEET_ASSERT( lua_touserdata(lua_state, position) != 0 );
+    SWEET_ASSERT( lua_state );
+    if ( !lua_isuserdata(lua_state, position) )
+    {
+        lua_pushfstring( lua_state, "The type '%s' at position %d is not userdata as expected", lua_typename(lua_state, lua_type(lua_state, position)), position );
+        lua_error( lua_state );
+    }
+    else if ( !lua_touserdata(lua_state, position) )
+    {
+        lua_pushfstring( lua_state, "The userdata at position %d is nil", position );
+        lua_error( lua_state );
+    }
+
+    SWEET_ASSERT( lua_touserdata(lua_state, position) );
     LuaUserDataTemplate<Type>* user_data = static_cast<LuaUserDataTemplate<Type>*>( lua_touserdata(lua_state, position) );
-    SWEET_ASSERT( user_data != NULL );
+    SWEET_ASSERT( user_data );
     return user_data->value();
 }
 
@@ -255,7 +265,7 @@ int lua_iterator_with_function( lua_State* lua_state )
     Iterator& iterator = LuaConverter<Iterator&>::to( lua_state, lua_upvalueindex(1) );
     Iterator end = LuaConverter<Iterator>::to( lua_state, lua_upvalueindex(2) );
     Function& function = LuaConverter<Function&>::to( lua_state, lua_upvalueindex(3) );
-    while ( iterator != end && !function(*iterator) )
+    while ( iterator != end && !function(lua_state, *iterator) )
     {
         ++iterator;
     }
@@ -280,14 +290,13 @@ int lua_iterator_with_function( lua_State* lua_state )
 // Create a Lua iterator to iterate over the range [\e start, \e finish).
 //
 // Copies of the iterators \e start and \e finish are made by calling the in 
-// place copy constructor on memory allocated as Lua user data.  A garbage 
-// collection method is set for the metatable for the user data so that 
-// the iterators are destroyed correctly when the user data is garbage 
-// collected.
+// place copy constructor on memory allocated as Lua userdata.  A garbage 
+// collection method is set for the metatable for the userdata so that the 
+// iterators are destroyed correctly when the userdata is garbage collected.
 //
-// The user data values containing the copied iterators are then bound as 
-// up values to an iterator function (see lua_iterator()) that iterates
-// over the range returning nil when the end is reached.
+// The userdata values containing the copied iterators are then bound as 
+// upvalues of an iterator function (see lua_iterator()) that iterates over 
+// the range returning nil when the end is reached.
 //
 // @param lua_state
 //  The lua_State.

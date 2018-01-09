@@ -21,7 +21,7 @@ void initialize_enable_ptr_from_this( ReferenceCount* reference_count, const ena
     enable_ptr_from_this->weak_this_.assign( const_cast<OtherType*>(ptr), reference_count );
 }
 
-inline void initialize_enable_ptr_from_this( ReferenceCount* reference_count, ... )
+inline void initialize_enable_ptr_from_this( ReferenceCount* /*reference_count*/, ... )
 {
 }
 

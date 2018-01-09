@@ -1,6 +1,6 @@
 //
 // LuaValue.cpp
-// Copyright (c) 2011 Charles Baker.  All rights reserved.
+// Copyright (c) 2011 - 2014 Charles Baker.  All rights reserved.
 //
 
 #include "stdafx.hpp"
@@ -83,10 +83,12 @@ LuaValue::~LuaValue()
     if ( lua_ )
     {
         lua_State* lua_state = lua_->get_lua_state();
-        SWEET_ASSERT( lua_state );
-        lua_pushlightuserdata( lua_state, this );
-        lua_pushnil( lua_state );
-        lua_rawset( lua_state, LUA_REGISTRYINDEX );
-        lua_ = NULL;
+        if ( lua_state )
+        {
+            lua_pushlightuserdata( lua_state, this );
+            lua_pushnil( lua_state );
+            lua_rawset( lua_state, LUA_REGISTRYINDEX );
+            lua_ = NULL;
+        }
     }
 }

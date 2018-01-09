@@ -1,9 +1,11 @@
 
 #include <sweet/lua/Lua.hpp>
+#include <sweet/error/ErrorPolicy.hpp>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
+using namespace sweet;
 using namespace sweet::lua;
 
 enum LogMask
@@ -46,7 +48,8 @@ SWEET_LUA_TYPE_CONVERSION( Log, LuaByReference );
 
 void lua_logging_example()
 {
-    Lua lua;
+    error::ErrorPolicy error_policy;
+    Lua lua( error_policy );
 
     Log log( LOG_NULL );
     lua.create( log );

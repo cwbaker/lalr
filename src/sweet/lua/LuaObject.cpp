@@ -45,6 +45,28 @@ LuaObject::~LuaObject()
 }
 
 /**
+// Get the Lua object that this LuaObject is part of.
+//
+// @return
+//  The Lua object that this LuaObject is part of.
+*/
+Lua* LuaObject::lua() const
+{
+    return lua_;
+}
+
+/**
+// Get the lua_State that this LuaObject is part of.
+//
+// @return
+//  The lua_State that this LuaObject is part of.
+*/
+lua_State* LuaObject::lua_state() const
+{
+    return lua_->get_lua_state();
+}
+
+/**
 // Set the members of this LuaObject.
 //
 // @return

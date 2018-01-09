@@ -1,6 +1,6 @@
 //
 // AddMember.cpp
-// Copyright (c) 2007 - 2012 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker.  All rights reserved.
 //
 
 #include "AddMember.hpp"
@@ -114,6 +114,41 @@ AddMember& AddMember::type( const rtti::Type& type )
 }
 
 /**
+// Copy fields from \e object's table into this LuaObject's table.
+//
+// @param object
+//  The LuaObject representing the table to copy fields from.
+//
+// @return
+//  This AddMember.
+*/
+AddMember& AddMember::copy( const LuaObject& object )
+{
+    SWEET_ASSERT( add_member_helper_ );
+
+    lua_State* lua_state = add_member_helper_->get_lua_state();
+    LuaStackGuard guard( lua_state );
+
+    const int TABLE = lua_gettop( lua_state );
+    const int OTHER_TABLE = TABLE + 1;
+    const int KEY = TABLE + 2;
+    const int VALUE = TABLE + 3;
+
+    lua_push_object( lua_state, const_cast<LuaObject*>(&object) );
+    lua_pushnil( lua_state );
+    while ( lua_next(lua_state, OTHER_TABLE) )
+    {
+        lua_pushvalue( lua_state, KEY );
+        lua_pushvalue( lua_state, VALUE );
+        lua_rawset( lua_state, TABLE );        
+        lua_pop( lua_state, 1 );
+    }
+    lua_pop( lua_state, 1 );
+
+    return *this;
+}
+
+/**
 // Set a member variable to nil.
 //
 // @param name
@@ -125,7 +160,7 @@ AddMember& AddMember::type( const rtti::Type& type )
 // @return
 //  This AddMember.
 */
-AddMember& AddMember::operator()( const char* name, const LuaNil& nil )
+AddMember& AddMember::operator()( const char* name, const LuaNil& /*nil*/ )
 {
     SWEET_ASSERT( add_member_helper_ );
     SWEET_ASSERT( name );
@@ -150,14 +185,14 @@ AddMember& AddMember::operator()( const char* name, const LuaNil& nil )
 // @return
 //  This AddMember.
 */
-AddMember& AddMember::operator()( const char* name, const LuaGlobalEnvironment& global_environment )
+AddMember& AddMember::operator()( const char* name, const LuaGlobalEnvironment& /*global_environment*/ )
 {
     SWEET_ASSERT( add_member_helper_ );
     SWEET_ASSERT( name );
 
     lua_State* lua_state = add_member_helper_->get_lua_state();
     LuaStackGuard guard( lua_state );
-    lua_pushvalue( lua_state, LUA_GLOBALSINDEX );
+    lua_pushglobaltable( lua_state );
     lua_setfield( lua_state, -2, name );
 
     return *this;

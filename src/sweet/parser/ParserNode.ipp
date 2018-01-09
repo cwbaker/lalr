@@ -34,8 +34,8 @@ template <class UserData, class Char, class Traits, class Allocator>
 ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const UserData& user_data )
 : state_( state ),
   symbol_( symbol ),
-  user_data_( user_data ),
-  lexeme_()
+  lexeme_(),
+  user_data_( user_data )
 {
     SWEET_ASSERT( state );
 }
@@ -59,8 +59,8 @@ template <class UserData, class Char, class Traits, class Allocator>
 ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
 : state_( state ),
   symbol_( symbol ),
-  user_data_(),
-  lexeme_( lexeme )
+  lexeme_( lexeme ),
+  user_data_()
 {
     SWEET_ASSERT( state );
 }

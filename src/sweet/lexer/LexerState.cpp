@@ -81,6 +81,7 @@ void LexerState::add_transition( int begin, int end, LexerState* state )
 
     bool inserted = transitions_.insert( LexerTransition(begin, end, state, action) ).second;
     SWEET_ASSERT( inserted );
+    (void) inserted;
 }
 
 /**

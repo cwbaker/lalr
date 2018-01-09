@@ -7,7 +7,7 @@
 #define SWEET_LUA_LUAPREPROCESSREADER_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "lua_/lua.h"
+#include <lua/lua.hpp>
 #include <vector>
 
 namespace sweet

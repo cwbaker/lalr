@@ -7,7 +7,8 @@
 #define SWEET_LUA_LUASTACKGUARD_HPP_INCLUDED
 
 #include "declspec.hpp"
-#include "lua_/lua.h"
+
+struct lua_State;
 
 namespace sweet
 {
