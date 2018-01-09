@@ -6,7 +6,7 @@
 #include "LuaAllocator.hpp"
 #if defined(BUILD_OS_WINDOWS) || defined(BUILD_OS_ANDROID)
 #include <malloc.h>
-#elif defined(BUILD_OS_MACOSX) || defined(BUILD_OS_IOS)
+#elif defined(BUILD_OS_MACOS) || defined(BUILD_OS_IOS)
 #include <stdlib.h>
 #endif
 
