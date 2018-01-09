@@ -45,8 +45,7 @@ build:initialize {
 
 build:default_targets {
     "sweet/lexer/lexer_test",    
-    "sweet/parser/parser_test",
-    "sweet/parser/parser_"
+    "sweet/parser/parser_test"
 };
 
 buildfile "lua/lua.build";
