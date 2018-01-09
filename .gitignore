@@ -11,3 +11,5 @@ macosx_debug
 macosx_release
 macosx_shipping
 local_settings.lua
+*.sublime-project
+*.sublime-workspace
