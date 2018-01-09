@@ -1,6 +1,6 @@
 # Sweet Parser
 
-*Sweet Parser* is a modern LALR parser and parser generator that generates an LALR(1) parser from a BNF grammar.
+*Sweet Parser* is a modern LALR(1) parser and parser generator.
 
 The parser can be generated at runtime without the need for an offline generation step.  If offline generation is required there is a stand alone executable that provides Lua scriptable code generation from the parser state machine.  Parsers generated this way have no dependencies on anything other than the standard libary.
 
