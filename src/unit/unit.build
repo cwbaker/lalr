@@ -35,7 +35,7 @@ for _, build in build:default_builds() do
         };
     end
 
-    if platform == "macosx" then
+    if platform == "macos" then
         libUnitTest {
             build:Cxx () {
                 "Posix/SignalTranslator.cpp",
