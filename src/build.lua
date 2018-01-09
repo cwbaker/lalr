@@ -57,7 +57,6 @@ buildfile "sweet/error/error.build";
 buildfile "sweet/lexer/lexer.build";
 buildfile "sweet/lua/lua.build";
 buildfile "sweet/parser/parser.build";
-buildfile "sweet/pointer/pointer.build";
 buildfile "sweet/rtti/rtti.build";
 buildfile "sweet/traits/traits.build";
 buildfile "sweet/utility/utility.build";
