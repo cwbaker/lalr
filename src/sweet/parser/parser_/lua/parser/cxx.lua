@@ -1,9 +1,9 @@
 --
 -- cxx.lua
--- Copyright (c) 2009 - 2010 Charles Baker.  All rights reserved.
+-- Copyright (c) Charles Baker. All rights reserved.
 --
 
-function cxx_parser( filename )
+local function cxx_parser( filename )
     local input_file = assert( io.open(filename, "rb") );
     local grammar = assert( input_file:read("*a") );
     input_file:close();
@@ -12,8 +12,8 @@ function cxx_parser( filename )
     local parser_state_machine = ParserStateMachine( grammar, filename );
     assert( parser_state_machine ~= nil, "Parsing "..filename.." failed" );
     
-    local output_filename = string.gsub( filename, ".g", ".hpp" );
-    local output_file = assert( io.open(output_filename, "wb") );
+    local hpp_filename = string.gsub( filename, "%.g$", ".hpp" );
+    local output_file = assert( io.open(hpp_filename, "wb") );
     local function print( value )
         output_file:write( value );
         output_file:write( "\n" );
@@ -86,7 +86,7 @@ function cxx_parser( filename )
             print( "    { "..transition:start()..", "..transition:finish()..", &"..lexer_state_id(id, transition:state())..", "..lexer_action_id(transition:action()).." }, " );
             transitions = transitions + 1;
         end
-        print( "    { 0, 0, NULL }" );
+        print( "    { 0, 0, NULL, NULL }" );
         print( "};" );
         print( "" );
 
@@ -252,6 +252,17 @@ function cxx_parser( filename )
     
     output_file:close();
     output_file = nil;    
+
+    local cpp_source = [[
+#include "parser.hpp"
+#include "%s"
+]];
+
+    local cpp_filename = string.gsub( filename, "%.g$", ".cpp" );
+    local output_file = assert( io.open(cpp_filename, "wb") );
+    output_file:write( cpp_source:format(hpp_filename) );
+    output_file:close();
+    output_file = nil;
 end
 
 function parser( filename )

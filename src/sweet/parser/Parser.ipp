@@ -558,12 +558,11 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTra
 //  A variable to receive whether or not this Parser has rejected its input.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTransition* transition, bool* accepted, bool* rejected )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTransition* transition, bool* accepted, bool* /*rejected*/ )
 {
     SWEET_ASSERT( state_machine_ );
     SWEET_ASSERT( transition );
     SWEET_ASSERT( accepted );
-    SWEET_ASSERT( rejected );
     
     const ParserSymbol* symbol = transition->get_reduced_production()->get_symbol();
     if ( symbol != state_machine_->start_symbol() )

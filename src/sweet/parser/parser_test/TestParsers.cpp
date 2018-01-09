@@ -654,12 +654,11 @@ SUITE( Parsers )
     {
         struct StringLexer
         {
-            static void string_lexer( const char** begin, const char* end, std::string* lexeme, const void** symbol )
+            static void string_lexer( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
                 SWEET_ASSERT( begin && *begin );
                 SWEET_ASSERT( end );
                 SWEET_ASSERT( lexeme );
-                SWEET_ASSERT( symbol );
 
                 lexeme->clear();
 
@@ -705,12 +704,11 @@ SUITE( Parsers )
     {
         struct LineComment
         {
-            static void line_comment( const char** begin, const char* end, std::string* lexeme, const void** symbol )
+            static void line_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
                 SWEET_ASSERT( begin && *begin );
                 SWEET_ASSERT( end );
                 SWEET_ASSERT( lexeme );
-                SWEET_ASSERT( symbol );
                 
                 lexeme->clear();
                 
@@ -754,11 +752,10 @@ SUITE( Parsers )
     {
         struct BlockComment
         {
-            static void block_comment( const char** begin, const char* end, std::string* lexeme, const void** symbol )
+            static void block_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
                 SWEET_ASSERT( begin );
                 SWEET_ASSERT( lexeme );
-                SWEET_ASSERT( symbol );
 
                 lexeme->clear();
                                 
@@ -947,10 +944,8 @@ SUITE( Parsers )
             SWEET_ASSERT( value_symbol_ );
         }
 
-        void prototype( const char** begin, const char* end, std::string* lexeme, const void** symbol ) const
+        void prototype( const char** /*begin*/, const char* /*end*/, std::string* lexeme, const void** symbol ) const
         {
-            SWEET_ASSERT( begin && *begin );
-            SWEET_ASSERT( end );
             SWEET_ASSERT( lexeme );
             SWEET_ASSERT( symbol );
             *symbol = *lexeme == "prototype" ? prototype_symbol_ : value_symbol_;
