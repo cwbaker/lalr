@@ -1,8 +1,3 @@
-//
-// GrammarParser.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef GRAMMARPARSER_INCLUDED
 #define GRAMMARPARSER_INCLUDED
 

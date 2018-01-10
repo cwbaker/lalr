@@ -1,12 +1,6 @@
-//
-// ParserItem.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//    
-
 #ifndef SWEET_PARSER_PARSERITEM_HPP_INCLUDED
 #define SWEET_PARSER_PARSERITEM_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <string>
 #include <set>
 
@@ -23,7 +17,7 @@ class ParserProduction;
 // An item that defines the positions in the grammar that a state 
 // represents.
 */
-class SWEET_PARSER_DECLSPEC ParserItem
+class ParserItem
 {
     std::shared_ptr<ParserProduction> production_; ///< The production that this item is for.
     int position_; ///< The position of the dot in this item.

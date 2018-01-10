@@ -1,12 +1,6 @@
-//
-// ParserTransition.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//    
-
 #ifndef SWEET_PARSER_PARSERTRANSITION_HPP_INCLUDED
 #define SWEET_PARSER_PARSERTRANSITION_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <string>
 #include <set>
 
@@ -32,7 +26,7 @@ enum ParserTransitionType
 /**
 // A transition in a parser's state machine.
 */
-class SWEET_PARSER_DECLSPEC ParserTransition
+class ParserTransition
 {
     public:
         static const int INVALID_INDEX = -1;

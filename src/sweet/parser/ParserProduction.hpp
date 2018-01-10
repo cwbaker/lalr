@@ -1,12 +1,6 @@
-//
-// ParserProduction.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_PRODUCTION_HPP_INCLUDED
 #define SWEET_PARSER_PRODUCTION_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <string>
 #include <vector>
 #include <set>
@@ -24,7 +18,7 @@ class ParserSymbol;
 // A production specifying a symbol on the left hand side that is reduced
 // from zero or more nodes on the right hand side.
 */
-class SWEET_PARSER_DECLSPEC ParserProduction
+class ParserProduction
 {
     public:
         static const int INVALID_INDEX = -1;

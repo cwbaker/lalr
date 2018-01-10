@@ -1,12 +1,6 @@
-//
-// ParserStateMachine.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_PARSERSTATEMACHINE_HPP_INCLUDED
 #define SWEET_PARSER_PARSERSTATEMACHINE_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <memory>
 #include <vector>
 #include <string>
@@ -35,7 +29,7 @@ class ParserErrorPolicy;
 /**
 // The data that defines the state machine for a %parser.
 */
-class SWEET_PARSER_DECLSPEC ParserStateMachine
+class ParserStateMachine
 {
     std::string identifier_; ///< The identifier of this ParserStateMachine.
     std::vector<std::shared_ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.

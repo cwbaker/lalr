@@ -1,12 +1,6 @@
-//
-// ParserState.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_PARSERSTATE_HPP_INCLUDED
 #define SWEET_PARSER_PARSERSTATE_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include "ParserItem.hpp"
 #include "ParserTransition.hpp"
 #include <memory>
@@ -21,7 +15,7 @@ namespace parser
 /**
 // A state in a parser's state machine.
 */
-class SWEET_PARSER_DECLSPEC ParserState
+class ParserState
 {
     public:
         static const int INVALID_INDEX = -1;

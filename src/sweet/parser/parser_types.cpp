@@ -9,4 +9,4 @@
 /** 
 // The keyword used to represent the special 'error' terminal. 
 */
-SWEET_PARSER_DECLSPEC const char* sweet::parser::ERROR_KEYWORD = "error";
+const char* sweet::parser::ERROR_KEYWORD = "error";

@@ -1,12 +1,6 @@
-//
-// ParserSymbol.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//    
-
 #ifndef SWEET_PARSER_SYMBOL_HPP_INCLUDED
 #define SWEET_PARSER_SYMBOL_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <memory>
 #include <set>
 #include <vector>
@@ -49,7 +43,7 @@ class ParserProduction;
 /**
 // A symbol parsed as part of a grammar rule.
 */
-class SWEET_PARSER_DECLSPEC ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
+class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
 {
     public:
         static const int INVALID_INDEX = -1;

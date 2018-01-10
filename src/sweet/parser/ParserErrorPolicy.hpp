@@ -1,12 +1,6 @@
-//
-// ParserErrorPolicy.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_PARSERERRORPOLICY_HPP_INCLUDED
 #define SWEET_PARSER_PARSERERRORPOLICY_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <stdarg.h>
 
 namespace sweet
@@ -26,7 +20,7 @@ namespace parser
 // An interface to be implemented by classes that wish to be notified of
 // errors and %debug information from the %parser library.
 */
-class SWEET_PARSER_DECLSPEC ParserErrorPolicy
+class ParserErrorPolicy
 {
     public:
         virtual ~ParserErrorPolicy();
