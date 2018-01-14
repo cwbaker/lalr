@@ -13,10 +13,10 @@ using namespace sweet;
 using namespace sweet::lexer;
 using namespace sweet::parser;
 
-static ptr<ParserUserData<char> > hello_world( const ParserSymbol* symbol, const ParserNode<>* start, const ParserNode<>* finish )
+static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symbol*/, const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/ )
 {
     printf( "Hello World!\n" );
-    return ptr<ParserUserData<char> >();
+    return shared_ptr<ParserUserData<char> >();
 }
 
 void parser_hello_world_with_grammar_example()

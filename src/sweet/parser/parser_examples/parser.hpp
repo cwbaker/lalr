@@ -1,7 +1,8 @@
-
 #ifndef PARSER_HPP_INCLUDED
 #define PARSER_HPP_INCLUDED
 
+#include <sweet/assert/assert.hpp>
+#include <string>
 #include <stdarg.h>
 #include <iterator>
 #include <algorithm>
@@ -78,7 +79,7 @@ class PositionIterator
         {
             int character = *position_;
             ++position_;
-            if ( character == '\n' || character == '\r' && (position_ == end_ || *position_ != '\n') )
+            if ( character == '\n' || (character == '\r' && (position_ == end_ || *position_ != '\n')) )
             {
                 ++line_;
             }

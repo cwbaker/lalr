@@ -1,22 +1,26 @@
 
+local build = build:configure {
+    warning_level = 0;
+};
+
 build:all {
     build:Executable "parser_examples" {
         libraries = {
-            "assert/assert",
-            "error/error",
-            "lexer/lexer",
-            "parser/parser",
-            "pointer/pointer"
+            "sweet/assert/assert",
+            "sweet/error/error",
+            "sweet/lexer/lexer",
+            "sweet/parser/parser"
         };
 
         build:Cxx () {
             "main.cpp",
-            "parser_hello_world_example.cpp",
-            "parser_hello_world_with_grammar_example.cpp",
-            "parser_json_example.cpp",
-            "parser_calculator_example.cpp",
+            -- "parser_hello_world_example.cpp",
+            -- "parser_hello_world_with_grammar_example.cpp",
+            -- "parser_json_example.cpp",
+            -- "parser_calculator_example.cpp",
             "parser_calculator_with_grammar_example.cpp",
-            "parser_xml_example.cpp"        
+            -- "parser_xml_example.cpp"        
+            'parser_calculator_grammar_example.cpp'
         };
 
         build:Cxx () {

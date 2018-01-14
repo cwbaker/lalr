@@ -220,6 +220,7 @@ void ParserGenerator::generate( ParserGrammar& grammar )
 
     if ( errors_ == 0 )
     {
+        grammar.calculate_terminal_and_non_terminal_symbols();
         grammar.calculate_implicit_terminal_symbols();
         grammar.calculate_first();
         grammar.calculate_follow();

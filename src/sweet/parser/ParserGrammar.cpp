@@ -16,6 +16,7 @@
 
 using std::set;
 using std::vector;
+using std::shared_ptr;
 using namespace sweet;
 using namespace sweet::lexer;
 using namespace sweet::parser;
@@ -393,6 +394,30 @@ void ParserGrammar::replace_references_to_symbol( ParserSymbol* to_symbol, Parse
         ParserProduction* production = i->get();
         SWEET_ASSERT( production );
         production->replace_references_to_symbol( to_symbol, with_symbol );
+    }
+}
+
+/**
+// Calculate which symbols are terminal and non-terminal.
+//
+// Any symbols with one or more productions are assumed to be non-terminals
+// and any symbols with no productions are assumed to be terminals.  Another
+// pass is made over the symbols in to convert non-terminals symbols that 
+// contain only a single production with one terminal symbol into terminals.
+// See `ParserGrammar::calculate_implicit_terminal_symbols()`.
+//
+// The `.start`, `.end`, and `.error` symbols are exempt from the above 
+// processing.  They are explicitly assigned their corr
+*/
+void ParserGrammar::calculate_terminal_and_non_terminal_symbols()
+{
+    for ( vector<shared_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        if ( symbol->get_type() == SYMBOL_NULL )
+        {
+            symbol->set_type( symbol->get_productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
+        }
     }
 }
 

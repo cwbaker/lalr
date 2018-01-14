@@ -58,6 +58,7 @@ public:
     void print_positions( const std::set<int>& positions ) const;
     void calculate_identifiers();
     void replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol );
+    void calculate_terminal_and_non_terminal_symbols();
     void calculate_implicit_terminal_symbols();
     void calculate_first();
     void calculate_follow();

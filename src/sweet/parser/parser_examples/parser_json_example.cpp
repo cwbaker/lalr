@@ -4,7 +4,6 @@
 #include <list>
 #include <sweet/build.hpp>
 #include <sweet/assert/assert.hpp>
-#include <sweet/pointer/ptr.hpp>
 #include "parser.hpp"
 #include "json.hpp"
 #include <string.h>
@@ -28,8 +27,8 @@ struct Attribute
 struct Element
 {
     std::string name_;
-    std::list<ptr<Attribute> > attributes_;
-    std::list<ptr<Element> > elements_;
+    std::list<shared_ptr<Attribute> > attributes_;
+    std::list<shared_ptr<Element> > elements_;
     
     Element()
     : name_(),
@@ -41,8 +40,8 @@ struct Element
 
 struct JsonUserData
 {
-    ptr<Attribute> attribute_;
-    ptr<Element> element_;
+    shared_ptr<Attribute> attribute_;
+    shared_ptr<Element> element_;
     
     JsonUserData()
     : attribute_(),
@@ -50,13 +49,13 @@ struct JsonUserData
     {
     }
     
-    JsonUserData( ptr<Attribute> attribute )
+    JsonUserData( shared_ptr<Attribute> attribute )
     : attribute_( attribute ),
       element_()
     {
     }    
     
-    JsonUserData( ptr<Element> element )
+    JsonUserData( shared_ptr<Element> element )
     : attribute_(),
       element_( element )
     {
@@ -96,21 +95,21 @@ static JsonUserData document( int symbol, const ParserNode<JsonUserData, char>* 
 
 static JsonUserData element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    ptr<Element> element = start[3].user_data_.element_;
+    shared_ptr<Element> element = start[3].user_data_.element_;
     element->name_ = start[0].lexeme_;
     return JsonUserData( element );
 }
 
 static JsonUserData attribute( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {   
-    ptr<Attribute> attribute = start[2].user_data_.attribute_;
+    shared_ptr<Attribute> attribute = start[2].user_data_.attribute_;
     attribute->name_ = start[0].lexeme_;
     return JsonUserData( attribute );
 }
 
 static JsonUserData value( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    ptr<Attribute> attribute( new Attribute(start[0].lexeme_) );
+    shared_ptr<Attribute> attribute( new Attribute(start[0].lexeme_) );
     return JsonUserData( attribute );
 }
 
@@ -121,7 +120,7 @@ static JsonUserData content( int symbol, const ParserNode<JsonUserData, char>* s
 
 static JsonUserData add_to_element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    ptr<Element> element = start[0].user_data_.element_;   
+    shared_ptr<Element> element = start[0].user_data_.element_;   
     if ( start[2].user_data_.attribute_ )
     {
         element->attributes_.push_back( start[2].user_data_.attribute_ );
@@ -135,7 +134,7 @@ static JsonUserData add_to_element( int symbol, const ParserNode<JsonUserData, c
 
 static JsonUserData create_element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    ptr<Element> element( new Element() );
+    shared_ptr<Element> element( new Element() );
     if ( start[0].user_data_.attribute_ )
     {
         element->attributes_.push_back( start[0].user_data_.attribute_ );
@@ -161,7 +160,7 @@ static void print( const Element* element, int level )
     indent( level );
     printf( "%s\n", element->name_.c_str() );
     
-    for ( list<ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
+    for ( list<shared_ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
     {
         const Attribute* attribute = i->get();
         SWEET_ASSERT( attribute );
@@ -169,7 +168,7 @@ static void print( const Element* element, int level )
         printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_.c_str() );
     }
     
-    for ( list<ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
+    for ( list<shared_ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
     {
         const Element* element = i->get();
         SWEET_ASSERT( element );

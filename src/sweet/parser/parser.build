@@ -1,13 +1,14 @@
 
 -- buildfile "parser_/parser_.build";
 buildfile "parser_examples/parser_examples.build";
-buildfile "parser_test/parser_test.build";
+-- buildfile "parser_test/parser_test.build";
 
 for _, build in build:default_builds() do    
     local parser = build:Library "parser" {
         build:Cxx () {
             pch = "stdafx.hpp";
-            "Error.cpp",        
+            "Error.cpp",
+            "Grammar.cpp",
             "ParserAction.cpp",
             "ParserStateMachine.cpp",
             "ParserErrorPolicy.cpp",
@@ -22,13 +23,13 @@ for _, build in build:default_builds() do
         };
     };
 
-    local build = build:configure {
-        warning_level = 0;
-    };
+    -- local build = build:configure {
+    --     warning_level = 0;
+    -- };
 
-    parser {
-        build:Cxx () {
-            "GrammarParser.cpp",
-        };
-    };
+    -- parser {
+    --     build:Cxx () {
+    --         "GrammarParser.cpp",
+    --     };
+    -- };
 end

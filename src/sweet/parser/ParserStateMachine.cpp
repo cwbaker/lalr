@@ -6,7 +6,7 @@
 #include "stdafx.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserGenerator.hpp"
-#include "GrammarParser.hpp"
+// #include "GrammarParser.hpp"
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserState.hpp"
@@ -59,6 +59,7 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
 //  The event sink to report errors to and print with or null to ignore errors
 //  and prints.
 */
+/*
 ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
@@ -91,6 +92,7 @@ ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy*
         }
     }
 }
+*/
 
 /**
 // Constructor.
@@ -107,6 +109,7 @@ ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy*
 //  The event sink to report errors to and print with or null to ignore errors
 //  and prints.
 */
+/*
 ParserStateMachine::ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
@@ -139,6 +142,7 @@ ParserStateMachine::ParserStateMachine( const char* start, const char* finish, P
         }
     }
 }
+*/
 
 /**
 // Get the identifier of the parser grammar.

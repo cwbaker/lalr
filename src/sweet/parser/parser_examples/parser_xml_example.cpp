@@ -24,8 +24,8 @@ struct Attribute
 struct Element
 {
     std::string name_;
-    std::list<ptr<Attribute> > attributes_;
-    std::list<ptr<Element> > elements_;
+    std::list<shared_ptr<Attribute> > attributes_;
+    std::list<shared_ptr<Element> > elements_;
     
     Element()
     : name_(),
@@ -37,8 +37,8 @@ struct Element
 
 struct XmlUserData
 {
-    ptr<Attribute> attribute_;
-    ptr<Element> element_;
+    shared_ptr<Attribute> attribute_;
+    shared_ptr<Element> element_;
     
     XmlUserData()
     : attribute_(),
@@ -46,13 +46,13 @@ struct XmlUserData
     {
     }
     
-    XmlUserData( ptr<Attribute> attribute )
+    XmlUserData( shared_ptr<Attribute> attribute )
     : attribute_( attribute ),
       element_()
     {
     }    
     
-    XmlUserData( ptr<Element> element )
+    XmlUserData( shared_ptr<Element> element )
     : attribute_(),
       element_( element )
     {
@@ -92,28 +92,28 @@ static XmlUserData document( const ParserSymbol* symbol, const ParserNode<XmlUse
 
 static XmlUserData add_element( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    ptr<Element> element = start[0].get_user_data().element_;
+    shared_ptr<Element> element = start[0].get_user_data().element_;
     element->elements_.push_back( start[1].get_user_data().element_ );
     return XmlUserData( element );
 }
 
 static XmlUserData create_element( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    ptr<Element> element( new Element() );
+    shared_ptr<Element> element( new Element() );
     element->elements_.push_back( start[0].get_user_data().element_ );
     return XmlUserData( element );
 }
 
 static XmlUserData short_element( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    ptr<Element> element = start[2].get_user_data().element_;
+    shared_ptr<Element> element = start[2].get_user_data().element_;
     element->name_ = start[1].get_lexeme();
     return XmlUserData( element );
 }
 
 static XmlUserData long_element( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    ptr<Element> element = start[2].get_user_data().element_;
+    shared_ptr<Element> element = start[2].get_user_data().element_;
     if ( !element )
     {
         element.reset( new Element() );
@@ -130,7 +130,7 @@ static XmlUserData long_element( const ParserSymbol* symbol, const ParserNode<Xm
 static XmlUserData add_attribute( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
     SWEET_ASSERT( start[0].get_user_data().element_ );
-    ptr<Element> element = start[0].get_user_data().element_;
+    shared_ptr<Element> element = start[0].get_user_data().element_;
     SWEET_ASSERT( start[1].get_user_data().attribute_ );
     element->attributes_.push_back( start[1].get_user_data().attribute_ );
     return XmlUserData( element );
@@ -139,14 +139,14 @@ static XmlUserData add_attribute( const ParserSymbol* symbol, const ParserNode<X
 static XmlUserData create_attribute( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
     SWEET_ASSERT( start[0].get_user_data().attribute_ );
-    ptr<Element> element( new Element() );
+    shared_ptr<Element> element( new Element() );
     element->attributes_.push_back( start[0].get_user_data().attribute_ );
     return XmlUserData( element );
 }
 
 static XmlUserData attribute( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    ptr<Attribute> attribute( new Attribute(start[0].get_lexeme(), start[2].get_lexeme()) );
+    shared_ptr<Attribute> attribute( new Attribute(start[0].get_lexeme(), start[2].get_lexeme()) );
     return XmlUserData( attribute );
 }
 
@@ -164,7 +164,7 @@ static void print( const Element* element, int level )
     indent( level );
     printf( "%s\n", element->name_.c_str() );
     
-    for ( list<ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
+    for ( list<shared_ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
     {
         const Attribute* attribute = i->get();
         SWEET_ASSERT( attribute );
@@ -172,7 +172,7 @@ static void print( const Element* element, int level )
         printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_.c_str() );
     }
     
-    for ( list<ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
+    for ( list<shared_ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
     {
         const Element* element = i->get();
         SWEET_ASSERT( element );
