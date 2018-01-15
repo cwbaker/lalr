@@ -1,0 +1,20 @@
+#ifndef SWEET_PARSER_SYMBOLLEXEMETYPE_HPP_INCLUDED
+#define SWEET_PARSER_SYMBOLLEXEMETYPE_HPP_INCLUDED
+
+namespace sweet
+{
+
+namespace parser
+{
+
+enum SymbolLexemeType
+{
+    SYMBOL_LEXEME_LITERAL,
+    SYMBOL_LEXEME_REGULAR_EXPRESSION
+};
+
+}
+
+}
+
+#endif

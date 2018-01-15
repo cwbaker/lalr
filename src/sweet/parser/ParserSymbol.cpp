@@ -24,6 +24,7 @@ ParserSymbol::ParserSymbol()
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),
+  lexeme_type_( SYMBOL_LEXEME_LITERAL ),
   nullable_( false ),
   first_(),
   follow_(),
@@ -51,6 +52,7 @@ ParserSymbol::ParserSymbol( SymbolType type, const std::string& lexeme, int line
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),
+  lexeme_type_( SYMBOL_LEXEME_LITERAL ),
   nullable_( false ),
   first_(),
   follow_(),
@@ -339,6 +341,28 @@ void ParserSymbol::set_associativity( SymbolAssociativity associativity )
 SymbolAssociativity ParserSymbol::get_associativity() const
 {
     return associativity_;
+}
+
+/**
+// Get the type of lexeme that this symbol has.
+//
+// @param lexeme_type 
+//  The `SymbolLexemeType` to set this symbol to have.
+*/
+void ParserSymbol::set_lexeme_type( SymbolLexemeType lexeme_type )
+{
+    lexeme_type_ = lexeme_type;
+}
+
+/**
+// Get the type of lexeme that this symbol has.
+//
+// @return 
+//  The `SymbolLexemeType` for this symbol.
+*/
+SymbolLexemeType ParserSymbol::get_lexeme_type() const
+{
+    return lexeme_type_;
 }
 
 /**

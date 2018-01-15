@@ -121,7 +121,10 @@ const WhitespaceGrammarHelper& WhitespaceGrammarHelper::operator()( const char* 
 
 const WhitespaceGrammarHelper& WhitespaceGrammarHelper::operator()( const regex& regex ) const
 {
-    (void) regex;
+    ParserSymbol* symbol = grammar_->find_or_create_symbol( regex.text() );
+    SWEET_ASSERT( symbol );
+    symbol->set_lexeme_type( SYMBOL_LEXEME_REGULAR_EXPRESSION );
+    parser_grammar_->symbol( symbol );
     return *this;
 }
 
@@ -174,7 +177,10 @@ const ProductionGrammarHelper& ProductionGrammarHelper::operator()( const regex&
         production_created_ = true;
     }
 
-    (void) regex;
+    ParserSymbol* symbol = grammar_->find_or_create_symbol( regex.text() );
+    SWEET_ASSERT( symbol );
+    symbol->set_lexeme_type( SYMBOL_LEXEME_REGULAR_EXPRESSION );
+    parser_grammar_->symbol( symbol );
     return *this;
 }
 

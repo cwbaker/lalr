@@ -1,12 +1,8 @@
-//
-// LexerToken.hpp
-// Copyright (c) 2010 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_TOKEN_HPP_INCLUDED
 #define SWEET_LEXER_TOKEN_HPP_INCLUDED
 
 #include "declspec.hpp"
+#include "LexerTokenType.hpp"
 #include <string>
 
 namespace sweet
@@ -14,22 +10,6 @@ namespace sweet
 
 namespace lexer
 {
-
-/*
-// The type of a token.
-//
-// The %LexerTokenType enumeration is specified in order of increasing priority 
-// so that states that can match both a literal and a regular expression 
-// result in the literal being matched.
-//
-// @relates LexerToken
-*/
-enum LexerTokenType
-{
-    TOKEN_NULL,
-    TOKEN_REGULAR_EXPRESSION,
-    TOKEN_LITERAL
-};
 
 /**
 // A token to be recognized by a lexical analyzer.
