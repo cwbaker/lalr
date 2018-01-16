@@ -14,13 +14,10 @@ build:all {
 
         build:Cxx () {
             "main.cpp",
-            -- "parser_hello_world_example.cpp",
-            -- "parser_hello_world_with_grammar_example.cpp",
-            -- "parser_json_example.cpp",
-            -- "parser_calculator_example.cpp",
-            "parser_calculator_with_grammar_example.cpp",
-            -- "parser_xml_example.cpp"        
-            'parser_calculator_grammar_example.cpp'
+            "parser_hello_world_example.cpp",
+            "parser_json_example.cpp",
+            "parser_calculator_example.cpp",
+            "parser_xml_example.cpp"        
         };
 
         build:Cxx () {

@@ -16,7 +16,7 @@ namespace parser
 class ParserAction;
 class ParserProduction;
 class ParserGenerator;
-class GrammarNode;
+class GrammarSymbol;
 
 /**
 // A grammar used to generate a state machine for a %parser.
@@ -41,6 +41,12 @@ public:
     ParserSymbol* start_symbol() const;
     ParserSymbol* end_symbol() const;
     ParserSymbol* error_symbol() const;
+
+    ParserSymbol* symbol( const GrammarSymbol* symbol );
+    ParserSymbol* symbol( SymbolType type, const std::string& identifier, int line );
+    ParserSymbol* terminal( const std::string& identifier, int line );
+    ParserSymbol* non_terminal( const std::string& identifier, int line );
+    ParserAction* action( const std::string& identifier );
 
     ParserSymbol* add_symbol( SymbolType type, const std::string& identifier, int line );
     ParserSymbol* add_terminal( const std::string& identifier, int line );

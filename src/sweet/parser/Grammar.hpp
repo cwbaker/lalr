@@ -1,7 +1,10 @@
 #ifndef SWEET_PARSER_GRAMMAR_HPP_INCLUDED
 #define SWEET_PARSER_GRAMMAR_HPP_INCLUDED
 
-#include <sweet/parser/ParserSymbol.hpp>
+#include "GrammarSymbolType.hpp"
+#include "SymbolAssociativity.hpp"
+#include "GrammarNil.hpp"
+#include <sweet/lexer/LexerToken.hpp>
 #include <vector>
 
 namespace sweet
@@ -10,97 +13,54 @@ namespace sweet
 namespace parser
 {
 
-class AssociativityGrammarHelper;
-class WhitespaceGrammarHelper;
-class ProductionGrammarHelper;
-class ParserGrammar;
-class ParserAction;
-class ParserSymbol;
-class Grammar;
-
-class regex
-{
-    const char* text_;
-
-public:
-    regex( const char* regex );
-    const char* text() const;
-};
-
-class GrammarHelper
-{
-    Grammar* grammar_;
-
-public:
-    GrammarHelper( Grammar* grammar );
-    const AssociativityGrammarHelper left() const;
-    const AssociativityGrammarHelper right() const;
-    const AssociativityGrammarHelper none() const;
-    const WhitespaceGrammarHelper whitespace() const;
-    const ProductionGrammarHelper production( const char* id ) const;    
-    ParserAction* find_or_create_action( const char* id ) const;
-    ParserSymbol* find_or_create_symbol( const char* id ) const;
-};
-
-class AssociativityGrammarHelper : public GrammarHelper
-{
-    ParserGrammar* parser_grammar_;
-    SymbolAssociativity associativity_;
-    int precedence_;
-
-public:
-    AssociativityGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar, SymbolAssociativity associativity, int precedence );
-    const AssociativityGrammarHelper& operator()( char lexeme ) const;
-    const AssociativityGrammarHelper& operator()( const char* id ) const;
-};
-
-class WhitespaceGrammarHelper : public GrammarHelper
-{
-    ParserGrammar* parser_grammar_;
-
-public:
-    WhitespaceGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar );
-    const WhitespaceGrammarHelper& operator()( char lexeme ) const;
-    const WhitespaceGrammarHelper& operator()( const char* literal ) const;
-    const WhitespaceGrammarHelper& operator()( const regex& regex ) const;
-};
-
-class ProductionGrammarHelper
-{
-    Grammar* grammar_;
-    ParserGrammar* parser_grammar_;
-    ParserSymbol* symbol_;
-    mutable bool production_created_;
-
-public:
-    ProductionGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar, const char* id );
-    const ProductionGrammarHelper& precedence() const;
-    const ProductionGrammarHelper& operator()( char lexeme ) const;
-    const ProductionGrammarHelper& operator()( const char* id ) const;
-    const ProductionGrammarHelper& operator()( const regex& regex ) const;
-    const ProductionGrammarHelper& operator[]( const char* id ) const;
-    Grammar& end_production() const;
-};
+class GrammarBuilder;
+class GrammarDirective;
+class GrammarSymbol;
+class GrammarProduction;
+class GrammarAction;
+class GrammarNil;
 
 class Grammar
 {
-    ParserGrammar* parser_grammar_; ///< The underlying ParserGrammar that is built up.
-    std::vector<ParserAction*> actions_; ///< The actions in the grammar.
-    std::vector<ParserSymbol*> symbols_; ///< The symbols in the grammar.
-    int precedence_;
+    std::vector<std::shared_ptr<GrammarDirective>> directives_; ///< The directives in the grammar.
+    std::vector<std::shared_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
+    std::vector<std::shared_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
+    std::vector<std::shared_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
+    std::vector<lexer::LexerToken> whitespace_tokens_;
+    bool active_whitespace_directive_;
+    GrammarDirective* active_directive_;
+    GrammarProduction* active_production_;
+    GrammarSymbol* active_symbol_;
 
 public:
     Grammar();
-    ~Grammar();
-    ParserGrammar& parser_grammar() const;
-    const AssociativityGrammarHelper left();
-    const AssociativityGrammarHelper right();
-    const AssociativityGrammarHelper none();
-    const WhitespaceGrammarHelper whitespace();
-    const ProductionGrammarHelper production( const char* id );
+    const std::vector<std::shared_ptr<GrammarDirective>>& directives() const;
+    const std::vector<std::shared_ptr<GrammarSymbol>>& symbols() const;
+    const std::vector<std::shared_ptr<GrammarProduction>>& productions() const;
+    const std::vector<lexer::LexerToken>& whitespace_tokens() const;
+    Grammar& begin();
+    Grammar& left();
+    Grammar& right();
+    Grammar& none();
+    Grammar& whitespace();
+    Grammar& precedence( char literal );
+    Grammar& precedence( const char* regex );
+    Grammar& production( const char* identifier );
+    Grammar& end_production();
+    Grammar& operator()( char literal );
+    Grammar& operator()( const char* regex );
+    Grammar& operator()( const GrammarNil& /*nil*/ );
+    Grammar& operator[]( const char* identifier );
+    Grammar& operator[]( const GrammarNil& /*nil*/ );
+    void end();
 
-    ParserAction* find_or_create_action( const char* id );
-    ParserSymbol* find_or_create_symbol( const char* id );
+private:
+    GrammarDirective* directive( SymbolAssociativity associativity );
+    GrammarSymbol* symbol( char literal );
+    GrammarSymbol* symbol( const char* regex );
+    GrammarSymbol* symbol( const char* regex, GrammarSymbolType type );
+    GrammarProduction* production( GrammarSymbol* symbol );
+    GrammarAction* action( const char* id );
 };
 
 }

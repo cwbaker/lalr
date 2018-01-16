@@ -1,4 +1,5 @@
 
+#include <sweet/parser/Grammar.hpp>
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
 #include <stdio.h>
@@ -16,13 +17,19 @@ static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symb
 
 void parser_hello_world_example()
 {
-    const char* grammar = 
-        "hello_world {\n"
-        "   hello_world: 'Hello World!' [hello_world];\n"
-        "}"
-    ;
+    // const char* grammar = 
+    //     "hello_world {\n"
+    //     "   hello_world: 'Hello World!' [hello_world];\n"
+    //     "}"
+    // ;
+    Grammar grammar;
+    grammar.begin()
+        .production( "hello_world" )
+            ("Hello World\\!") ["hello_world"]
+        .end_production()
+    .end();
 
-    ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar) );
+    ParserStateMachine parser_state_machine( grammar );
     Parser<const char*> parser( &parser_state_machine );
     parser.parser_action_handlers()
         ( "hello_world", &hello_world )

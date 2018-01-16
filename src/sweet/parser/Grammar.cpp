@@ -4,283 +4,299 @@
 //
 
 #include "Grammar.hpp"
-#include "ParserGrammar.hpp"
-#include "ParserAction.hpp"
-#include "ParserSymbol.hpp"
+#include "GrammarDirective.hpp"
+#include "GrammarSymbol.hpp"
+#include "GrammarProduction.hpp"
+#include "GrammarAction.hpp"
+#include <sweet/lexer/LexerTokenType.hpp>
 #include <sweet/assert/assert.hpp>
 
 using std::string;
 using std::vector;
 using std::shared_ptr;
+using namespace sweet;
+using namespace sweet::lexer;
 using namespace sweet::parser;
 
-regex::regex( const char* text )
-: text_( text )
-{
-    SWEET_ASSERT( text_ );
-}
-
-const char* regex::text() const
-{
-    return text_;
-}
-
-GrammarHelper::GrammarHelper( Grammar* grammar )
-: grammar_( grammar )
-{
-    SWEET_ASSERT( grammar_ );
-}
-
-const AssociativityGrammarHelper GrammarHelper::left() const
-{
-    return grammar_->left();
-}
-
-const AssociativityGrammarHelper GrammarHelper::right() const
-{
-    return grammar_->right();
-}
-
-const AssociativityGrammarHelper GrammarHelper::none() const
-{
-    return grammar_->none();
-}
-
-const WhitespaceGrammarHelper GrammarHelper::whitespace() const
-{
-    return grammar_->whitespace();
-}
-
-const ProductionGrammarHelper GrammarHelper::production( const char* id ) const
-{
-    SWEET_ASSERT( id );
-    return grammar_->production( id );
-}
-
-ParserAction* GrammarHelper::find_or_create_action( const char* id ) const
-{
-    SWEET_ASSERT( id );
-    return grammar_->find_or_create_action( id );
-}
-
-ParserSymbol* GrammarHelper::find_or_create_symbol( const char* id ) const
-{
-    SWEET_ASSERT( id );
-    return grammar_->find_or_create_symbol( id );
-}
-
-AssociativityGrammarHelper::AssociativityGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar, SymbolAssociativity associativity, int precedence )
-: GrammarHelper( grammar ),
-  parser_grammar_( parser_grammar ),
-  associativity_( associativity ),
-  precedence_( precedence )
-{
-    SWEET_ASSERT( parser_grammar_ );
-    SWEET_ASSERT( associativity_ > ASSOCIATE_NULL && associativity_ <= ASSOCIATE_RIGHT );
-}
-
-const AssociativityGrammarHelper& AssociativityGrammarHelper::operator()( char lexeme ) const
-{
-    (void) lexeme;
-    char id[2] = { lexeme, 0 };
-    ParserSymbol* symbol = find_or_create_symbol( id );
-    SWEET_ASSERT( symbol );
-    symbol->set_associativity( associativity_ );
-    symbol->set_precedence( precedence_ );
-    return *this;
-}
-
-const AssociativityGrammarHelper& AssociativityGrammarHelper::operator()( const char* id ) const
-{
-    SWEET_ASSERT( id );
-    ParserSymbol* symbol = find_or_create_symbol( id );
-    SWEET_ASSERT( symbol );
-    symbol->set_associativity( associativity_ );
-    symbol->set_precedence( precedence_ );
-    return *this;
-}
-
-WhitespaceGrammarHelper::WhitespaceGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar )
-: GrammarHelper( grammar ),
-  parser_grammar_( parser_grammar )
-{
-    SWEET_ASSERT( parser_grammar_ );
-}
-
-const WhitespaceGrammarHelper& WhitespaceGrammarHelper::operator()( char lexeme ) const
-{
-    (void) lexeme;
-    return *this;
-}
-
-const WhitespaceGrammarHelper& WhitespaceGrammarHelper::operator()( const char* literal ) const
-{
-    SWEET_ASSERT( literal );
-    return *this;
-}
-
-const WhitespaceGrammarHelper& WhitespaceGrammarHelper::operator()( const regex& regex ) const
-{
-    ParserSymbol* symbol = grammar_->find_or_create_symbol( regex.text() );
-    SWEET_ASSERT( symbol );
-    symbol->set_lexeme_type( SYMBOL_LEXEME_REGULAR_EXPRESSION );
-    parser_grammar_->symbol( symbol );
-    return *this;
-}
-
-ProductionGrammarHelper::ProductionGrammarHelper( Grammar* grammar, ParserGrammar* parser_grammar, const char* id )
-: grammar_( grammar ),
-  parser_grammar_( parser_grammar ),
-  symbol_( nullptr ),
-  production_created_( false )
-{
-    SWEET_ASSERT( grammar_ );
-    SWEET_ASSERT( parser_grammar_ );
-    SWEET_ASSERT( id );
-    symbol_ = grammar_->find_or_create_symbol( id );
-}
-
-const ProductionGrammarHelper& ProductionGrammarHelper::operator()( char lexeme ) const
-{
-    if ( !production_created_ )
-    {
-        parser_grammar_->begin_production( symbol_, 0 );
-        production_created_ = true;
-    }
-
-    char id [2] = { lexeme, 0 };
-    ParserSymbol* symbol = grammar_->find_or_create_symbol( id );
-    SWEET_ASSERT( symbol );
-    parser_grammar_->symbol( symbol );
-    return *this;
-}
-
-const ProductionGrammarHelper& ProductionGrammarHelper::operator()( const char* id ) const
-{
-    if ( !production_created_ )
-    {
-        parser_grammar_->begin_production( symbol_, 0 );
-        production_created_ = true;
-    }
-
-    ParserSymbol* symbol = grammar_->find_or_create_symbol( id );
-    SWEET_ASSERT( symbol );
-    parser_grammar_->symbol( symbol );
-    return *this;
-}
-
-const ProductionGrammarHelper& ProductionGrammarHelper::operator()( const regex& regex ) const
-{
-    if ( !production_created_ )
-    {
-        parser_grammar_->begin_production( symbol_, 0 );
-        production_created_ = true;
-    }
-
-    ParserSymbol* symbol = grammar_->find_or_create_symbol( regex.text() );
-    SWEET_ASSERT( symbol );
-    symbol->set_lexeme_type( SYMBOL_LEXEME_REGULAR_EXPRESSION );
-    parser_grammar_->symbol( symbol );
-    return *this;
-}
-
-const ProductionGrammarHelper& ProductionGrammarHelper::operator[]( const char* id ) const
-{
-    if ( id )
-    {
-        ParserAction* action = grammar_->find_or_create_action( id );
-        SWEET_ASSERT( action );
-        parser_grammar_->action( action );
-    }
-    parser_grammar_->end_production();
-    production_created_ = false;
-    return *this;
-}
-
-Grammar& ProductionGrammarHelper::end_production() const
-{
-    return *grammar_;
-}
-
 Grammar::Grammar()
-: parser_grammar_( nullptr ),
-  actions_(),
+: directives_(),
   symbols_(),
-  precedence_( 1 )
+  productions_(),
+  actions_(),
+  whitespace_tokens_(),
+  active_directive_( nullptr ),
+  active_production_( nullptr ),
+  active_symbol_( nullptr )
 {
-    parser_grammar_ = new ParserGrammar;
 }
 
-Grammar::~Grammar()
+const std::vector<std::shared_ptr<GrammarDirective>>& Grammar::directives() const
 {
-    delete parser_grammar_;
+    return directives_;
 }
 
-ParserGrammar& Grammar::parser_grammar() const
+const std::vector<std::shared_ptr<GrammarSymbol>>& Grammar::symbols() const
 {
-    return *parser_grammar_;
+    return symbols_;
 }
 
-const AssociativityGrammarHelper Grammar::left()
+const std::vector<std::shared_ptr<GrammarProduction>>& Grammar::productions() const
 {
-    int precedence = precedence_;
-    ++precedence_;
-    return AssociativityGrammarHelper( this, parser_grammar_, ASSOCIATE_LEFT, precedence );
+    return productions_;
 }
 
-const AssociativityGrammarHelper Grammar::right()
+const std::vector<lexer::LexerToken>& Grammar::whitespace_tokens() const
 {
-    int precedence = precedence_;
-    ++precedence_;
-    return AssociativityGrammarHelper( this, parser_grammar_, ASSOCIATE_RIGHT, precedence );
+    return whitespace_tokens_;
 }
 
-const AssociativityGrammarHelper Grammar::none()
+Grammar& Grammar::begin()
 {
-    int precedence = precedence_;
-    ++precedence_;
-    return AssociativityGrammarHelper( this, parser_grammar_, ASSOCIATE_NONE, precedence );
+    return *this;
 }
 
-const WhitespaceGrammarHelper Grammar::whitespace()
+Grammar& Grammar::left()
 {
-    return WhitespaceGrammarHelper( this, parser_grammar_ );
+    active_whitespace_directive_ = false;
+    active_directive_ = directive( ASSOCIATE_LEFT );
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
 }
 
-const ProductionGrammarHelper Grammar::production( const char* id )
+Grammar& Grammar::right()
 {
-    return ProductionGrammarHelper( this, parser_grammar_, id );
+    active_whitespace_directive_ = false;
+    active_directive_ = directive( ASSOCIATE_RIGHT );
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
 }
 
-ParserAction* Grammar::find_or_create_action( const char* id )
+Grammar& Grammar::none()
 {
-    vector<ParserAction*>::const_iterator i = actions_.begin();
-    while ( i != actions_.end() && (*i)->get_identifier() != id )
+    active_whitespace_directive_ = false;
+    active_directive_ = directive( ASSOCIATE_NONE );
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
+}
+
+Grammar& Grammar::whitespace()
+{
+    active_whitespace_directive_ = true;
+    active_directive_ = nullptr;
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
+}
+
+Grammar& Grammar::precedence( char literal )
+{
+    SWEET_ASSERT( active_production_ );
+    if ( active_production_ )
     {
-        ++i;
+        active_production_->set_precedence_symbol( symbol(literal) );
     }
-    if ( i == actions_.end() )
-    {
-        ParserAction* action = parser_grammar_->add_action( string(id) );
-        actions_.push_back( action );
-        return action;
-    }
-    return *i;
+    return *this;
 }
 
-ParserSymbol* Grammar::find_or_create_symbol( const char* id )
+Grammar& Grammar::precedence( const char* regex )
 {
-    vector<ParserSymbol*>::const_iterator i = symbols_.begin();
-    // while ( i != symbols_.end() && (*i)->get_identifier() != id )
-    while ( i != symbols_.end() && (*i)->get_lexeme() != id )
+    SWEET_ASSERT( active_production_ );
+    if ( active_production_ )
+    {
+        active_production_->set_precedence_symbol( symbol(regex) );
+    }
+    return *this;
+}
+
+Grammar& Grammar::production( const char* identifier )
+{
+    SWEET_ASSERT( identifier );
+    active_whitespace_directive_ = false;
+    active_directive_ = nullptr;
+    active_production_ = nullptr;
+    active_symbol_ = symbol( identifier );
+    return *this;
+}
+
+Grammar& Grammar::end_production()
+{
+    SWEET_ASSERT( active_symbol_ );
+    active_whitespace_directive_ = false;
+    active_directive_ = nullptr;
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
+}
+
+Grammar& Grammar::operator()( char literal )
+{
+    SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
+    if ( active_whitespace_directive_ )
+    {
+        char lexeme [2] = { literal, 0 };
+        whitespace_tokens_.push_back( LexerToken(TOKEN_LITERAL, 0, nullptr, lexeme) );
+    }
+    else if ( active_directive_ )
+    {
+        active_directive_->append_symbol( symbol(literal) );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+        active_production_->append_symbol( symbol(literal) );
+    }
+    return *this;
+}
+
+Grammar& Grammar::operator()( const char* regex )
+{
+    SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
+    if ( active_whitespace_directive_ )
+    {
+        whitespace_tokens_.push_back( LexerToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
+    }
+    else if ( active_directive_ )
+    {
+        active_directive_->append_symbol( symbol(regex) );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+        active_production_->append_symbol( symbol(regex) );
+    }
+    return *this;
+}
+
+Grammar& Grammar::operator()( const GrammarNil& /*nil*/ )
+{
+    SWEET_ASSERT( active_symbol_ );
+    if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+    }
+    return *this;
+}
+
+Grammar& Grammar::operator[]( const char* identifier )
+{
+    SWEET_ASSERT( active_production_ );
+    if ( active_production_ )
+    {
+        active_production_->set_action( action(identifier) );
+        active_production_ = nullptr;
+    }
+    return *this;
+}
+
+Grammar& Grammar::operator[]( const GrammarNil& /*nil*/ )
+{
+    active_production_ = nullptr;
+    return *this;
+}
+
+void Grammar::end()
+{
+    int precedence = 1;
+    for ( auto i = directives_.begin(); i != directives_.end(); ++i )
+    {
+        const GrammarDirective* directive = i->get();
+        SWEET_ASSERT( directive );
+        const vector<GrammarSymbol*>& symbols = directive->symbols();
+        for ( auto j = symbols.begin(); j != symbols.end(); ++j )
+        {
+            GrammarSymbol* symbol = *j;
+            SWEET_ASSERT( symbol );
+            symbol->set_associativity( directive->associativity() );
+            symbol->set_precedence( precedence );
+        }
+        ++precedence;
+    }
+
+    for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        GrammarSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        if ( !symbol->productions().empty() )
+        {
+            symbol->set_type( GRAMMAR_NON_TERMINAL );
+        }
+    }
+}
+
+GrammarDirective* Grammar::directive( SymbolAssociativity associativity )
+{
+    shared_ptr<GrammarDirective> directive( new GrammarDirective(associativity) );
+    directives_.push_back( directive );
+    return directive.get();
+}
+
+GrammarSymbol* Grammar::symbol( char literal )
+{
+    char lexeme [2] = { literal, 0 };
+    return Grammar::symbol( lexeme, GRAMMAR_LITERAL );
+}
+
+GrammarSymbol* Grammar::symbol( const char* regex )
+{
+    SWEET_ASSERT( regex );
+    return symbol( regex, GRAMMAR_REGULAR_EXPRESSION );
+}
+
+GrammarSymbol* Grammar::symbol( const char* lexeme, GrammarSymbolType type )
+{
+    SWEET_ASSERT( lexeme );
+    vector<shared_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
+    while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
     {
         ++i;
     }
     if ( i == symbols_.end() )
     {
-        ParserSymbol* symbol = parser_grammar_->add_symbol( SYMBOL_NULL, string(id), 0 );
+        shared_ptr<GrammarSymbol> symbol( new GrammarSymbol(lexeme) );
+        symbol->set_type( type );
         symbols_.push_back( symbol );
-        return symbol;
+        return symbol.get();
     }
-    return *i;
+    GrammarSymbol* symbol = i->get();
+    SWEET_ASSERT( symbol );
+    SWEET_ASSERT( symbol->type() == type );
+    return symbol;
+}
+
+GrammarProduction* Grammar::production( GrammarSymbol* symbol )
+{
+    SWEET_ASSERT( symbol );
+    shared_ptr<GrammarProduction> production( new GrammarProduction(symbol) );
+    productions_.push_back( production );
+    symbol->append_production( production.get() );
+    return production.get();
+}
+
+GrammarAction* Grammar::action( const char* identifier )
+{
+    SWEET_ASSERT( identifier );
+    vector<shared_ptr<GrammarAction>>::const_iterator i = actions_.begin();
+    while ( i != actions_.end() && (*i)->identifier() != identifier )
+    {
+        ++i;
+    }
+    if ( i == actions_.end() )
+    {
+        shared_ptr<GrammarAction> action( new GrammarAction(identifier) );
+        actions_.push_back( action );
+        return action.get();
+    }
+    return i->get();
 }

@@ -2,6 +2,7 @@
 #define SWEET_PARSER_SYMBOL_HPP_INCLUDED
 
 #include "SymbolLexemeType.hpp"
+#include "SymbolAssociativity.hpp"
 #include <memory>
 #include <set>
 #include <vector>
@@ -24,19 +25,6 @@ enum SymbolType
     SYMBOL_TERMINAL, ///< Terminal symbols.
     SYMBOL_NON_TERMINAL, ///< Non-terminal symbols.
     SYMBOL_END ///< The end symbol.
-};
-
-/**
-// The associativity of a symbol.
-//
-// @relates ParserSymbol
-*/
-enum SymbolAssociativity
-{
-    ASSOCIATE_NULL, ///< The symbol has undefined associativity.
-    ASSOCIATE_NONE, ///< The symbol has no associativity.
-    ASSOCIATE_LEFT, ///< The symbol associates to the left.
-    ASSOCIATE_RIGHT ///< The symbol associates to the right.
 };
 
 class ParserProduction;

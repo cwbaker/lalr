@@ -9,6 +9,11 @@ for _, build in build:default_builds() do
             pch = "stdafx.hpp";
             "Error.cpp",
             "Grammar.cpp",
+            "GrammarAction.cpp",
+            "GrammarDirective.cpp",
+            "GrammarNil.cpp",
+            "GrammarProduction.cpp",
+            "GrammarSymbol.cpp",
             "ParserAction.cpp",
             "ParserStateMachine.cpp",
             "ParserErrorPolicy.cpp",

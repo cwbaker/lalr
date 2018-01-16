@@ -1,23 +1,30 @@
 //
 // ParserStateMachine.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #include "stdafx.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserGenerator.hpp"
-// #include "GrammarParser.hpp"
+#include "ParserGrammar.hpp"
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserState.hpp"
+#include "GrammarSymbol.hpp"
+#include "GrammarProduction.hpp"
+#include "GrammarDirective.hpp"
+#include "GrammarAction.hpp"
+#include "Grammar.hpp"
 #include <sweet/lexer/LexerAction.hpp>
 #include <sweet/lexer/LexerStateMachine.hpp>
 #include <sweet/assert/assert.hpp>
 
 using std::vector;
+using std::shared_ptr;
 using std::copy;
 using std::back_inserter;
 using namespace sweet;
+using namespace sweet::lexer;
 using namespace sweet::parser;
 
 /**
@@ -30,7 +37,102 @@ using namespace sweet::parser;
 //  The error policy to report errors during generation to or null to 
 //  silently swallow errors.
 */
+ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
+: identifier_(),
+  actions_(),
+  productions_(),
+  symbols_(),
+  states_(),
+  start_symbol_( nullptr ),
+  end_symbol_( nullptr ),
+  error_symbol_( nullptr ),
+  start_state_( nullptr ),
+  lexer_state_machine_()
+{
+    vector<LexerToken> tokens;
+    ParserGrammar parser_grammar;
+
+    const vector<shared_ptr<GrammarProduction>>& productions = grammar.productions();
+    for ( auto i = productions.begin(); i != productions.end(); ++i )
+    {
+        const GrammarProduction* production = i->get();
+        SWEET_ASSERT( production );
+
+        const GrammarSymbol* symbol = production->symbol();
+        SWEET_ASSERT( symbol );
+
+        parser_grammar.begin_production( parser_grammar.symbol(symbol), 0 );
+        const vector<GrammarSymbol*>& symbols = production->symbols();
+        for ( auto k = symbols.begin(); k != symbols.end(); ++k )
+        {
+            parser_grammar.symbol( parser_grammar.symbol(*k) );
+        }
+        GrammarAction* action = production->action();
+        if ( action )
+        {
+           parser_grammar.action( parser_grammar.action(action->identifier()) );
+        }
+        GrammarSymbol* precedence_symbol = production->precedence_symbol();
+        if ( precedence_symbol )
+        {
+            parser_grammar.precedence_symbol( parser_grammar.symbol(precedence_symbol) );
+        }
+        parser_grammar.end_production();
+    }
+
+    const vector<shared_ptr<GrammarSymbol>>& symbols = grammar.symbols();
+    for ( auto i = symbols.begin(); i != symbols.end(); ++i )
+    {
+        const GrammarSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        if ( symbol->type() == GRAMMAR_LITERAL || symbol->type() == GRAMMAR_REGULAR_EXPRESSION )
+        {
+            ParserSymbol* parser_symbol = parser_grammar.symbol( symbol );
+            parser_symbol->set_associativity( symbol->associativity() );
+            parser_symbol->set_precedence( symbol->precedence() );
+            LexerTokenType token_type = symbol->type() == GRAMMAR_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
+            tokens.push_back( LexerToken(token_type, 0, parser_symbol, symbol->lexeme()) );                
+        }   
+    }
+
+    ParserGenerator parser_generator( parser_grammar, error_policy ); 
+    if ( parser_generator.errors() == 0 )
+    {
+        identifier_ = parser_generator.identifier();
+        actions_.swap( parser_generator.actions() );
+        productions_.swap( parser_generator.productions() );
+        symbols_.swap( parser_generator.symbols() );
+        states_.reserve( parser_generator.states().size() );
+        copy( parser_generator.states().begin(), parser_generator.states().end(), back_inserter(states_) );
+        start_symbol_ = parser_generator.start_symbol();
+        end_symbol_ = parser_generator.end_symbol();
+        error_symbol_ = parser_generator.error_symbol();
+        start_state_ = parser_generator.start_state();
+        lexer_state_machine_.reset( new lexer::LexerStateMachine(identifier_, tokens, grammar.whitespace_tokens(), lexer_error_policy) );
+    }
+}
+
+/**
+// Constructor.
+//
+// @param grammar
+//  The ParserGrammar to generate this ParserStateMachine from.
+//
+// @param error_policy
+//  The error policy to report errors during generation to or null to 
+//  silently swallow errors.
+*/
 ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy )
+: identifier_(),
+  actions_(),
+  productions_(),
+  symbols_(),
+  states_(),
+  start_symbol_( nullptr ),
+  end_symbol_( nullptr ),
+  error_symbol_( nullptr ),
+  start_state_( nullptr ),
+  lexer_state_machine_()
 {
     ParserGenerator parser_generator( grammar, error_policy );
     if ( parser_generator.errors() == 0 )

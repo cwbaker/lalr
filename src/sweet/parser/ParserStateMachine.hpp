@@ -19,6 +19,7 @@ class LexerErrorPolicy;
 namespace parser
 {
 
+class Grammar;
 class ParserGrammar;
 class ParserAction;
 class ParserProduction;
@@ -43,9 +44,10 @@ class ParserStateMachine
     std::shared_ptr<lexer::LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
 
     public:
-        ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = NULL );
-        // ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy = NULL, lexer::LexerErrorPolicy* lexer_error_policy = NULL );
-        // ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy = NULL, lexer::LexerErrorPolicy* lexer_error_policy = NULL );
+        ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
+        ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = nullptr );
+        // ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
+        // ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
 
         const std::string& identifier() const;
         const std::vector<std::shared_ptr<ParserAction> >& actions() const;

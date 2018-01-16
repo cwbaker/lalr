@@ -9,6 +9,7 @@
 #include "ParserGenerator.hpp"
 #include "ParserProduction.hpp"
 #include "ParserAction.hpp"
+#include "GrammarSymbol.hpp"
 #include "Error.hpp"
 #include <sweet/assert/assert.hpp>
 #include <memory>
@@ -125,6 +126,56 @@ ParserSymbol* ParserGrammar::end_symbol() const
 ParserSymbol* ParserGrammar::error_symbol() const
 {
     return error_symbol_;
+}
+
+ParserSymbol* ParserGrammar::symbol( const GrammarSymbol* grammar_symbol )
+{
+    SWEET_ASSERT( grammar_symbol );
+    SymbolType type = grammar_symbol->type() == GRAMMAR_NON_TERMINAL ? SYMBOL_NON_TERMINAL : SYMBOL_TERMINAL;
+    ParserSymbol* symbol = ParserGrammar::symbol( type, grammar_symbol->lexeme(), 0 );
+    symbol->set_associativity( grammar_symbol->associativity() );
+    symbol->set_precedence( grammar_symbol->precedence() );
+    return symbol;
+}
+
+ParserSymbol* ParserGrammar::symbol( SymbolType type, const std::string& identifier, int line )
+{
+    auto i = symbols_.begin();
+    while ( i != symbols_.end() && (*i)->get_lexeme() != identifier )
+    {
+        ++i;
+    }
+    if ( i == symbols_.end() )
+    {
+        return add_symbol( type, identifier, line );
+    }
+    SWEET_ASSERT( i != symbols_.end() );
+    return i->get();
+}
+
+ParserSymbol* ParserGrammar::terminal( const std::string& identifier, int line )
+{
+    return symbol( SYMBOL_TERMINAL, identifier, line );
+}
+
+ParserSymbol* ParserGrammar::non_terminal( const std::string& identifier, int line )
+{
+    return symbol( SYMBOL_NON_TERMINAL, identifier, line );
+}
+
+ParserAction* ParserGrammar::action( const std::string& identifier )
+{
+    auto i = actions_.begin();
+    while ( i != actions_.end() && (*i)->get_identifier() != identifier )
+    {
+        ++i;
+    }
+    if ( i == actions_.end() )
+    {
+        return add_action( identifier );
+    }
+    SWEET_ASSERT( i != actions_.end() );
+    return i->get();
 }
 
 /**

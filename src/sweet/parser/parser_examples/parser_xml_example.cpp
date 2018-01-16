@@ -1,4 +1,5 @@
 
+#include <sweet/parser/Grammar.hpp>
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
 #include <list>
@@ -182,23 +183,52 @@ static void print( const Element* element, int level )
 
 void parser_xml_example()
 {
-    const char* grammar =
-        "xml {\n"
-        "   %whitespace \"[ \t\r\n]*\";\n"
-        "   %left '<' '>';\n"
-        "   %left name;\n"
-        "   document: prolog element [document];\n"
-        "   prolog: '<?xml' attributes '?>' | ;\n"
-        "   elements: elements element [add_element] | element [create_element] | %precedence '<';\n"
-        "   element: '<' name attributes '/>' [short_element] | '<' name attributes '>' elements '</' name '>' [long_element];\n"
-        "   attributes: attributes attribute [add_attribute] | attribute [create_attribute] | %precedence name;\n"
-        "   attribute:  name '=' value [attribute];\n"
-        "   name: \"[A-Za-z_:][A-Za-z0-9_:\\.-]*\";\n"
-        "   value: \"[\\\"']:string:\";\n"
-        "}"
-    ;
+    Grammar grammar;
+    grammar.begin()
+        .whitespace() ("[ \t\r\n]*")
+        .left() ('<') ('>')
+        .left() ("name")
 
-    ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar) );
+        .production( "document" )
+            ("prolog") ("element") ["document"]
+        .end_production()
+
+        .production( "prolog" )
+            ("<\\?xml") ("attributes") ("\\?>") [nil]
+            (nil)
+        .end_production()
+
+        .production( "elements" )
+            ("elements") ("element") ["add_element"]
+            ("element") ["create_element"] 
+            (nil) .precedence ('<')
+        .end_production()
+
+        .production( "element" )
+            ('<') ("name") ("attributes") ("/>") ["short_element"]
+            ('<') ("name") ("attributes") ('>') ("elements") ("</") ("name") ('>') ["long_element"]
+        .end_production()
+
+        .production( "attributes" )
+            ("attributes") ("attribute") ["add_attribute"]
+            ("attribute") ["create_attribute"] 
+            (nil) .precedence ("name")
+        .end_production()
+
+        .production( "attribute" )
+            ("name") ('=') ("value") ["attribute"]
+        .end_production()
+
+        .production( "name" )
+            ("[A-Za-z_:][A-Za-z0-9_:\\.-]*")
+        .end_production()
+
+        .production( "value" )
+            ("[\\\"']:string:")
+        .end_production()
+    .end();
+
+    ParserStateMachine parser_state_machine( grammar );
     Parser<const char*, XmlUserData> parser( &parser_state_machine );
     parser.lexer_action_handlers()
         ( "string", &string_ )

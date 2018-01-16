@@ -2,14 +2,16 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <sweet/build.hpp>
+#include <sweet/parser/Grammar.hpp>
+#include <sweet/parser/ParserStateMachine.hpp>
+#include <sweet/parser/Parser.ipp>
+#include <sweet/lexer/PositionIterator.hpp>
 #include <sweet/assert/assert.hpp>
-#include "parser.hpp"
-#include "json.hpp"
 #include <string.h>
 
 using namespace std;
 using namespace sweet;
+using namespace sweet::lexer;
 using namespace sweet::parser;
 
 struct Attribute
@@ -62,12 +64,11 @@ struct JsonUserData
     }    
 };
 
-static void string_( PositionIterator<const char*>* begin, PositionIterator<const char*> end, std::string* lexeme, int* symbol )
+static void string_( PositionIterator<const char*>* begin, PositionIterator<const char*> end, std::string* lexeme, const void** /*symbol*/ )
 {
     SWEET_ASSERT( begin );
     SWEET_ASSERT( lexeme );
     SWEET_ASSERT( lexeme->length() == 1 );
-    SWEET_ASSERT( symbol );
 
     PositionIterator<const char*> position = *begin;
     int terminator = lexeme->at( 0 );
@@ -88,60 +89,60 @@ static void string_( PositionIterator<const char*>* begin, PositionIterator<cons
     *begin = position;
 }
 
-static JsonUserData document( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData document( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    return start[1].user_data_;
+    return start[1].get_user_data();
 }
 
-static JsonUserData element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData element( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    shared_ptr<Element> element = start[3].user_data_.element_;
-    element->name_ = start[0].lexeme_;
+    shared_ptr<Element> element = start[3].get_user_data().element_;
+    element->name_ = start[0].get_lexeme();
     return JsonUserData( element );
 }
 
-static JsonUserData attribute( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData attribute( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {   
-    shared_ptr<Attribute> attribute = start[2].user_data_.attribute_;
-    attribute->name_ = start[0].lexeme_;
+    shared_ptr<Attribute> attribute = start[2].get_user_data().attribute_;
+    attribute->name_ = start[0].get_lexeme();
     return JsonUserData( attribute );
 }
 
-static JsonUserData value( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData value( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    shared_ptr<Attribute> attribute( new Attribute(start[0].lexeme_) );
+    shared_ptr<Attribute> attribute( new Attribute(start[0].get_lexeme()) );
     return JsonUserData( attribute );
 }
 
-static JsonUserData content( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData content( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    return start[0].user_data_;
+    return start[0].get_user_data();
 }
 
-static JsonUserData add_to_element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData add_to_element( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
-    shared_ptr<Element> element = start[0].user_data_.element_;   
-    if ( start[2].user_data_.attribute_ )
+    shared_ptr<Element> element = start[0].get_user_data().element_;   
+    if ( start[2].get_user_data().attribute_ )
     {
-        element->attributes_.push_back( start[2].user_data_.attribute_ );
+        element->attributes_.push_back( start[2].get_user_data().attribute_ );
     }
-    else if ( start[2].user_data_.element_ )
+    else if ( start[2].get_user_data().element_ )
     {
-        element->elements_.push_back( start[2].user_data_.element_ );
+        element->elements_.push_back( start[2].get_user_data().element_ );
     }
     return JsonUserData( element );    
 }
 
-static JsonUserData create_element( int symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
+static JsonUserData create_element( const ParserSymbol* symbol, const ParserNode<JsonUserData, char>* start, const ParserNode<JsonUserData, char>* finish )
 {
     shared_ptr<Element> element( new Element() );
-    if ( start[0].user_data_.attribute_ )
+    if ( start[0].get_user_data().attribute_ )
     {
-        element->attributes_.push_back( start[0].user_data_.attribute_ );
+        element->attributes_.push_back( start[0].get_user_data().attribute_ );
     }
-    else if ( start[0].user_data_.element_ )
+    else if ( start[0].get_user_data().element_ )
     {
-        element->elements_.push_back( start[0].user_data_.element_ );
+        element->elements_.push_back( start[0].get_user_data().element_ );
     }
     return JsonUserData( element );    
 }
@@ -178,7 +179,60 @@ static void print( const Element* element, int level )
 
 void parser_json_example()
 {
-    Parser<PositionIterator<const char*>, JsonUserData> parser( &json_parser_state_machine );
+    Grammar grammar;
+    grammar.begin()
+        .whitespace() ("[ \t\r\n]*")
+
+        .production( "document" )
+            ('{') ("element") ('}') ["document"]
+        .end_production()
+
+        .production( "element" )
+            ("name") (':') ('{') ("contents") ('}') ["element"]
+        .end_production()
+
+        .production( "contents" )
+            ("contents") (',') ("content") ["add_to_element"]
+            ("content") ["create_element"]
+        .end_production()
+
+        .production( "content" )
+            ("attribute") ["content"]
+            ("element") ["content"]
+        .end_production()
+
+        .production( "attribute" )
+            ("name") (':') ("value") ["attribute"]
+        .end_production()
+
+        .production( "value" )
+            ("null") ["value"]
+            ("true") ["value"]
+            ("false") ["value"]
+            ("integer") ["value"]
+            ("real") ["value"]
+            ("string") ["value"]
+        .end_production()
+
+        .production( "name" )
+            ("[\"']:string:")
+        .end_production()
+
+        .production( "integer" )
+            ( "(\\+|\\-)?[0-9]+" )
+        .end_production()
+
+        .production( "real" )
+            ("(\\+|\\-)?[0-9]+(\\.[0-9]+)?((e|E)(\\+|\\-)?[0-9]+)?")
+        .end_production()
+
+        .production( "string" )
+            ("[\"']:string:")
+        .end_production()
+    .end();
+
+    ParserStateMachine parser_state_machine( grammar );
+    Parser<PositionIterator<const char*>, JsonUserData> parser( &parser_state_machine );
     parser.lexer_action_handlers()
         ( "string", &string_ )
     ;

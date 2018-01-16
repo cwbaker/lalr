@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
+#include <sweet/parser/Grammar.hpp>
 #include <string.h>
 
 using namespace std;
@@ -41,26 +42,26 @@ static int integer( const ParserSymbol* symbol, const ParserNode<int>* start, co
 
 void parser_calculator_example()
 {
-    const char* grammar = 
-        "calculator {\n"
-        "   %left '+' '-';\n"
-        "   %left '*' '/';\n"
-        "   %none integer;\n"
-        "   %whitespace \"[ \t\r\n]*\";\n"
-        "\n"
-        "   expr: expr '+' expr [add]\n"
-        "       | expr '-' expr [subtract]\n"
-        "       | expr '*' expr [multiply]\n"
-        "       | expr '/' expr [divide]\n"
-        "       | '(' expr ')' [compound]\n"
-        "       | integer [integer]\n"
-        "       ;\n"
-        "\n"
-        "   integer: \"[0-9]+\";\n"
-        "}"
-    ;
+    Grammar grammar;
+    grammar.begin()
+        .left() ('+') ('-')
+        .left() ('*') ('/')
+        .none() ("integer")
+        .whitespace() ("[ \t\r\n]*")
+        .production( "expr" )
+            ("expr") ('+') ("expr") ["add"]
+            ("expr") ('-') ("expr") ["subtract"]
+            ("expr") ('*') ("expr") ["multiply"]
+            ("expr") ('/') ("expr") ["divide"]
+            ('(') ("expr") (')') ["compound"]
+            ("integer") ["integer"]
+        .end_production()
+        .production( "integer" )
+            ("[0-9]+")
+        .end_production()
+    .end();
 
-    ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar) );
+    ParserStateMachine parser_state_machine( grammar );
     Parser<const char*, int> parser( &parser_state_machine );
     parser.parser_action_handlers()
         ( "add", &add )

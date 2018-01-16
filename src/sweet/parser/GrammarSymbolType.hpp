@@ -1,0 +1,22 @@
+#ifndef SWEET_PARSER_GRAMMARSYMBOLTYPE_HPP_INCLUDED
+#define SWEET_PARSER_GRAMMARSYMBOLTYPE_HPP_INCLUDED
+
+namespace sweet
+{
+
+namespace parser
+{
+
+enum GrammarSymbolType
+{
+    GRAMMAR_SYMBOL_NULL,
+    GRAMMAR_LITERAL,  
+    GRAMMAR_REGULAR_EXPRESSION,  
+    GRAMMAR_NON_TERMINAL
+};
+
+}
+
+}
+
+#endif
