@@ -15,94 +15,14 @@ Features:
 - Lexical tokens can be specified inline in the grammar.
 - Re-entrant and thread-safe.
 
-## Installation
-
-## Usage
-
-*Sweet Parser* is a C++ library that generates LALR(1) parsers from BNF grammars.  It provides classes to represent a grammar (`ParserGrammar`), the parser state machine (`ParserStateMachine`, `ParserState`, `ParserItem`, `ParserTransition`, `ParserProduction`, `ParserSymbol`, and `ParserAction`), receive notification of errors during parser generation and parsing (`ParserErrorPolicy`), and class templates to parse input (`Parser`, `ParserNode`, and `ParserUserData`).
-
-The `ParserStateMachine` class represents a parser's state machine.  Its constructor takes as a grammar as input from which it generates a state machine that can be used to parse source text that conforms to that grammar.  The input can be a programmatically constructed ParserGrammar object or a sequence or file containing a grammar specified using the format defined in the grammar section below.
-
-The `ParserState` class represents the set of positions in the grammar that a parser may be recognizing.
-
-The `ParserItem` class is a single position in the grammar that a parser may be recognizing.  
-
-The `ParserTransition` class specifies the next state to move to for a particular symbol, whether to shift or reduce on that transition, and for reduction transitions the action that should be taken (if any).
-
-The `ParserProduction` class represents a production in the grammar that can be reduced from a list of symbols on the right-hand side to a single symbol on the left-hand side.
-
-The `ParserSymbol` class represents a symbol in the grammar.  The symbols may be terminal or non-terminal.  Non-terminal symbols contain all of the productions that can be reduced to that symbol.
-
-The `ParserAction` class represents an action that is attached to a production in the grammar.   
-
-The `ParserErrorPolicy` class is an interfaces that can be implemented to be notified of errors and provide debug output during parser generation and parsing.
-
-The `Parser` class template uses the data defined in a ParserStateMachine to parse input.  Construct a Parser object using a ParserStateMachine and then pass it sequences of input to parse.
-
-The `ParserNode` class template is an element on the parser's stack.  It stores the right-hand side of the parsed input that hasn't been matched.  When the elements on the top of the stack match the right-hand side of a production then they are popped from the stack and replaced by a single element for the symbol on the left-hand side of the production that has been reduced to.  Each element on the stack stores the state that the parser is in when that element is at the top of the stack, the productions that were potentially started when the parser entered that state, the symbol at that element, the lexeme at that element, and any user data supplied by actions that were taken when that element was reduced.
-
-The `ParserUserData` class template is a default implementation for user data stored in an element on the parser's stack.  It is expected that users of the library will provide their own user data implementation and pass it as a template parameter to a Parser.
-
-### Initialization
- 
-The library needs no special initialization.  Constructing a `ParserStateMachine` object with a valid grammar and using that to construct a `Parser` is all that needs to be done to start parsing input.
-
-~~~c++
-#include <sweet/parser/ParserStateMachine.hpp>
-#include <sweet/parser/Parser.ipp>
-#include <stdio.h>
-#include <string.h>
-
-using namespace std;
-using namespace sweet;
-using namespace sweet::parser;
-
-static ptr<ParserUserData<char> > hello_world( const ParserSymbol* symbol, const ParserNode<>* start, const ParserNode<>* finish )
-{
-    printf( "Hello World!\n" );
-    return ptr<ParserUserData<char> >();
-}
-
-void parser_hello_world_example()
-{
-    const char* grammar = 
-        "hello_world {\n"
-        "   hello_world: 'Hello World!' [hello_world];\n"
-        "}"
-    ;
-
-    ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar) );
-    Parser<const char*> parser( &parser_state_machine );
-    parser.parser_action_handlers()
-        ( "hello_world", &hello_world )
-    ;
-    
-    const char* input = "Hello World!";
-    parser.parse( input, input + strlen(input) );
-    SWEET_ASSERT( parser.accepted() );
-    SWEET_ASSERT( parser.full() );
-}
-~~~
-
-### Grammar
-
-When specified as a sequence or file a grammar consists of an identifier followed by one or more productions enclosed within curly braces.  The first production specifies the start symbol for the grammar after which productions can occur in any order.  Extra whitespace and C/C++ style comments are ignored.
-
-Each production consists of a symbol (the left-hand side), a colon, an expression made up of symbols, operators, literals, and regular expressions (the right-hand side), an optional action, and a terminating semi-colon.
-
-The right-hand side specifies a pattern in the language that is to be matched when parsing.  When the pattern is matched a reduction occurs and the symbols that have been matched on the right-hand side are reduced to the symbol on the left-hand side.  This process is repeated until a right-hand side is reduced to the start symbol.
-
-The optional action allows user code to be executed when a reduction occurs.  An action is attached to a production by specifying the action's identifier between `[` and `]` at the end of the production.   The action's identifier is used by user code to attach an arbitrary function to be executed when that production is reduced.  The action function is passed the symbol on the left-hand side and the elements on the parser's stack that make up the right-hand side.  The return value of the action function is stored in the element of the parser's stack that results from the reduction.
-
-Ambiguous grammars fail to generate parsers.  Ambiguity can be resolved by rearranging the grammar or by specifying the precedence and associativity of the symbols and productions that are involved in the conflict.
-
-Syntax errors that occur during parsing are handled by backtracking until a special `error` symbol can be accepted, accepting that symbol, and then continuing the parse.  If there is no `error` symbol specified in the grammar or the parser backtracks all the way back to the start of the input then parsing fails.
+## Example
 
 ~~~c++
 #include <stdio.h>
 #include <stdarg.h>
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
+#include <sweet/parser/Grammar.hpp>
 #include <string.h>
 
 using namespace std;
@@ -141,26 +61,26 @@ static int integer( const ParserSymbol* symbol, const ParserNode<int>* start, co
 
 void parser_calculator_example()
 {
-    const char* grammar = 
-        "calculator {\n"
-        "   %left '+' '-';\n"
-        "   %left '*' '/';\n"
-        "   %none integer;\n"
-        "   %whitespace \"[ \t\r\n]*\";\n"
-        "\n"
-        "   expr: expr '+' expr [add]\n"
-        "       | expr '-' expr [subtract]\n"
-        "       | expr '*' expr [multiply]\n"
-        "       | expr '/' expr [divide]\n"
-        "       | '(' expr ')' [compound]\n"
-        "       | integer [integer]\n"
-        "       ;\n"
-        "\n"
-        "   integer: \"[0-9]+\";\n"
-        "}"
-    ;
+    Grammar grammar;
+    grammar.begin()
+        .left() ('+') ('-')
+        .left() ('*') ('/')
+        .none() ("integer")
+        .whitespace() ("[ \t\r\n]*")
+        .production( "expr" )
+            ("expr") ('+') ("expr") ["add"]
+            ("expr") ('-') ("expr") ["subtract"]
+            ("expr") ('*') ("expr") ["multiply"]
+            ("expr") ('/') ("expr") ["divide"]
+            ('(') ("expr") (')') ["compound"]
+            ("integer") ["integer"]
+        .end_production()
+        .production( "integer" )
+            ("[0-9]+")
+        .end_production()
+    .end();
 
-    ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar) );
+    ParserStateMachine parser_state_machine( grammar );
     Parser<const char*, int> parser( &parser_state_machine );
     parser.parser_action_handlers()
         ( "add", &add )
@@ -178,6 +98,52 @@ void parser_calculator_example()
     SWEET_ASSERT( parser.user_data() == 20 );
 }
 ~~~
+
+## Installation
+
+## Usage
+
+*Sweet Parser* is a C++ library that generates LALR(1) parsers from BNF grammars.  It provides classes to represent a grammar (`ParserGrammar`), the parser state machine (`ParserStateMachine`, `ParserState`, `ParserItem`, `ParserTransition`, `ParserProduction`, `ParserSymbol`, and `ParserAction`), receive notification of errors during parser generation and parsing (`ParserErrorPolicy`), and class templates to parse input (`Parser`, `ParserNode`, and `ParserUserData`).
+
+The `ParserStateMachine` class represents a parser's state machine.  Its constructor takes as a grammar as input from which it generates a state machine that can be used to parse source text that conforms to that grammar.  The input can be a programmatically constructed ParserGrammar object or a sequence or file containing a grammar specified using the format defined in the grammar section below.
+
+The `ParserState` class represents the set of positions in the grammar that a parser may be recognizing.
+
+The `ParserItem` class is a single position in the grammar that a parser may be recognizing.  
+
+The `ParserTransition` class specifies the next state to move to for a particular symbol, whether to shift or reduce on that transition, and for reduction transitions the action that should be taken (if any).
+
+The `ParserProduction` class represents a production in the grammar that can be reduced from a list of symbols on the right-hand side to a single symbol on the left-hand side.
+
+The `ParserSymbol` class represents a symbol in the grammar.  The symbols may be terminal or non-terminal.  Non-terminal symbols contain all of the productions that can be reduced to that symbol.
+
+The `ParserAction` class represents an action that is attached to a production in the grammar.   
+
+The `ParserErrorPolicy` class is an interfaces that can be implemented to be notified of errors and provide debug output during parser generation and parsing.
+
+The `Parser` class template uses the data defined in a ParserStateMachine to parse input.  Construct a Parser object using a ParserStateMachine and then pass it sequences of input to parse.
+
+The `ParserNode` class template is an element on the parser's stack.  It stores the right-hand side of the parsed input that hasn't been matched.  When the elements on the top of the stack match the right-hand side of a production then they are popped from the stack and replaced by a single element for the symbol on the left-hand side of the production that has been reduced to.  Each element on the stack stores the state that the parser is in when that element is at the top of the stack, the productions that were potentially started when the parser entered that state, the symbol at that element, the lexeme at that element, and any user data supplied by actions that were taken when that element was reduced.
+
+The `ParserUserData` class template is a default implementation for user data stored in an element on the parser's stack.  It is expected that users of the library will provide their own user data implementation and pass it as a template parameter to a Parser.
+
+### Initialization
+ 
+The library needs no special initialization.  Constructing a `ParserStateMachine` object with a valid grammar and using that to construct a `Parser` is all that needs to be done to start parsing input.
+
+### Grammar
+
+When specified as a sequence or file a grammar consists of an identifier followed by one or more productions enclosed within curly braces.  The first production specifies the start symbol for the grammar after which productions can occur in any order.  Extra whitespace and C/C++ style comments are ignored.
+
+Each production consists of a symbol (the left-hand side), a colon, an expression made up of symbols, operators, literals, and regular expressions (the right-hand side), an optional action, and a terminating semi-colon.
+
+The right-hand side specifies a pattern in the language that is to be matched when parsing.  When the pattern is matched a reduction occurs and the symbols that have been matched on the right-hand side are reduced to the symbol on the left-hand side.  This process is repeated until a right-hand side is reduced to the start symbol.
+
+The optional action allows user code to be executed when a reduction occurs.  An action is attached to a production by specifying the action's identifier between `[` and `]` at the end of the production.   The action's identifier is used by user code to attach an arbitrary function to be executed when that production is reduced.  The action function is passed the symbol on the left-hand side and the elements on the parser's stack that make up the right-hand side.  The return value of the action function is stored in the element of the parser's stack that results from the reduction.
+
+Ambiguous grammars fail to generate parsers.  Ambiguity can be resolved by rearranging the grammar or by specifying the precedence and associativity of the symbols and productions that are involved in the conflict.
+
+Syntax errors that occur during parsing are handled by backtracking until a special `error` symbol can be accepted, accepting that symbol, and then continuing the parse.  If there is no `error` symbol specified in the grammar or the parser backtracks all the way back to the start of the input then parsing fails.
 
 Grammars can also be specified programmatically using a `ParserGrammar` object.  The interface to the `ParserGrammar` class is designed to be easy to use when driven from a parser rather than to be easy to use when programmed directly.
 
