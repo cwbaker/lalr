@@ -49,14 +49,8 @@ build:default_targets {
     "sweet/parser/parser_test"
 };
 
-buildfile "lua/lua.build";
 buildfile "sweet/assert/assert.build";
-buildfile "sweet/atomic/atomic.build";
-buildfile "sweet/cmdline/cmdline.build";
 buildfile "sweet/error/error.build";
 buildfile "sweet/lexer/lexer.build";
-buildfile "sweet/lua/lua.build";
 buildfile "sweet/parser/parser.build";
-buildfile "sweet/rtti/rtti.build";
-buildfile "sweet/traits/traits.build";
 buildfile "unit/unit.build";
