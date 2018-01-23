@@ -26,14 +26,4 @@ for _, build in build:default_builds() do
             "parser_types.cpp"
         };
     };
-
-    -- local build = build:configure {
-    --     warning_level = 0;
-    -- };
-
-    -- parser {
-    --     build:Cxx () {
-    --         "GrammarParser.cpp",
-    --     };
-    -- };
 end
