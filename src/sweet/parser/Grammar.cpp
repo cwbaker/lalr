@@ -189,6 +189,23 @@ Grammar& Grammar::operator()( const GrammarNil& /*nil*/ )
     return *this;
 }
 
+Grammar& Grammar::error()
+{
+    if ( active_directive_ )
+    {
+        active_directive_->append_symbol( error_symbol() );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+        active_production_->append_symbol( error_symbol() );
+    }
+    return *this;
+}
+
 Grammar& Grammar::operator[]( const char* identifier )
 {
     SWEET_ASSERT( active_production_ );
@@ -252,6 +269,11 @@ GrammarSymbol* Grammar::symbol( const char* regex )
 {
     SWEET_ASSERT( regex );
     return symbol( regex, GRAMMAR_REGULAR_EXPRESSION );
+}
+
+GrammarSymbol* Grammar::error_symbol()
+{
+    return symbol( ".error", GRAMMAR_LITERAL );
 }
 
 GrammarSymbol* Grammar::symbol( const char* lexeme, GrammarSymbolType type )

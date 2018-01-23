@@ -1,11 +1,12 @@
 //
-// TestParsers.cpp
+// TestPrecedenceDirectives.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
 #include "stdafx.hpp"
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserErrorPolicy.hpp>
+#include <sweet/parser/Grammar.hpp>
 #include <sweet/parser/Error.hpp>
 #include <unit/UnitTest.h>
 #include <stdio.h>
@@ -35,27 +36,29 @@ SUITE( PrecedenceDirectives )
             }
         };
 
-        const char* grammar = 
-            "ExpressionsThatRequireShiftReduceConflictResolution {\n"
-            " \n"
-            "   %whitespace \"[ \t\r\n]*\";\n"
-            "   %left '+' '-'; \n"
-            "   %left '*' '/'; \n"
-            "   %none integer; \n"
-            " \n"
-            "   unit: expr;\n"
-            "   expr: expr '+' expr \n"
-            "       | expr '-' expr \n"
-            "       | expr '*' expr \n"
-            "       | expr '/' expr \n"
-            "       | integer \n"
-            "       ; \n"
-            "   integer: \"[0-9]+\"; \n"
-            "}"
-        ;
+        Grammar grammar;
+        grammar.begin()
+            .whitespace() ("[ \\t\\r\\n]*")
+            .left() ('+') ('-')
+            .left() ('*') ('/')
+            .none() ("integer")
+            .production( "unit" )
+                ("expr") [nil]
+            .end_production()
+            .production( "expr" )
+                ("expr") ('+') ("expr") [nil]
+                ("expr") ('-') ("expr") [nil]
+                ("expr") ('*') ("expr") [nil]
+                ("expr") ('/') ("expr") [nil]
+                ("integer") [nil]
+            .end_production()
+            .production( "integer" )
+                ("[0-9]+")
+            .end_production()
+        .end();
         
         EventSink event_sink;
-        ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar), &event_sink );
+        ParserStateMachine parser_state_machine( grammar, &event_sink );
         CHECK( event_sink.errors_ == 0 );
     }
 }

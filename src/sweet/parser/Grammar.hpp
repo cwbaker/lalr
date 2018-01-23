@@ -50,6 +50,7 @@ public:
     Grammar& operator()( char literal );
     Grammar& operator()( const char* regex );
     Grammar& operator()( const GrammarNil& /*nil*/ );
+    Grammar& error();
     Grammar& operator[]( const char* identifier );
     Grammar& operator[]( const GrammarNil& /*nil*/ );
     void end();
@@ -59,6 +60,7 @@ private:
     GrammarSymbol* symbol( char literal );
     GrammarSymbol* symbol( const char* regex );
     GrammarSymbol* symbol( const char* regex, GrammarSymbolType type );
+    GrammarSymbol* error_symbol();
     GrammarProduction* production( GrammarSymbol* symbol );
     GrammarAction* action( const char* id );
 };
