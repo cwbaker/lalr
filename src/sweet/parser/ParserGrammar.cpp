@@ -5,7 +5,6 @@
 
 #include "stdafx.hpp"
 #include "ParserGrammar.hpp"
-#include "parser_types.hpp"
 #include "ParserGenerator.hpp"
 #include "ParserProduction.hpp"
 #include "ParserAction.hpp"

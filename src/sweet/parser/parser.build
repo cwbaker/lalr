@@ -22,8 +22,7 @@ for _, build in build:default_builds() do
             "ParserState.cpp",
             "ParserTransition.cpp",
             "ParserProduction.cpp",
-            "ParserSymbol.cpp",
-            "parser_types.cpp"
+            "ParserSymbol.cpp"
         };
     };
 end
