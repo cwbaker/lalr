@@ -13,27 +13,16 @@ version = version or ("%s %s %s"):format(os.date("%Y.%m.%d %H:%M:%S"), platform,
 goal = goal or "";
 jobs = jobs or 4;
 
-local boost_include_directory, boost_library_directory;
-if build:operating_system() == 'windows' then
-    boost_include_directory = "C:/boost/include/boost-1_62";
-    boost_library_directory = "C:/boost/lib";
-elseif build:operating_system() == 'macos' then
-    boost_include_directory = "/usr/local/include";
-    boost_library_directory = "/usr/local/lib";
-end
-
 build:initialize {
     variants = { 'debug', 'release', 'shipping' };
     bin = build:root( ("../%s/bin"):format(variant) );
     lib = build:root( ("../%s/lib"):format(variant) );
     obj = build:root( ("../%s/obj"):format(variant) );
     include_directories = {
-        build:root(),
-        boost_include_directory
+        build:root()
     };
     library_directories = {
-        build:root( ("../%s/lib"):format(variant) ),
-        boost_library_directory
+        build:root( ("../%s/lib"):format(variant) )
     };
     visual_studio = {
         sln = build:root( "../sweet_parser.sln" );

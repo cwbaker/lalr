@@ -23,7 +23,7 @@ namespace lexer
 class LexerState;
 class LexerAction;
 class LexerErrorPolicy;
-class RegexParser;
+class RegexSyntaxTree;
 
 /**
 // @internal 
@@ -56,7 +56,7 @@ class LexerGenerator
 
     private:
         std::shared_ptr<LexerState> goto_( const LexerState* state, int begin, int end );
-        void generate_states( const RegexParser& regular_expression_parser, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state );
+        void generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state );
         void generate_indices_for_states();
         void generate_symbol_for_state( LexerState* state ) const;
 

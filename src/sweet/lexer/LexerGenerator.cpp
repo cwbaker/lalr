@@ -12,6 +12,7 @@
 #include "LexerAction.hpp"
 #include "LexerErrorPolicy.hpp"
 #include "RegexNode.hpp"
+#include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
 #include <sweet/utility/shared_ptr_less.hpp>
 #include <sweet/assert/assert.hpp>
@@ -38,7 +39,7 @@ LexerGenerator::LexerGenerator( const LexerToken& token, LexerErrorPolicy* event
   whitespace_start_state_( NULL ),
   ranges_()
 {
-    generate_states( RegexParser(token, this), &states_, &start_state_ );
+    generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
 }
 
 /**
@@ -56,8 +57,8 @@ LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, const std
   whitespace_start_state_( NULL ),
   ranges_()
 {    
-    generate_states( RegexParser(tokens, this), &states_, &start_state_ );
-    generate_states( RegexParser(whitespace_tokens, this), &whitespace_states_, &whitespace_start_state_ );
+    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
+    generate_states( RegexSyntaxTree(whitespace_tokens, this), &whitespace_states_, &whitespace_start_state_ );
 }
 
 /**
@@ -236,31 +237,31 @@ std::shared_ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int 
 }
 
 /**
-// Generate the states for a LexerStateMachine from \e regex_parser.
+// Generate the states for a LexerStateMachine from \e syntax_tree.
 //
-// @param regex_parser
-//  The RegexParser to get the RegexNodes from that are then used to generate 
+// @param syntax_tree
+//  The RegexSyntaxTree to get the RegexNodes from that are then used to generate 
 //  states.
 //
 // @param states
-//  The set of states to populate from the output of the RegexParser (assumed
+//  The set of states to populate from the output of the RegexSyntaxTree (assumed
 //  not null).
 //
 // @param start_state
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void LexerGenerator::generate_states( const RegexParser& regex_parser, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state )
+void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
     SWEET_ASSERT( start_state );
     SWEET_ASSERT( !*start_state );
 
-    if ( !regex_parser.empty() && regex_parser.errors() == 0 )
+    if ( !syntax_tree.empty() && syntax_tree.errors() == 0 )
     {
         std::shared_ptr<LexerState> state( new LexerState() );    
-        state->add_item( regex_parser.node()->get_first_positions() );
+        state->add_item( syntax_tree.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         states->insert( state );
         *start_state = state.get();
