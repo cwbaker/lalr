@@ -20,10 +20,10 @@ build:all {
             "parser_xml_example.cpp"        
         };
 
-        build:Cxx () {
-            build:Parser (build:absolute("json.cpp")) {
-                "json.g";
-            };
-        };
+        -- build:Cxx () {
+        --     build:Parser (build:absolute("json.cpp")) {
+        --         "json.g";
+        --     };
+        -- };
     };
 };
