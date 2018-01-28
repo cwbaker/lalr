@@ -12,8 +12,6 @@
 #include "ParserGrammar.hpp"
 #include "Error.hpp"
 #include <sweet/assert/assert.hpp>
-#include <boost/spirit/include/classic_file_iterator.hpp>
-#include <boost/spirit/include/classic_position_iterator.hpp>
 
 using std::set;
 using std::vector;
