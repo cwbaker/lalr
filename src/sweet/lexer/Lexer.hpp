@@ -53,6 +53,7 @@ class Lexer
         void skip();
         const void* run();
         void error();
+        void fire_error( int line, int error, const char* format, ... ) const;
 };
 
 }

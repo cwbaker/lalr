@@ -24,7 +24,7 @@ class LexerErrorPolicy
 {
     public:
         virtual ~LexerErrorPolicy();
-        virtual void lexer_error( int line, const error::Error& error );
+        virtual void lexer_error( int line, int error, const char* format, va_list args );
         virtual void lexer_vprintf( const char* format, va_list args );
 };
 

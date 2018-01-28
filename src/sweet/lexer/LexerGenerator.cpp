@@ -4,7 +4,7 @@
 //
 
 #include "LexerGenerator.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include "LexerToken.hpp"
 #include "LexerItem.hpp"
 #include "LexerState.hpp"
@@ -165,13 +165,23 @@ const lexer::LexerAction* LexerGenerator::add_lexer_action( const std::string& i
 //  The line number that the error occured on.
 //
 // @param error
-//  The error to fire.
+//  The error code that indicates the error that occured.
+// 
+// @param format
+//  A printf-style format string describing the error that occured (assumed 
+//  not null).
+//
+// @param ...
+//  Parameters as described by *format*.
 */
-void LexerGenerator::fire_error( int line, const error::Error& error ) const
+void LexerGenerator::fire_error( int line, int error, const char* format, ... ) const
 {
     if ( event_sink_ )
     {
-        event_sink_->lexer_error( line, error );
+        va_list args;
+        va_start( args, format );
+        event_sink_->lexer_error( line, error, format, args );
+        va_end( args );
     }
 }
 
@@ -402,7 +412,7 @@ void LexerGenerator::generate_symbol_for_state( LexerState* state ) const
                     SWEET_ASSERT( type != TOKEN_NULL );
                     SWEET_ASSERT( line != INT_MAX );
                     SWEET_ASSERT( token );
-                    fire_error( token->line(), LexerSymbolConflictError("0x%08x and 0x%08x conflict but are both defined on the same line", token, node->get_token()) );
+                    fire_error( token->line(), LEXER_ERROR_SYMBOL_CONFLICT, "0x%08x and 0x%08x conflict but are both defined on the same line", token, node->get_token() );
                 }
             }
             

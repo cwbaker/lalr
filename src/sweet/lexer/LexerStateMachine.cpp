@@ -10,7 +10,7 @@
 #include "LexerState.hpp"
 #include "LexerToken.hpp"
 #include "LexerGenerator.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include <sweet/assert/assert.hpp>
 
 using namespace sweet;

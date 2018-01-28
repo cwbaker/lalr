@@ -51,7 +51,7 @@ class LexerGenerator
         const LexerState* whitespace_start_state() const;
         const lexer::LexerAction* add_lexer_action( const std::string& identifier );
 
-        void fire_error( int line, const error::Error& error ) const;
+        void fire_error( int line, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
 
     private:

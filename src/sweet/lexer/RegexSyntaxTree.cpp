@@ -9,7 +9,7 @@
 #include "RegexNodeLess.hpp"
 #include "RegexCharacter.hpp"
 #include "LexerGenerator.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include <sweet/assert/assert.hpp>
 
 using std::set;
@@ -711,7 +711,7 @@ void RegexSyntaxTree::parse_regular_expression( const LexerToken& token )
     {
         ++errors_;
         SWEET_ASSERT( lexer_generator_ );
-        lexer_generator_->fire_error( token.line(), SyntaxError("Syntax error in regular expression '%s'", token.lexeme().c_str()) );
+        lexer_generator_->fire_error( token.line(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
         nodes_.clear();
     }
     else

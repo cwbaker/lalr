@@ -15,7 +15,7 @@ LexerErrorPolicy::~LexerErrorPolicy()
 {
 }
 
-void LexerErrorPolicy::lexer_error( int /*line*/, const error::Error& /*error*/ )
+void LexerErrorPolicy::lexer_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
 {
 }
 

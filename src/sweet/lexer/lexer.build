@@ -4,7 +4,6 @@ buildfile "lexer_test/lexer_test.build";
 for _, build in build:default_builds() do    
     local lexer = build:Library "lexer" {
         build:Cxx () {
-            "Error.cpp",        
             "LexerAction.cpp",
             "LexerErrorPolicy.cpp",
             "LexerGenerator.cpp",

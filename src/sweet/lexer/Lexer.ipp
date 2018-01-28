@@ -6,7 +6,7 @@
 #include "LexerState.hpp"
 #include "LexerAction.hpp"
 #include "LexerErrorPolicy.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include <sweet/assert/assert.hpp>
 
 namespace sweet
@@ -285,11 +285,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
     SWEET_ASSERT( state_machine_ );
     SWEET_ASSERT( state_machine_->start_state() );
     SWEET_ASSERT( position_ != end_ );
-    
-    if ( error_policy_ )
-    {
-        error_policy_->lexer_error( 0, LexerLexicalError("Lexical error on character '%c' (%d)", int(*position_), int(*position_)) );
-    }
+
+    fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
     const LexerTransition* transition = NULL;
     const LexerState* state = state_machine_->start_state();
@@ -297,6 +294,33 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
     {
         ++position_;
     }
+}
+
+/**
+// Report an error to the `LexerErrorPolicy` used by this `Lexer`.
+//
+// @param line
+//  The line number to associate the error with (if any).
+//
+// @param error
+//  The error code of the error.
+//
+// @param format
+//  A printf-style format string describing the error.
+//
+// @param ...
+//  Arguments as described by *format*.
+*/
+template <class Iterator, class Char, class Traits, class Allocator>
+void Lexer<Iterator, Char, Traits, Allocator>::fire_error( int line, int error, const char* format, ... ) const
+{
+    if ( error_policy_ )
+    {
+        va_list args;
+        va_start( args, format );
+        error_policy_->lexer_error( line, error, format, args );
+        va_end( args );
+    }    
 }
 
 }

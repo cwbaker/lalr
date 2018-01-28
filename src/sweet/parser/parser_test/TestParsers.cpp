@@ -11,7 +11,7 @@
 #include <sweet/parser/ParserProduction.hpp>
 #include <sweet/parser/Error.hpp>
 #include <sweet/parser/Grammar.hpp>
-#include <sweet/lexer/Error.hpp>
+#include <sweet/lexer/ErrorCode.hpp>
 #include <sweet/lexer/LexerErrorPolicy.hpp>
 #include <functional>
 #include <unit/UnitTest.h>
@@ -77,11 +77,11 @@ SUITE( Parsers )
         {
         }
 
-        void lexer_error( int /*line*/, const error::Error& error )
+        void lexer_error( int /*line*/, int error, const char* /*format*/, va_list /*args*/ )
         {
             (void) error;
             ++errors_;
-            CHECK( error.error() == expected_error_ );
+            CHECK( error == expected_error_ );
         }
     };
         
