@@ -1,9 +1,8 @@
 //
 // LexerToken.cpp
-// Copyright (c) 2010 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "LexerToken.hpp"
 
 using namespace sweet::lexer;

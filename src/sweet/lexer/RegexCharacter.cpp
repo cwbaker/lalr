@@ -1,9 +1,8 @@
 //
 // RegexCharacter.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "RegexCharacter.hpp"
 #include <sweet/assert/assert.hpp>
 

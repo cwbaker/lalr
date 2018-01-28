@@ -3,7 +3,6 @@
 // Copyright Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
 #include "RegexNode.hpp"

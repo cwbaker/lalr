@@ -3,7 +3,6 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "LexerGenerator.hpp"
 #include "Error.hpp"
 #include "LexerToken.hpp"
