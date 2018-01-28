@@ -39,7 +39,6 @@ build:default_targets {
 };
 
 buildfile "sweet/assert/assert.build";
-buildfile "sweet/error/error.build";
 buildfile "sweet/lexer/lexer.build";
 buildfile "sweet/parser/parser.build";
 buildfile "unit/unit.build";

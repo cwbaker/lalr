@@ -22,10 +22,16 @@ ParserErrorPolicy::~ParserErrorPolicy()
 //  The line number that the %error occured on.
 //
 // @param error
-//  The %Error that describes the %error that has occured.
+//  The error code.
+//
+// @param format
+//  A printf-style format string that describes the error.
+//
+// @param ...
+//  Arguments as described by *format*.
 */
 void 
-ParserErrorPolicy::parser_error( int /*line*/, const error::Error& /*error*/ )
+ParserErrorPolicy::parser_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
 {
 }
 
