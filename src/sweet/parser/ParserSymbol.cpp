@@ -1,9 +1,8 @@
 //
 // ParserSymbol.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "stdafx.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserProduction.hpp"
 #include <sweet/assert/assert.hpp>

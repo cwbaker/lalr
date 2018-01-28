@@ -3,7 +3,6 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserGenerator.hpp"
 #include "ParserGrammar.hpp"

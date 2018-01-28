@@ -5,7 +5,6 @@ buildfile "parser_test/parser_test.build";
 for _, build in build:default_builds() do    
     local parser = build:Library "parser" {
         build:Cxx () {
-            pch = "stdafx.hpp";
             "Error.cpp",
             "Grammar.cpp",
             "GrammarAction.cpp",

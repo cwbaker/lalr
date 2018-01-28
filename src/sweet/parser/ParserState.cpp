@@ -1,9 +1,8 @@
 //
 // ParserState.cpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include "ParserState.hpp"
 #include "ParserItem.hpp"
 #include "ParserTransition.hpp"
