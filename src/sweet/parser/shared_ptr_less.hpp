@@ -6,7 +6,7 @@
 namespace sweet
 {
 
-namespace utility
+namespace parser
 {
 
 /**
@@ -24,7 +24,7 @@ public:
 
 }
 
-using utility::shared_ptr_less;
+using parser::shared_ptr_less;
 
 }
 

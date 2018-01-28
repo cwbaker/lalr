@@ -1,7 +1,7 @@
 #ifndef PARSERGENERATOR_HPP_INCLUDED
 #define PARSERGENERATOR_HPP_INCLUDED
 
-#include <sweet/utility/shared_ptr_less.hpp>
+#include "shared_ptr_less.hpp"
 #include <memory>
 #include <set>
 #include <vector>
