@@ -1,12 +1,6 @@
-//
-// LexerStateMachine.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXERSTATEMACHINE_HPP_INCLUDED
 #define SWEET_LEXER_LEXERSTATEMACHINE_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,7 +19,7 @@ class LexerErrorPolicy;
 /**
 // The data that defines the state machine for a lexical analyzer.
 */
-class SWEET_LEXER_DECLSPEC LexerStateMachine
+class LexerStateMachine
 {
     std::string identifier_; ///< The identifier of this LexerStateMachine.
     std::vector<std::shared_ptr<lexer::LexerAction> > actions_; ///< The lexer actions for this ParserStateMachine.

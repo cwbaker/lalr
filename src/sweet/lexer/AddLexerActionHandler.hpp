@@ -1,8 +1,3 @@
-//
-// AddLexerActionHandler.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_ADDLEXERACTIONHANDLER_HPP_INCLUDED
 #define SWEET_LEXER_ADDLEXERACTIONHANDLER_HPP_INCLUDED
 

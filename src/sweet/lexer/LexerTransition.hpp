@@ -1,12 +1,6 @@
-//
-// LexerTransition.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXERTRANSITION_HPP_INCLUDED
 #define SWEET_LEXER_LEXERTRANSITION_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <string>
 
 namespace sweet
@@ -21,7 +15,7 @@ class LexerState;
 /**
 // A transition in a lexical analyzer's state machine.
 */
-class SWEET_LEXER_DECLSPEC LexerTransition
+class LexerTransition
 {
     int begin_; ///< The first character that the transition can be made on.
     int end_; ///< One past the last character that the transition can be made on.

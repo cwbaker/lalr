@@ -1,8 +1,3 @@
-//
-// Lexer.ipp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXER_IPP_INCLUDED
 #define SWEET_LEXER_LEXER_IPP_INCLUDED
 

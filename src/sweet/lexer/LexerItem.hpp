@@ -1,12 +1,6 @@
-//
-// LexerItem.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXERITEM_HPP_INCLUDED
 #define SWEET_LEXER_LEXERITEM_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include "RegexNodeLess.hpp"
 #include <string>
 #include <set>
@@ -24,7 +18,7 @@ class LexerAction;
 // An item that defines the positions in a regular expression that a state 
 // represents.
 */
-class SWEET_LEXER_DECLSPEC LexerItem
+class LexerItem
 {
     std::set<RegexNode*, RegexNodeLess> next_nodes_; ///< The nodes that appear after the dot in this item.
 

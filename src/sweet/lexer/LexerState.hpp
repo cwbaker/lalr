@@ -1,12 +1,6 @@
-//
-// LexerState.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXERSTATE_HPP_INCLUDED
 #define SWEET_LEXER_LEXERSTATE_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include "LexerItem.hpp"
 #include "LexerTransition.hpp"
 #include <string>
@@ -23,7 +17,7 @@ class RegexNode;
 /**
 // A state in a lexical analyzer's state machine.
 */
-class SWEET_LEXER_DECLSPEC LexerState
+class LexerState
 {
     std::set<LexerItem>       items_;       ///< The items that define the positions within the regular expressions that this state represents.
     std::set<LexerTransition> transitions_; ///< The available transitions from this state to other states.

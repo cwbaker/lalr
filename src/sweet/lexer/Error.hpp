@@ -1,12 +1,6 @@
-//
-// Error.hpp
-// Copyright (c) 2007 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_ERROR_HPP_INCLUDED
 #define SWEET_LEXER_ERROR_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <sweet/error/Error.hpp>
 #include <sweet/error/ErrorTemplate.hpp>
 
@@ -32,7 +26,7 @@ enum ErrorCode
 /**
 // Errors thrown from the %lexer library.
 */
-class SWEET_LEXER_DECLSPEC Error : public error::Error
+class Error : public error::Error
 {
     public:
         Error( int error );

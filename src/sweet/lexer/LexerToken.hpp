@@ -1,7 +1,6 @@
 #ifndef SWEET_LEXER_TOKEN_HPP_INCLUDED
 #define SWEET_LEXER_TOKEN_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include "LexerTokenType.hpp"
 #include <string>
 
@@ -14,7 +13,7 @@ namespace lexer
 /**
 // A token to be recognized by a lexical analyzer.
 */
-class SWEET_LEXER_DECLSPEC LexerToken
+class LexerToken
 {
     LexerTokenType type_; ///< The type of this LexerToken (literal or regular expression).
     int line_; ///< The line to use when resolving token conflicts and reporting errors.

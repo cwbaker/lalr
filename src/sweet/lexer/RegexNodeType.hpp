@@ -1,8 +1,3 @@
-//
-// RegexNodeType.hpp
-// Copyright (c) 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_REGEXNODETYPE_HPP_INCLUDED
 #define SWEET_LEXER_REGEXNODETYPE_HPP_INCLUDED
 

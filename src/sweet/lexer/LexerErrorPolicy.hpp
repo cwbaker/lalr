@@ -1,12 +1,6 @@
-//
-// LexerErrorPolicy.hpp
-// Copyright (c) 2010 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_LEXER_LEXERERRORPOLICY_HPP_INCLUDED
 #define SWEET_LEXER_LEXERERRORPOLICY_HPP_INCLUDED
 
-#include "declspec.hpp"
 #include <stdarg.h>
 
 namespace sweet
@@ -26,7 +20,7 @@ namespace lexer
 // An interface to be implemented by classes that wish to handle errors and 
 // %debug information from the %lexer library.
 */
-class SWEET_LEXER_DECLSPEC LexerErrorPolicy
+class LexerErrorPolicy
 {
     public:
         virtual ~LexerErrorPolicy();
