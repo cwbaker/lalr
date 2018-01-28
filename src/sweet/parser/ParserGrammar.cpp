@@ -8,7 +8,7 @@
 #include "ParserProduction.hpp"
 #include "ParserAction.hpp"
 #include "GrammarSymbol.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include <sweet/assert/assert.hpp>
 #include <memory>
 #include <stdio.h>
@@ -611,7 +611,7 @@ void ParserGrammar::check_for_undefined_symbol_errors( ParserGenerator* generato
             SWEET_ASSERT( symbol );
             if ( symbol->get_type() == SYMBOL_NON_TERMINAL && symbol->get_productions().empty() )
             {
-                generator->fire_error( 1, UndefinedSymbolError("Undefined symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str()) );
+                generator->fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str() );
             }
         }
     }
@@ -649,7 +649,7 @@ void ParserGrammar::check_for_unreferenced_symbol_errors( ParserGenerator* gener
 
                 if ( references == 0 )
                 {
-                    generator->fire_error( 1, UnreferencedSymbolError("Unreferenced symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str()) );
+                    generator->fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str() );
                 }
             }
         }
@@ -671,6 +671,6 @@ void ParserGrammar::check_for_error_symbol_on_left_hand_side_errors( ParserGener
     const vector<std::shared_ptr<ParserProduction> >& productions = error_symbol_->get_productions();
     for ( vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions.begin(); i != productions.end(); ++i )
     {
-        generator->fire_error( 1, ErrorSymbolOnLeftHandSideError("The 'error' symbol appears on the left hand side of a production") );
+        generator->fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
     }
 }

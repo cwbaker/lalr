@@ -84,7 +84,7 @@ class Parser
         void set_default_action_handler( ParserActionFunction function );
         void set_action_handler( const char* identifier, ParserActionFunction function );
 
-        void fire_error( const error::Error& error ) const;
+        void fire_error( int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         
         void set_debug_enabled( bool debug_shift_enabled );

@@ -24,7 +24,7 @@ class ParserErrorPolicy
 {
     public:
         virtual ~ParserErrorPolicy();
-        virtual void parser_error( int line, const error::Error& error );
+        virtual void parser_error( int line, int error, const char* format, va_list args );
         virtual void parser_vprintf( const char* format, va_list args );
 };
 

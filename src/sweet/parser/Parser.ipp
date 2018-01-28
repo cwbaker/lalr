@@ -14,7 +14,7 @@
 #include "ParserSymbol.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserStateMachine.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include "ParserNode.ipp"
 #include "ParserUserData.ipp"
 #include "AddParserActionHandler.ipp"
@@ -320,11 +320,14 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
 //  The %Error that describes the %error that has occured.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( const error::Error& error ) const
+void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int error, const char* format, ... ) const
 {
     if ( error_policy_ )
     {
-        error_policy_->parser_error( 0, error );
+        va_list args;
+        va_start( args, format );
+        error_policy_->parser_error( 0, error, format, args );
+        va_end( args );
     }
 }
 
@@ -628,7 +631,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
                     
                 default:
                     SWEET_ASSERT( false );
-                    fire_error( UnexpectedError("Unexpected transition type '%d'", transition->get_type()) );
+                    fire_error( PARSER_ERROR_UNEXPECTED, "Unexpected transition type '%d'", transition->get_type() );
                     *rejected = true;
                     break;
             }
@@ -641,7 +644,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     
     if ( nodes_.empty() )
     {
-        fire_error( SyntaxError("Syntax error") );
+        fire_error( PARSER_ERROR_SYNTAX, "Syntax error" );
         *rejected = true;
     }
 }

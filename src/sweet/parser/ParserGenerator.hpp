@@ -70,7 +70,7 @@ class ParserGenerator
         ParserState* start_state();
         int errors() const;
 
-        void fire_error( int line, const error::Error& error );
+        void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
                 
     private:

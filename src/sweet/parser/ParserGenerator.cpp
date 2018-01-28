@@ -9,7 +9,7 @@
 #include "ParserItem.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserGrammar.hpp"
-#include "Error.hpp"
+#include "ErrorCode.hpp"
 #include <sweet/assert/assert.hpp>
 
 using std::set;
@@ -165,18 +165,23 @@ int ParserGenerator::errors() const
 //  The line that the error occured on.
 //
 // @param error
-//  The description of the error that has occured.
+//  The error code.
+//
+// @param format
+//  A printf-style format string describing the error
+//
+// @param ...
+//  Arguments described by *format*.
 */
-void ParserGenerator::fire_error( int line, const error::Error& error )
+void ParserGenerator::fire_error( int line, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
     {
-        error_policy_->parser_error( line, error );
-    }
-    else
-    {
-        SWEET_ERROR( error );
+        va_list args;
+        va_start( args, format );
+        error_policy_->parser_error( line, error, format, args );
+        va_end( args );
     }
 }
 
@@ -579,7 +584,7 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
             {
                 if ( production->get_precedence() == 0 || symbol->get_precedence() == 0 || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_NULL) )
                 {
-                    fire_error( production->get_line(), ParseTableConflictError("Shift/reduce conflict on '%s' for '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str()) );
+                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Shift/reduce conflict on '%s' for '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str() );
                 }
                 else if ( production->get_precedence() > symbol->get_precedence() || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_RIGHT) )
                 {
@@ -595,7 +600,7 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
                 SWEET_ASSERT( other_production );
                 if ( production->get_precedence() == 0 || other_production->get_precedence() == 0 || production->get_precedence() == other_production->get_precedence() )
                 {
-                    fire_error( production->get_line(), ParseTableConflictError("Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str(), other_production->get_symbol()->get_identifier().c_str()) );
+                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str(), other_production->get_symbol()->get_identifier().c_str() );
                 }
                 else
                 {

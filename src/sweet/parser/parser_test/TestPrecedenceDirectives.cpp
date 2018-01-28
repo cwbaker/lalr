@@ -7,7 +7,7 @@
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserErrorPolicy.hpp>
 #include <sweet/parser/Grammar.hpp>
-#include <sweet/parser/Error.hpp>
+#include <sweet/parser/ErrorCode.hpp>
 #include <unit/UnitTest.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,11 +28,13 @@ SUITE( PrecedenceDirectives )
             {
             }
 
-            void parser_error( int /*line*/, const error::Error& error )
+            void parser_error( int /*line*/, int error, const char* format, va_list args )
             {
                 ++errors_;
-                printf( "%s\n", error.what() );
-                CHECK( error.error() == PARSER_ERROR_PARSE_TABLE_CONFLICT );
+                char message [1024];
+                vsnprintf( message, sizeof(message), format, args );
+                printf( "%s\n", message );
+                CHECK( error == PARSER_ERROR_PARSE_TABLE_CONFLICT );
             }
         };
 

@@ -9,7 +9,7 @@
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/ParserSymbol.hpp>
 #include <sweet/parser/ParserProduction.hpp>
-#include <sweet/parser/Error.hpp>
+#include <sweet/parser/ErrorCode.hpp>
 #include <sweet/parser/Grammar.hpp>
 #include <sweet/lexer/ErrorCode.hpp>
 #include <sweet/lexer/LexerErrorPolicy.hpp>
@@ -28,7 +28,7 @@ SUITE( Parsers )
     class IgnoreParserErrorPolicy : public ParserErrorPolicy
     {
         public:
-            void parser_error( int /*line*/, const error::Error& /*error*/ )
+            void parser_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
             {
             }
     };
@@ -41,9 +41,11 @@ SUITE( Parsers )
                 vprintf( format, args );
             }
         
-            void parser_error( int line, const error::Error& error )
+            void parser_error( int line, int /*error*/, const char* format, va_list args )
             {
-                printf( "(%d): error: %s.\n", line, error.what() );
+                char message [1024];
+                vsnprintf( message, sizeof(message), format, args );
+                printf( "(%d): error: %s.\n", line, message );
             }
     };
 
@@ -58,11 +60,11 @@ SUITE( Parsers )
         {
         }
 
-        void parser_error( int /*line*/, const error::Error& error )
+        void parser_error( int /*line*/, int error, const char* /*format*/, va_list /*args*/ )
         {
             (void) error;
             ++errors_;
-            CHECK( error.error() == expected_error_ );
+            CHECK( error == expected_error_ );
         }
     };
     
