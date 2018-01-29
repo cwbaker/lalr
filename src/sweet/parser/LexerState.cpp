@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 #if defined(BUILD_PLATFORM_MSVC)
 #define snprintf _snprintf

@@ -11,8 +11,8 @@
 #include <sweet/parser/ParserProduction.hpp>
 #include <sweet/parser/ErrorCode.hpp>
 #include <sweet/parser/Grammar.hpp>
-#include <sweet/lexer/ErrorCode.hpp>
-#include <sweet/lexer/LexerErrorPolicy.hpp>
+#include <sweet/parser/ErrorCode.hpp>
+#include <sweet/parser/LexerErrorPolicy.hpp>
 #include <functional>
 #include <unit/UnitTest.h>
 #include <string.h>
@@ -20,7 +20,7 @@
 using std::bind;
 using namespace std::placeholders;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 SUITE( Parsers )
@@ -68,7 +68,7 @@ SUITE( Parsers )
         }
     };
     
-    struct CheckLexerErrorPolicy : public lexer::LexerErrorPolicy
+    struct CheckLexerErrorPolicy : public LexerErrorPolicy
     {    
         int expected_error_;
         int errors_;

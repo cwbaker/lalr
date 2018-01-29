@@ -17,7 +17,7 @@ class Error;
 
 }
 
-namespace lexer
+namespace parser
 {
 
 class LexerState;
@@ -49,7 +49,7 @@ class LexerGenerator
         std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& whitespace_states();
         const LexerState* start_state() const;
         const LexerState* whitespace_start_state() const;
-        const lexer::LexerAction* add_lexer_action( const std::string& identifier );
+        const LexerAction* add_lexer_action( const std::string& identifier );
 
         void fire_error( int line, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;

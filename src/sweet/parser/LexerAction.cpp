@@ -5,7 +5,7 @@
 
 #include "LexerAction.hpp"
 
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 /**
 // Constructor.

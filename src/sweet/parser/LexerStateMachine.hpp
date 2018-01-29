@@ -9,7 +9,7 @@
 namespace sweet
 {
 
-namespace lexer
+namespace parser
 {
 
 class LexerAction;
@@ -22,7 +22,7 @@ class LexerErrorPolicy;
 class LexerStateMachine
 {
     std::string identifier_; ///< The identifier of this LexerStateMachine.
-    std::vector<std::shared_ptr<lexer::LexerAction> > actions_; ///< The lexer actions for this ParserStateMachine.
+    std::vector<std::shared_ptr<LexerAction> > actions_; ///< The lexer actions for this ParserStateMachine.
     std::vector<std::shared_ptr<LexerState> > states_; ///< The states that make up the state machine for this LexerStateMachine.
     std::vector<std::shared_ptr<LexerState> > whitespace_states_; ///< The states that make up the state machine for whitespace in this LexerStateMachine.
     const LexerState* start_state_; ///< The starting state for the state machine.

@@ -62,7 +62,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::ParserActionHandler::Parser
 //  swallow lexical errors.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
+Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : state_machine_( state_machine ),
   error_policy_( error_policy ),
   nodes_(),
@@ -264,9 +264,9 @@ AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator> Parser<Itera
 //  adding action handlers to the %Lexer.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-lexer::AddLexerActionHandler<Iterator, Char, Traits, Allocator> Parser<Iterator, UserData, Char, Traits, Allocator>::lexer_action_handlers()
+AddLexerActionHandler<Iterator, Char, Traits, Allocator> Parser<Iterator, UserData, Char, Traits, Allocator>::lexer_action_handlers()
 {
-    return lexer::AddLexerActionHandler<Iterator, Char, Traits, Allocator>( &lexer_ );
+    return AddLexerActionHandler<Iterator, Char, Traits, Allocator>( &lexer_ );
 }
 
 /**

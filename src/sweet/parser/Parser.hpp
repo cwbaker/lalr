@@ -60,7 +60,7 @@ class Parser
         const ParserStateMachine* state_machine_; ///< The data that defines the state machine used by this parser.
         ParserErrorPolicy* error_policy_; ///< The error policy this parser uses to report errors and debug information.
         std::vector<ParserNode> nodes_; ///< The stack of nodes that store symbols that are shifted and reduced during parsing.
-        lexer::Lexer<Iterator, Char, Traits, Allocator> lexer_; ///< The lexical analyzer used during parsing.
+        Lexer<Iterator, Char, Traits, Allocator> lexer_; ///< The lexical analyzer used during parsing.
         std::vector<ParserActionHandler> action_handlers_; ///< The action handlers for parser actions taken during reduction.
         ParserActionFunction default_action_handler_; ///< The default action handler for reductions that don't specify any action.
         bool debug_enabled_; ///< True if shift and reduce operations should be printed otherwise false.
@@ -68,7 +68,7 @@ class Parser
         bool full_; ///< True if the parser processed all of its input otherwise false.
 
     public:
-        Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy = NULL, lexer::LexerErrorPolicy* lexer_error_policy = NULL );
+        Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy = NULL, LexerErrorPolicy* lexer_error_policy = NULL );
 
         void reset();
         void parse( Iterator start, Iterator finish );
@@ -80,7 +80,7 @@ class Parser
         const Iterator& position() const;
 
         AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator> parser_action_handlers();
-        lexer::AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
+        AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
         void set_default_action_handler( ParserActionFunction function );
         void set_action_handler( const char* identifier, ParserActionFunction function );
 

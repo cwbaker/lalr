@@ -15,7 +15,7 @@ using std::string;
 using std::vector;
 using std::shared_ptr;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 Grammar::Grammar()
@@ -45,7 +45,7 @@ const std::vector<std::shared_ptr<GrammarProduction>>& Grammar::productions() co
     return productions_;
 }
 
-const std::vector<lexer::LexerToken>& Grammar::whitespace_tokens() const
+const std::vector<LexerToken>& Grammar::whitespace_tokens() const
 {
     return whitespace_tokens_;
 }

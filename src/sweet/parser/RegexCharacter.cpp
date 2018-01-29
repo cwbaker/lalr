@@ -6,7 +6,7 @@
 #include "RegexCharacter.hpp"
 #include <sweet/assert/assert.hpp>
 
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 /**
 // Constructor.

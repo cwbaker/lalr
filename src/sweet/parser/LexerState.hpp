@@ -9,7 +9,7 @@
 namespace sweet
 {
 
-namespace lexer
+namespace parser
 {
 
 class RegexNode;

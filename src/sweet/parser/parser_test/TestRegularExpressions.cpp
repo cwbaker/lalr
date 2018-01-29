@@ -5,12 +5,12 @@
 
 #include "stdafx.hpp"
 #include <unit/UnitTest.h>
-#include <sweet/lexer/LexerStateMachine.hpp>
-#include <sweet/lexer/Lexer.ipp>
-#include <sweet/lexer/PositionIterator.hpp>
+#include <sweet/parser/LexerStateMachine.hpp>
+#include <sweet/parser/Lexer.ipp>
+#include <sweet/parser/PositionIterator.hpp>
 #include <string.h>
 
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 using std::string;
 

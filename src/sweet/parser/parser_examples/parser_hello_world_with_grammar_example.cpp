@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symbol*/, const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/ )

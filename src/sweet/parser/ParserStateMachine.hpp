@@ -8,7 +8,7 @@
 namespace sweet
 {
 
-namespace lexer
+namespace parser
 {
 
 class LexerStateMachine;
@@ -41,10 +41,10 @@ class ParserStateMachine
     const ParserSymbol* end_symbol_; ///< The end symbol.
     const ParserSymbol* error_symbol_; ///< The error symbol.
     ParserState* start_state_; ///< The start state.
-    std::shared_ptr<lexer::LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
+    std::shared_ptr<LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
 
     public:
-        ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
+        ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
         ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = nullptr );
         // ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
         // ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
@@ -58,7 +58,7 @@ class ParserStateMachine
         const ParserSymbol* end_symbol() const;
         const ParserSymbol* error_symbol() const;
         const ParserState* start_state() const;
-        const lexer::LexerStateMachine* lexer_state_machine() const;
+        const LexerStateMachine* lexer_state_machine() const;
         const ParserSymbol* find_symbol_by_identifier( const char* identifier ) const;
         std::string description() const;
 };

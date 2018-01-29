@@ -8,7 +8,7 @@
 #include <sweet/assert/assert.hpp>
 
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 /**
 // Compare two RegexNodes.

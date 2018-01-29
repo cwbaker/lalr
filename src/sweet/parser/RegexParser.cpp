@@ -9,7 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 RegexParser::RegexParser( RegexSyntaxTree* syntax_tree )
 : syntax_tree_( syntax_tree ),

@@ -13,7 +13,7 @@ class Error;
 
 }
 
-namespace lexer
+namespace parser
 {
 
 /**

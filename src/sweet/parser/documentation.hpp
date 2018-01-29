@@ -154,7 +154,7 @@ regular_expression {
 @endcode
 
 */
-namespace lexer
+namespace parser
 {
 }
 

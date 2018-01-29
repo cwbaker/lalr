@@ -5,7 +5,7 @@
 
 #include "LexerToken.hpp"
 
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 LexerToken::LexerToken( LexerTokenType type, int line, const void* symbol, const std::string& lexeme )
 : type_( type ),

@@ -5,13 +5,13 @@
 #include <sweet/parser/Grammar.hpp>
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
-#include <sweet/lexer/PositionIterator.hpp>
+#include <sweet/parser/PositionIterator.hpp>
 #include <sweet/assert/assert.hpp>
 #include <string.h>
 
 using namespace std;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 struct Attribute

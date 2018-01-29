@@ -10,7 +10,7 @@
 namespace sweet
 {
 
-namespace lexer
+namespace parser
 {
 
 /**

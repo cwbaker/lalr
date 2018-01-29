@@ -17,7 +17,7 @@ using std::set;
 using std::vector;
 using std::shared_ptr;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 /**

@@ -14,12 +14,12 @@ using std::find;
 using std::vector;
 using std::set;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
-const int sweet::lexer::BEGIN_CHARACTER = 0;
-const int sweet::lexer::END_CHARACTER = INT_MAX;
-const int sweet::lexer::INVALID_BEGIN_CHARACTER = -2;
-const int sweet::lexer::INVALID_END_CHARACTER = -1;
+const int sweet::parser::BEGIN_CHARACTER = 0;
+const int sweet::parser::END_CHARACTER = INT_MAX;
+const int sweet::parser::INVALID_BEGIN_CHARACTER = -2;
+const int sweet::parser::INVALID_END_CHARACTER = -1;
 
 /**
 // Constructor.

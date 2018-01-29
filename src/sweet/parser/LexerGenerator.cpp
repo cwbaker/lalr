@@ -21,7 +21,7 @@ using std::pair;
 using std::vector;
 using std::make_pair;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 
 /**
 // Constructor.
@@ -130,15 +130,15 @@ const LexerState* LexerGenerator::whitespace_start_state() const
 //  The LexerAction whose identifier matches \e identifier or null if 
 //  \e identifier is empty.
 */
-const lexer::LexerAction* LexerGenerator::add_lexer_action( const std::string& identifier )
+const LexerAction* LexerGenerator::add_lexer_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );
     
-    std::shared_ptr<lexer::LexerAction> lexer_action;
+    std::shared_ptr<LexerAction> lexer_action;
 
     if ( !identifier.empty() )
     {    
-        std::vector<std::shared_ptr<lexer::LexerAction> >::const_iterator i = actions_.begin();
+        std::vector<std::shared_ptr<LexerAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
@@ -150,7 +150,7 @@ const lexer::LexerAction* LexerGenerator::add_lexer_action( const std::string& i
         }
         else
         {
-            lexer_action.reset( new lexer::LexerAction(actions_.size(), identifier) );
+            lexer_action.reset( new LexerAction(actions_.size(), identifier) );
             actions_.push_back( lexer_action );
         }
     }

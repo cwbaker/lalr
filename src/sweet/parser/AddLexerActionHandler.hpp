@@ -6,7 +6,7 @@
 namespace sweet
 {
 
-namespace lexer
+namespace parser
 {
 
 template <class Iterator, class Char, class Traits, class Allocator> class Lexer;

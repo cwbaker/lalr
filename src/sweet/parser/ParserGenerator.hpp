@@ -17,7 +17,7 @@ class Error;
 
 }
 
-namespace lexer
+namespace parser
 {
 
 class LexerStateMachine;

@@ -23,7 +23,7 @@ using std::shared_ptr;
 using std::copy;
 using std::back_inserter;
 using namespace sweet;
-using namespace sweet::lexer;
+using namespace sweet::parser;
 using namespace sweet::parser;
 
 /**
@@ -36,7 +36,7 @@ using namespace sweet::parser;
 //  The error policy to report errors during generation to or null to 
 //  silently swallow errors.
 */
-ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
+ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
   productions_(),
@@ -107,7 +107,7 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
         end_symbol_ = parser_generator.end_symbol();
         error_symbol_ = parser_generator.error_symbol();
         start_state_ = parser_generator.start_state();
-        lexer_state_machine_.reset( new lexer::LexerStateMachine(identifier_, tokens, grammar.whitespace_tokens(), lexer_error_policy) );
+        lexer_state_machine_.reset( new LexerStateMachine(identifier_, tokens, grammar.whitespace_tokens(), lexer_error_policy) );
     }
 }
 
@@ -161,7 +161,7 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
 //  and prints.
 */
 /*
-ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
+ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
   productions_(),
@@ -189,7 +189,7 @@ ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy*
             end_symbol_ = parser_generator.end_symbol();
             error_symbol_ = parser_generator.error_symbol();
             start_state_ = parser_generator.start_state();
-            lexer_state_machine_.reset( new lexer::LexerStateMachine(identifier_, grammar_parser.tokens(), grammar_parser.whitespace_tokens(), lexer_error_policy) );
+            lexer_state_machine_.reset( new LexerStateMachine(identifier_, grammar_parser.tokens(), grammar_parser.whitespace_tokens(), lexer_error_policy) );
         }
     }
 }
@@ -211,7 +211,7 @@ ParserStateMachine::ParserStateMachine( const char* filename, ParserErrorPolicy*
 //  and prints.
 */
 /*
-ParserStateMachine::ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy, lexer::LexerErrorPolicy* lexer_error_policy )
+ParserStateMachine::ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
   productions_(),
@@ -239,7 +239,7 @@ ParserStateMachine::ParserStateMachine( const char* start, const char* finish, P
             end_symbol_ = parser_generator.end_symbol();
             error_symbol_ = parser_generator.error_symbol();
             start_state_ = parser_generator.start_state();
-            lexer_state_machine_.reset( new lexer::LexerStateMachine(identifier_, grammar_parser.tokens(), grammar_parser.whitespace_tokens(), lexer_error_policy) );
+            lexer_state_machine_.reset( new LexerStateMachine(identifier_, grammar_parser.tokens(), grammar_parser.whitespace_tokens(), lexer_error_policy) );
         }
     }
 }
@@ -351,7 +351,7 @@ const ParserState* ParserStateMachine::start_state() const
 //  The lexical analyzer or null if this ParserStateMachine doesn't have a lexical
 //  analyzer.
 */
-const lexer::LexerStateMachine* ParserStateMachine::lexer_state_machine() const
+const LexerStateMachine* ParserStateMachine::lexer_state_machine() const
 {
     return lexer_state_machine_.get();
 }
