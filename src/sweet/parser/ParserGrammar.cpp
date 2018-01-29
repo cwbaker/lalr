@@ -9,7 +9,7 @@
 #include "ParserAction.hpp"
 #include "GrammarSymbol.hpp"
 #include "ErrorCode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <memory>
 #include <stdio.h>
 

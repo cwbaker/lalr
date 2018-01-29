@@ -2,7 +2,7 @@
 #define SWEET_LEXER_ADDLEXERACTIONHANDLER_IPP_INCLUDED
 
 #include "AddLexerActionHandler.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 namespace sweet
 {

@@ -6,7 +6,7 @@
 #include <sweet/parser/ParserStateMachine.hpp>
 #include <sweet/parser/Parser.ipp>
 #include <sweet/parser/PositionIterator.hpp>
-#include <sweet/assert/assert.hpp>
+#include <sweet/parser/assert.hpp>
 #include <string.h>
 
 using namespace std;

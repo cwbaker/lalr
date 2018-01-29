@@ -10,7 +10,7 @@
 #include "ParserErrorPolicy.hpp"
 #include "ParserGrammar.hpp"
 #include "ErrorCode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::set;
 using std::vector;

@@ -7,7 +7,7 @@
 #define SWEET_PARSER_PARSERNODE_IPP_INCLUDED
 
 #include "ParserNode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 namespace sweet
 {

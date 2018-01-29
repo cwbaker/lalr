@@ -8,7 +8,7 @@
 #include "ParserSymbol.hpp"
 #include "ParserItem.hpp"
 #include "ParserState.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <stdio.h>
 
 using namespace sweet::parser;

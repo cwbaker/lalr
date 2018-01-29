@@ -5,7 +5,7 @@
 
 #include "RegexNode.hpp"
 #include "LexerAction.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <algorithm>
 #include <stdio.h>
 #include <limits.h>

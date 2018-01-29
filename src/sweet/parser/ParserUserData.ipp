@@ -7,7 +7,7 @@
 #define SWEET_PARSER_PARSERUSERDATA_IPP_INCLUDED
 
 #include "ParserUserData.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 namespace sweet
 {

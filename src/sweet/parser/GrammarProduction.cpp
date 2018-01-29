@@ -4,7 +4,7 @@
 //
 
 #include "GrammarProduction.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using namespace sweet::parser;
 

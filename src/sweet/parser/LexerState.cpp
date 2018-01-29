@@ -6,7 +6,7 @@
 #include "LexerState.hpp"
 #include "LexerItem.hpp"
 #include "LexerTransition.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <stdio.h>
 
 using namespace sweet;

@@ -5,7 +5,7 @@
 
 #include "ParserSymbol.hpp"
 #include "ParserProduction.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::vector;
 using std::set;

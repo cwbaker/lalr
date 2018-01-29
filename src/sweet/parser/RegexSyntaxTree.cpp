@@ -10,7 +10,7 @@
 #include "RegexCharacter.hpp"
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::set;
 using std::pair;

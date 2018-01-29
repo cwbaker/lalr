@@ -14,7 +14,7 @@
 #include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
 #include "shared_ptr_less.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <limits.h>
 
 using std::pair;

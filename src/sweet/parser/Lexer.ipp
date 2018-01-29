@@ -7,7 +7,7 @@
 #include "LexerAction.hpp"
 #include "LexerErrorPolicy.hpp"
 #include "ErrorCode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 namespace sweet
 {

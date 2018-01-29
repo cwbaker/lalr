@@ -16,7 +16,7 @@
 #include "Grammar.hpp"
 #include "LexerAction.hpp"
 #include "LexerStateMachine.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::vector;
 using std::shared_ptr;

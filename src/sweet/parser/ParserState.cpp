@@ -6,7 +6,7 @@
 #include "ParserState.hpp"
 #include "ParserItem.hpp"
 #include "ParserTransition.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <stdio.h>
 
 using namespace sweet;

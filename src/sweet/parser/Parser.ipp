@@ -20,7 +20,7 @@
 #include "AddParserActionHandler.ipp"
 #include "Lexer.ipp"
 #include "AddLexerActionHandler.ipp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <stdarg.h>
 #include <stdio.h>
 

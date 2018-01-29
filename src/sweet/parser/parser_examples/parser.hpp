@@ -1,7 +1,7 @@
 #ifndef PARSER_HPP_INCLUDED
 #define PARSER_HPP_INCLUDED
 
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 #include <string>
 #include <stdarg.h>
 #include <iterator>

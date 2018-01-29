@@ -5,7 +5,7 @@
 
 #include "RegexNodeLess.hpp"
 #include "RegexNode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using namespace sweet;
 using namespace sweet::parser;

@@ -9,7 +9,7 @@
 #include "GrammarProduction.hpp"
 #include "GrammarAction.hpp"
 #include "LexerTokenType.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::string;
 using std::vector;

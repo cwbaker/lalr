@@ -11,7 +11,7 @@
 #include "LexerToken.hpp"
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using namespace sweet;
 using namespace sweet::parser;

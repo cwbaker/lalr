@@ -5,7 +5,7 @@
 
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
-#include <sweet/assert/assert.hpp>
+#include "assert.hpp"
 
 using std::shared_ptr;
 using namespace sweet::parser;
