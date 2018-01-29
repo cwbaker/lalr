@@ -3,7 +3,7 @@ build:all {
     build:Executable "lalr_test" {
         libraries = {
             "sweet/lalr/lalr",
-            "unit/libUnitTest"
+            'unittest-cpp/UnitTest++/UnitTest++'
         };
 
         build:Cxx () {

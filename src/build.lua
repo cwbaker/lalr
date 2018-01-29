@@ -19,7 +19,8 @@ build:initialize {
     lib = build:root( ("../%s/lib"):format(variant) );
     obj = build:root( ("../%s/obj"):format(variant) );
     include_directories = {
-        build:root()
+        build:root(),
+        build:root('unittest-cpp');
     };
     library_directories = {
         build:root( ("../%s/lib"):format(variant) )
@@ -40,4 +41,4 @@ build:default_targets {
 buildfile "sweet/lalr/lalr.build";
 buildfile "sweet/lalr_examples/lalr_examples.build";
 buildfile "sweet/lalr_test/lalr_test.build";
-buildfile "unit/unit.build";
+buildfile "unittest-cpp/unittest-cpp.build";
