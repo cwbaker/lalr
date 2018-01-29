@@ -33,9 +33,11 @@ build:initialize {
 };
 
 build:default_targets {
-    "sweet/lalr/lalr_examples",
-    "sweet/lalr/lalr_test"
+    "sweet/lalr_examples",
+    "sweet/lalr_test"
 };
 
 buildfile "sweet/lalr/lalr.build";
+buildfile "sweet/lalr_examples/lalr_examples.build";
+buildfile "sweet/lalr_test/lalr_test.build";
 buildfile "unit/unit.build";
