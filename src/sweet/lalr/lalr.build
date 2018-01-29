@@ -1,9 +1,9 @@
 
-buildfile "parser_examples/parser_examples.build";
-buildfile "parser_test/parser_test.build";
+buildfile "lalr_examples/lalr_examples.build";
+buildfile "lalr_test/lalr_test.build";
 
 for _, build in build:default_builds() do    
-    local parser = build:Library "parser" {
+    local lalr = build:Library "lalr" {
         build:Cxx () {
             "Grammar.cpp",
             "GrammarAction.cpp",

@@ -4,16 +4,16 @@
 //
 
 #include "stdafx.hpp"
-#include <sweet/parser/ParserStateMachine.hpp>
-#include <sweet/parser/ParserErrorPolicy.hpp>
-#include <sweet/parser/Grammar.hpp>
-#include <sweet/parser/ErrorCode.hpp>
+#include <sweet/lalr/ParserStateMachine.hpp>
+#include <sweet/lalr/ParserErrorPolicy.hpp>
+#include <sweet/lalr/Grammar.hpp>
+#include <sweet/lalr/ErrorCode.hpp>
 #include <unit/UnitTest.h>
 #include <stdio.h>
 #include <string.h>
 
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 SUITE( PrecedenceDirectives )
 {

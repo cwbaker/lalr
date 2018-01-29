@@ -9,7 +9,7 @@
 namespace sweet
 {
 
-namespace parser
+namespace lalr
 {
 
 class LexerAction;

@@ -1,14 +1,14 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <sweet/parser/ParserStateMachine.hpp>
-#include <sweet/parser/Parser.ipp>
-#include <sweet/parser/Grammar.hpp>
+#include <sweet/lalr/ParserStateMachine.hpp>
+#include <sweet/lalr/Parser.ipp>
+#include <sweet/lalr/Grammar.hpp>
 #include <string.h>
 
 using namespace std;
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 static int add( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
 {

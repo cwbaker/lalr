@@ -16,7 +16,7 @@ using std::set;
 using std::vector;
 using std::shared_ptr;
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 /**
 // Constructor.

@@ -6,7 +6,7 @@
 namespace sweet
 {
 
-namespace parser
+namespace lalr
 {
 
 /**
@@ -24,7 +24,7 @@ public:
 
 }
 
-using parser::shared_ptr_less;
+using lalr::shared_ptr_less;
 
 }
 

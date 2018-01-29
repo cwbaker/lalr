@@ -13,7 +13,7 @@
 namespace sweet
 {
 
-namespace parser
+namespace lalr
 {
 
 class LexerGenerator;

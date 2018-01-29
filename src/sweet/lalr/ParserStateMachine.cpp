@@ -23,8 +23,8 @@ using std::shared_ptr;
 using std::copy;
 using std::back_inserter;
 using namespace sweet;
-using namespace sweet::parser;
-using namespace sweet::parser;
+using namespace sweet::lalr;
+using namespace sweet::lalr;
 
 /**
 // Constructor.

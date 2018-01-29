@@ -25,17 +25,17 @@ build:initialize {
         build:root( ("../%s/lib"):format(variant) )
     };
     visual_studio = {
-        sln = build:root( "../sweet_parser.sln" );
+        sln = build:root( "../sweet_lalr.sln" );
     };
     xcode = {
-        xcodeproj = build:root( "../sweet_parser.xcodeproj" );
+        xcodeproj = build:root( "../sweet_lalr.xcodeproj" );
     };
 };
 
 build:default_targets {
-    "sweet/parser/parser_examples",
-    "sweet/parser/parser_test"
+    "sweet/lalr/lalr_examples",
+    "sweet/lalr/lalr_test"
 };
 
-buildfile "sweet/parser/parser.build";
+buildfile "sweet/lalr/lalr.build";
 buildfile "unit/unit.build";

@@ -4,7 +4,7 @@
 namespace sweet
 {
 
-namespace parser
+namespace lalr
 {
 
 enum SymbolLexemeType

@@ -4,26 +4,17 @@ local build = build:configure {
 };
 
 build:all {
-    build:Executable "parser_examples" {
+    build:Executable "lalr_examples" {
         libraries = {
-            "sweet/assert/assert",
-            "sweet/error/error",
-            "sweet/lexer/lexer",
-            "sweet/parser/parser"
+            "sweet/lalr/lalr"
         };
 
         build:Cxx () {
             "main.cpp",
-            "parser_hello_world_example.cpp",
-            "parser_json_example.cpp",
-            "parser_calculator_example.cpp",
-            "parser_xml_example.cpp"        
+            "lalr_hello_world_example.cpp",
+            "lalr_json_example.cpp",
+            "lalr_calculator_example.cpp",
+            "lalr_xml_example.cpp"        
         };
-
-        -- build:Cxx () {
-        --     build:Parser (build:absolute("json.cpp")) {
-        --         "json.g";
-        --     };
-        -- };
     };
 };

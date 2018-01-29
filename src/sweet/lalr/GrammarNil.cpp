@@ -5,4 +5,4 @@
 
 #include "GrammarNil.hpp"
 
-const sweet::parser::GrammarNil sweet::parser::nil;
+const sweet::lalr::GrammarNil sweet::lalr::nil;

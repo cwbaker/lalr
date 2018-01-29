@@ -10,7 +10,7 @@
 using std::vector;
 using std::set;
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 /**
 // Constructor.

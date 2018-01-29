@@ -15,8 +15,8 @@ using std::string;
 using std::vector;
 using std::shared_ptr;
 using namespace sweet;
-using namespace sweet::parser;
-using namespace sweet::parser;
+using namespace sweet::lalr;
+using namespace sweet::lalr;
 
 Grammar::Grammar()
 : directives_(),

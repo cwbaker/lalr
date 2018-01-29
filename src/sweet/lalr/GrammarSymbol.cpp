@@ -8,7 +8,7 @@
 #include "assert.hpp"
 
 using std::shared_ptr;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 GrammarSymbol::GrammarSymbol( const char* lexeme )
 : lexeme_( lexeme ),

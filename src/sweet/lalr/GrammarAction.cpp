@@ -5,7 +5,7 @@
 
 #include "GrammarAction.hpp"
 
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 GrammarAction::GrammarAction( std::string identifier )
 : identifier_( identifier )

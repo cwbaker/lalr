@@ -9,7 +9,7 @@
 #include "assert.hpp"
 #include <stdio.h>
 
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 #if defined(BUILD_PLATFORM_MSVC)
 #define snprintf _snprintf

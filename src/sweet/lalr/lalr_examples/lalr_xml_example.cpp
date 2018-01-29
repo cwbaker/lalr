@@ -1,14 +1,14 @@
 
-#include <sweet/parser/Grammar.hpp>
-#include <sweet/parser/ParserStateMachine.hpp>
-#include <sweet/parser/Parser.ipp>
+#include <sweet/lalr/Grammar.hpp>
+#include <sweet/lalr/ParserStateMachine.hpp>
+#include <sweet/lalr/Parser.ipp>
 #include <list>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 struct Attribute
 {

@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 using std::set;
 

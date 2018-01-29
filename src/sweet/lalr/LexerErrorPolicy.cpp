@@ -6,7 +6,7 @@
 #include "LexerErrorPolicy.hpp"
 
 using namespace sweet;
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 /**
 // Destructor.

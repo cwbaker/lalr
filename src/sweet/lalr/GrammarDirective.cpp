@@ -6,7 +6,7 @@
 #include "GrammarDirective.hpp"
 #include "assert.hpp"
 
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 GrammarDirective::GrammarDirective( SymbolAssociativity associativity )
 : associativity_( associativity ),

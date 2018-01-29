@@ -6,7 +6,7 @@
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
 
-using namespace sweet::parser;
+using namespace sweet::lalr;
 
 GrammarProduction::GrammarProduction( GrammarSymbol* symbol )
 : symbol_( symbol ),

@@ -4,15 +4,15 @@
 //
 
 #include "stdafx.hpp"
-#include <sweet/parser/Parser.ipp>
-#include <sweet/parser/ParserErrorPolicy.hpp>
-#include <sweet/parser/ParserStateMachine.hpp>
-#include <sweet/parser/ParserSymbol.hpp>
-#include <sweet/parser/ParserProduction.hpp>
-#include <sweet/parser/ErrorCode.hpp>
-#include <sweet/parser/Grammar.hpp>
-#include <sweet/parser/ErrorCode.hpp>
-#include <sweet/parser/LexerErrorPolicy.hpp>
+#include <sweet/lalr/Parser.ipp>
+#include <sweet/lalr/ParserErrorPolicy.hpp>
+#include <sweet/lalr/ParserStateMachine.hpp>
+#include <sweet/lalr/ParserSymbol.hpp>
+#include <sweet/lalr/ParserProduction.hpp>
+#include <sweet/lalr/ErrorCode.hpp>
+#include <sweet/lalr/Grammar.hpp>
+#include <sweet/lalr/ErrorCode.hpp>
+#include <sweet/lalr/LexerErrorPolicy.hpp>
 #include <functional>
 #include <unit/UnitTest.h>
 #include <string.h>
@@ -20,8 +20,8 @@
 using std::bind;
 using namespace std::placeholders;
 using namespace sweet;
-using namespace sweet::parser;
-using namespace sweet::parser;
+using namespace sweet::lalr;
+using namespace sweet::lalr;
 
 SUITE( Parsers )
 {

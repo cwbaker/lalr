@@ -8,7 +8,7 @@
 namespace sweet
 {
 
-namespace parser
+namespace lalr
 {
 
 class LexerStateMachine;
@@ -16,7 +16,7 @@ class LexerErrorPolicy;
 
 }
 
-namespace parser
+namespace lalr
 {
 
 class Grammar;
