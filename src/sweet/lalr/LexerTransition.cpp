@@ -1,5 +1,5 @@
 //
-// LexerLexerTransition.cpp
+// LexerTransition.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 

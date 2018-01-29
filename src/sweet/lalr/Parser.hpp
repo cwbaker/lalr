@@ -1,8 +1,3 @@
-//
-// Parser.hpp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
-//
-
 #ifndef SWEET_PARSER_PARSER_HPP_INCLUDED
 #define SWEET_PARSER_PARSER_HPP_INCLUDED
 

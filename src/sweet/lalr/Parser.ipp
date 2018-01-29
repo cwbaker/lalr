@@ -1,6 +1,6 @@
 //
 // Parser.ipp
-// Copyright (c) 2009 - 2011 Charles Baker.  All rights reserved.
+// Copyright (c) Charles Baker. All rights reserved.
 //
 
 #ifndef SWEET_PARSER_PARSER_IPP_INCLUDED

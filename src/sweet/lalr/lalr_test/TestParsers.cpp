@@ -3,7 +3,6 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "stdafx.hpp"
 #include <sweet/lalr/Parser.ipp>
 #include <sweet/lalr/ParserErrorPolicy.hpp>
 #include <sweet/lalr/ParserStateMachine.hpp>

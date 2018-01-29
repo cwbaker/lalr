@@ -17,11 +17,6 @@ static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symb
 
 void parser_hello_world_example()
 {
-    // const char* grammar = 
-    //     "hello_world {\n"
-    //     "   hello_world: 'Hello World!' [hello_world];\n"
-    //     "}"
-    // ;
     Grammar grammar;
     grammar.begin()
         .production( "hello_world" )
