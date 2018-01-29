@@ -33,11 +33,9 @@ build:initialize {
 };
 
 build:default_targets {
-    "sweet/lexer/lexer_test",    
     "sweet/parser/parser_examples",
     "sweet/parser/parser_test"
 };
 
-buildfile "sweet/assert/assert.build";
 buildfile "sweet/parser/parser.build";
 buildfile "unit/unit.build";

@@ -1,8 +1,0 @@
-
-for _, build in build:default_builds() do    
-    build:Library "assert" {
-        build:Cc () {
-            "assert.cpp"
-        };
-    };
-end
