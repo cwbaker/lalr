@@ -11,6 +11,9 @@ for _, build in build:default_builds() do
             "GrammarNil.cpp",
             "GrammarProduction.cpp",
             "GrammarSymbol.cpp",
+        };
+
+        build:Cxx () {
             "ParserAction.cpp",
             "ParserStateMachine.cpp",
             "ParserErrorPolicy.cpp",
@@ -21,6 +24,22 @@ for _, build in build:default_builds() do
             "ParserTransition.cpp",
             "ParserProduction.cpp",
             "ParserSymbol.cpp"
+        };
+
+        build:Cxx () {
+            "LexerAction.cpp",
+            "LexerErrorPolicy.cpp",
+            "LexerGenerator.cpp",
+            "LexerItem.cpp",
+            "LexerState.cpp",
+            "LexerStateMachine.cpp",
+            "LexerToken.cpp",
+            "LexerTransition.cpp",
+            "RegexCharacter.cpp",
+            "RegexNode.cpp",
+            "RegexNodeLess.cpp",
+            "RegexParser.cpp",
+            "RegexSyntaxTree.cpp"
         };
     };
 end

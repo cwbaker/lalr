@@ -8,7 +8,7 @@
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "GrammarAction.hpp"
-#include <sweet/lexer/LexerTokenType.hpp>
+#include "LexerTokenType.hpp"
 #include <sweet/assert/assert.hpp>
 
 using std::string;

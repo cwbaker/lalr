@@ -9,8 +9,8 @@
 #include "ParserNode.hpp"
 #include "ParserUserData.hpp"
 #include "AddParserActionHandler.hpp"
-#include <sweet/lexer/Lexer.hpp>
-#include <sweet/lexer/AddLexerActionHandler.hpp>
+#include "Lexer.hpp"
+#include "AddLexerActionHandler.hpp"
 #include <memory>
 #include <functional>
 #include <vector>

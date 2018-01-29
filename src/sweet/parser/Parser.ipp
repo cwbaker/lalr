@@ -18,8 +18,8 @@
 #include "ParserNode.ipp"
 #include "ParserUserData.ipp"
 #include "AddParserActionHandler.ipp"
-#include <sweet/lexer/Lexer.ipp>
-#include <sweet/lexer/AddLexerActionHandler.ipp>
+#include "Lexer.ipp"
+#include "AddLexerActionHandler.ipp"
 #include <sweet/assert/assert.hpp>
 #include <stdarg.h>
 #include <stdio.h>

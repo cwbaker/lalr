@@ -13,6 +13,9 @@ namespace parser
 enum ErrorCode
 {
     PARSER_ERROR_NONE, ///< No %error.
+    LEXER_ERROR_SYNTAX, ///< Syntax %error occured while parsing some input.
+    LEXER_ERROR_SYMBOL_CONFLICT, ///< A lexer state matches more than one symbol.
+    LEXER_ERROR_LEXICAL_ERROR, ///< A lexical error occured while scanning an input sequence.
     PARSER_ERROR_OPENING_FILE_FAILED, ///< Opening a grammar file failed.
     PARSER_ERROR_PARSING_FAILED, ///< Parsing a grammar failed.
     PARSER_ERROR_UNEXPECTED, ///< An unexpected %error occured.

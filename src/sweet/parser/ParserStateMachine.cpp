@@ -14,8 +14,8 @@
 #include "GrammarDirective.hpp"
 #include "GrammarAction.hpp"
 #include "Grammar.hpp"
-#include <sweet/lexer/LexerAction.hpp>
-#include <sweet/lexer/LexerStateMachine.hpp>
+#include "LexerAction.hpp"
+#include "LexerStateMachine.hpp"
 #include <sweet/assert/assert.hpp>
 
 using std::vector;

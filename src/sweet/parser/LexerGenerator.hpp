@@ -2,7 +2,7 @@
 #define SWEET_LEXER_LEXERGENERATOR_HPP_INCLUDED
 
 #include "LexerToken.hpp"
-#include <sweet/parser/shared_ptr_less.hpp>
+#include "shared_ptr_less.hpp"
 #include <memory>
 #include <vector>
 #include <set>

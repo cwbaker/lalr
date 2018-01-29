@@ -13,7 +13,8 @@ build:all {
         build:Cxx () {
             "main.cpp",
             "TestParsers.cpp",
-            "TestPrecedenceDirectives.cpp"
+            "TestPrecedenceDirectives.cpp",
+            "TestRegularExpressions.cpp"
         };
     };
 };

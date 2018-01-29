@@ -4,7 +4,7 @@
 #include "GrammarSymbolType.hpp"
 #include "SymbolAssociativity.hpp"
 #include "GrammarNil.hpp"
-#include <sweet/lexer/LexerToken.hpp>
+#include "LexerToken.hpp"
 #include <vector>
 
 namespace sweet

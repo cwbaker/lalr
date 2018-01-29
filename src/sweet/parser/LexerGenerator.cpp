@@ -13,7 +13,7 @@
 #include "RegexNode.hpp"
 #include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
-#include <sweet/parser/shared_ptr_less.hpp>
+#include "shared_ptr_less.hpp"
 #include <sweet/assert/assert.hpp>
 #include <limits.h>
 
