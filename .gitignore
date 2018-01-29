@@ -13,3 +13,4 @@ shipping
 local_settings.lua
 *.sublime-project
 *.sublime-workspace
+*.xcodeproj
