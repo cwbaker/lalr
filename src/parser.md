@@ -1,12 +1,6 @@
+# Sweet Parser
 
-:toc:
-:numbered:
-:theme: sweet
-:pygments:
-
-= Sweet Parser
-
-== Overview
+## Overview
 
 Sweet Parser is a C++ parser library.  It compiles with Microsoft Visual 
 Studio 2008 (MSVC 9.0), MinGW (GCC 4.6.2), and Xcode (LLVM-GCC 4.2.1) and 
@@ -21,20 +15,20 @@ no dependencies on anything other than the standard libary.
 
 Features:
 
-    - LALR(1) parser generation from a BNF grammar.
-    - No separate generation step required.
-    - Lua bindings allow generation of parsers for C++ and other languages.
-    - Lexer actions for escape character conversion.
-    - Lexer actions for feedback from the parser to the lexer.
-    - Bind parser and lexer actions to std::tr1::function objects.
-    - Lexical tokens can be specified inline in the grammar.
-    - Re-entrant and thread-safe.
+- LALR(1) parser generation from a BNF grammar.
+- No separate generation step required.
+- Lua bindings allow generation of parsers for C++ and other languages.
+- Lexer actions for escape character conversion.
+- Lexer actions for feedback from the parser to the lexer.
+- Bind parser and lexer actions to std::tr1::function objects.
+- Lexical tokens can be specified inline in the grammar.
+- Re-entrant and thread-safe.
 
 Anti-features:     
    
-    - The library has not seen widespread use and is still in beta.
+- The library has not seen widespread use and is still in beta.
 
-=== Boost Spirit vs Sweet Parser
+### Boost Spirit vs Sweet Parser
 
 Boost Spirit is an awesome library written by Joel de Guzman, Hartmut Kaiser, and
 others.  Boost Spirit uses expression templates to implement an EBNF like language
@@ -71,7 +65,7 @@ times growing too long then you might like to try Sweet Parser as an
 inline C++ replacement or using Sweet Parser to generate a parser offline 
 that you then just use in your code.
 
-=== LEMON vs Sweet Parser
+### LEMON vs Sweet Parser
 
 LEMON is an LALR(1) parser generator for C and C++.  It is written by
 D. Richard Hipp, the author of the SQLite database library.  Documentation 
@@ -91,7 +85,7 @@ in another programming language, would like to play with implementing a
 parser from already generated parse tables, or prefer a slightly more 
 C++ feel you might like to try Sweet Parser.
 
-== Installation
+## Installation
 
 Sweet Parser is built and installed by downloading the latest version from
 http://www.sweetsoftware.co.nz/, extracting the archive onto your computer, 
@@ -106,7 +100,7 @@ compiler's header and library search paths respectively.
 If you want Sweet Parser built to another location or with different variants 
 and/or settings then you'll need to edit the settings in "`sweet/build.lua`".
 
-== Usage
+## Usage
 
 Sweet Parser is a C++ library that generates LALR(1) parsers from 
 BNF grammars.  It provides classes to represent a grammar (ParserGrammar), the 
@@ -169,18 +163,13 @@ data stored in an element on the parser's stack.  It is expected that
 users of the library will provide their own user data implementation 
 and pass it as a template parameter to a Parser.
 
-=== Initialization
+### Initialization
  
 The library needs no special initialization.  Constructing a 
 ParserStateMachine object with a valid grammar and using that to construct 
 a Parser is all that needs to be done to start parsing input.
 
-[source,cpp]
-----
-include::parser/parser_examples/parser_hello_world_example.cpp[]
-----
-
-=== Grammar
+### Grammar
 
 When specified as a sequence or file a grammar consists of an identifier 
 followed by one or more productions enclosed within curly braces.  The first 
@@ -216,11 +205,6 @@ continuing the parse.  If there is no `error` symbol specified in the
 grammar or the parser backtracks all the way back to the start of the input 
 then parsing fails.
 
-[source,cpp]
-----
-include::parser/parser_examples/parser_calculator_example.cpp[]
-----
-
 Grammars can also be specified programmatically using a ParserGrammar object.  The
 interface to the ParserGrammar class is designed to be easy to use when driven 
 from a parser rather than to be easy to use when programmed directly.
@@ -245,7 +229,7 @@ Actions, like symbols, can be added at any time by calling
 `ParserGrammar::add_action()`.  Again like symbols they must obviously be 
 added before they can be used.
  
-=== Symbols
+### Symbols
 
 No explicit distinction needs to be made between terminal and non-terminal 
 symbols.  The library is able to determine whether or not a symbol is 
@@ -261,7 +245,7 @@ names.
 The special `error` symbol specifies states that the parser will search
 back to when syntax errors are found during parsing.
 
-=== Literals and Regular Expressions
+### Literals and Regular Expressions
 
 Literal elements are specified as single quoted strings.  This directs 
 the parser to literally parse the text provided.  The C/C++ style escape 
@@ -289,13 +273,13 @@ tables.  Lexical analyzer actions are attached in regular expressions using
 expression is added as an action that is called when the lexical analyzer 
 reaches a state that has the action as its next position.
 
-=== Whitespace
+### Whitespace
  
 The special `whitespace` directive specifies the input that will be skipped
 as whitespace every time the lexical analyzer is called to advance by a 
 token.
 
-=== Precedence and Associativity
+### Precedence and Associativity
 
 The library allows the precedence and associativity of terminals
 to be set using the associativity directives `left`, `right`, and 
@@ -353,7 +337,7 @@ an error is reported, and the grammar fails to generate a parser.
 - Otherwise the precedence of one production is higher than the other and
 the conflict is resolved in favour of this production.
 
-=== Errors and Debugging
+### Errors and Debugging
 
 Errors that occur during parser generation and parsing are reported through
 the ParserErrorPolicy class.  Users of the library need to implement these 
@@ -362,7 +346,7 @@ implementations silently ignore errors and debug output.  If no
 ParserErrorPolicy class is used then the library will throw exceptions to
 report errors and ignore debug output.
 
-=== Thread Safety
+### Thread Safety
 
 The library has no static state and so creating and/or using multiple 
 ParserStateMachines or Parsers at the same time poses no problems.  ParserStateMachine 
@@ -372,7 +356,7 @@ Note that any number of Parsers sharing the same ParserStateMachine can be
 used by any number of threads at once so long as multiple threads don't 
 make calls into the same Parser object at the same time.
  
-=== Generating Parsers
+### Generating Parsers
 
 Parsers can also be generated offline using the parser tool and some
 Lua script.  The tool provides Lua bindings to the library so that
@@ -384,23 +368,20 @@ Parsers generated this way only need to include 'parser.hpp' and
 not the entire parser library.  They have no external dependencies
 other than on the standard library.
 
-    Usage: parser [options] [attribute=value] file ...
-    Options:
-      -h, --help         Print this message and exit.
-      -v, --version      Print the version and exit.
-      -r, --require      Set the filename of the script to require on startup.
-      -s, --stack-trace  Enable stack traces in error messages.
+~~~
+Usage: parser [options] [attribute=value] file ...
+Options:
+  -h, --help         Print this message and exit.
+  -v, --version      Print the version and exit.
+  -r, --require      Set the filename of the script to require on startup.
+  -s, --stack-trace  Enable stack traces in error messages.
 
-    > parser -r parser/cxx json.g
+> parser -r parser/cxx json.g
+~~~
 
-[source,cpp]
-----
-include::parser/parser_examples/parser_json_example.cpp[]
-----
+### Parser Grammar
 
-=== Parser Grammar
-
-----
+~~~
 grammar: identifier '{' statements '}'
        ;
 
@@ -449,4 +430,4 @@ regex: "\"[^\"]*\""
 
 identifier: "[A-Za-z_][A-Za-z0-9_]*"
           ;
-----
+~~~
