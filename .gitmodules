@@ -1,3 +1,0 @@
-[submodule "src/unittest-cpp"]
-	path = src/unittest-cpp
-	url = git@github.com:cwbaker/unittest-cpp.git
