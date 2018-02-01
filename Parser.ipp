@@ -170,11 +170,11 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
     bool accepted = false;
     bool rejected = false;
     
-    const ParserTransition* transition = find_transition( symbol, nodes_.back().get_state() );
+    const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
     while ( !accepted && !rejected && transition && transition->get_type() == TRANSITION_REDUCE )
     {
         reduce( transition, &accepted, &rejected );
-        transition = find_transition( symbol, nodes_.back().get_state() );
+        transition = find_transition( symbol, nodes_.back().state() );
     }
     
     if ( transition && transition->get_type() == TRANSITION_SHIFT )
@@ -228,7 +228,7 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
 {
     SWEET_ASSERT( accepted() );
     SWEET_ASSERT( nodes_.size() == 1 );
-    return nodes_.front().get_user_data();
+    return nodes_.front().user_data();
 }
 
 /**
@@ -277,7 +277,7 @@ AddLexerActionHandler<Iterator, Char, Traits, Allocator> Parser<Iterator, UserDa
 //  null to set this %Parser to have no default action handler.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_handler( ParserActionFunction function )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_handler( const ParserActionFunction& function )
 {
     default_action_handler_ = function;
 }
@@ -293,7 +293,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_han
 //  handler to have no function.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, ParserActionFunction function )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, const ParserActionFunction& function )
 {
     SWEET_ASSERT( identifier );
     
@@ -441,8 +441,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
 {
     if ( debug_enabled_ )
     {
-        const ParserSymbol* symbol = node.get_symbol();
-        const std::string& lexeme = node.get_lexeme();
+        const ParserSymbol* symbol = node.symbol();
+        const std::string& lexeme = node.lexeme();
         fire_printf( "SHIFT: (%s %s)\n", symbol ? symbol->get_identifier().c_str() : "", lexeme.c_str() );
     }
 }
@@ -475,16 +475,16 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
         const ParserNode* node = start; 
         if ( node != finish )
         {
-            const ParserSymbol* symbol = node->get_symbol();
-            const std::string& lexeme = node->get_lexeme();
+            const ParserSymbol* symbol = node->symbol();
+            const std::string& lexeme = node->lexeme();
             fire_printf( "(%s %s)", symbol ? symbol->get_identifier().c_str() : "", lexeme.c_str() );
             ++node;
         }
         
         while ( node != finish )
         {
-            const ParserSymbol* symbol = node->get_symbol();
-            const std::string& lexeme = node->get_lexeme();
+            const ParserSymbol* symbol = node->symbol();
+            const std::string& lexeme = node->lexeme();
             fire_printf( " (%s %s)", symbol ? symbol->get_identifier().c_str() : "", lexeme.c_str() );
             ++node;
         }
@@ -578,7 +578,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         debug_reduce( reduced_production, start, finish );
         UserData user_data = handle( reduced_production, start, finish );
         nodes_.erase( i, nodes_.end() );
-        const ParserTransition* transition = find_transition( symbol, nodes_.back().get_state() );
+        const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         SWEET_ASSERT( transition );
         ParserNode node( transition->get_state(), symbol, user_data );
         nodes_.push_back( node );
@@ -615,7 +615,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     bool handled = false;
     while ( !nodes_.empty() && !handled && !*accepted && !*rejected )
     {
-        const ParserTransition* transition = find_transition( state_machine_->error_symbol(), nodes_.back().get_state() );
+        const ParserTransition* transition = find_transition( state_machine_->error_symbol(), nodes_.back().state() );
         if ( transition )
         {
             switch ( transition->get_type() )

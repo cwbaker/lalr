@@ -649,7 +649,7 @@ void ParserGrammar::check_for_unreferenced_symbol_errors( ParserGenerator* gener
 
                 if ( references == 0 )
                 {
-                    generator->fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str() );
+                    generator->fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->get_identifier().c_str(), symbol->get_lexeme().c_str() );
                 }
             }
         }

@@ -34,6 +34,7 @@ template <class UserData, class Char, class Traits, class Allocator>
 ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const UserData& user_data )
 : state_( state ),
   symbol_( symbol ),
+  line_( -1 ),
   lexeme_(),
   user_data_( user_data )
 {
@@ -59,6 +60,7 @@ template <class UserData, class Char, class Traits, class Allocator>
 ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
 : state_( state ),
   symbol_( symbol ),
+  line_( -1 ),
   lexeme_( lexeme ),
   user_data_()
 {
@@ -72,7 +74,7 @@ ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* st
 //  The state.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const ParserState* ParserNode<UserData, Char, Traits, Allocator>::get_state() const
+const ParserState* ParserNode<UserData, Char, Traits, Allocator>::state() const
 {
     return state_;
 }
@@ -84,9 +86,22 @@ const ParserState* ParserNode<UserData, Char, Traits, Allocator>::get_state() co
 //  The symbol.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const ParserSymbol* ParserNode<UserData, Char, Traits, Allocator>::get_symbol() const
+const ParserSymbol* ParserNode<UserData, Char, Traits, Allocator>::symbol() const
 {
     return symbol_;
+}
+
+/**
+// Get the line that this node was generated from (if any).
+//
+// @return
+//  The line number that this node was generated from or -1 if this node 
+//  doesn't relate to a line of source.
+*/
+template <class UserData, class Char, class Traits, class Allocator>
+int ParserNode<UserData, Char, Traits, Allocator>::line() const
+{
+    return line_;
 }
 
 /**
@@ -96,7 +111,7 @@ const ParserSymbol* ParserNode<UserData, Char, Traits, Allocator>::get_symbol() 
 //  The lexeme.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const std::basic_string<Char, Traits, Allocator>& ParserNode<UserData, Char, Traits, Allocator>::get_lexeme() const
+const std::basic_string<Char, Traits, Allocator>& ParserNode<UserData, Char, Traits, Allocator>::lexeme() const
 {
     return lexeme_;
 }
@@ -108,7 +123,7 @@ const std::basic_string<Char, Traits, Allocator>& ParserNode<UserData, Char, Tra
 //  The user data.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const UserData& ParserNode<UserData, Char, Traits, Allocator>::get_user_data() const
+const UserData& ParserNode<UserData, Char, Traits, Allocator>::user_data() const
 {
     return user_data_;
 }
