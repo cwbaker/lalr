@@ -298,7 +298,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
     SWEET_ASSERT( identifier );
     
     typename std::vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
-    while ( action_handler != action_handlers_.end() && action_handler->action_->identifier != identifier )
+    while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
     {
         ++action_handler;
     }

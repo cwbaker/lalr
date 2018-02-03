@@ -3,7 +3,9 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
+#define __STDC_WANT_LIB_EXT2__ 1
 #include "ParserAction.hpp"
+#include <string.h>
 
 using namespace sweet::lalr;
 
@@ -16,8 +18,18 @@ using namespace sweet::lalr;
 // @param identifier
 //  The identifier of this action.
 */
-ParserAction::ParserAction( int iindex, const std::string& iidentifier )
+ParserAction::ParserAction( int iindex, const char* iidentifier )
 : index( iindex ),
-  identifier( iidentifier )
+  identifier( nullptr )
 {
+    identifier = strdup( iidentifier );
+}
+
+ParserAction::~ParserAction()
+{
+    if ( identifier )
+    {
+        free( (void*) identifier );
+        identifier = nullptr;
+    }
 }

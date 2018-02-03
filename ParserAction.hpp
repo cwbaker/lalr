@@ -18,9 +18,10 @@ class ParserAction
         static const int INVALID_INDEX = -1;
 
         int index; ///< The index of this action.
-        std::string identifier; ///< The identifier of this action.
+        const char* identifier; ///< The identifier of this action.
     
-        ParserAction( int iindex, const std::string& iidentifier );
+        ParserAction( int iindex, const char* iidentifier );
+        ~ParserAction();
 };
 
 }
