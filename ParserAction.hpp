@@ -21,7 +21,7 @@ class ParserAction
         const char* identifier; ///< The identifier of this action.
     
         ParserAction( int iindex, const char* iidentifier );
-        ~ParserAction();
+        void destroy();
 };
 
 }

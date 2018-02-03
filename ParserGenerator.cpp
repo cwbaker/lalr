@@ -47,6 +47,12 @@ ParserGenerator::ParserGenerator( ParserGrammar& grammar, ParserErrorPolicy* err
 
 ParserGenerator::~ParserGenerator()
 {
+    for ( auto i = actions_.begin(); i != actions_.end(); ++i )
+    {
+        ParserAction* action = i->get();
+        SWEET_ASSERT( action );
+        action->destroy();
+    }
 }
 
 /**

@@ -153,6 +153,12 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
 
 ParserStateMachine::~ParserStateMachine()
 {
+    for ( auto i = actions_.begin(); i != actions_.end(); ++i )
+    {
+        ParserAction* action = i->get();
+        SWEET_ASSERT( action );
+        action->destroy();
+    }
 }
 
 /**

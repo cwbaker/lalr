@@ -49,6 +49,16 @@ ParserGrammar::ParserGrammar( size_t actions_reserve, size_t productions_reserve
     error_symbol_ = add_terminal( ".error", 0 );
 }
 
+ParserGrammar::~ParserGrammar()
+{
+    for ( auto i = actions_.begin(); i != actions_.end(); ++i )
+    {
+        ParserAction* action = i->get();
+        SWEET_ASSERT( action );
+        action->destroy();
+    }
+}
+
 /**
 // Get the identifier of this ParserGrammar.
 //

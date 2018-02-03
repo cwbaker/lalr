@@ -33,6 +33,7 @@ class ParserGrammar
 
 public:
     ParserGrammar( size_t actions_reserve = 32, size_t productions_reserve = 64, size_t symbols_reserve = 64 );
+    ~ParserGrammar();
 
     std::string& identifier();
     std::vector<std::unique_ptr<ParserAction>>& actions();
