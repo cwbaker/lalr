@@ -90,8 +90,8 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
             parser_symbol->set_associativity( symbol->associativity() );
             parser_symbol->set_precedence( symbol->precedence() );
             LexerTokenType token_type = symbol->type() == GRAMMAR_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( LexerToken(token_type, 0, parser_symbol, symbol->lexeme()) );                
-        }   
+            tokens.push_back( LexerToken(token_type, int(tokens.size()) + 1, parser_symbol, symbol->lexeme()) );                
+        }
     }
 
     ParserGenerator parser_generator( parser_grammar, error_policy ); 
