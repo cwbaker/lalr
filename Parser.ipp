@@ -277,7 +277,7 @@ AddLexerActionHandler<Iterator, Char, Traits, Allocator> Parser<Iterator, UserDa
 //  null to set this %Parser to have no default action handler.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_handler( const ParserActionFunction& function )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_handler( ParserActionFunction function )
 {
     default_action_handler_ = function;
 }
@@ -293,7 +293,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_han
 //  handler to have no function.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, const ParserActionFunction& function )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, ParserActionFunction function )
 {
     SWEET_ASSERT( identifier );
     
