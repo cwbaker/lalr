@@ -298,7 +298,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
     SWEET_ASSERT( identifier );
     
     typename std::vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
-    while ( action_handler != action_handlers_.end() && action_handler->action_->get_identifier() != identifier )
+    while ( action_handler != action_handlers_.end() && action_handler->action_->identifier != identifier )
     {
         ++action_handler;
     }
@@ -519,7 +519,7 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
 
     if ( reduced_production->get_action() )
     {
-        int index = reduced_production->get_action()->get_index();
+        int index = reduced_production->get_action()->index;
         SWEET_ASSERT( index >= 0 && index < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[index].function_ )
         {

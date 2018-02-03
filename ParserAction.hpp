@@ -17,14 +17,10 @@ class ParserAction
     public:
         static const int INVALID_INDEX = -1;
 
-    private:
-        int index_; ///< The index of this action.
-        std::string identifier_; ///< The identifier of this action.
+        int index; ///< The index of this action.
+        std::string identifier; ///< The identifier of this action.
     
-    public:
-        ParserAction( int index, const std::string& identifier );
-        int get_index() const;
-        const std::string& get_identifier() const;
+        ParserAction( int iindex, const std::string& iidentifier );
 };
 
 }

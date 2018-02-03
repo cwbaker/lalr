@@ -164,7 +164,7 @@ ParserSymbol* ParserGrammar::non_terminal( const std::string& identifier, int li
 ParserAction* ParserGrammar::action( const std::string& identifier )
 {
     auto i = actions_.begin();
-    while ( i != actions_.end() && (*i)->get_identifier() != identifier )
+    while ( i != actions_.end() && (*i)->identifier != identifier )
     {
         ++i;
     }
@@ -249,7 +249,7 @@ ParserAction* ParserGrammar::add_action( const std::string& identifier )
     if ( !identifier.empty() )
     {
         std::vector<std::shared_ptr<ParserAction> >::const_iterator i = actions_.begin();
-        while ( i != actions_.end() && (*i)->get_identifier() != identifier )
+        while ( i != actions_.end() && (*i)->identifier != identifier )
         {
             ++i;
         }
