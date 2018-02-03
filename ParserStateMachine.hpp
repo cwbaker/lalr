@@ -46,9 +46,6 @@ class ParserStateMachine
     public:
         ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
         ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = nullptr );
-        // ParserStateMachine( const char* filename, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
-        // ParserStateMachine( const char* start, const char* finish, ParserErrorPolicy* error_policy = nullptr, lexer::LexerErrorPolicy* lexer_error_policy = nullptr );
-
         const std::string& identifier() const;
         const std::vector<std::shared_ptr<ParserAction> >& actions() const;
         const std::vector<std::shared_ptr<ParserProduction> >& productions() const;        
