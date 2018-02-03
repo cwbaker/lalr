@@ -24,7 +24,7 @@ class GrammarSymbol;
 class ParserGrammar
 {
     std::string identifier_; ///< The identifier of the grammar.
-    std::vector<std::shared_ptr<ParserAction>> actions_; ///< The actions in the grammar.
+    std::vector<std::unique_ptr<ParserAction>> actions_; ///< The actions in the grammar.
     std::vector<std::shared_ptr<ParserProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::shared_ptr<ParserSymbol>> symbols_; ///< The symbols in the grammar.
     ParserSymbol* start_symbol_; ///< The start symbol.
@@ -35,7 +35,7 @@ public:
     ParserGrammar( size_t actions_reserve = 32, size_t productions_reserve = 64, size_t symbols_reserve = 64 );
 
     std::string& identifier();
-    std::vector<std::shared_ptr<ParserAction>>& actions();
+    std::vector<std::unique_ptr<ParserAction>>& actions();
     std::vector<std::shared_ptr<ParserProduction>>& productions();
     std::vector<std::shared_ptr<ParserSymbol>>& symbols();
     ParserSymbol* start_symbol() const;

@@ -66,7 +66,7 @@ std::string& ParserGrammar::identifier()
 // @return
 //  The actions.
 */
-std::vector<std::shared_ptr<ParserAction> >& ParserGrammar::actions()
+std::vector<std::unique_ptr<ParserAction> >& ParserGrammar::actions()
 {
     return actions_;
 }
@@ -244,28 +244,26 @@ ParserSymbol* ParserGrammar::add_non_terminal( const std::string& identifier, in
 ParserAction* ParserGrammar::add_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );    
-    std::shared_ptr<ParserAction> action;
-
+    ParserAction* action = nullptr;
     if ( !identifier.empty() )
     {
-        std::vector<std::shared_ptr<ParserAction> >::const_iterator i = actions_.begin();
+        std::vector<std::unique_ptr<ParserAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->identifier != identifier )
         {
             ++i;
-        }
-        
+        }        
         if ( i != actions_.end() )
         {
-            action = *i;
+            action = i->get();
         }
         else
         {
-            action.reset( new ParserAction(int(actions_.size()), identifier) );
-            actions_.push_back( action );
+            std::unique_ptr<ParserAction> new_action( new ParserAction(int(actions_.size()), identifier.c_str()) );
+            actions_.push_back( move(new_action) );
+            action = actions_.back().get();
         }
     }
-    
-    return action.get();
+    return action;
 }
 
 /**

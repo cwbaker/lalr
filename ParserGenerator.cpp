@@ -9,6 +9,7 @@
 #include "ParserItem.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserGrammar.hpp"
+#include "ParserAction.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -44,6 +45,10 @@ ParserGenerator::ParserGenerator( ParserGrammar& grammar, ParserErrorPolicy* err
     generate( grammar );
 }
 
+ParserGenerator::~ParserGenerator()
+{
+}
+
 /**
 // Get the identifier of the grammar.
 //
@@ -61,7 +66,7 @@ std::string& ParserGenerator::identifier()
 // @return
 //  The actions.
 */
-std::vector<std::shared_ptr<ParserAction> >& ParserGenerator::actions()
+std::vector<std::unique_ptr<ParserAction> >& ParserGenerator::actions()
 {
     return actions_;
 }

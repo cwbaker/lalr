@@ -76,7 +76,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     SWEET_ASSERT( state_machine_ );
     
     action_handlers_.reserve( state_machine_->actions().size() );
-    for ( std::vector<std::shared_ptr<ParserAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
+    for ( std::vector<std::unique_ptr<ParserAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
     {
         ParserAction* action = i->get();
         SWEET_ASSERT( action );

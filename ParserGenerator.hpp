@@ -46,7 +46,7 @@ class ParserGenerator
 {
     ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
-    std::vector<std::shared_ptr<ParserAction>> actions_; ///< The actions in the parser.
+    std::vector<std::unique_ptr<ParserAction>> actions_; ///< The actions in the parser.
     std::vector<std::shared_ptr<ParserProduction>> productions_; ///< The productions in the parser.
     std::vector<std::shared_ptr<ParserSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>> states_; ///< The states in the parser's state machine.
@@ -58,9 +58,9 @@ class ParserGenerator
 
     public:
         ParserGenerator( ParserGrammar& grammar, ParserErrorPolicy* error_policy );
-
+        ~ParserGenerator();
         std::string& identifier();
-        std::vector<std::shared_ptr<ParserAction> >& actions();
+        std::vector<std::unique_ptr<ParserAction> >& actions();
         std::vector<std::shared_ptr<ParserProduction> >& productions();
         std::vector<std::shared_ptr<ParserSymbol> >& symbols();
         std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>& states();

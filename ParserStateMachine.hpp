@@ -33,7 +33,7 @@ class ParserErrorPolicy;
 class ParserStateMachine
 {
     std::string identifier_; ///< The identifier of this ParserStateMachine.
-    std::vector<std::shared_ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.
+    std::vector<std::unique_ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.
     std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions in the grammar for this ParserStateMachine.
     std::vector<std::shared_ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar for this ParserStateMachine.
     std::vector<std::shared_ptr<ParserState> > states_; ///< The states in the state machine for this ParserStateMachine.
@@ -46,8 +46,9 @@ class ParserStateMachine
     public:
         ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
         ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy = nullptr );
+        ~ParserStateMachine();
         const std::string& identifier() const;
-        const std::vector<std::shared_ptr<ParserAction> >& actions() const;
+        const std::vector<std::unique_ptr<ParserAction> >& actions() const;
         const std::vector<std::shared_ptr<ParserProduction> >& productions() const;        
         const std::vector<std::shared_ptr<ParserSymbol> >& symbols() const;
         const std::vector<std::shared_ptr<ParserState> >& states() const;

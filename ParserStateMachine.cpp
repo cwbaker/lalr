@@ -9,6 +9,7 @@
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserState.hpp"
+#include "ParserAction.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "GrammarDirective.hpp"
@@ -150,6 +151,10 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
     }
 }
 
+ParserStateMachine::~ParserStateMachine()
+{
+}
+
 /**
 // Get the identifier of the parser grammar.
 //
@@ -167,7 +172,7 @@ const std::string& ParserStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<std::shared_ptr<ParserAction> >& ParserStateMachine::actions() const
+const std::vector<std::unique_ptr<ParserAction> >& ParserStateMachine::actions() const
 {
     return actions_;
 }
