@@ -911,12 +911,14 @@ void RegexSyntaxTree::erase_characters( int begin, int end )
         {
             bool inserted = bracket_expression_characters_.insert( RegexCharacter(pre_begin, pre_end) ).second;
             SWEET_ASSERT( inserted );
+            (void) inserted;
         }
         
         if ( post_begin < post_end )
         {
             bool inserted = bracket_expression_characters_.insert( RegexCharacter(post_begin, post_end) ).second;
             SWEET_ASSERT( inserted );
+            (void) inserted;
         }
     }        
 }
