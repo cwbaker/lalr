@@ -585,7 +585,7 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
     ParserTransition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
-        state->add_transition( symbol, production );
+        state->add_transition( symbol, production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
     }
     else
     {
@@ -599,7 +599,7 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
                 }
                 else if ( production->get_precedence() > symbol->get_precedence() || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_RIGHT) )
                 {
-                    transition->override_shift_to_reduce( production );
+                    transition->override_shift_to_reduce( production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
                 }
 
                 break;
@@ -607,16 +607,13 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
             
             case TRANSITION_REDUCE:
             {
-                const ParserProduction* other_production = transition->get_reduced_production();
-                SWEET_ASSERT( other_production );
-                if ( production->get_precedence() == 0 || other_production->get_precedence() == 0 || production->get_precedence() == other_production->get_precedence() )
+                if ( production->get_precedence() == 0 || transition->precedence() == 0 || production->get_precedence() == transition->precedence() )
                 {
-                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str(), other_production->get_symbol()->get_identifier().c_str() );
+                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str(), transition->reduced_symbol()->get_identifier().c_str() );
                 }
-                else
+                else if ( production->get_precedence() > transition->precedence() )
                 {
-                    const ParserProduction* reduced_production = production->get_precedence() > other_production->get_precedence() ? production : other_production;
-                    transition->override_reduce_to_reduce( reduced_production );
+                    transition->override_reduce_to_reduce( production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
                 }
                 break;
             }

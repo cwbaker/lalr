@@ -87,10 +87,10 @@ class Parser
         
     private:
         const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;
-        typename std::vector<ParserNode>::iterator find_node_to_reduce_to( const ParserProduction* production, std::vector<ParserNode>& nodes );
+        typename std::vector<ParserNode>::iterator find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes );
         void debug_shift( const ParserNode& node ) const;
-        void debug_reduce( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const;
-        UserData handle( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const;
+        void debug_reduce( const ParserSymbol* reduced_symbol, const ParserNode* start, const ParserNode* finish ) const;
+        UserData handle( const ParserTransition* transition, const ParserNode* start, const ParserNode* finish ) const;
         void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme );
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
         void error( bool* accepted, bool* rejected );

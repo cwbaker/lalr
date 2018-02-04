@@ -36,8 +36,8 @@ class ParserState
         std::string description() const;
 
         void add_transition( const ParserSymbol* symbol, ParserState* state );
-        void add_transition( const ParserSymbol* symbol, const ParserProduction* production );
-        void add_transition( const std::set<const ParserSymbol*>& symbols, const ParserProduction* production );
+        void add_transition( const ParserSymbol* symbol, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+        void add_transition( const std::set<const ParserSymbol*>& symbols, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         void generate_indices_for_transitions();
         ParserTransition* find_transition_by_symbol( const ParserSymbol* symbol );
         const ParserTransition* find_transition_by_symbol( const ParserSymbol* symbol ) const;

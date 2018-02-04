@@ -412,8 +412,8 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 //
 // Find the Node to reduce to when \e production is reduced.
 //
-// @param production
-//  The production that is being reduced.
+// @param transition
+//  The reducing transition.
 //
 // @param nodes
 //  The ParserNodes currently on the stack.
@@ -423,10 +423,11 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 //  if no Node to reduce to could be found.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserProduction* production, std::vector<ParserNode>& nodes )
+typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes )
 {
-    SWEET_ASSERT( production->get_length() < int(nodes.size()) );
-    typename std::vector<ParserNode>::reverse_iterator node = nodes.rbegin() + production->get_length();
+    SWEET_ASSERT( transition );
+    SWEET_ASSERT( transition->reduced_length() < int(nodes.size()) );
+    typename std::vector<ParserNode>::reverse_iterator node = nodes.rbegin() + transition->reduced_length();
     return node != nodes.rend() ? node.base() : nodes_.begin();
 }
 
@@ -450,8 +451,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
 /**
 // Debug a reduce operation.
 //
-// @param reduced_producion
-//  The production that has been reduced.
+// @param reduced_symbol
+//  The symbol that will be reduced to.
 //
 // @param start
 //  The first ParserNode in the stack that will be reduced.
@@ -460,17 +461,16 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
 //  One past the last ParserNode in the stack that will be reduced.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const
+void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const ParserSymbol* reduced_symbol, const ParserNode* start, const ParserNode* finish ) const
 {
     SWEET_ASSERT( start );
     SWEET_ASSERT( finish );
     SWEET_ASSERT( start <= finish );
-    SWEET_ASSERT( reduced_production );
-    SWEET_ASSERT( reduced_production->get_symbol() );
+    SWEET_ASSERT( reduced_symbol );
 
     if ( debug_enabled_ )
     {
-        fire_printf( "REDUCE: %s <- ", reduced_production->get_symbol()->get_identifier().c_str() );        
+        fire_printf( "REDUCE: %s <- ", reduced_symbol->get_identifier().c_str() );        
 
         const ParserNode* node = start; 
         if ( node != finish )
@@ -510,24 +510,24 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
 //  The user data that results from the reduction.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const ParserProduction* reduced_production, const ParserNode* start, const ParserNode* finish ) const
+UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const ParserTransition* transition, const ParserNode* start, const ParserNode* finish ) const
 {
     SWEET_ASSERT( start );
     SWEET_ASSERT( finish );
     SWEET_ASSERT( start <= finish );
-    SWEET_ASSERT( reduced_production );
+    SWEET_ASSERT( transition );
 
-    if ( reduced_production->get_action() )
+    int action = transition->action();
+    if ( action != ParserAction::INVALID_INDEX )
     {
-        int index = reduced_production->get_action()->index;
-        SWEET_ASSERT( index >= 0 && index < static_cast<int>(action_handlers_.size()) );            
-        if ( action_handlers_[index].function_ )
+        SWEET_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
+        if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[index].function_( reduced_production->get_symbol(), start, finish );
+            return action_handlers_[action].function_( transition->reduced_symbol(), start, finish );
         }
     }
 
-    return default_action_handler_ ? default_action_handler_( reduced_production->get_symbol(), start, finish ) : UserData();
+    return default_action_handler_ ? default_action_handler_( transition->reduced_symbol(), start, finish ) : UserData();
 }
 
 /**
@@ -567,16 +567,15 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
     SWEET_ASSERT( transition );
     SWEET_ASSERT( accepted );
     
-    const ParserSymbol* symbol = transition->get_reduced_production()->get_symbol();
+    const ParserSymbol* symbol = transition->reduced_symbol();
     if ( symbol != state_machine_->start_symbol() )
     {
-        const ParserProduction* reduced_production = transition->get_reduced_production();
-        typename std::vector<ParserNode>::iterator i = find_node_to_reduce_to( transition->get_reduced_production(), nodes_ );
+        typename std::vector<ParserNode>::iterator i = find_node_to_reduce_to( transition, nodes_ );
         const ParserNode* start = i != nodes_.end() ? &(*i) : &nodes_.back() + 1;
         const ParserNode* finish = &nodes_.back() + 1;
 
-        debug_reduce( reduced_production, start, finish );
-        UserData user_data = handle( reduced_production, start, finish );
+        debug_reduce( transition->reduced_symbol(), start, finish );
+        UserData user_data = handle( transition, start, finish );
         nodes_.erase( i, nodes_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         SWEET_ASSERT( transition );

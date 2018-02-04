@@ -152,23 +152,33 @@ void ParserState::add_transition( const ParserSymbol* symbol, ParserState* state
 // @param symbol
 //  The symbol to make the reduction on.
 //
-// @param production
-//  The production to reduce to.
+// @param reduced_symbol
+//  The symbol that is reduced to.
+//
+// @param reduced_length
+//  The number of symbols on the right-hand side of the production that is
+//  reduced.
+//
+// @param action
+//  The index of the action taken on the reduction or 
+//  `ParserAction::INVALID_INDEX` if no action is taken.
 */
-void ParserState::add_transition( const ParserSymbol* symbol, const ParserProduction* production )
+void ParserState::add_transition( const ParserSymbol* symbol, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
-    SWEET_ASSERT( production );
+    SWEET_ASSERT( reduced_symbol );
+    SWEET_ASSERT( reduced_length >= 0 );
+    SWEET_ASSERT( precedence >= 0 );
 
-    std::set<ParserTransition>::iterator transition = transitions_.find( ParserTransition(symbol, production) );
+    std::set<ParserTransition>::iterator transition = transitions_.find( ParserTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
         SWEET_ASSERT( transition->get_type() == TRANSITION_SHIFT );
-        transition->override_shift_to_reduce( production );
+        transition->override_shift_to_reduce( reduced_symbol, reduced_length, precedence, action );
     }
     else
     {
-        transition = transitions_.insert( ParserTransition(symbol, production) ).first;
+        transition = transitions_.insert( ParserTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
     }
 }
 
@@ -179,16 +189,27 @@ void ParserState::add_transition( const ParserSymbol* symbol, const ParserProduc
 // @param symbols
 //  The symbols to make the reduction on.
 //
-// @param production
-//  The production to reduce.
+// @param reduced_symbol
+//  The symbol that is reduced to.
+//
+// @param reduced_length
+//  The number of symbols on the right-hand side of the production that is
+//  reduced.
+//
+// @param action
+//  The index of the action taken on the reduction or 
+//  `ParserAction::INVALID_INDEX` if no action is taken.
 */
-void ParserState::add_transition( const std::set<const ParserSymbol*>& symbols, const ParserProduction* production )
+void ParserState::add_transition( const std::set<const ParserSymbol*>& symbols, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
+    SWEET_ASSERT( reduced_symbol );
+    SWEET_ASSERT( reduced_length >= 0 );
+    SWEET_ASSERT( precedence >= 0 );
     for ( set<const ParserSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
         const ParserSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        add_transition( symbol, production );
+        add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
     }
 }
 

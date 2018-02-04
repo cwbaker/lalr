@@ -50,6 +50,7 @@ class ParserProduction
         
         void set_action( const ParserAction* action );
         const ParserAction* get_action() const;
+        int action_index() const;
         
         void set_precedence_symbol( const ParserSymbol* symbol );
         int get_precedence() const;

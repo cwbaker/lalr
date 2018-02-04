@@ -4,10 +4,10 @@
 //    
 
 #include "ParserTransition.hpp"
-#include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserItem.hpp"
 #include "ParserState.hpp"
+#include "ParserAction.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -23,18 +23,30 @@ using namespace sweet::lalr;
 // @param symbol
 //  The symbol that this transition is made on (assumed not null).
 //
-// @param state
-//  The state that this transition is to (assumed not null).
+// @param reduced_symbol
+//  The ParserSymbol that this transition reduces to.
+//
+// @param length
+//  The number of symbols on the right-hand side of the production that this 
+//  transition reduces.
+//
+// @param action
+//  The index of the action taken on this reduction or 
+//  `ParserAction::INVALID_INDEX` if no action is taken.
 */
-ParserTransition::ParserTransition( const ParserSymbol* symbol, ParserState* state )
+ParserTransition::ParserTransition( const ParserSymbol* symbol, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
-  state_( state ),
-  reduced_production_( NULL ),
-  type_( TRANSITION_SHIFT ),
+  state_( NULL ),
+  reduced_symbol_( reduced_symbol ),
+  reduced_length_( reduced_length ),
+  precedence_( precedence ),
+  action_( action ),
+  type_( TRANSITION_REDUCE ),
   index_( INVALID_INDEX )
 {
-    SWEET_ASSERT( symbol_ );
-    SWEET_ASSERT( state_ );
+    SWEET_ASSERT( reduced_symbol_ );
+    SWEET_ASSERT( reduced_length_ >= 0 );
+    SWEET_ASSERT( precedence_ >= 0 );
 }
 
 /**
@@ -43,17 +55,21 @@ ParserTransition::ParserTransition( const ParserSymbol* symbol, ParserState* sta
 // @param symbol
 //  The symbol that this transition is made on (assumed not null).
 //
-// @param reduced_production
-//  The production that is reduced on this transition (assumed not null).
+// @param state
+//  The state that this transition is to (assumed not null).
 */
-ParserTransition::ParserTransition( const ParserSymbol* symbol, const ParserProduction* reduced_production )
+ParserTransition::ParserTransition( const ParserSymbol* symbol, ParserState* state )
 : symbol_( symbol ),
-  state_( NULL ),
-  reduced_production_( reduced_production ),
-  type_( TRANSITION_REDUCE ),
+  state_( state ),
+  reduced_symbol_( nullptr ),
+  reduced_length_( 0 ),
+  precedence_( 0 ),
+  action_( ParserAction::INVALID_INDEX ),
+  type_( TRANSITION_SHIFT ),
   index_( INVALID_INDEX )
 {
-    SWEET_ASSERT( reduced_production );
+    SWEET_ASSERT( symbol_ );
+    SWEET_ASSERT( state_ );
 }
 
 /**
@@ -74,9 +90,29 @@ ParserState* ParserTransition::get_state() const
 //  The production that is reduced on this transition or null if this 
 //  transition is a shift.
 */
-const ParserProduction* ParserTransition::get_reduced_production() const
+// const ParserProduction* ParserTransition::get_reduced_production() const
+// {
+//     return reduced_production_;
+// }
+
+const ParserSymbol* ParserTransition::reduced_symbol() const
 {
-    return reduced_production_;
+    return reduced_symbol_;
+}
+
+int ParserTransition::reduced_length() const
+{
+    return reduced_length_;
+}
+
+int ParserTransition::precedence() const
+{
+    return precedence_;
+}
+
+int ParserTransition::action() const
+{
+    return action_;
 }
 
 /**
@@ -140,10 +176,10 @@ void ParserTransition::describe( std::string* description ) const
         }
             
         case TRANSITION_REDUCE:
-            SWEET_ASSERT( reduced_production_ );
-            SWEET_ASSERT( reduced_production_->get_symbol() );
+            // SWEET_ASSERT( reduced_production_ );
+            SWEET_ASSERT( reduced_symbol_ );
             char buffer [512];
-            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_production_->get_symbol()->get_identifier().c_str() );
+            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_symbol_->get_identifier().c_str() );
             buffer [sizeof(buffer) - 1] = '\0';
             description->append( buffer );
             break;
@@ -186,16 +222,20 @@ int ParserTransition::get_index() const
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void ParserTransition::override_shift_to_reduce( const ParserProduction* reduced_production ) const
+void ParserTransition::override_shift_to_reduce( const ParserSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_SHIFT );
     SWEET_ASSERT( state_ );
-    SWEET_ASSERT( !reduced_production_ );
-    SWEET_ASSERT( reduced_production );
-    
+    SWEET_ASSERT( !reduced_symbol_ );
+    SWEET_ASSERT( length > 0 );
+    SWEET_ASSERT( precedence >= 0 );
+    SWEET_ASSERT( symbol );    
     type_ = TRANSITION_REDUCE;
-    state_ = NULL;
-    reduced_production_ = reduced_production;
+    state_ = nullptr;
+    reduced_symbol_ = symbol;
+    reduced_length_ = length;
+    precedence_ = precedence;
+    action_ = action;
 }
 
 /**
@@ -205,13 +245,18 @@ void ParserTransition::override_shift_to_reduce( const ParserProduction* reduced
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void ParserTransition::override_reduce_to_reduce( const ParserProduction* reduced_production ) const
+void ParserTransition::override_reduce_to_reduce( const ParserSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_REDUCE );
-    SWEET_ASSERT( reduced_production_ );
-    SWEET_ASSERT( reduced_production );
-    SWEET_ASSERT( reduced_production_ != reduced_production );
-    reduced_production_ = reduced_production;
+    SWEET_ASSERT( reduced_symbol_ );
+    SWEET_ASSERT( symbol );
+    SWEET_ASSERT( length > 0 );
+    SWEET_ASSERT( precedence >= 0 );
+    SWEET_ASSERT( reduced_symbol_ != symbol );
+    reduced_symbol_ = symbol;
+    reduced_length_ = length;
+    precedence_ = precedence;
+    action_ = action;
 }
 
 /**

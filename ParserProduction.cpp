@@ -5,6 +5,7 @@
 
 #include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
+#include "ParserAction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -215,6 +216,11 @@ void ParserProduction::set_action( const ParserAction* action )
 const ParserAction* ParserProduction::get_action() const
 {
     return action_;
+}
+
+int ParserProduction::action_index() const
+{
+    return action_ ? action_->index : ParserAction::INVALID_INDEX;
 }
 
 /**
