@@ -6,7 +6,6 @@
 #include "ParserStateMachine.hpp"
 #include "ParserGenerator.hpp"
 #include "ParserGrammar.hpp"
-#include "ParserProduction.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
@@ -40,7 +39,6 @@ using namespace sweet::lalr;
 ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : identifier_(),
   actions_(),
-  productions_(),
   symbols_(),
   states_(),
   start_symbol_( nullptr ),
@@ -100,7 +98,6 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
     {
         identifier_ = parser_generator.identifier();
         actions_.swap( parser_generator.actions() );
-        productions_.swap( parser_generator.productions() );
         symbols_.swap( parser_generator.symbols() );
         states_.reserve( parser_generator.states().size() );
         copy( parser_generator.states().begin(), parser_generator.states().end(), back_inserter(states_) );
@@ -125,7 +122,6 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
 ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy )
 : identifier_(),
   actions_(),
-  productions_(),
   symbols_(),
   states_(),
   start_symbol_( nullptr ),
@@ -139,7 +135,6 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
     {
         identifier_ = parser_generator.identifier();
         actions_.swap( parser_generator.actions() );
-        productions_.swap( parser_generator.productions() );
         symbols_.swap( parser_generator.symbols() );
         states_.reserve( parser_generator.states().size() );
         copy( parser_generator.states().begin(), parser_generator.states().end(), back_inserter(states_) );
@@ -181,17 +176,6 @@ const std::string& ParserStateMachine::identifier() const
 const std::vector<std::unique_ptr<ParserAction> >& ParserStateMachine::actions() const
 {
     return actions_;
-}
-
-/**
-// Get the productions in the parser grammar.
-//
-// @return
-//  The productions.
-*/
-const std::vector<std::shared_ptr<ParserProduction> >& ParserStateMachine::productions() const
-{
-    return productions_;
 }
 
 /**
@@ -304,14 +288,6 @@ std::string ParserStateMachine::description() const
 {
     std::string description;
     description.reserve( 1024 );
-    
-    for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
-    {
-        const ParserProduction* production = i->get();
-        SWEET_ASSERT( production );
-        production->describe( &description );
-        description.append( "\n" );
-    }
     
     for ( std::vector<std::shared_ptr<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
