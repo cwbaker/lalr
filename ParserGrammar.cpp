@@ -139,7 +139,7 @@ ParserSymbol* ParserGrammar::error_symbol() const
 ParserSymbol* ParserGrammar::symbol( const GrammarSymbol* grammar_symbol )
 {
     SWEET_ASSERT( grammar_symbol );
-    SymbolType type = grammar_symbol->type() == GRAMMAR_NON_TERMINAL ? SYMBOL_NON_TERMINAL : SYMBOL_TERMINAL;
+    SymbolType type = grammar_symbol->lexeme_type() == LEXEME_NULL ? SYMBOL_NON_TERMINAL : SYMBOL_TERMINAL;
     ParserSymbol* symbol = ParserGrammar::symbol( type, grammar_symbol->lexeme(), 0 );
     symbol->set_associativity( grammar_symbol->associativity() );
     symbol->set_precedence( grammar_symbol->precedence() );

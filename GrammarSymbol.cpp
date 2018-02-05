@@ -13,7 +13,8 @@ using namespace sweet::lalr;
 GrammarSymbol::GrammarSymbol( const char* lexeme )
 : lexeme_( lexeme ),
   identifier_(),
-  type_( GRAMMAR_SYMBOL_NULL ),
+  symbol_type_( SYMBOL_NULL ),
+  lexeme_type_( LEXEME_NULL ),
   associativity_( ASSOCIATE_NONE ),
   precedence_( 0 ),
   productions_()
@@ -30,9 +31,14 @@ const std::string& GrammarSymbol::identifier() const
     return identifier_;
 }
 
-GrammarSymbolType GrammarSymbol::type() const
+SymbolType GrammarSymbol::symbol_type() const
 {
-    return type_;
+    return symbol_type_;
+}
+
+LexemeType GrammarSymbol::lexeme_type() const
+{
+    return lexeme_type_;
 }
 
 SymbolAssociativity GrammarSymbol::associativity() const
@@ -60,10 +66,16 @@ void GrammarSymbol::set_identifier( const std::string& identifier )
     identifier_ = identifier;
 }
 
-void GrammarSymbol::set_type( GrammarSymbolType type )
+void GrammarSymbol::set_symbol_type( SymbolType symbol_type )
 {
-    SWEET_ASSERT( type >= GRAMMAR_SYMBOL_NULL && type <= GRAMMAR_NON_TERMINAL );
-    type_ = type;
+    SWEET_ASSERT( symbol_type >= SYMBOL_NULL && symbol_type < SYMBOL_TYPE_COUNT );
+    symbol_type_ = symbol_type;
+}
+
+void GrammarSymbol::set_lexeme_type( LexemeType lexeme_type )
+{
+    SWEET_ASSERT( lexeme_type >= LEXEME_NULL && lexeme_type < LEXEME_TYPE_COUNT );
+    lexeme_type_ = lexeme_type;
 }
 
 void GrammarSymbol::set_associativity( SymbolAssociativity associativity )

@@ -1,7 +1,8 @@
 #ifndef SWEET_PARSER_GRAMMAR_HPP_INCLUDED
 #define SWEET_PARSER_GRAMMAR_HPP_INCLUDED
 
-#include "GrammarSymbolType.hpp"
+#include "SymbolType.hpp"
+#include "LexemeType.hpp"
 #include "SymbolAssociativity.hpp"
 #include "GrammarNil.hpp"
 #include "LexerToken.hpp"
@@ -59,7 +60,7 @@ private:
     GrammarDirective* directive( SymbolAssociativity associativity );
     GrammarSymbol* symbol( char literal );
     GrammarSymbol* symbol( const char* regex );
-    GrammarSymbol* symbol( const char* regex, GrammarSymbolType type );
+    GrammarSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
     GrammarSymbol* error_symbol();
     GrammarProduction* production( GrammarSymbol* symbol );
     GrammarAction* action( const char* id );

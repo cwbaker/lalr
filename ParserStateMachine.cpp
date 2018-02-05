@@ -83,12 +83,12 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
     {
         const GrammarSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
-        if ( symbol->type() == GRAMMAR_LITERAL || symbol->type() == GRAMMAR_REGULAR_EXPRESSION )
+        if ( symbol->lexeme_type() != LEXEME_NULL )
         {
             ParserSymbol* parser_symbol = parser_grammar.symbol( symbol );
             parser_symbol->set_associativity( symbol->associativity() );
             parser_symbol->set_precedence( symbol->precedence() );
-            LexerTokenType token_type = symbol->type() == GRAMMAR_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
+            LexerTokenType token_type = symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
             tokens.push_back( LexerToken(token_type, int(tokens.size()) + 1, parser_symbol, symbol->lexeme()) );                
         }
     }

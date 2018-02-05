@@ -247,7 +247,8 @@ void Grammar::end()
         SWEET_ASSERT( symbol );
         if ( !symbol->productions().empty() )
         {
-            symbol->set_type( GRAMMAR_NON_TERMINAL );
+            symbol->set_lexeme_type( LEXEME_NULL );
+            symbol->set_symbol_type( SYMBOL_NON_TERMINAL );
         }
     }
 }
@@ -262,21 +263,21 @@ GrammarDirective* Grammar::directive( SymbolAssociativity associativity )
 GrammarSymbol* Grammar::symbol( char literal )
 {
     char lexeme [2] = { literal, 0 };
-    return Grammar::symbol( lexeme, GRAMMAR_LITERAL );
+    return Grammar::symbol( lexeme, LEXEME_LITERAL, SYMBOL_NULL );
 }
 
 GrammarSymbol* Grammar::symbol( const char* regex )
 {
     SWEET_ASSERT( regex );
-    return symbol( regex, GRAMMAR_REGULAR_EXPRESSION );
+    return symbol( regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL );
 }
 
 GrammarSymbol* Grammar::error_symbol()
 {
-    return symbol( ".error", GRAMMAR_LITERAL );
+    return symbol( ".error", LEXEME_LITERAL, SYMBOL_NULL );
 }
 
-GrammarSymbol* Grammar::symbol( const char* lexeme, GrammarSymbolType type )
+GrammarSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type )
 {
     SWEET_ASSERT( lexeme );
     vector<shared_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
@@ -287,13 +288,15 @@ GrammarSymbol* Grammar::symbol( const char* lexeme, GrammarSymbolType type )
     if ( i == symbols_.end() )
     {
         shared_ptr<GrammarSymbol> symbol( new GrammarSymbol(lexeme) );
-        symbol->set_type( type );
+        symbol->set_lexeme_type( lexeme_type );
+        symbol->set_symbol_type( symbol_type );
         symbols_.push_back( symbol );
         return symbol.get();
     }
     GrammarSymbol* symbol = i->get();
     SWEET_ASSERT( symbol );
-    SWEET_ASSERT( symbol->type() == type );
+    SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
+    SWEET_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 

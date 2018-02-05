@@ -1,7 +1,8 @@
 #ifndef SWEET_PARSER_GRAMMARSYMBOL_HPP_INCLUDED
 #define SWEET_PARSER_GRAMMARSYMBOL_HPP_INCLUDED
 
-#include "GrammarSymbolType.hpp"
+#include "SymbolType.hpp"
+#include "LexemeType.hpp"
 #include "SymbolAssociativity.hpp"
 #include <string>
 #include <vector>
@@ -18,7 +19,8 @@ class GrammarSymbol
 {
     std::string lexeme_;
     std::string identifier_;
-    GrammarSymbolType type_;
+    SymbolType symbol_type_;
+    LexemeType lexeme_type_;
     SymbolAssociativity associativity_;
     int precedence_;
     std::vector<GrammarProduction*> productions_;
@@ -28,14 +30,16 @@ public:
 
     const std::string& lexeme() const;
     const std::string& identifier() const;
-    GrammarSymbolType type() const;
+    SymbolType symbol_type() const;
+    LexemeType lexeme_type() const;
     SymbolAssociativity associativity() const;
     int precedence() const;
     const std::vector<GrammarProduction*>& productions() const;
 
     void set_lexeme( const std::string& lexeme );
     void set_identifier( const std::string& identifier );
-    void set_type( GrammarSymbolType type );
+    void set_symbol_type( SymbolType symbol_type );
+    void set_lexeme_type( LexemeType lexeme_type );
     void set_associativity( SymbolAssociativity associativity );
     void set_precedence( int precedence );
     void append_production( GrammarProduction* production );
