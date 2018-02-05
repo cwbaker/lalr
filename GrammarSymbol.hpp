@@ -3,7 +3,7 @@
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
-#include "SymbolAssociativity.hpp"
+#include "Associativity.hpp"
 #include <string>
 #include <vector>
 
@@ -21,7 +21,7 @@ class GrammarSymbol
     std::string identifier_;
     SymbolType symbol_type_;
     LexemeType lexeme_type_;
-    SymbolAssociativity associativity_;
+    Associativity associativity_;
     int precedence_;
     std::vector<GrammarProduction*> productions_;
 
@@ -32,7 +32,7 @@ public:
     const std::string& identifier() const;
     SymbolType symbol_type() const;
     LexemeType lexeme_type() const;
-    SymbolAssociativity associativity() const;
+    Associativity associativity() const;
     int precedence() const;
     const std::vector<GrammarProduction*>& productions() const;
 
@@ -40,7 +40,7 @@ public:
     void set_identifier( const std::string& identifier );
     void set_symbol_type( SymbolType symbol_type );
     void set_lexeme_type( LexemeType lexeme_type );
-    void set_associativity( SymbolAssociativity associativity );
+    void set_associativity( Associativity associativity );
     void set_precedence( int precedence );
     void append_production( GrammarProduction* production );
 };

@@ -3,7 +3,7 @@
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
-#include "SymbolAssociativity.hpp"
+#include "Associativity.hpp"
 #include <memory>
 #include <set>
 #include <vector>
@@ -32,7 +32,7 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         int line_; ///< The line that this symbol was defined on.
         std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions for this symbol.
         int precedence_; ///< The precedence of this symbol (0 indicates no precedence).
-        SymbolAssociativity associativity_; ///< The associativity of this symbol.
+        Associativity associativity_; ///< The associativity of this symbol.
         bool nullable_; ///< True if this symbol is nullable otherwise false.
         std::set<const ParserSymbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
         std::set<const ParserSymbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
@@ -69,8 +69,8 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         void set_precedence( int precedence );
         int get_precedence() const;
         
-        void set_associativity( SymbolAssociativity associativity );
-        SymbolAssociativity get_associativity() const;
+        void set_associativity( Associativity associativity );
+        Associativity get_associativity() const;
         
         void calculate_identifier();
         int calculate_first();

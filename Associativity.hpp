@@ -1,5 +1,5 @@
-#ifndef SWEET_PARSER_SYMBOLASSOCIATIVITY_HPP_INCLUDED
-#define SWEET_PARSER_SYMBOLASSOCIATIVITY_HPP_INCLUDED
+#ifndef SWEET_LALR_ASSOCIATIVITY_HPP_INCLUDED
+#define SWEET_LALR_ASSOCIATIVITY_HPP_INCLUDED
 
 namespace sweet
 {
@@ -12,7 +12,7 @@ namespace lalr
 //
 // @relates ParserSymbol
 */
-enum SymbolAssociativity
+enum Associativity
 {
     ASSOCIATE_NULL, ///< The symbol has undefined associativity.
     ASSOCIATE_NONE, ///< The symbol has no associativity.

@@ -41,7 +41,7 @@ LexemeType GrammarSymbol::lexeme_type() const
     return lexeme_type_;
 }
 
-SymbolAssociativity GrammarSymbol::associativity() const
+Associativity GrammarSymbol::associativity() const
 {
     return associativity_;
 }
@@ -78,7 +78,7 @@ void GrammarSymbol::set_lexeme_type( LexemeType lexeme_type )
     lexeme_type_ = lexeme_type;
 }
 
-void GrammarSymbol::set_associativity( SymbolAssociativity associativity )
+void GrammarSymbol::set_associativity( Associativity associativity )
 {
     SWEET_ASSERT( associativity >= ASSOCIATE_NONE && associativity <= ASSOCIATE_RIGHT );
     associativity_ = associativity;

@@ -1,7 +1,7 @@
 #ifndef SWEET_PARSER_GRAMMARDIRECTIVE_HPP_INCLUDED
 #define SWEET_PARSER_GRAMMARDIRECTIVE_HPP_INCLUDED
 
-#include "SymbolAssociativity.hpp"
+#include "Associativity.hpp"
 #include <vector>
 
 namespace sweet
@@ -14,12 +14,12 @@ class GrammarSymbol;
 
 class GrammarDirective
 {
-    SymbolAssociativity associativity_;
+    Associativity associativity_;
     std::vector<GrammarSymbol*> symbols_;
 
 public:
-    GrammarDirective( SymbolAssociativity associativity );
-    SymbolAssociativity associativity() const;
+    GrammarDirective( Associativity associativity );
+    Associativity associativity() const;
     const std::vector<GrammarSymbol*>& symbols() const;
     void append_symbol( GrammarSymbol* symbol );
 };

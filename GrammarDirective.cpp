@@ -8,13 +8,13 @@
 
 using namespace sweet::lalr;
 
-GrammarDirective::GrammarDirective( SymbolAssociativity associativity )
+GrammarDirective::GrammarDirective( Associativity associativity )
 : associativity_( associativity ),
   symbols_()
 {
 }
 
-SymbolAssociativity GrammarDirective::associativity() const
+Associativity GrammarDirective::associativity() const
 {
     return associativity_;
 }

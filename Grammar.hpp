@@ -3,7 +3,7 @@
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
-#include "SymbolAssociativity.hpp"
+#include "Associativity.hpp"
 #include "GrammarNil.hpp"
 #include "LexerToken.hpp"
 #include <vector>
@@ -57,7 +57,7 @@ public:
     void end();
 
 private:
-    GrammarDirective* directive( SymbolAssociativity associativity );
+    GrammarDirective* directive( Associativity associativity );
     GrammarSymbol* symbol( char literal );
     GrammarSymbol* symbol( const char* regex );
     GrammarSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );

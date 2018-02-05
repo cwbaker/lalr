@@ -253,7 +253,7 @@ void Grammar::end()
     }
 }
 
-GrammarDirective* Grammar::directive( SymbolAssociativity associativity )
+GrammarDirective* Grammar::directive( Associativity associativity )
 {
     shared_ptr<GrammarDirective> directive( new GrammarDirective(associativity) );
     directives_.push_back( directive );

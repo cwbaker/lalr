@@ -324,7 +324,7 @@ int ParserSymbol::get_precedence() const
 // @param associativity
 //  The value to set the associativity of this ParserSymbol to.
 */
-void ParserSymbol::set_associativity( SymbolAssociativity associativity )
+void ParserSymbol::set_associativity( Associativity associativity )
 {
     associativity_ = associativity;
 }
@@ -335,7 +335,7 @@ void ParserSymbol::set_associativity( SymbolAssociativity associativity )
 // @return
 //  The associativity.
 */
-SymbolAssociativity ParserSymbol::get_associativity() const
+Associativity ParserSymbol::get_associativity() const
 {
     return associativity_;
 }
