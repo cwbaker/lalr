@@ -36,6 +36,11 @@ GrammarAction* GrammarProduction::action() const
     return action_;
 }
 
+int GrammarProduction::length() const
+{
+    return int(symbols_.size());
+}
+
 void GrammarProduction::append_symbol( GrammarSymbol* symbol )
 {
     SWEET_ASSERT( symbol );

@@ -26,6 +26,7 @@ public:
     const std::vector<GrammarSymbol*>& symbols() const;
     GrammarSymbol* precedence_symbol() const;
     GrammarAction* action() const;
+    int length() const;
 
     void append_symbol( GrammarSymbol* symbol );
     void set_precedence_symbol( GrammarSymbol* precedence_symbol );

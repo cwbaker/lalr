@@ -186,6 +186,14 @@ void ParserSymbol::replace_by_non_terminal( const ParserSymbol* non_terminal_sym
 /**
 // Get the implicit terminal for this symbol.
 //
+// The implicit terminal for this symbol is the single symbol on the 
+// right-hand side of its single, action-less production.
+//
+// There is an implicit terminal for this symbol only if this symbol has a
+// single, action-less production with a single symbol on its right-hand side.
+// In that situation that this symbol is simply an alias for the single 
+// terminal symbol on the right-hand side.
+//
 // @return
 //  The implict terminal for this symbol or null if this symbol doesn't have
 //  an implicit terminal.
