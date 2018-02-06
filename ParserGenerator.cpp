@@ -238,7 +238,6 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         grammar.calculate_implicit_terminal_symbols();
         grammar.calculate_first();
         grammar.calculate_follow();
-        grammar.calculate_indices();
 
         identifier_ = grammar.identifier();
         actions_.swap( grammar.actions() );
@@ -250,6 +249,7 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         states_.clear();
         start_state_ = NULL;
         
+        calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
     }
@@ -461,6 +461,21 @@ void ParserGenerator::calculate_precedence_of_productions()
                 production->set_precedence_symbol( symbol );
             }
         }
+    }
+}
+
+/**
+// Calculate the index for each symbol.
+*/
+void ParserGenerator::calculate_symbol_indices()
+{
+    int index = 0;
+    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        symbol->set_index( index );
+        ++index;
     }
 }
 

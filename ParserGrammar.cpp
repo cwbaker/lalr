@@ -569,21 +569,6 @@ void ParserGrammar::calculate_follow()
 }
 
 /**
-// Calculate the index for each symbol.
-*/
-void ParserGrammar::calculate_indices()
-{
-    int index = 0;
-    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
-    {
-        ParserSymbol* symbol = i->get();
-        SWEET_ASSERT( symbol );
-        symbol->set_index( index );
-        ++index;
-    }
-}
-
-/**
 // Check for symbols in the grammar that are referenced but never defined.
 */
 void ParserGrammar::check_for_undefined_symbol_errors( ParserGenerator* generator )

@@ -69,7 +69,6 @@ public:
     void calculate_implicit_terminal_symbols();
     void calculate_first();
     void calculate_follow();
-    void calculate_indices();
     void check_for_undefined_symbol_errors( ParserGenerator* generator );
     void check_for_unreferenced_symbol_errors( ParserGenerator* generator );
     void check_for_error_symbol_on_left_hand_side_errors( ParserGenerator* generator );
