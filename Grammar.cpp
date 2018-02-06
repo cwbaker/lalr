@@ -303,7 +303,8 @@ GrammarSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, Symb
 GrammarProduction* Grammar::production( GrammarSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
-    shared_ptr<GrammarProduction> production( new GrammarProduction(symbol) );
+    int index = int(productions_.size());
+    shared_ptr<GrammarProduction> production( new GrammarProduction(index, symbol) );
     productions_.push_back( production );
     symbol->append_production( production.get() );
     return production.get();
