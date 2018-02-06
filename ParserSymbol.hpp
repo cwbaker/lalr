@@ -30,7 +30,7 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         std::string lexeme_; ///< The lexeme for this symbol.
         std::string identifier_; ///< The identifier for this symbol (generated from its lexeme).
         int line_; ///< The line that this symbol was defined on.
-        std::vector<std::shared_ptr<ParserProduction> > productions_; ///< The productions for this symbol.
+        std::vector<ParserProduction*> productions_; ///< The productions for this symbol.
         int precedence_; ///< The precedence of this symbol (0 indicates no precedence).
         Associativity associativity_; ///< The associativity of this symbol.
         bool nullable_; ///< True if this symbol is nullable otherwise false.
@@ -51,8 +51,8 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         void set_line( int line );
         int get_line() const;
 
-        void append_production( std::shared_ptr<ParserProduction> production );
-        const std::vector<std::shared_ptr<ParserProduction> >& get_productions() const;
+        void append_production( ParserProduction* production );
+        const std::vector<ParserProduction*>& get_productions() const;
 
         bool is_nullable() const;
         void replace_by_non_terminal( const ParserSymbol* non_terminal_symbol );

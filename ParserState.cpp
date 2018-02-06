@@ -41,7 +41,7 @@ ParserState::ParserState()
 // @return
 //  The number of items added (0 or 1).
 */
-int ParserState::add_item( std::shared_ptr<ParserProduction> production, int position )
+int ParserState::add_item( ParserProduction* production, int position )
 {
     SWEET_ASSERT( production );
     return items_.insert( ParserItem(production, position) ).second ? 1 : 0;
@@ -63,7 +63,7 @@ int ParserState::add_item( std::shared_ptr<ParserProduction> production, int pos
 // @return
 //  The number of lookahead symbols added.
 */
-int ParserState::add_lookahead_symbols( std::shared_ptr<ParserProduction> production, int position, const std::set<const ParserSymbol*>& lookahead_symbols )
+int ParserState::add_lookahead_symbols( ParserProduction* production, int position, const std::set<const ParserSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<ParserItem>::iterator item = items_.find( ParserItem(production, position) );

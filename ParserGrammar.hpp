@@ -25,8 +25,8 @@ class ParserGrammar
 {
     std::string identifier_; ///< The identifier of the grammar.
     std::vector<std::unique_ptr<ParserAction>> actions_; ///< The actions in the grammar.
-    std::vector<std::shared_ptr<ParserProduction>> productions_; ///< The productions in the grammar.
-    std::vector<std::shared_ptr<ParserSymbol>> symbols_; ///< The symbols in the grammar.
+    std::vector<std::unique_ptr<ParserProduction>> productions_; ///< The productions in the grammar.
+    std::vector<std::unique_ptr<ParserSymbol>> symbols_; ///< The symbols in the grammar.
     ParserSymbol* start_symbol_; ///< The start symbol.
     ParserSymbol* end_symbol_; ///< The end symbol.
     ParserSymbol* error_symbol_; ///< The error symbol.
@@ -37,8 +37,8 @@ public:
 
     std::string& identifier();
     std::vector<std::unique_ptr<ParserAction>>& actions();
-    std::vector<std::shared_ptr<ParserProduction>>& productions();
-    std::vector<std::shared_ptr<ParserSymbol>>& symbols();
+    std::vector<std::unique_ptr<ParserProduction>>& productions();
+    std::vector<std::unique_ptr<ParserSymbol>>& symbols();
     ParserSymbol* start_symbol() const;
     ParserSymbol* end_symbol() const;
     ParserSymbol* error_symbol() const;

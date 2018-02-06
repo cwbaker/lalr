@@ -15,6 +15,7 @@
 
 using std::set;
 using std::vector;
+using std::unique_ptr;
 using std::shared_ptr;
 using namespace sweet;
 using namespace sweet::lalr;
@@ -83,7 +84,7 @@ std::vector<std::unique_ptr<ParserAction> >& ParserGenerator::actions()
 // @return
 //  The productions.
 */
-std::vector<std::shared_ptr<ParserProduction> >& ParserGenerator::productions()
+std::vector<std::unique_ptr<ParserProduction> >& ParserGenerator::productions()
 {
     return productions_;
 }
@@ -94,7 +95,7 @@ std::vector<std::shared_ptr<ParserProduction> >& ParserGenerator::productions()
 // @return
 //  The symbols.
 */
-std::vector<std::shared_ptr<ParserSymbol> >& ParserGenerator::symbols()
+std::vector<std::unique_ptr<ParserSymbol> >& ParserGenerator::symbols()
 {
     return symbols_;
 }
@@ -267,7 +268,7 @@ std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item
 {
     set<const ParserSymbol*> lookahead_symbols;
 
-    const ParserProduction* production = item.get_production().get();
+    const ParserProduction* production = item.get_production();
     SWEET_ASSERT( production );
         
     const vector<ParserSymbol*>& symbols = production->get_symbols();    
@@ -319,10 +320,10 @@ void ParserGenerator::closure( const std::shared_ptr<ParserState>& state )
             const ParserSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
             if ( symbol )
             {
-                const vector<std::shared_ptr<ParserProduction> >& productions = symbol->get_productions();
-                for ( vector<std::shared_ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
+                const vector<ParserProduction*>& productions = symbol->get_productions();
+                for ( vector<ParserProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
-                    const std::shared_ptr<ParserProduction>& production = *j;
+                    ParserProduction* production = *j;
                     SWEET_ASSERT( production );
                     added += state->add_item( production, 0 );
                 }
@@ -386,11 +387,12 @@ int ParserGenerator::lookahead_closure( ParserState* state ) const
         const ParserSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
         if ( symbol )
         {
-            std::set<const ParserSymbol*> lookahead_symbols = lookahead( *item );        
-            const std::vector<std::shared_ptr<ParserProduction> >& productions = symbol->get_productions();
-            for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator j = productions.begin(); j != productions.end(); ++j )
+            set<const ParserSymbol*> lookahead_symbols = lookahead( *item );        
+            const vector<ParserProduction*>& productions = symbol->get_productions();
+            for ( vector<ParserProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
-                const std::shared_ptr<ParserProduction>& production = *j;
+                ParserProduction* production = *j;
+                SWEET_ASSERT( production );
                 added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
             }
         }
@@ -454,7 +456,7 @@ int ParserGenerator::lookahead_goto( ParserState* state ) const
 // @param symbols
 //  The symbols in the grammar.
 */
-void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::shared_ptr<ParserSymbol> >& symbols )
+void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::unique_ptr<ParserSymbol>>& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -484,7 +486,7 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
                 if ( !state->is_processed() )
                 {
                     state->set_processed( true );
-                    for ( vector<std::shared_ptr<ParserSymbol> >::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                    for ( vector<unique_ptr<ParserSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                     {
                         ParserSymbol* symbol = j->get();
                         SWEET_ASSERT( symbol );
@@ -557,7 +559,7 @@ void ParserGenerator::generate_reduce_transitions()
                 {
                     const ParserSymbol* symbol = *j;
                     SWEET_ASSERT( symbol );
-                    generate_reduce_transition( state, symbol, item->get_production().get() );
+                    generate_reduce_transition( state, symbol, item->get_production() );
                 }
             }                
         }

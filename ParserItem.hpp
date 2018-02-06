@@ -19,15 +19,15 @@ class ParserProduction;
 */
 class ParserItem
 {
-    std::shared_ptr<ParserProduction> production_; ///< The production that this item is for.
+    ParserProduction* production_; ///< The production that this item is for.
     int position_; ///< The position of the dot in this item.
     mutable std::set<const ParserSymbol*> lookahead_symbols_; ///< The lookahead Symbols for this item.
 
     public:
         ParserItem();
-        ParserItem( std::shared_ptr<ParserProduction> production, int position );
+        ParserItem( ParserProduction* production, int position );
 
-        std::shared_ptr<ParserProduction> get_production() const;
+        ParserProduction* get_production() const;
         int get_position() const;
         bool is_dot_at_beginning() const;
         bool is_dot_at_end() const;

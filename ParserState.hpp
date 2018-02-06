@@ -29,8 +29,8 @@ class ParserState
     public:
         ParserState();
 
-        int add_item( std::shared_ptr<ParserProduction> production, int position );
-        int add_lookahead_symbols( std::shared_ptr<ParserProduction> production, int position, const std::set<const ParserSymbol*>& lookahead_symbols );
+        int add_item( ParserProduction* production, int position );
+        int add_lookahead_symbols( ParserProduction* production, int position, const std::set<const ParserSymbol*>& lookahead_symbols );
         const std::set<ParserItem>& get_items() const;
         void describe( std::string* description ) const;
         std::string description() const;

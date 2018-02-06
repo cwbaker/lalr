@@ -130,7 +130,7 @@ int ParserSymbol::get_line() const
 // @param production
 //  The production to append (assumed not null).
 */
-void ParserSymbol::append_production( std::shared_ptr<ParserProduction> production )
+void ParserSymbol::append_production( ParserProduction* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -142,7 +142,7 @@ void ParserSymbol::append_production( std::shared_ptr<ParserProduction> producti
 // @return
 //  The productions that reduce to this symbol.
 */
-const std::vector<std::shared_ptr<ParserProduction> >& ParserSymbol::get_productions() const
+const std::vector<ParserProduction*>& ParserSymbol::get_productions() const
 {
     return productions_;
 }
@@ -204,7 +204,7 @@ ParserSymbol* ParserSymbol::get_implicit_terminal() const
     
     if ( productions_.size() == 1 )
     {
-        const ParserProduction* production = productions_.front().get();
+        const ParserProduction* production = productions_.front();
         SWEET_ASSERT( production );
 
         if ( production->get_length() == 1 && production->get_action() == NULL )
@@ -401,9 +401,9 @@ int ParserSymbol::calculate_first()
 
     if ( type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<ParserProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
-            const ParserProduction* production = i->get();
+            const ParserProduction* production = *i;
             SWEET_ASSERT( production );  
                   
             const vector<ParserSymbol*>& symbols = production->get_symbols();
@@ -447,9 +447,9 @@ int ParserSymbol::calculate_follow()
 {
     int added = 0;
 
-    for ( std::vector<std::shared_ptr<ParserProduction> >::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<ParserProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        const ParserProduction* production = i->get();
+        const ParserProduction* production = *i;
         SWEET_ASSERT( production );
                     
         const vector<ParserSymbol*>& symbols = production->get_symbols();

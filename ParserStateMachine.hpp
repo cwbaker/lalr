@@ -33,7 +33,7 @@ class ParserStateMachine
 {
     std::string identifier_; ///< The identifier of this ParserStateMachine.
     std::vector<std::unique_ptr<ParserAction> > actions_; ///< The parser actions for this ParserStateMachine.
-    std::vector<std::shared_ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar for this ParserStateMachine.
+    std::vector<std::unique_ptr<ParserSymbol> > symbols_; ///< The symbols in the grammar for this ParserStateMachine.
     std::vector<std::shared_ptr<ParserState> > states_; ///< The states in the state machine for this ParserStateMachine.
     const ParserSymbol* start_symbol_; ///< The start symbol.
     const ParserSymbol* end_symbol_; ///< The end symbol.
@@ -47,7 +47,7 @@ class ParserStateMachine
         ~ParserStateMachine();
         const std::string& identifier() const;
         const std::vector<std::unique_ptr<ParserAction> >& actions() const;
-        const std::vector<std::shared_ptr<ParserSymbol> >& symbols() const;
+        const std::vector<std::unique_ptr<ParserSymbol> >& symbols() const;
         const std::vector<std::shared_ptr<ParserState> >& states() const;
         const ParserSymbol* start_symbol() const;
         const ParserSymbol* end_symbol() const;

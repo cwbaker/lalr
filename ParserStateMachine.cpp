@@ -19,9 +19,10 @@
 #include "assert.hpp"
 
 using std::vector;
-using std::shared_ptr;
 using std::copy;
 using std::back_inserter;
+using std::unique_ptr;
+using std::shared_ptr;
 using namespace sweet;
 using namespace sweet::lalr;
 using namespace sweet::lalr;
@@ -93,7 +94,7 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
         }
     }
 
-    ParserGenerator parser_generator( parser_grammar, error_policy ); 
+    ParserGenerator parser_generator( parser_grammar, error_policy );
     if ( parser_generator.errors() == 0 )
     {
         identifier_ = parser_generator.identifier();
@@ -184,7 +185,7 @@ const std::vector<std::unique_ptr<ParserAction> >& ParserStateMachine::actions()
 // @return
 //  The symbols.
 */
-const std::vector<std::shared_ptr<ParserSymbol> >& ParserStateMachine::symbols() const
+const std::vector<std::unique_ptr<ParserSymbol> >& ParserStateMachine::symbols() const
 {
     return symbols_;
 }
@@ -270,7 +271,7 @@ const ParserSymbol* ParserStateMachine::find_symbol_by_identifier( const char* i
 {
     SWEET_ASSERT( identifier );
 
-    std::vector<std::shared_ptr<ParserSymbol> >::const_iterator i = symbols_.begin();
+    vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->get_identifier() != identifier )
     {
         ++i;
@@ -289,7 +290,7 @@ std::string ParserStateMachine::description() const
     std::string description;
     description.reserve( 1024 );
     
-    for ( std::vector<std::shared_ptr<ParserState> >::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::vector<std::shared_ptr<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         const ParserState* state = i->get();
         SWEET_ASSERT( state );

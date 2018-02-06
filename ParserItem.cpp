@@ -31,7 +31,7 @@ ParserItem::ParserItem()
 // @param position
 //  The position of the dot in this item.
 */
-ParserItem::ParserItem( std::shared_ptr<ParserProduction> production, int position )
+ParserItem::ParserItem( ParserProduction* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ ParserItem::ParserItem( std::shared_ptr<ParserProduction> production, int positi
 /**
 // Get the production for this item.
 */
-std::shared_ptr<ParserProduction> ParserItem::get_production() const
+ParserProduction* ParserItem::get_production() const
 {
     return production_;
 }
