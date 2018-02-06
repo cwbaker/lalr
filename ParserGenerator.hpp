@@ -50,9 +50,9 @@ class ParserGenerator
     std::vector<std::unique_ptr<ParserProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<ParserSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>> states_; ///< The states in the parser's state machine.
-    const ParserSymbol* start_symbol_; ///< The start symbol.
-    const ParserSymbol* end_symbol_; ///< The end symbol.
-    const ParserSymbol* error_symbol_; ///< The error symbol.
+    ParserSymbol* start_symbol_; ///< The start symbol.
+    ParserSymbol* end_symbol_; ///< The end symbol.
+    ParserSymbol* error_symbol_; ///< The error symbol.
     ParserState* start_state_; ///< The start state.
     int errors_; ///< The number of errors that occured during parsing and generation.
 
@@ -80,8 +80,12 @@ class ParserGenerator
         std::shared_ptr<ParserState> goto_( const std::shared_ptr<ParserState>& state, const ParserSymbol& symbol );
         int lookahead_closure( ParserState* state ) const;
         int lookahead_goto( ParserState* state ) const;
+        void replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol );
         void calculate_precedence_of_productions();
         void calculate_symbol_indices();
+        void calculate_implicit_terminal_symbols();
+        void calculate_first();
+        void calculate_follow();
         void generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::unique_ptr<ParserSymbol>>& symbols );
         void generate_indices_for_states();
         void generate_reduce_transitions();

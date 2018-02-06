@@ -235,9 +235,6 @@ void ParserGenerator::generate( ParserGrammar& grammar )
     if ( errors_ == 0 )
     {
         grammar.calculate_terminal_and_non_terminal_symbols();
-        grammar.calculate_implicit_terminal_symbols();
-        grammar.calculate_first();
-        grammar.calculate_follow();
 
         identifier_ = grammar.identifier();
         actions_.swap( grammar.actions() );
@@ -249,6 +246,9 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         states_.clear();
         start_state_ = NULL;
         
+        calculate_implicit_terminal_symbols();
+        calculate_first();
+        calculate_follow();
         calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
@@ -444,6 +444,130 @@ int ParserGenerator::lookahead_goto( ParserState* state ) const
 }
 
 /**
+// Replace references to \e to_symbol with references to \e with_symbol.
+//
+// @param to_symbol
+//  The ParserSymbol to replace references to.
+//
+// @param with_symbol
+//  The ParserSymbol to replace references with.
+*/
+void ParserGenerator::replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol )
+{
+    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    {
+        ParserProduction* production = i->get();
+        SWEET_ASSERT( production );
+        production->replace_references_to_symbol( to_symbol, with_symbol );
+    }
+}
+
+/**
+// Calculate the non terminal symbols that are really just named terminals.
+//
+// Any symbols that contain a single production that contains only a terminal 
+// symbol are really just acting as names for that terminal symbol.  To make 
+// the parser easier to understand and more efficient these symbols are 
+// collapsed by making any references to the non terminal symbol refer directly
+// to the terminal symbol.  The identifier of the terminal is changed to be 
+// the more readable name of the non terminal.
+//
+// For example the rule 'integer: "[0-9]+";' creates a non terminal
+// symbol 'integer' and a terminal symbol '"[0-9]+"'.  The non terminal
+// symbol 'integer' is redundant from the point of view of the parser as it
+// adds only a trivial reduction from one symbol type to another.  To optimize
+// this situation the terminal is collapsed into the non terminal keeping the
+// more readable name of the non terminal but removing the redundant 
+// reduction.
+*/
+void ParserGenerator::calculate_implicit_terminal_symbols()
+{
+    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* non_terminal_symbol = i->get();        
+        if ( non_terminal_symbol && non_terminal_symbol != error_symbol_ )
+        {
+            ParserSymbol* terminal_symbol = non_terminal_symbol->get_implicit_terminal();
+            if ( terminal_symbol )
+            {       
+                SWEET_ASSERT( terminal_symbol != non_terminal_symbol );
+                terminal_symbol->replace_by_non_terminal( non_terminal_symbol );
+                replace_references_to_symbol( non_terminal_symbol, terminal_symbol );
+                i->reset();
+            }
+        }
+    }
+    
+    vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin();
+    while ( i != symbols_.end() )
+    {
+        if ( !i->get() )
+        {
+            i = symbols_.erase( i );
+        }
+        else        
+        {
+            ++i;
+        }
+    }
+}
+
+/**
+// Calculate the first position sets for each ParserSymbol until no more 
+// terminals can be added to any first position sets.
+*/
+void ParserGenerator::calculate_first()
+{
+    int added = 1;
+    while ( added > 0 )
+    {
+        added = 0;
+        for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        {
+            ParserSymbol* symbol = i->get();
+            SWEET_ASSERT( symbol );
+            added += symbol->calculate_first();
+        }
+    }
+}
+
+/**
+// Calculate the follow position sets for each ParserSymbol until no more 
+// terminals can be added to any follow position sets.
+*/
+void ParserGenerator::calculate_follow()
+{
+    start_symbol_->add_symbol_to_follow( end_symbol_ );
+
+    int added = 1;
+    while ( added > 0 )
+    {
+        added = 0;
+        for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        {
+            ParserSymbol* symbol = i->get();
+            SWEET_ASSERT( symbol );
+            added += symbol->calculate_follow();
+        }
+    }
+}
+
+/**
+// Calculate the index for each symbol.
+*/
+void ParserGenerator::calculate_symbol_indices()
+{
+    int index = 0;
+    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        symbol->set_index( index );
+        ++index;
+    }
+}
+
+/**
 // Calculate the precedence of each production that hasn't had precedence
 // set explicitly as the precedence of its rightmost terminal.
 */
@@ -461,21 +585,6 @@ void ParserGenerator::calculate_precedence_of_productions()
                 production->set_precedence_symbol( symbol );
             }
         }
-    }
-}
-
-/**
-// Calculate the index for each symbol.
-*/
-void ParserGenerator::calculate_symbol_indices()
-{
-    int index = 0;
-    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
-    {
-        ParserSymbol* symbol = i->get();
-        SWEET_ASSERT( symbol );
-        symbol->set_index( index );
-        ++index;
     }
 }
 
