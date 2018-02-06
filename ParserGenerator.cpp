@@ -234,8 +234,6 @@ void ParserGenerator::generate( ParserGrammar& grammar )
 
     if ( errors_ == 0 )
     {
-        grammar.calculate_terminal_and_non_terminal_symbols();
-
         identifier_ = grammar.identifier();
         actions_.swap( grammar.actions() );
         productions_.swap( grammar.productions() );
@@ -246,6 +244,7 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         states_.clear();
         start_state_ = NULL;
         
+        calculate_terminal_and_non_terminal_symbols();
         calculate_implicit_terminal_symbols();
         calculate_first();
         calculate_follow();
@@ -463,6 +462,30 @@ void ParserGenerator::replace_references_to_symbol( ParserSymbol* to_symbol, Par
 }
 
 /**
+// Calculate which symbols are terminal and non-terminal.
+//
+// Any symbols with one or more productions are assumed to be non-terminals
+// and any symbols with no productions are assumed to be terminals.  Another
+// pass is made over the symbols in to convert non-terminals symbols that 
+// contain only a single production with one terminal symbol into terminals.
+// See `ParserGrammar::calculate_implicit_terminal_symbols()`.
+//
+// The `.start`, `.end`, and `.error` symbols are exempt from the above 
+// processing.  They are explicitly assigned their corr
+*/
+void ParserGenerator::calculate_terminal_and_non_terminal_symbols()
+{
+    for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        if ( symbol->get_type() == SYMBOL_NULL )
+        {
+            symbol->set_type( symbol->get_productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
+        }
+    }
+}
+
+/**
 // Calculate the non terminal symbols that are really just named terminals.
 //
 // Any symbols that contain a single production that contains only a terminal 
@@ -513,6 +536,42 @@ void ParserGenerator::calculate_implicit_terminal_symbols()
 }
 
 /**
+// Calculate the precedence of each production that hasn't had precedence
+// set explicitly as the precedence of its rightmost terminal.
+*/
+void ParserGenerator::calculate_precedence_of_productions()
+{
+    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    {
+        ParserProduction* production = i->get();
+        SWEET_ASSERT( production );       
+        if ( production->get_precedence() == 0 )
+        {
+            const ParserSymbol* symbol = production->find_rightmost_terminal_symbol();
+            if ( symbol )
+            {
+                production->set_precedence_symbol( symbol );
+            }
+        }
+    }
+}
+
+/**
+// Calculate the index for each symbol.
+*/
+void ParserGenerator::calculate_symbol_indices()
+{
+    int index = 0;
+    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        symbol->set_index( index );
+        ++index;
+    }
+}
+
+/**
 // Calculate the first position sets for each ParserSymbol until no more 
 // terminals can be added to any first position sets.
 */
@@ -548,42 +607,6 @@ void ParserGenerator::calculate_follow()
             ParserSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             added += symbol->calculate_follow();
-        }
-    }
-}
-
-/**
-// Calculate the index for each symbol.
-*/
-void ParserGenerator::calculate_symbol_indices()
-{
-    int index = 0;
-    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
-    {
-        ParserSymbol* symbol = i->get();
-        SWEET_ASSERT( symbol );
-        symbol->set_index( index );
-        ++index;
-    }
-}
-
-/**
-// Calculate the precedence of each production that hasn't had precedence
-// set explicitly as the precedence of its rightmost terminal.
-*/
-void ParserGenerator::calculate_precedence_of_productions()
-{
-    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
-    {
-        ParserProduction* production = i->get();
-        SWEET_ASSERT( production );       
-        if ( production->get_precedence() == 0 )
-        {
-            const ParserSymbol* symbol = production->find_rightmost_terminal_symbol();
-            if ( symbol )
-            {
-                production->set_precedence_symbol( symbol );
-            }
         }
     }
 }

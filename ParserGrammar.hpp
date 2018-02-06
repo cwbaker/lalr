@@ -64,7 +64,6 @@ public:
     void print() const;
     void print_positions( const std::set<int>& positions ) const;
     void calculate_identifiers();
-    void calculate_terminal_and_non_terminal_symbols();
     void check_for_undefined_symbol_errors( ParserGenerator* generator );
     void check_for_unreferenced_symbol_errors( ParserGenerator* generator );
     void check_for_error_symbol_on_left_hand_side_errors( ParserGenerator* generator );

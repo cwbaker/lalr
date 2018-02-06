@@ -81,9 +81,10 @@ class ParserGenerator
         int lookahead_closure( ParserState* state ) const;
         int lookahead_goto( ParserState* state ) const;
         void replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol );
+        void calculate_terminal_and_non_terminal_symbols();
+        void calculate_implicit_terminal_symbols();
         void calculate_precedence_of_productions();
         void calculate_symbol_indices();
-        void calculate_implicit_terminal_symbols();
         void calculate_first();
         void calculate_follow();
         void generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::unique_ptr<ParserSymbol>>& symbols );

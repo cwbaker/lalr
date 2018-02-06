@@ -436,30 +436,6 @@ void ParserGrammar::calculate_identifiers()
 }
 
 /**
-// Calculate which symbols are terminal and non-terminal.
-//
-// Any symbols with one or more productions are assumed to be non-terminals
-// and any symbols with no productions are assumed to be terminals.  Another
-// pass is made over the symbols in to convert non-terminals symbols that 
-// contain only a single production with one terminal symbol into terminals.
-// See `ParserGrammar::calculate_implicit_terminal_symbols()`.
-//
-// The `.start`, `.end`, and `.error` symbols are exempt from the above 
-// processing.  They are explicitly assigned their corr
-*/
-void ParserGrammar::calculate_terminal_and_non_terminal_symbols()
-{
-    for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
-    {
-        ParserSymbol* symbol = i->get();
-        if ( symbol->get_type() == SYMBOL_NULL )
-        {
-            symbol->set_type( symbol->get_productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
-        }
-    }
-}
-
-/**
 // Check for symbols in the grammar that are referenced but never defined.
 */
 void ParserGrammar::check_for_undefined_symbol_errors( ParserGenerator* generator )
