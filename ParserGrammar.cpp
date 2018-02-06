@@ -584,27 +584,6 @@ void ParserGrammar::calculate_indices()
 }
 
 /**
-// Calculate the precedence of each production that hasn't had precedence
-// set explicitly as the precedence of its rightmost terminal.
-*/
-void ParserGrammar::calculate_precedence_of_productions()
-{
-    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
-    {
-        ParserProduction* production = i->get();
-        SWEET_ASSERT( production );       
-        if ( production->get_precedence() == 0 )
-        {
-            const ParserSymbol* symbol = production->find_rightmost_terminal_symbol();
-            if ( symbol )
-            {
-                production->set_precedence_symbol( symbol );
-            }
-        }
-    }
-}
-
-/**
 // Check for symbols in the grammar that are referenced but never defined.
 */
 void ParserGrammar::check_for_undefined_symbol_errors( ParserGenerator* generator )

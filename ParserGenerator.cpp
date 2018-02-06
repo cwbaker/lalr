@@ -239,7 +239,6 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         grammar.calculate_first();
         grammar.calculate_follow();
         grammar.calculate_indices();
-        grammar.calculate_precedence_of_productions();
 
         identifier_ = grammar.identifier();
         actions_.swap( grammar.actions() );
@@ -251,6 +250,7 @@ void ParserGenerator::generate( ParserGrammar& grammar )
         states_.clear();
         start_state_ = NULL;
         
+        calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
     }
 }
@@ -441,6 +441,27 @@ int ParserGenerator::lookahead_goto( ParserState* state ) const
     }
 
     return added;
+}
+
+/**
+// Calculate the precedence of each production that hasn't had precedence
+// set explicitly as the precedence of its rightmost terminal.
+*/
+void ParserGenerator::calculate_precedence_of_productions()
+{
+    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    {
+        ParserProduction* production = i->get();
+        SWEET_ASSERT( production );       
+        if ( production->get_precedence() == 0 )
+        {
+            const ParserSymbol* symbol = production->find_rightmost_terminal_symbol();
+            if ( symbol )
+            {
+                production->set_precedence_symbol( symbol );
+            }
+        }
+    }
 }
 
 /**
