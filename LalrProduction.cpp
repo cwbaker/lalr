@@ -1,11 +1,11 @@
 //
-// ParserProduction.cpp
+// LalrProduction.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "ParserProduction.hpp"
-#include "ParserSymbol.hpp"
-#include "ParserAction.hpp"
+#include "LalrProduction.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrAction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-ParserProduction::ParserProduction( int index, ParserSymbol* symbol, int line, const ParserAction* action )
+LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const LalrAction* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -43,7 +43,7 @@ ParserProduction::ParserProduction( int index, ParserSymbol* symbol, int line, c
 // @return
 //  The index.
 */
-int ParserProduction::get_index() const
+int LalrProduction::get_index() const
 {
     return index_;
 }
@@ -54,7 +54,7 @@ int ParserProduction::get_index() const
 // @return
 //  The symbol.
 */
-ParserSymbol* ParserProduction::get_symbol() const
+LalrSymbol* LalrProduction::get_symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -66,7 +66,7 @@ ParserSymbol* ParserProduction::get_symbol() const
 // @return
 //  The line.
 */
-int ParserProduction::get_line() const
+int LalrProduction::get_line() const
 {
     return line_;
 }
@@ -81,10 +81,10 @@ int ParserProduction::get_line() const
 // @return
 //  The number of references.
 */
-int ParserProduction::count_references_to_symbol( const ParserSymbol* symbol ) const
+int LalrProduction::count_references_to_symbol( const LalrSymbol* symbol ) const
 {
     int references = 0;
-    for ( vector<ParserSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         references += (symbol == *i ? 1 : 0);
     }
@@ -103,9 +103,9 @@ int ParserProduction::count_references_to_symbol( const ParserSymbol* symbol ) c
 //  The rightmost terminal symbol or null if there was more than one potential
 //  rightmost terminal symbol.
 */
-const ParserSymbol* ParserProduction::find_rightmost_terminal_symbol() const
+const LalrSymbol* LalrProduction::find_rightmost_terminal_symbol() const
 {
-    vector<ParserSymbol*>::const_reverse_iterator i = symbols_.rbegin();
+    vector<LalrSymbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->get_type() != SYMBOL_TERMINAL )
     {
         ++i;
@@ -119,7 +119,7 @@ const ParserSymbol* ParserProduction::find_rightmost_terminal_symbol() const
 // @return
 //  The length of the right-hand side of this production.
 */
-int ParserProduction::get_length() const
+int LalrProduction::get_length() const
 {
     return int(symbols_.size());
 }
@@ -130,7 +130,7 @@ int ParserProduction::get_length() const
 // @return
 //  The description.
 */
-std::string ParserProduction::description() const
+std::string LalrProduction::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -144,14 +144,14 @@ std::string ParserProduction::description() const
 // @param description
 //  A variable to receive the description of this production.
 */
-void ParserProduction::describe( std::string* description ) const
+void LalrProduction::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     symbol_->describe( description );
     description->append( " <- " );
-    for ( vector<ParserSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         symbol->describe( description );
         description->append( " " );        
@@ -164,7 +164,7 @@ void ParserProduction::describe( std::string* description ) const
 // @param symbol
 //  The symbol to append (assumed not null).
 */
-void ParserProduction::append_symbol( ParserSymbol* symbol )
+void LalrProduction::append_symbol( LalrSymbol* symbol )
 {
     symbols_.push_back( symbol );
 }
@@ -179,7 +179,7 @@ void ParserProduction::append_symbol( ParserSymbol* symbol )
 //  The symbol at \e position or null if \e position refers past the end of
 //  this production.
 */
-const ParserSymbol* ParserProduction::get_symbol_by_position( int position ) const
+const LalrSymbol* LalrProduction::get_symbol_by_position( int position ) const
 {
     return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
 }
@@ -190,7 +190,7 @@ const ParserSymbol* ParserProduction::get_symbol_by_position( int position ) con
 // @return
 //  The symbols.
 */
-const std::vector<ParserSymbol*>& ParserProduction::get_symbols() const
+const std::vector<LalrSymbol*>& LalrProduction::get_symbols() const
 {
     return symbols_;
 }
@@ -202,7 +202,7 @@ const std::vector<ParserSymbol*>& ParserProduction::get_symbols() const
 //  The action to take when this production is reduced or null to set this
 //  production to have no action.
 */
-void ParserProduction::set_action( const ParserAction* action )
+void LalrProduction::set_action( const LalrAction* action )
 {
     action_ = action;
 }
@@ -213,14 +213,14 @@ void ParserProduction::set_action( const ParserAction* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const ParserAction* ParserProduction::get_action() const
+const LalrAction* LalrProduction::get_action() const
 {
     return action_;
 }
 
-int ParserProduction::action_index() const
+int LalrProduction::action_index() const
 {
-    return action_ ? action_->index : ParserAction::INVALID_INDEX;
+    return action_ ? action_->index : LalrAction::INVALID_INDEX;
 }
 
 /**
@@ -232,14 +232,14 @@ int ParserProduction::action_index() const
 // @param description
 //  A variable to receive the description of the productions.
 */
-void ParserProduction::describe( const std::set<const ParserProduction*>& productions, std::string* description )
+void LalrProduction::describe( const std::set<const LalrProduction*>& productions, std::string* description )
 {
     SWEET_ASSERT( description );
 
-    std::set<const ParserProduction*>::const_iterator i = productions.begin(); 
+    std::set<const LalrProduction*>::const_iterator i = productions.begin(); 
     if ( i != productions.end() )
     {
-        const ParserProduction* production = *i;
+        const LalrProduction* production = *i;
         SWEET_ASSERT( production );        
         production->describe( description );
         ++i;        
@@ -247,7 +247,7 @@ void ParserProduction::describe( const std::set<const ParserProduction*>& produc
     
     while ( i != productions.end() )
     {
-        const ParserProduction* production = *i;
+        const LalrProduction* production = *i;
         SWEET_ASSERT( production );
         description->append( ", " );
         production->describe( description );
@@ -262,7 +262,7 @@ void ParserProduction::describe( const std::set<const ParserProduction*>& produc
 //  The symbol to have this production inherit its precedence from (assumed 
 //  not null).
 */
-void ParserProduction::set_precedence_symbol( const ParserSymbol* symbol )
+void LalrProduction::set_precedence_symbol( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
@@ -275,7 +275,7 @@ void ParserProduction::set_precedence_symbol( const ParserSymbol* symbol )
 // @return
 //  The precedence of this production.
 */
-int ParserProduction::get_precedence() const
+int LalrProduction::get_precedence() const
 {
     return precedence_symbol_ ? precedence_symbol_->get_precedence() : 0;
 }
@@ -289,7 +289,7 @@ int ParserProduction::get_precedence() const
 // @param with_symbol
 //  The symbol to replace the references with.
 */
-void ParserProduction::replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol )
+void LalrProduction::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
 {
     if ( symbol_ == to_symbol )
     {
@@ -301,7 +301,7 @@ void ParserProduction::replace_references_to_symbol( ParserSymbol* to_symbol, Pa
         precedence_symbol_ = with_symbol;
     }
 
-    for ( vector<ParserSymbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<LalrSymbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         if ( *i == to_symbol )
         {

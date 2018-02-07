@@ -11,16 +11,19 @@ for _, build in build:default_builds() do
         };
 
         build:Cxx () {
-            "ParserAction.cpp",
+            "LalrAction.cpp",
+            "LalrGenerator.cpp",
+            "LalrGrammar.cpp",
+            "LalrItem.cpp",
+            "LalrState.cpp",
+            "LalrTransition.cpp",
+            "LalrProduction.cpp",
+            "LalrSymbol.cpp"
+        };
+
+        build:Cxx () {
             "ParserStateMachine.cpp",
-            "ParserErrorPolicy.cpp",
-            "ParserGenerator.cpp",
-            "ParserGrammar.cpp",
-            "ParserItem.cpp",
-            "ParserState.cpp",
-            "ParserTransition.cpp",
-            "ParserProduction.cpp",
-            "ParserSymbol.cpp"
+            "ParserErrorPolicy.cpp"
         };
 
         build:Cxx () {

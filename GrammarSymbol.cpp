@@ -352,7 +352,7 @@ void GrammarSymbol::calculate_identifier()
 // Replace this symbol's identifier, line, precedence, and associativity 
 // with those from *non_terminal_symbol*.  This is done as an optimization
 // to remove redundant reductions for implicit terminal symbols.  See 
-// `ParserGrammar::calculate_implicit_terminal_symbols()`.
+// `LalrGrammar::calculate_implicit_terminal_symbols()`.
 //
 // This symbol is assumed to be of type `SYMBOL_TERMINAL`.
 //

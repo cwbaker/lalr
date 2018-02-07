@@ -1,11 +1,11 @@
 //
-// ParserItem.cpp
+// LalrItem.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "ParserItem.hpp"
-#include "ParserSymbol.hpp"
-#include "ParserProduction.hpp"
+#include "LalrItem.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrProduction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -15,7 +15,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-ParserItem::ParserItem()
+LalrItem::LalrItem()
 : production_(),
   position_( 0 ),
   lookahead_symbols_()
@@ -31,7 +31,7 @@ ParserItem::ParserItem()
 // @param position
 //  The position of the dot in this item.
 */
-ParserItem::ParserItem( ParserProduction* production, int position )
+LalrItem::LalrItem( LalrProduction* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ ParserItem::ParserItem( ParserProduction* production, int position )
 /**
 // Get the production for this item.
 */
-ParserProduction* ParserItem::get_production() const
+LalrProduction* LalrItem::get_production() const
 {
     return production_;
 }
@@ -54,7 +54,7 @@ ParserProduction* ParserItem::get_production() const
 // @return
 //  The position of the dot in this item.
 */
-int ParserItem::get_position() const
+int LalrItem::get_position() const
 {
     return position_;
 }
@@ -66,7 +66,7 @@ int ParserItem::get_position() const
 // @return
 //  True if the dot is at the beginning of the production otherwise false.
 */
-bool ParserItem::is_dot_at_beginning() const
+bool LalrItem::is_dot_at_beginning() const
 {
     return position_ == 0;
 }
@@ -78,7 +78,7 @@ bool ParserItem::is_dot_at_beginning() const
 // @return
 //  True if the dot is at the end of the production otherwise false.
 */
-bool ParserItem::is_dot_at_end() const
+bool LalrItem::is_dot_at_end() const
 {
     return position_ == production_->get_length();
 }
@@ -93,7 +93,7 @@ bool ParserItem::is_dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool ParserItem::is_next_node( const ParserSymbol& symbol ) const
+bool LalrItem::is_next_node( const LalrSymbol& symbol ) const
 {
     return production_->get_symbol_by_position(position_) == &symbol;
 }
@@ -104,17 +104,17 @@ bool ParserItem::is_next_node( const ParserSymbol& symbol ) const
 // @param description
 //  A variable to receive the description of this item (assumed not null).
 */
-void ParserItem::describe( std::string* description ) const
+void LalrItem::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     SWEET_ASSERT( production_ );
         
     int position = 0;
-    const vector<ParserSymbol*>& symbols = production_->get_symbols();
-    vector<ParserSymbol*>::const_iterator i = symbols.begin(); 
+    const vector<LalrSymbol*>& symbols = production_->get_symbols();
+    vector<LalrSymbol*>::const_iterator i = symbols.begin(); 
     while ( i != symbols.end() && position < position_ )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         symbol->describe( description );
         description->append( " " );
@@ -125,17 +125,17 @@ void ParserItem::describe( std::string* description ) const
     
     while ( i != symbols.end() )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         symbol->describe( description );
         description->append( " " );
         ++i;
     }
 
-    std::set<const ParserSymbol*>::const_iterator j = lookahead_symbols_.begin();
+    std::set<const LalrSymbol*>::const_iterator j = lookahead_symbols_.begin();
     if ( j != lookahead_symbols_.end() )
     {
-        const ParserSymbol* symbol = *j;
+        const LalrSymbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( "; " );
         symbol->describe( description );
@@ -144,7 +144,7 @@ void ParserItem::describe( std::string* description ) const
 
     while ( j != lookahead_symbols_.end() )
     {
-        const ParserSymbol* symbol = *j;
+        const LalrSymbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( ", " );
         symbol->describe( description );
@@ -161,7 +161,7 @@ void ParserItem::describe( std::string* description ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int ParserItem::add_lookahead_symbols( const std::set<const ParserSymbol*>& lookahead_symbols ) const
+int LalrItem::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
@@ -174,7 +174,7 @@ int ParserItem::add_lookahead_symbols( const std::set<const ParserSymbol*>& look
 // @return
 //  The lookahead set.
 */
-const std::set<const ParserSymbol*>& ParserItem::get_lookahead_symbols() const
+const std::set<const LalrSymbol*>& LalrItem::get_lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -190,7 +190,7 @@ const std::set<const ParserSymbol*>& ParserItem::get_lookahead_symbols() const
 //  production is the same as \e item's then if this item's next nodes
 //  are lexically less than item's otherwise false.
 */
-bool ParserItem::operator<( const ParserItem& item ) const
+bool LalrItem::operator<( const LalrItem& item ) const
 {
     return 
         production_->get_index() < item.production_->get_index() || 

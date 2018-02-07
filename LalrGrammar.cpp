@@ -1,12 +1,12 @@
 // 
-// ParserGrammar.cpp
+// LalrGrammar.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "ParserGrammar.hpp"
-#include "ParserGenerator.hpp"
-#include "ParserProduction.hpp"
-#include "ParserAction.hpp"
+#include "LalrGrammar.hpp"
+#include "LalrGenerator.hpp"
+#include "LalrProduction.hpp"
+#include "LalrAction.hpp"
 #include "GrammarSymbol.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
@@ -24,15 +24,15 @@ using namespace sweet::lalr;
 // Constructor.
 //
 // @param actions_reserve
-//  The number of actions to reserve space for in this ParserGrammar.
+//  The number of actions to reserve space for in this LalrGrammar.
 //
 // @param productions_reserve
-//  The number of productions to reserve space for in this ParserGrammar.
+//  The number of productions to reserve space for in this LalrGrammar.
 //
 // @param symbols_reserve
-//  The number of symbols to reserve space for in this ParserGrammar.
+//  The number of symbols to reserve space for in this LalrGrammar.
 */
-ParserGrammar::ParserGrammar( size_t actions_reserve, size_t productions_reserve, size_t symbols_reserve )
+LalrGrammar::LalrGrammar( size_t actions_reserve, size_t productions_reserve, size_t symbols_reserve )
 : identifier_(),
   actions_(),
   productions_(),
@@ -49,104 +49,104 @@ ParserGrammar::ParserGrammar( size_t actions_reserve, size_t productions_reserve
     error_symbol_ = add_terminal( ".error", 0 );
 }
 
-ParserGrammar::~ParserGrammar()
+LalrGrammar::~LalrGrammar()
 {
     for ( auto i = actions_.begin(); i != actions_.end(); ++i )
     {
-        ParserAction* action = i->get();
+        LalrAction* action = i->get();
         SWEET_ASSERT( action );
         action->destroy();
     }
 }
 
 /**
-// Get the identifier of this ParserGrammar.
+// Get the identifier of this LalrGrammar.
 //
 // @return
 //  The identifier.
 */
-std::string& ParserGrammar::identifier()
+std::string& LalrGrammar::identifier()
 {
     return identifier_;
 }
 
 /**
-// Get the actions in this ParserGrammar.
+// Get the actions in this LalrGrammar.
 //
 // @return
 //  The actions.
 */
-std::vector<std::unique_ptr<ParserAction> >& ParserGrammar::actions()
+std::vector<std::unique_ptr<LalrAction> >& LalrGrammar::actions()
 {
     return actions_;
 }
 
 /**
-// Get the productions in this ParserGrammar.
+// Get the productions in this LalrGrammar.
 //
 // @return
 //  The productions.
 */
-std::vector<std::unique_ptr<ParserProduction> >& ParserGrammar::productions()
+std::vector<std::unique_ptr<LalrProduction> >& LalrGrammar::productions()
 {
     return productions_;
 }
 
 /**
-// Get the symbols in this ParserGrammar.
+// Get the symbols in this LalrGrammar.
 //
 // @return
 //  The symbols.
 */
-std::vector<std::unique_ptr<ParserSymbol> >& ParserGrammar::symbols()
+std::vector<std::unique_ptr<LalrSymbol> >& LalrGrammar::symbols()
 {
     return symbols_;
 }
 
 /**
-// Get the start symbol in this ParserGrammar.
+// Get the start symbol in this LalrGrammar.
 //
 // @return
 //  The start symbol.
 */
-ParserSymbol* ParserGrammar::start_symbol() const
+LalrSymbol* LalrGrammar::start_symbol() const
 {
     return start_symbol_;
 }
 
 /**
-// Get the end symbol in this ParserGrammar.
+// Get the end symbol in this LalrGrammar.
 //
 // @return
 //  The end symbol.
 */
-ParserSymbol* ParserGrammar::end_symbol() const
+LalrSymbol* LalrGrammar::end_symbol() const
 {
     return end_symbol_;
 }
 
 /**
-// Get the error symbol in this ParserGrammar.
+// Get the error symbol in this LalrGrammar.
 //
 // @return
 //  The error symbol.
 */
-ParserSymbol* ParserGrammar::error_symbol() const
+LalrSymbol* LalrGrammar::error_symbol() const
 {
     return error_symbol_;
 }
 
-ParserSymbol* ParserGrammar::symbol( const GrammarSymbol* grammar_symbol )
+LalrSymbol* LalrGrammar::symbol( const GrammarSymbol* grammar_symbol )
 {
     SWEET_ASSERT( grammar_symbol );
     SymbolType type = grammar_symbol->lexeme_type() == LEXEME_NULL ? SYMBOL_NON_TERMINAL : SYMBOL_TERMINAL;
-    ParserSymbol* symbol = ParserGrammar::symbol( type, grammar_symbol->lexeme(), 0 );
+    LalrSymbol* symbol = LalrGrammar::symbol( type, grammar_symbol->lexeme(), 0 );
     symbol->set_associativity( grammar_symbol->associativity() );
     symbol->set_precedence( grammar_symbol->precedence() );
     return symbol;
 }
 
-ParserSymbol* ParserGrammar::symbol( SymbolType type, const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::symbol( SymbolType type, const std::string& identifier, int line )
 {
     auto i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->get_lexeme() != identifier )
@@ -161,17 +161,17 @@ ParserSymbol* ParserGrammar::symbol( SymbolType type, const std::string& identif
     return i->get();
 }
 
-ParserSymbol* ParserGrammar::terminal( const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::terminal( const std::string& identifier, int line )
 {
     return symbol( SYMBOL_TERMINAL, identifier, line );
 }
 
-ParserSymbol* ParserGrammar::non_terminal( const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::non_terminal( const std::string& identifier, int line )
 {
     return symbol( SYMBOL_NON_TERMINAL, identifier, line );
 }
 
-ParserAction* ParserGrammar::action( const std::string& identifier )
+LalrAction* LalrGrammar::action( const std::string& identifier )
 {
     auto i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier != identifier )
@@ -187,7 +187,7 @@ ParserAction* ParserGrammar::action( const std::string& identifier )
 }
 
 /**
-// Add a symbol to this ParserGrammar.
+// Add a symbol to this LalrGrammar.
 //
 // @param type
 //  The type of symbol to add.
@@ -201,15 +201,15 @@ ParserAction* ParserGrammar::action( const std::string& identifier )
 // @return
 //  The symbol.
 */
-ParserSymbol* ParserGrammar::add_symbol( SymbolType type, const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::add_symbol( SymbolType type, const std::string& identifier, int line )
 {
-    unique_ptr<ParserSymbol> symbol( new ParserSymbol(type, identifier, line) );
+    unique_ptr<LalrSymbol> symbol( new LalrSymbol(type, identifier, line) );
     symbols_.push_back( move(symbol) );
     return symbols_.back().get();
 }
 
 /**
-// Add a terminal symbol to this ParserGrammar.
+// Add a terminal symbol to this LalrGrammar.
 //
 // @param identifier
 //  The identifier to use for the symbol (for debugging purposes only).
@@ -220,13 +220,13 @@ ParserSymbol* ParserGrammar::add_symbol( SymbolType type, const std::string& ide
 // @return
 //  The terminal symbol.
 */
-ParserSymbol* ParserGrammar::add_terminal( const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::add_terminal( const std::string& identifier, int line )
 {
     return add_symbol( SYMBOL_TERMINAL, identifier, line );
 }
 
 /**
-// Add a non terminal symbol to this ParserGrammar.
+// Add a non terminal symbol to this LalrGrammar.
 //
 // @param identifier
 //  The identifier to use for the symbol (for debugging purposes only).
@@ -237,13 +237,13 @@ ParserSymbol* ParserGrammar::add_terminal( const std::string& identifier, int li
 // @return
 //  The terminal symbol.
 */
-ParserSymbol* ParserGrammar::add_non_terminal( const std::string& identifier, int line )
+LalrSymbol* LalrGrammar::add_non_terminal( const std::string& identifier, int line )
 {
     return add_symbol( SYMBOL_NON_TERMINAL, identifier, line );
 }
 
 /**
-// Add an action to this ParserGrammar.
+// Add an action to this LalrGrammar.
 //
 // @param identifier
 //  The identifier of the action to add.
@@ -251,13 +251,13 @@ ParserSymbol* ParserGrammar::add_non_terminal( const std::string& identifier, in
 // @return
 //  The action.
 */
-ParserAction* ParserGrammar::add_action( const std::string& identifier )
+LalrAction* LalrGrammar::add_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );    
-    ParserAction* action = nullptr;
+    LalrAction* action = nullptr;
     if ( !identifier.empty() )
     {
-        std::vector<std::unique_ptr<ParserAction> >::const_iterator i = actions_.begin();
+        std::vector<std::unique_ptr<LalrAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->identifier != identifier )
         {
             ++i;
@@ -268,7 +268,7 @@ ParserAction* ParserGrammar::add_action( const std::string& identifier )
         }
         else
         {
-            std::unique_ptr<ParserAction> new_action( new ParserAction(int(actions_.size()), identifier.c_str()) );
+            std::unique_ptr<LalrAction> new_action( new LalrAction(int(actions_.size()), identifier.c_str()) );
             actions_.push_back( move(new_action) );
             action = actions_.back().get();
         }
@@ -277,18 +277,18 @@ ParserAction* ParserGrammar::add_action( const std::string& identifier )
 }
 
 /**
-// Set the identifier for this ParserGrammar (optional).
+// Set the identifier for this LalrGrammar (optional).
 //
 // @param identifier
-//  The identifier for this ParserGrammar.
+//  The identifier for this LalrGrammar.
 */
-void ParserGrammar::identifier( const std::string& identifier )
+void LalrGrammar::identifier( const std::string& identifier )
 {
     identifier_ = identifier;
 }
 
 /**
-// Start a production in this ParserGrammar.
+// Start a production in this LalrGrammar.
 //
 // @param symbol
 //  The symbol on the left hand side of the production (assumed not null).
@@ -296,21 +296,21 @@ void ParserGrammar::identifier( const std::string& identifier )
 // @param line
 //  The line that the production starts on.
 */
-void ParserGrammar::begin_production( ParserSymbol* symbol, int line )
+void LalrGrammar::begin_production( LalrSymbol* symbol, int line )
 {
     if ( productions_.empty() )
     {
         SWEET_ASSERT( start_symbol_ );
         SWEET_ASSERT( end_symbol_ );
 
-        unique_ptr<ParserProduction> production( new ParserProduction(int(productions_.size()), start_symbol_, 0, NULL) );
+        unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), start_symbol_, 0, NULL) );
         start_symbol_->append_production( production.get() );
         productions_.push_back( move(production) );
-        ParserGrammar::symbol( symbol );
+        LalrGrammar::symbol( symbol );
     }
 
     SWEET_ASSERT( symbol );
-    unique_ptr<ParserProduction> production( new ParserProduction(int(productions_.size()), symbol, line, NULL) );
+    unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), symbol, line, NULL) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
 }
@@ -324,7 +324,7 @@ void ParserGrammar::begin_production( ParserSymbol* symbol, int line )
 // production.  It will be reduced later when another top level '|' expression
 // or the ';' at the end of the production is matched.
 */
-void ParserGrammar::end_production()
+void LalrGrammar::end_production()
 {
 }
 
@@ -334,11 +334,11 @@ void ParserGrammar::end_production()
 // @param symbol
 //  The symbol to append on the right hand side (assumed not null).
 */
-void ParserGrammar::symbol( ParserSymbol* symbol )
+void LalrGrammar::symbol( LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !productions_.empty() );
-    ParserProduction* production = productions_.back().get();
+    LalrProduction* production = productions_.back().get();
     production->append_symbol( symbol );
 }
 
@@ -348,7 +348,7 @@ void ParserGrammar::symbol( ParserSymbol* symbol )
 // @param action
 //  The action to take when the current production is reduced.
 */
-void ParserGrammar::action( ParserAction* action )
+void LalrGrammar::action( LalrAction* action )
 {
     SWEET_ASSERT( !productions_.empty() );
     productions_.back()->set_action( action );
@@ -362,7 +362,7 @@ void ParserGrammar::action( ParserAction* action )
 //  The symbol to set the precedence of the current production to match 
 //  (assumed not null).
 */
-void ParserGrammar::precedence_symbol( ParserSymbol* symbol )
+void LalrGrammar::precedence_symbol( LalrSymbol* symbol )
 {
     SWEET_ASSERT( !productions_.empty() );
     productions_.back()->set_precedence_symbol( symbol );

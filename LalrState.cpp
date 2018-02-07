@@ -1,11 +1,11 @@
 //
-// ParserState.cpp
+// LalrState.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "ParserState.hpp"
-#include "ParserItem.hpp"
-#include "ParserTransition.hpp"
+#include "LalrState.hpp"
+#include "LalrItem.hpp"
+#include "LalrTransition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -21,7 +21,7 @@ using std::set;
 /**
 // Constructor.
 */
-ParserState::ParserState()
+LalrState::LalrState()
 : items_(),
   transitions_(),
   processed_( false ),
@@ -41,10 +41,10 @@ ParserState::ParserState()
 // @return
 //  The number of items added (0 or 1).
 */
-int ParserState::add_item( ParserProduction* production, int position )
+int LalrState::add_item( LalrProduction* production, int position )
 {
     SWEET_ASSERT( production );
-    return items_.insert( ParserItem(production, position) ).second ? 1 : 0;
+    return items_.insert( LalrItem(production, position) ).second ? 1 : 0;
 }
 
 /**
@@ -63,10 +63,10 @@ int ParserState::add_item( ParserProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int ParserState::add_lookahead_symbols( ParserProduction* production, int position, const std::set<const ParserSymbol*>& lookahead_symbols )
+int LalrState::add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
-    std::set<ParserItem>::iterator item = items_.find( ParserItem(production, position) );
+    std::set<LalrItem>::iterator item = items_.find( LalrItem(production, position) );
     SWEET_ASSERT( item != items_.end() );
     return item->add_lookahead_symbols( lookahead_symbols );
 }
@@ -77,7 +77,7 @@ int ParserState::add_lookahead_symbols( ParserProduction* production, int positi
 // @return
 //  The items.
 */
-const std::set<ParserItem>& ParserState::get_items() const
+const std::set<LalrItem>& LalrState::get_items() const
 {
     return items_;
 }
@@ -89,7 +89,7 @@ const std::set<ParserItem>& ParserState::get_items() const
 //  A variable to append the description of this state to (assumed not 
 //  null).
 */
-void ParserState::describe( std::string* description ) const
+void LalrState::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
 
@@ -98,7 +98,7 @@ void ParserState::describe( std::string* description ) const
     buffer [sizeof(buffer) - 1] = '\0';
     description->append( buffer );
 
-    std::set<ParserItem>::const_iterator item = items_.begin(); 
+    std::set<LalrItem>::const_iterator item = items_.begin(); 
     while ( item != items_.end() )
     {
         item->describe( description );
@@ -106,7 +106,7 @@ void ParserState::describe( std::string* description ) const
         ++item;
     }
 
-    std::set<ParserTransition>::const_iterator transition = transitions_.begin();
+    std::set<LalrTransition>::const_iterator transition = transitions_.begin();
     while ( transition != transitions_.end() )
     {
         transition->describe( description );
@@ -121,7 +121,7 @@ void ParserState::describe( std::string* description ) const
 // @return
 //  A string describing this state.
 */
-std::string ParserState::description() const
+std::string LalrState::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -138,12 +138,12 @@ std::string ParserState::description() const
 // @param state
 //  The state to transition to (assumed not null).
 */
-void ParserState::add_transition( const ParserSymbol* symbol, ParserState* state )
+void LalrState::add_transition( const LalrSymbol* symbol, LalrState* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
-    SWEET_ASSERT( transitions_.find(ParserTransition(symbol, state)) == transitions_.end() );
-    transitions_.insert( ParserTransition(symbol, state) );
+    SWEET_ASSERT( transitions_.find(LalrTransition(symbol, state)) == transitions_.end() );
+    transitions_.insert( LalrTransition(symbol, state) );
 }
 
 /**
@@ -161,16 +161,16 @@ void ParserState::add_transition( const ParserSymbol* symbol, ParserState* state
 //
 // @param action
 //  The index of the action taken on the reduction or 
-//  `ParserAction::INVALID_INDEX` if no action is taken.
+//  `LalrAction::INVALID_INDEX` if no action is taken.
 */
-void ParserState::add_transition( const ParserSymbol* symbol, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void LalrState::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
 
-    std::set<ParserTransition>::iterator transition = transitions_.find( ParserTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
+    std::set<LalrTransition>::iterator transition = transitions_.find( LalrTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
         SWEET_ASSERT( transition->get_type() == TRANSITION_SHIFT );
@@ -178,7 +178,7 @@ void ParserState::add_transition( const ParserSymbol* symbol, const ParserSymbol
     }
     else
     {
-        transition = transitions_.insert( ParserTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
+        transition = transitions_.insert( LalrTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
     }
 }
 
@@ -198,16 +198,16 @@ void ParserState::add_transition( const ParserSymbol* symbol, const ParserSymbol
 //
 // @param action
 //  The index of the action taken on the reduction or 
-//  `ParserAction::INVALID_INDEX` if no action is taken.
+//  `LalrAction::INVALID_INDEX` if no action is taken.
 */
-void ParserState::add_transition( const std::set<const ParserSymbol*>& symbols, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void LalrState::add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
-    for ( set<const ParserSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
+    for ( set<const LalrSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
     }
@@ -223,18 +223,18 @@ void ParserState::add_transition( const std::set<const ParserSymbol*>& symbols, 
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-ParserTransition* ParserState::find_transition_by_symbol( const ParserSymbol* symbol )
+LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* symbol )
 {    
-    ParserTransition* transition = NULL;  
+    LalrTransition* transition = NULL;  
       
     if ( symbol )
     {
-        std::set<ParserTransition>::iterator i = transitions_.begin();
+        std::set<LalrTransition>::iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->is_symbol(symbol) )
         {
             ++i;
         }
-        transition = i != transitions_.end() ? const_cast<ParserTransition*>(&(*i)) : NULL;
+        transition = i != transitions_.end() ? const_cast<LalrTransition*>(&(*i)) : NULL;
     }    
     
     return transition;
@@ -250,13 +250,13 @@ ParserTransition* ParserState::find_transition_by_symbol( const ParserSymbol* sy
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const ParserTransition* ParserState::find_transition_by_symbol( const ParserSymbol* symbol ) const
+const LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* symbol ) const
 {    
-    const ParserTransition* transition = NULL;
+    const LalrTransition* transition = NULL;
     
     if ( symbol )
     {
-        std::set<ParserTransition>::const_iterator i = transitions_.begin();
+        std::set<LalrTransition>::const_iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->is_symbol(symbol) )
         {
             ++i;
@@ -270,10 +270,10 @@ const ParserTransition* ParserState::find_transition_by_symbol( const ParserSymb
 /**
 // Generate indices for the transitions in this state.
 */
-void ParserState::generate_indices_for_transitions()
+void LalrState::generate_indices_for_transitions()
 {
     int index = 0;
-    for ( std::set<ParserTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
+    for ( std::set<LalrTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
     {
         transition->set_index( index );
         ++index;
@@ -286,7 +286,7 @@ void ParserState::generate_indices_for_transitions()
 // @return
 //  The transitions.
 */
-const std::set<ParserTransition>& ParserState::get_transitions() const
+const std::set<LalrTransition>& LalrState::get_transitions() const
 {
     return transitions_;
 }
@@ -297,7 +297,7 @@ const std::set<ParserTransition>& ParserState::get_transitions() const
 // @param processed
 //  True to mark this state as processed or false to mark it as not processed.
 */
-void ParserState::set_processed( bool processed )
+void LalrState::set_processed( bool processed )
 {
     processed_ = processed;
 }
@@ -308,7 +308,7 @@ void ParserState::set_processed( bool processed )
 // @return
 //  True if this state has been processed otherwise false.
 */
-bool ParserState::is_processed() const
+bool LalrState::is_processed() const
 {
     return processed_;
 }
@@ -319,7 +319,7 @@ bool ParserState::is_processed() const
 // @param index
 //  The value to set the index of this state to.
 */
-void ParserState::set_index( int index )
+void LalrState::set_index( int index )
 {
     index_ = index;
 }
@@ -330,7 +330,7 @@ void ParserState::set_index( int index )
 // @return
 //  The index of this state.
 */
-int ParserState::get_index() const
+int LalrState::get_index() const
 {
     return index_;
 }
@@ -344,7 +344,7 @@ int ParserState::get_index() const
 // @return
 //  True if the items in this state are less than the items in \e state.
 */
-bool ParserState::operator<( const ParserState& state ) const
+bool LalrState::operator<( const LalrState& state ) const
 {
     return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
 }

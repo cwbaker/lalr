@@ -4,11 +4,11 @@
 //
 
 #include "ParserStateMachine.hpp"
-#include "ParserGenerator.hpp"
-#include "ParserGrammar.hpp"
-#include "ParserSymbol.hpp"
-#include "ParserState.hpp"
-#include "ParserAction.hpp"
+#include "LalrGenerator.hpp"
+#include "LalrGrammar.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrState.hpp"
+#include "LalrAction.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "GrammarDirective.hpp"
@@ -31,7 +31,7 @@ using namespace sweet::lalr;
 // Constructor.
 //
 // @param grammar
-//  The ParserGrammar to generate this ParserStateMachine from.
+//  The LalrGrammar to generate this ParserStateMachine from.
 //
 // @param error_policy
 //  The error policy to report errors during generation to or null to 
@@ -49,7 +49,7 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
   lexer_state_machine_()
 {
     vector<LexerToken> tokens;
-    ParserGrammar parser_grammar;
+    LalrGrammar parser_grammar;
 
     const vector<shared_ptr<GrammarProduction>>& productions = grammar.productions();
     for ( auto i = productions.begin(); i != productions.end(); ++i )
@@ -86,7 +86,7 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
         SWEET_ASSERT( symbol );
         if ( symbol->lexeme_type() != LEXEME_NULL )
         {
-            ParserSymbol* parser_symbol = parser_grammar.symbol( symbol );
+            LalrSymbol* parser_symbol = parser_grammar.symbol( symbol );
             parser_symbol->set_associativity( symbol->associativity() );
             parser_symbol->set_precedence( symbol->precedence() );
             LexerTokenType token_type = symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
@@ -94,7 +94,7 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
         }
     }
 
-    ParserGenerator parser_generator( parser_grammar, error_policy );
+    LalrGenerator parser_generator( parser_grammar, error_policy );
     if ( parser_generator.errors() == 0 )
     {
         identifier_ = parser_generator.identifier();
@@ -114,13 +114,13 @@ ParserStateMachine::ParserStateMachine( Grammar& grammar, ParserErrorPolicy* err
 // Constructor.
 //
 // @param grammar
-//  The ParserGrammar to generate this ParserStateMachine from.
+//  The LalrGrammar to generate this ParserStateMachine from.
 //
 // @param error_policy
 //  The error policy to report errors during generation to or null to 
 //  silently swallow errors.
 */
-ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolicy* error_policy )
+ParserStateMachine::ParserStateMachine( LalrGrammar& grammar, ParserErrorPolicy* error_policy )
 : identifier_(),
   actions_(),
   symbols_(),
@@ -131,7 +131,7 @@ ParserStateMachine::ParserStateMachine( ParserGrammar& grammar, ParserErrorPolic
   start_state_( nullptr ),
   lexer_state_machine_()
 {
-    ParserGenerator parser_generator( grammar, error_policy );
+    LalrGenerator parser_generator( grammar, error_policy );
     if ( parser_generator.errors() == 0 )
     {
         identifier_ = parser_generator.identifier();
@@ -151,7 +151,7 @@ ParserStateMachine::~ParserStateMachine()
 {
     for ( auto i = actions_.begin(); i != actions_.end(); ++i )
     {
-        ParserAction* action = i->get();
+        LalrAction* action = i->get();
         SWEET_ASSERT( action );
         action->destroy();
     }
@@ -174,7 +174,7 @@ const std::string& ParserStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<std::unique_ptr<ParserAction> >& ParserStateMachine::actions() const
+const std::vector<std::unique_ptr<LalrAction> >& ParserStateMachine::actions() const
 {
     return actions_;
 }
@@ -185,7 +185,7 @@ const std::vector<std::unique_ptr<ParserAction> >& ParserStateMachine::actions()
 // @return
 //  The symbols.
 */
-const std::vector<std::unique_ptr<ParserSymbol> >& ParserStateMachine::symbols() const
+const std::vector<std::unique_ptr<LalrSymbol> >& ParserStateMachine::symbols() const
 {
     return symbols_;
 }
@@ -196,7 +196,7 @@ const std::vector<std::unique_ptr<ParserSymbol> >& ParserStateMachine::symbols()
 // @return
 //  The states.
 */
-const std::vector<std::shared_ptr<ParserState> >& ParserStateMachine::states() const
+const std::vector<std::shared_ptr<LalrState> >& ParserStateMachine::states() const
 {
     return states_;
 }
@@ -207,7 +207,7 @@ const std::vector<std::shared_ptr<ParserState> >& ParserStateMachine::states() c
 // @return
 //  The start symbol or null if parsing the grammar failed.
 */
-const ParserSymbol* ParserStateMachine::start_symbol() const
+const LalrSymbol* ParserStateMachine::start_symbol() const
 {
     return start_symbol_;
 }
@@ -218,7 +218,7 @@ const ParserSymbol* ParserStateMachine::start_symbol() const
 // @return
 //  The end symbol.
 */
-const ParserSymbol* ParserStateMachine::end_symbol() const
+const LalrSymbol* ParserStateMachine::end_symbol() const
 {
     return end_symbol_;
 }
@@ -229,7 +229,7 @@ const ParserSymbol* ParserStateMachine::end_symbol() const
 // @return
 //  The error symbol.
 */
-const ParserSymbol* ParserStateMachine::error_symbol() const
+const LalrSymbol* ParserStateMachine::error_symbol() const
 {
     return error_symbol_;
 }
@@ -240,7 +240,7 @@ const ParserSymbol* ParserStateMachine::error_symbol() const
 // @return
 //  The start state.
 */
-const ParserState* ParserStateMachine::start_state() const
+const LalrState* ParserStateMachine::start_state() const
 {
     return start_state_;
 }
@@ -258,20 +258,20 @@ const LexerStateMachine* ParserStateMachine::lexer_state_machine() const
 }
 
 /**
-// Find the ParserSymbol whose identifier matches \e identifier.
+// Find the LalrSymbol whose identifier matches \e identifier.
 //
 // @param identifier
-//  The identifier of the ParserSymbol to find (assumed not null).
+//  The identifier of the LalrSymbol to find (assumed not null).
 //
 // @return
-//  The ParserSymbol or null if no ParserSymbol was found with a matching 
+//  The LalrSymbol or null if no LalrSymbol was found with a matching 
 //  identifier.
 */
-const ParserSymbol* ParserStateMachine::find_symbol_by_identifier( const char* identifier ) const
+const LalrSymbol* ParserStateMachine::find_symbol_by_identifier( const char* identifier ) const
 {
     SWEET_ASSERT( identifier );
 
-    vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin();
+    vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->get_identifier() != identifier )
     {
         ++i;
@@ -290,9 +290,9 @@ std::string ParserStateMachine::description() const
     std::string description;
     description.reserve( 1024 );
     
-    for ( std::vector<std::shared_ptr<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::vector<std::shared_ptr<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        const ParserState* state = i->get();
+        const LalrState* state = i->get();
         SWEET_ASSERT( state );
         state->describe( &description );
         description.append( "\n" );

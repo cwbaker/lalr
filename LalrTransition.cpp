@@ -1,13 +1,13 @@
 //
-// ParserTransition.cpp
+// LalrTransition.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "ParserTransition.hpp"
-#include "ParserSymbol.hpp"
-#include "ParserItem.hpp"
-#include "ParserState.hpp"
-#include "ParserAction.hpp"
+#include "LalrTransition.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrItem.hpp"
+#include "LalrState.hpp"
+#include "LalrAction.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -24,7 +24,7 @@ using namespace sweet::lalr;
 //  The symbol that this transition is made on (assumed not null).
 //
 // @param reduced_symbol
-//  The ParserSymbol that this transition reduces to.
+//  The LalrSymbol that this transition reduces to.
 //
 // @param length
 //  The number of symbols on the right-hand side of the production that this 
@@ -32,9 +32,9 @@ using namespace sweet::lalr;
 //
 // @param action
 //  The index of the action taken on this reduction or 
-//  `ParserAction::INVALID_INDEX` if no action is taken.
+//  `LalrAction::INVALID_INDEX` if no action is taken.
 */
-ParserTransition::ParserTransition( const ParserSymbol* symbol, const ParserSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+LalrTransition::LalrTransition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
   state_( NULL ),
   reduced_symbol_( reduced_symbol ),
@@ -58,13 +58,13 @@ ParserTransition::ParserTransition( const ParserSymbol* symbol, const ParserSymb
 // @param state
 //  The state that this transition is to (assumed not null).
 */
-ParserTransition::ParserTransition( const ParserSymbol* symbol, ParserState* state )
+LalrTransition::LalrTransition( const LalrSymbol* symbol, LalrState* state )
 : symbol_( symbol ),
   state_( state ),
   reduced_symbol_( nullptr ),
   reduced_length_( 0 ),
   precedence_( 0 ),
-  action_( ParserAction::INVALID_INDEX ),
+  action_( LalrAction::INVALID_INDEX ),
   type_( TRANSITION_SHIFT ),
   index_( INVALID_INDEX )
 {
@@ -78,7 +78,7 @@ ParserTransition::ParserTransition( const ParserSymbol* symbol, ParserState* sta
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-ParserState* ParserTransition::get_state() const
+LalrState* LalrTransition::get_state() const
 {
     return state_;
 }
@@ -90,27 +90,27 @@ ParserState* ParserTransition::get_state() const
 //  The production that is reduced on this transition or null if this 
 //  transition is a shift.
 */
-// const ParserProduction* ParserTransition::get_reduced_production() const
+// const LalrProduction* LalrTransition::get_reduced_production() const
 // {
 //     return reduced_production_;
 // }
 
-const ParserSymbol* ParserTransition::reduced_symbol() const
+const LalrSymbol* LalrTransition::reduced_symbol() const
 {
     return reduced_symbol_;
 }
 
-int ParserTransition::reduced_length() const
+int LalrTransition::reduced_length() const
 {
     return reduced_length_;
 }
 
-int ParserTransition::precedence() const
+int LalrTransition::precedence() const
 {
     return precedence_;
 }
 
-int ParserTransition::action() const
+int LalrTransition::action() const
 {
     return action_;
 }
@@ -121,7 +121,7 @@ int ParserTransition::action() const
 // @return
 //  The type of this transition.
 */
-int ParserTransition::get_type() const
+int LalrTransition::get_type() const
 {
     return type_;
 }
@@ -135,7 +135,7 @@ int ParserTransition::get_type() const
 // @return
 //  True if this transition is taken on \e symbol otherwise false.
 */
-bool ParserTransition::is_symbol( const ParserSymbol* symbol ) const
+bool LalrTransition::is_symbol( const LalrSymbol* symbol ) const
 {
     return symbol_ == symbol;
 }
@@ -146,7 +146,7 @@ bool ParserTransition::is_symbol( const ParserSymbol* symbol ) const
 // @return
 //  The symbol.
 */
-const ParserSymbol* ParserTransition::get_symbol() const
+const LalrSymbol* LalrTransition::get_symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -159,7 +159,7 @@ const ParserSymbol* ParserTransition::get_symbol() const
 //  A variable to append the description of this transition to (assumed not 
 //  null).
 */
-void ParserTransition::describe( std::string* description ) const
+void LalrTransition::describe( std::string* description ) const
 {
     SWEET_ASSERT( description != NULL );
 
@@ -199,7 +199,7 @@ void ParserTransition::describe( std::string* description ) const
 // @param index
 //  The value to set the index of this production to.
 */
-void ParserTransition::set_index( int index ) const
+void LalrTransition::set_index( int index ) const
 {
     index_ = index;
 }
@@ -210,7 +210,7 @@ void ParserTransition::set_index( int index ) const
 // @return
 //  The index.
 */
-int ParserTransition::get_index() const
+int LalrTransition::get_index() const
 {
     return index_;
 }
@@ -222,7 +222,7 @@ int ParserTransition::get_index() const
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void ParserTransition::override_shift_to_reduce( const ParserSymbol* symbol, int length, int precedence, int action ) const
+void LalrTransition::override_shift_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_SHIFT );
     SWEET_ASSERT( state_ );
@@ -245,7 +245,7 @@ void ParserTransition::override_shift_to_reduce( const ParserSymbol* symbol, int
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void ParserTransition::override_reduce_to_reduce( const ParserSymbol* symbol, int length, int precedence, int action ) const
+void LalrTransition::override_reduce_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_REDUCE );
     SWEET_ASSERT( reduced_symbol_ );
@@ -269,7 +269,7 @@ void ParserTransition::override_reduce_to_reduce( const ParserSymbol* symbol, in
 //  True if the address of this transition's symbol is less than the address 
 //  of \e transition's symbol.
 */
-bool ParserTransition::operator<( const ParserTransition& transition ) const
+bool LalrTransition::operator<( const LalrTransition& transition ) const
 {
     return symbol_ < transition.symbol_;
 }

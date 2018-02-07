@@ -10,7 +10,7 @@ namespace lalr
 /**
 // The associativity of a symbol.
 //
-// @relates ParserSymbol
+// @relates LalrSymbol
 */
 enum Associativity
 {

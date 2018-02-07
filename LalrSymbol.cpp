@@ -1,10 +1,10 @@
 //
-// ParserSymbol.cpp
+// LalrSymbol.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "ParserSymbol.hpp"
-#include "ParserProduction.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrProduction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -15,7 +15,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-ParserSymbol::ParserSymbol()
+LalrSymbol::LalrSymbol()
 : type_( SYMBOL_NULL ),
   lexeme_(),
   identifier_(),
@@ -42,7 +42,7 @@ ParserSymbol::ParserSymbol()
 // @param line
 //  The line that this symbol is defined on.
 */
-ParserSymbol::ParserSymbol( SymbolType type, const std::string& lexeme, int line )
+LalrSymbol::LalrSymbol( SymbolType type, const std::string& lexeme, int line )
 : type_( type ),
   lexeme_( lexeme ),
   identifier_(),
@@ -63,7 +63,7 @@ ParserSymbol::ParserSymbol( SymbolType type, const std::string& lexeme, int line
 // @return
 //  The lexeme of this symbol.
 */
-const std::string& ParserSymbol::get_lexeme() const
+const std::string& LalrSymbol::get_lexeme() const
 {
     return lexeme_;
 }
@@ -74,7 +74,7 @@ const std::string& ParserSymbol::get_lexeme() const
 // @return
 //  The identifier.
 */
-const std::string& ParserSymbol::get_identifier() const
+const std::string& LalrSymbol::get_identifier() const
 {
     return identifier_;
 }
@@ -85,7 +85,7 @@ const std::string& ParserSymbol::get_identifier() const
 // @param type
 //  The value to set the type of this symbol to.
 */
-void ParserSymbol::set_type( SymbolType type )
+void LalrSymbol::set_type( SymbolType type )
 {
     type_ = type;
 }
@@ -96,7 +96,7 @@ void ParserSymbol::set_type( SymbolType type )
 // @return
 //  The type of this symbol.
 */
-SymbolType ParserSymbol::get_type() const
+SymbolType LalrSymbol::get_type() const
 {
     return type_;
 }
@@ -107,7 +107,7 @@ SymbolType ParserSymbol::get_type() const
 // @param line
 //  The line to set this symbol as being defined on.
 */
-void ParserSymbol::set_line( int line )
+void LalrSymbol::set_line( int line )
 {
     line_ = line;
 }
@@ -119,7 +119,7 @@ void ParserSymbol::set_line( int line )
 //  The line that this symbol is defined on or 0 if this symbol isn't defined
 //  or if state machine generation failed before its line number is set.
 */
-int ParserSymbol::get_line() const
+int LalrSymbol::get_line() const
 {
     return line_;
 }
@@ -130,7 +130,7 @@ int ParserSymbol::get_line() const
 // @param production
 //  The production to append (assumed not null).
 */
-void ParserSymbol::append_production( ParserProduction* production )
+void LalrSymbol::append_production( LalrProduction* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -142,7 +142,7 @@ void ParserSymbol::append_production( ParserProduction* production )
 // @return
 //  The productions that reduce to this symbol.
 */
-const std::vector<ParserProduction*>& ParserSymbol::get_productions() const
+const std::vector<LalrProduction*>& LalrSymbol::get_productions() const
 {
     return productions_;
 }
@@ -153,7 +153,7 @@ const std::vector<ParserProduction*>& ParserSymbol::get_productions() const
 // @return
 //  True if this symbol is nullable otherwise false.
 */
-bool ParserSymbol::is_nullable() const
+bool LalrSymbol::is_nullable() const
 {
     return nullable_;
 }
@@ -162,7 +162,7 @@ bool ParserSymbol::is_nullable() const
 // Replace this symbol's identifier and line, precedence, and associativity 
 // with those from \e non_terminal_symbol.  This is done as an optimization 
 // to remove redundant reductions for implicit terminal symbols.  See 
-// ParserGrammar::calculate_implicit_terminal_symbols().
+// LalrGrammar::calculate_implicit_terminal_symbols().
 //
 // This symbol is assumed to be of type SYMBOL_TERMINAL.
 //
@@ -171,7 +171,7 @@ bool ParserSymbol::is_nullable() const
 //  associativity for this symbol with (assumed not null and of type 
 //  SYMBOL_NON_TERMINAL).
 */
-void ParserSymbol::replace_by_non_terminal( const ParserSymbol* non_terminal_symbol )
+void LalrSymbol::replace_by_non_terminal( const LalrSymbol* non_terminal_symbol )
 {
     SWEET_ASSERT( get_type() == SYMBOL_TERMINAL );
     SWEET_ASSERT( non_terminal_symbol );    
@@ -198,18 +198,18 @@ void ParserSymbol::replace_by_non_terminal( const ParserSymbol* non_terminal_sym
 //  The implict terminal for this symbol or null if this symbol doesn't have
 //  an implicit terminal.
 */
-ParserSymbol* ParserSymbol::get_implicit_terminal() const
+LalrSymbol* LalrSymbol::get_implicit_terminal() const
 {
-    ParserSymbol* implicit_terminal_symbol = NULL;
+    LalrSymbol* implicit_terminal_symbol = NULL;
     
     if ( productions_.size() == 1 )
     {
-        const ParserProduction* production = productions_.front();
+        const LalrProduction* production = productions_.front();
         SWEET_ASSERT( production );
 
         if ( production->get_length() == 1 && production->get_action() == NULL )
         {
-            ParserSymbol* symbol = production->get_symbols().front();
+            LalrSymbol* symbol = production->get_symbols().front();
             if ( symbol->get_type() == SYMBOL_TERMINAL )
             {
                 implicit_terminal_symbol = symbol;
@@ -229,7 +229,7 @@ ParserSymbol* ParserSymbol::get_implicit_terminal() const
 // @return
 //  The number of symbols added (0 or 1).
 */
-int ParserSymbol::add_symbol_to_first( const ParserSymbol* symbol )
+int LalrSymbol::add_symbol_to_first( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return first_.insert( symbol ).second ? 1 : 0;
@@ -244,7 +244,7 @@ int ParserSymbol::add_symbol_to_first( const ParserSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int ParserSymbol::add_symbols_to_first( const std::set<const ParserSymbol*>& symbols )
+int LalrSymbol::add_symbols_to_first( const std::set<const LalrSymbol*>& symbols )
 {
     size_t original_size = first_.size();
     first_.insert( symbols.begin(), symbols.end() );
@@ -252,12 +252,12 @@ int ParserSymbol::add_symbols_to_first( const std::set<const ParserSymbol*>& sym
 }
 
 /**
-// Get the first set for this ParserSymbol.
+// Get the first set for this LalrSymbol.
 //
 // @return
-//  The first set for this ParserSymbol.
+//  The first set for this LalrSymbol.
 */
-const std::set<const ParserSymbol*>& ParserSymbol::get_first() const
+const std::set<const LalrSymbol*>& LalrSymbol::get_first() const
 {
     return first_;
 }
@@ -271,7 +271,7 @@ const std::set<const ParserSymbol*>& ParserSymbol::get_first() const
 // @return
 //  The number of symbols added (0 or 1).
 */
-int ParserSymbol::add_symbol_to_follow( const ParserSymbol* symbol )
+int LalrSymbol::add_symbol_to_follow( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return follow_.insert( symbol ).second ? 1 : 0;
@@ -286,7 +286,7 @@ int ParserSymbol::add_symbol_to_follow( const ParserSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int ParserSymbol::add_symbols_to_follow( const std::set<const ParserSymbol*>& symbols )
+int LalrSymbol::add_symbols_to_follow( const std::set<const LalrSymbol*>& symbols )
 {
     size_t original_size = follow_.size();
     follow_.insert( symbols.begin(), symbols.end() );
@@ -294,56 +294,56 @@ int ParserSymbol::add_symbols_to_follow( const std::set<const ParserSymbol*>& sy
 }
 
 /**
-// Get the follow set for this ParserSymbol.
+// Get the follow set for this LalrSymbol.
 //
 // @return
-//  The follow set for this ParserSymbol.
+//  The follow set for this LalrSymbol.
 */
-const std::set<const ParserSymbol*>& ParserSymbol::get_follow() const
+const std::set<const LalrSymbol*>& LalrSymbol::get_follow() const
 {
     return follow_;
 }
 
 /**
-// Set the precedence of this ParserSymbol.
+// Set the precedence of this LalrSymbol.
 //
 // @param precedence
-//  The value to set the precedence of this ParserSymbol to.
+//  The value to set the precedence of this LalrSymbol to.
 */
-void ParserSymbol::set_precedence( int precedence )
+void LalrSymbol::set_precedence( int precedence )
 {
     precedence_ = precedence;
 }
 
 /**
-// Get the precedence of this ParserSymbol.
+// Get the precedence of this LalrSymbol.
 //
 // @return
 //  The precedence (0 indicates no precedence).
 */
-int ParserSymbol::get_precedence() const
+int LalrSymbol::get_precedence() const
 {
     return precedence_;
 }
 
 /**
-// Set the associativity of this ParserSymbol.
+// Set the associativity of this LalrSymbol.
 //
 // @param associativity
-//  The value to set the associativity of this ParserSymbol to.
+//  The value to set the associativity of this LalrSymbol to.
 */
-void ParserSymbol::set_associativity( Associativity associativity )
+void LalrSymbol::set_associativity( Associativity associativity )
 {
     associativity_ = associativity;
 }
 
 /**
-// Get the associativity of this ParserSymbol.
+// Get the associativity of this LalrSymbol.
 //
 // @return
 //  The associativity.
 */
-Associativity ParserSymbol::get_associativity() const
+Associativity LalrSymbol::get_associativity() const
 {
     return associativity_;
 }
@@ -351,7 +351,7 @@ Associativity ParserSymbol::get_associativity() const
 /**
 // Calculate the identifier for this symbol.
 */
-void ParserSymbol::calculate_identifier()
+void LalrSymbol::calculate_identifier()
 {
     SWEET_ASSERT( !lexeme_.empty() );
 
@@ -395,22 +395,22 @@ void ParserSymbol::calculate_identifier()
 //  The number of symbols added to the first set and plus one if nullable
 //  changed for this symbol.
 */
-int ParserSymbol::calculate_first()
+int LalrSymbol::calculate_first()
 {
     int added = 0;
 
     if ( type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<ParserProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
-            const ParserProduction* production = *i;
+            const LalrProduction* production = *i;
             SWEET_ASSERT( production );  
                   
-            const vector<ParserSymbol*>& symbols = production->get_symbols();
-            vector<ParserSymbol*>::const_iterator j = symbols.begin(); 
+            const vector<LalrSymbol*>& symbols = production->get_symbols();
+            vector<LalrSymbol*>::const_iterator j = symbols.begin(); 
             while ( j != symbols.end() && (*j)->is_nullable() )
             {
-                const ParserSymbol* symbol = *j;
+                const LalrSymbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->get_first() );
                 ++j;
@@ -418,7 +418,7 @@ int ParserSymbol::calculate_first()
             
             if ( j != symbols.end() )
             {
-                const ParserSymbol* symbol = *j;
+                const LalrSymbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->get_first() );
             }
@@ -443,26 +443,26 @@ int ParserSymbol::calculate_first()
 // @return
 //  The number of symbols added to the follow set.
 */
-int ParserSymbol::calculate_follow()
+int LalrSymbol::calculate_follow()
 {
     int added = 0;
 
-    for ( vector<ParserProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        const ParserProduction* production = *i;
+        const LalrProduction* production = *i;
         SWEET_ASSERT( production );
                     
-        const vector<ParserSymbol*>& symbols = production->get_symbols();
+        const vector<LalrSymbol*>& symbols = production->get_symbols();
         if ( !symbols.empty() )
         {
-            vector<ParserSymbol*>::const_reverse_iterator j = symbols.rbegin(); 
-            ParserSymbol* symbol = *j;
+            vector<LalrSymbol*>::const_reverse_iterator j = symbols.rbegin(); 
+            LalrSymbol* symbol = *j;
             added += symbol->add_symbols_to_follow( get_follow() );
             ++j;
         
             while ( j != symbols.rend() && symbol->is_nullable() )
             {
-                ParserSymbol* previous_symbol = *j;
+                LalrSymbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->get_first() );
                 added += previous_symbol->add_symbols_to_follow( get_follow() );
@@ -472,7 +472,7 @@ int ParserSymbol::calculate_follow()
             
             while ( j != symbols.rend() )
             {
-                ParserSymbol* previous_symbol = *j;
+                LalrSymbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->get_first() );
                 ++j;
@@ -489,7 +489,7 @@ int ParserSymbol::calculate_follow()
 // @param index
 //  The value to set the index of this symbol to.
 */
-void ParserSymbol::set_index( int index )
+void LalrSymbol::set_index( int index )
 {
     index_ = index;
 }
@@ -500,7 +500,7 @@ void ParserSymbol::set_index( int index )
 // @return
 //  The index of this symbol.
 */
-int ParserSymbol::get_index() const
+int LalrSymbol::get_index() const
 {
     return index_;
 }
@@ -511,7 +511,7 @@ int ParserSymbol::get_index() const
 // @param description
 //  A variable to append the description to (assumed not null).
 */
-void ParserSymbol::describe( std::string* description ) const
+void LalrSymbol::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );    
     description->append( get_identifier() );
@@ -523,14 +523,14 @@ void ParserSymbol::describe( std::string* description ) const
 // @param description
 //  A variable to append the description to (assumed not null).
 */
-void ParserSymbol::describe( const std::set<const ParserSymbol*>& symbols, std::string* description )
+void LalrSymbol::describe( const std::set<const LalrSymbol*>& symbols, std::string* description )
 {
     SWEET_ASSERT( description );
 
-    std::set<const ParserSymbol*>::const_iterator i = symbols.begin(); 
+    std::set<const LalrSymbol*>::const_iterator i = symbols.begin(); 
     if ( i != symbols.end() )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );        
         symbol->describe( description );
         ++i;        
@@ -538,7 +538,7 @@ void ParserSymbol::describe( const std::set<const ParserSymbol*>& symbols, std::
     
     while ( i != symbols.end() )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         description->append( ", " );
         symbol->describe( description );
@@ -552,7 +552,7 @@ void ParserSymbol::describe( const std::set<const ParserSymbol*>& symbols, std::
 // @return
 //  The description.
 */
-std::string ParserSymbol::description() const
+std::string LalrSymbol::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -569,7 +569,7 @@ std::string ParserSymbol::description() const
 // @return
 //  The name of \e character.
 */
-const char* ParserSymbol::name( int character ) const
+const char* LalrSymbol::name( int character ) const
 {
     const char* NAMES[] =
     {

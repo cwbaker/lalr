@@ -15,12 +15,12 @@ namespace sweet
 namespace lalr
 {
 
-class ParserProduction;
+class LalrProduction;
 
 /**
 // A symbol parsed as part of a grammar rule.
 */
-class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
+class LalrSymbol : public std::enable_shared_from_this<LalrSymbol>
 {
     public:
         static const int INVALID_INDEX = -1;
@@ -30,17 +30,17 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         std::string lexeme_; ///< The lexeme for this symbol.
         std::string identifier_; ///< The identifier for this symbol (generated from its lexeme).
         int line_; ///< The line that this symbol was defined on.
-        std::vector<ParserProduction*> productions_; ///< The productions for this symbol.
+        std::vector<LalrProduction*> productions_; ///< The productions for this symbol.
         int precedence_; ///< The precedence of this symbol (0 indicates no precedence).
         Associativity associativity_; ///< The associativity of this symbol.
         bool nullable_; ///< True if this symbol is nullable otherwise false.
-        std::set<const ParserSymbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
-        std::set<const ParserSymbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
+        std::set<const LalrSymbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
+        std::set<const LalrSymbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
         int index_; ///< The index of this symbol.
 
     public:
-        ParserSymbol();
-        ParserSymbol( SymbolType type, const std::string& lexeme, int line );
+        LalrSymbol();
+        LalrSymbol( SymbolType type, const std::string& lexeme, int line );
 
         const std::string& get_lexeme() const;
         const std::string& get_identifier() const;
@@ -51,20 +51,20 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         void set_line( int line );
         int get_line() const;
 
-        void append_production( ParserProduction* production );
-        const std::vector<ParserProduction*>& get_productions() const;
+        void append_production( LalrProduction* production );
+        const std::vector<LalrProduction*>& get_productions() const;
 
         bool is_nullable() const;
-        void replace_by_non_terminal( const ParserSymbol* non_terminal_symbol );
-        ParserSymbol* get_implicit_terminal() const;
+        void replace_by_non_terminal( const LalrSymbol* non_terminal_symbol );
+        LalrSymbol* get_implicit_terminal() const;
 
-        int add_symbol_to_first( const ParserSymbol* symbol );
-        int add_symbols_to_first( const std::set<const ParserSymbol*>& symbols );
-        const std::set<const ParserSymbol*>& get_first() const;
+        int add_symbol_to_first( const LalrSymbol* symbol );
+        int add_symbols_to_first( const std::set<const LalrSymbol*>& symbols );
+        const std::set<const LalrSymbol*>& get_first() const;
 
-        int add_symbol_to_follow( const ParserSymbol* symbol );
-        int add_symbols_to_follow( const std::set<const ParserSymbol*>& symbols );
-        const std::set<const ParserSymbol*>& get_follow() const;
+        int add_symbol_to_follow( const LalrSymbol* symbol );
+        int add_symbols_to_follow( const std::set<const LalrSymbol*>& symbols );
+        const std::set<const LalrSymbol*>& get_follow() const;
         
         void set_precedence( int precedence );
         int get_precedence() const;
@@ -80,7 +80,7 @@ class ParserSymbol : public std::enable_shared_from_this<ParserSymbol>
         int get_index() const;
 
         void describe( std::string* description ) const;
-        static void describe( const std::set<const ParserSymbol*>& symbols, std::string* description );
+        static void describe( const std::set<const LalrSymbol*>& symbols, std::string* description );
         std::string description() const;
 
     private:

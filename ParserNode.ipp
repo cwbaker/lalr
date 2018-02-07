@@ -19,7 +19,7 @@ namespace lalr
 // Constructor.
 //
 // @param state
-//  The %ParserState at this node.
+//  The %LalrState at this node.
 //
 // @param started_productions
 //  The productions that were started at this node.
@@ -31,7 +31,7 @@ namespace lalr
 //  The user data that stores application specific data at this node.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const UserData& user_data )
+ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const LalrState* state, const LalrSymbol* symbol, const UserData& user_data )
 : state_( state ),
   symbol_( symbol ),
   line_( -1 ),
@@ -57,7 +57,7 @@ ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* st
 //  The lexeme at this node.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
+ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const LalrState* state, const LalrSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
 : state_( state ),
   symbol_( symbol ),
   line_( -1 ),
@@ -74,7 +74,7 @@ ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* st
 //  The state.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const ParserState* ParserNode<UserData, Char, Traits, Allocator>::state() const
+const LalrState* ParserNode<UserData, Char, Traits, Allocator>::state() const
 {
     return state_;
 }
@@ -86,7 +86,7 @@ const ParserState* ParserNode<UserData, Char, Traits, Allocator>::state() const
 //  The symbol.
 */
 template <class UserData, class Char, class Traits, class Allocator>
-const ParserSymbol* ParserNode<UserData, Char, Traits, Allocator>::symbol() const
+const LalrSymbol* ParserNode<UserData, Char, Traits, Allocator>::symbol() const
 {
     return symbol_;
 }

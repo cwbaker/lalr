@@ -1,15 +1,15 @@
 //
-// ParserGenerator.cpp
+// LalrGenerator.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "ParserGenerator.hpp"
-#include "ParserProduction.hpp"
-#include "ParserState.hpp"
-#include "ParserItem.hpp"
+#include "LalrGenerator.hpp"
+#include "LalrProduction.hpp"
+#include "LalrState.hpp"
+#include "LalrItem.hpp"
 #include "ParserErrorPolicy.hpp"
-#include "ParserGrammar.hpp"
-#include "ParserAction.hpp"
+#include "LalrGrammar.hpp"
+#include "LalrAction.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -24,13 +24,13 @@ using namespace sweet::lalr;
 // Constructor.
 //
 // @param grammar
-//  The ParserGrammar to generate a parser for.
+//  The LalrGrammar to generate a parser for.
 //
 // @param error_policy
 //  The error policy to report errors during generation to or null to silently
 //  swallow errors.
 */
-ParserGenerator::ParserGenerator( ParserGrammar& grammar, ParserErrorPolicy* error_policy )
+LalrGenerator::LalrGenerator( LalrGrammar& grammar, ParserErrorPolicy* error_policy )
 : error_policy_( error_policy ),
   identifier_(),
   actions_(),
@@ -46,11 +46,11 @@ ParserGenerator::ParserGenerator( ParserGrammar& grammar, ParserErrorPolicy* err
     generate( grammar );
 }
 
-ParserGenerator::~ParserGenerator()
+LalrGenerator::~LalrGenerator()
 {
     for ( auto i = actions_.begin(); i != actions_.end(); ++i )
     {
-        ParserAction* action = i->get();
+        LalrAction* action = i->get();
         SWEET_ASSERT( action );
         action->destroy();
     }
@@ -62,7 +62,7 @@ ParserGenerator::~ParserGenerator()
 // @return
 //  The identifier.
 */
-std::string& ParserGenerator::identifier()
+std::string& LalrGenerator::identifier()
 {
     return identifier_;
 }
@@ -73,7 +73,7 @@ std::string& ParserGenerator::identifier()
 // @return
 //  The actions.
 */
-std::vector<std::unique_ptr<ParserAction> >& ParserGenerator::actions()
+std::vector<std::unique_ptr<LalrAction> >& LalrGenerator::actions()
 {
     return actions_;
 }
@@ -84,7 +84,7 @@ std::vector<std::unique_ptr<ParserAction> >& ParserGenerator::actions()
 // @return
 //  The productions.
 */
-std::vector<std::unique_ptr<ParserProduction> >& ParserGenerator::productions()
+std::vector<std::unique_ptr<LalrProduction> >& LalrGenerator::productions()
 {
     return productions_;
 }
@@ -95,7 +95,7 @@ std::vector<std::unique_ptr<ParserProduction> >& ParserGenerator::productions()
 // @return
 //  The symbols.
 */
-std::vector<std::unique_ptr<ParserSymbol> >& ParserGenerator::symbols()
+std::vector<std::unique_ptr<LalrSymbol> >& LalrGenerator::symbols()
 {
     return symbols_;
 }
@@ -106,7 +106,7 @@ std::vector<std::unique_ptr<ParserSymbol> >& ParserGenerator::symbols()
 // @return
 //  The states.
 */
-std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>& ParserGenerator::states()
+std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& LalrGenerator::states()
 {
     return states_;
 }
@@ -117,7 +117,7 @@ std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>& ParserGene
 // @return
 //  The start symbol.
 */
-const ParserSymbol* ParserGenerator::start_symbol()
+const LalrSymbol* LalrGenerator::start_symbol()
 {
     return start_symbol_;
 }
@@ -128,7 +128,7 @@ const ParserSymbol* ParserGenerator::start_symbol()
 // @return
 //  The end symbol.
 */
-const ParserSymbol* ParserGenerator::end_symbol()
+const LalrSymbol* LalrGenerator::end_symbol()
 {
     return end_symbol_;
 }
@@ -139,7 +139,7 @@ const ParserSymbol* ParserGenerator::end_symbol()
 // @return
 //  The error symbol.
 */
-const ParserSymbol* ParserGenerator::error_symbol()
+const LalrSymbol* LalrGenerator::error_symbol()
 {
     return error_symbol_;
 }
@@ -150,7 +150,7 @@ const ParserSymbol* ParserGenerator::error_symbol()
 // @return
 //  The start state.
 */
-ParserState* ParserGenerator::start_state()
+LalrState* LalrGenerator::start_state()
 {
     return start_state_;
 }
@@ -158,14 +158,14 @@ ParserState* ParserGenerator::start_state()
 /**
 // Get the number of errors that occured during parsing and generation.
 //
-// Other ParserGenerator functions are invalid if the number of errors
-// returned by this function is not zero after the ParserGenerator has
+// Other LalrGenerator functions are invalid if the number of errors
+// returned by this function is not zero after the LalrGenerator has
 // been constructed.
 //
 // @return
 //  The number of errors.
 */
-int ParserGenerator::errors() const
+int LalrGenerator::errors() const
 {
     return errors_;
 }
@@ -185,7 +185,7 @@ int ParserGenerator::errors() const
 // @param ...
 //  Arguments described by *format*.
 */
-void ParserGenerator::fire_error( int line, int error, const char* format, ... )
+void LalrGenerator::fire_error( int line, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
@@ -206,7 +206,7 @@ void ParserGenerator::fire_error( int line, int error, const char* format, ... )
 // @param args
 //  Arguments as described by \e format.
 */
-void ParserGenerator::fire_printf( const char* format, ... ) const
+void LalrGenerator::fire_printf( const char* format, ... ) const
 {
     if ( error_policy_ )
     {
@@ -225,7 +225,7 @@ void ParserGenerator::fire_printf( const char* format, ... ) const
 // @param grammar_parser
 //  The GrammarParser that has successfully parsed a grammar.
 */
-void ParserGenerator::generate( ParserGrammar& grammar )
+void LalrGenerator::generate( LalrGrammar& grammar )
 {
     identifier_ = grammar.identifier();
     actions_.swap( grammar.actions() );
@@ -263,15 +263,15 @@ void ParserGenerator::generate( ParserGrammar& grammar )
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item ) const
+std::set<const LalrSymbol*> LalrGenerator::lookahead( const LalrItem& item ) const
 {
-    set<const ParserSymbol*> lookahead_symbols;
+    set<const LalrSymbol*> lookahead_symbols;
 
-    const ParserProduction* production = item.get_production();
+    const LalrProduction* production = item.get_production();
     SWEET_ASSERT( production );
         
-    const vector<ParserSymbol*>& symbols = production->get_symbols();    
-    vector<ParserSymbol*>::const_iterator i = symbols.begin() + item.get_position();
+    const vector<LalrSymbol*>& symbols = production->get_symbols();    
+    vector<LalrSymbol*>::const_iterator i = symbols.begin() + item.get_position();
     if ( i != symbols.end() )
     {
         ++i;
@@ -279,7 +279,7 @@ std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item
     
     while ( i != symbols.end() && (*i)->is_nullable() )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         lookahead_symbols.insert( symbol->get_first().begin(), symbol->get_first().end() );
         ++i;
@@ -287,7 +287,7 @@ std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item
     
     if ( i != symbols.end() )
     {
-        const ParserSymbol* symbol = *i;
+        const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         lookahead_symbols.insert( symbol->get_first().begin(), symbol->get_first().end() );
     }
@@ -303,9 +303,9 @@ std::set<const ParserSymbol*> ParserGenerator::lookahead( const ParserItem& item
 // Generate the closure of the items contained in \e state.
 //
 // @param state
-//  The ParserState that contains the items to generate the closure of.
+//  The LalrState that contains the items to generate the closure of.
 */
-void ParserGenerator::closure( const std::shared_ptr<ParserState>& state )
+void LalrGenerator::closure( const std::shared_ptr<LalrState>& state )
 {
     SWEET_ASSERT( state );
 
@@ -313,16 +313,16 @@ void ParserGenerator::closure( const std::shared_ptr<ParserState>& state )
     while ( added > 0 )
     {
         added = 0;
-        const set<ParserItem>& items = state->get_items();
-        for ( set<ParserItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<LalrItem>& items = state->get_items();
+        for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
-            const ParserSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
+            const LalrSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
             if ( symbol )
             {
-                const vector<ParserProduction*>& productions = symbol->get_productions();
-                for ( vector<ParserProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+                const vector<LalrProduction*>& productions = symbol->get_productions();
+                for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
-                    ParserProduction* production = *j;
+                    LalrProduction* production = *j;
                     SWEET_ASSERT( production );
                     added += state->add_item( production, 0 );
                 }
@@ -343,14 +343,14 @@ void ParserGenerator::closure( const std::shared_ptr<ParserState>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<ParserState> ParserGenerator::goto_( const std::shared_ptr<ParserState>& state, const ParserSymbol& symbol )
+std::shared_ptr<LalrState> LalrGenerator::goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol )
 {
     SWEET_ASSERT( state );
 
-    std::shared_ptr<ParserState> goto_state( new ParserState() );
+    std::shared_ptr<LalrState> goto_state( new LalrState() );
 
-    const set<ParserItem>& items = state->get_items();
-    for ( set<ParserItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<LalrItem>& items = state->get_items();
+    for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         if ( item->is_next_node(symbol) )
         {
@@ -374,23 +374,23 @@ std::shared_ptr<ParserState> ParserGenerator::goto_( const std::shared_ptr<Parse
 // @return
 //  The number of lookahead symbols generated.
 */
-int ParserGenerator::lookahead_closure( ParserState* state ) const
+int LalrGenerator::lookahead_closure( LalrState* state ) const
 {
     SWEET_ASSERT( state );
 
     int added = 0;
 
-    const set<ParserItem>& items = state->get_items();
-    for ( set<ParserItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<LalrItem>& items = state->get_items();
+    for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
-        const ParserSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
+        const LalrSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
         if ( symbol )
         {
-            set<const ParserSymbol*> lookahead_symbols = lookahead( *item );        
-            const vector<ParserProduction*>& productions = symbol->get_productions();
-            for ( vector<ParserProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+            set<const LalrSymbol*> lookahead_symbols = lookahead( *item );        
+            const vector<LalrProduction*>& productions = symbol->get_productions();
+            for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
-                ParserProduction* production = *j;
+                LalrProduction* production = *j;
                 SWEET_ASSERT( production );
                 added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
             }
@@ -415,25 +415,25 @@ int ParserGenerator::lookahead_closure( ParserState* state ) const
 // @return
 //  The number of lookahead symbols propagated.
 */
-int ParserGenerator::lookahead_goto( ParserState* state ) const
+int LalrGenerator::lookahead_goto( LalrState* state ) const
 {
     SWEET_ASSERT( state );
 
     int added = 0;
 
-    const set<ParserTransition>& transitions = state->get_transitions();
-    for ( set<ParserTransition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
+    const set<LalrTransition>& transitions = state->get_transitions();
+    for ( set<LalrTransition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
     {
-        const ParserSymbol* symbol = transition->get_symbol();
+        const LalrSymbol* symbol = transition->get_symbol();
         SWEET_ASSERT( symbol );
 
-        const set<ParserItem>& items = state->get_items();
-        for ( set<ParserItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<LalrItem>& items = state->get_items();
+        for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
             int position = item->get_position();
             if ( item->get_production()->get_symbol_by_position(position) == symbol )
             {
-                ParserState* goto_state = transition->get_state();
+                LalrState* goto_state = transition->get_state();
                 added += goto_state->add_lookahead_symbols( item->get_production(), position + 1, item->get_lookahead_symbols() );
             }
         }        
@@ -446,16 +446,16 @@ int ParserGenerator::lookahead_goto( ParserState* state ) const
 // Replace references to \e to_symbol with references to \e with_symbol.
 //
 // @param to_symbol
-//  The ParserSymbol to replace references to.
+//  The LalrSymbol to replace references to.
 //
 // @param with_symbol
-//  The ParserSymbol to replace references with.
+//  The LalrSymbol to replace references with.
 */
-void ParserGenerator::replace_references_to_symbol( ParserSymbol* to_symbol, ParserSymbol* with_symbol )
+void LalrGenerator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
 {
-    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        ParserProduction* production = i->get();
+        LalrProduction* production = i->get();
         SWEET_ASSERT( production );
         production->replace_references_to_symbol( to_symbol, with_symbol );
     }
@@ -464,13 +464,13 @@ void ParserGenerator::replace_references_to_symbol( ParserSymbol* to_symbol, Par
 /**
 // Check for symbols in the grammar that are referenced but never defined.
 */
-void ParserGenerator::check_for_undefined_symbol_errors()
+void LalrGenerator::check_for_undefined_symbol_errors()
 {
     if ( errors() == 0 )
     {
-        for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            const ParserSymbol* symbol = i->get();
+            const LalrSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             if ( symbol->get_type() == SYMBOL_NON_TERMINAL && symbol->get_productions().empty() )
             {
@@ -484,23 +484,23 @@ void ParserGenerator::check_for_undefined_symbol_errors()
 // Check for symbols in the grammar that are defined but never referenced.
 //
 // @param generator
-//  The ParserGenerator for fire any errors from (assumed not null).
+//  The LalrGenerator for fire any errors from (assumed not null).
 */
-void ParserGenerator::check_for_unreferenced_symbol_errors()
+void LalrGenerator::check_for_unreferenced_symbol_errors()
 {
     if ( errors() == 0 )
     {
-        for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            const ParserSymbol* symbol = i->get();
+            const LalrSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             
             int references = 0;            
             if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
             {
-                for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+                for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
-                    const ParserProduction* production = i->get();
+                    const LalrProduction* production = i->get();
                     SWEET_ASSERT( production );
                     if ( production->get_symbol()->get_type() != SYMBOL_TERMINAL )
                     {
@@ -522,13 +522,13 @@ void ParserGenerator::check_for_unreferenced_symbol_errors()
 // production.
 //
 // @param generator
-//  The ParserGenerator for fire any errors from (assumed not null).
+//  The LalrGenerator for fire any errors from (assumed not null).
 */
-void ParserGenerator::check_for_error_symbol_on_left_hand_side_errors()
+void LalrGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
-    const vector<ParserProduction*>& productions = error_symbol_->get_productions();
+    const vector<LalrProduction*>& productions = error_symbol_->get_productions();
     if ( !productions.empty() )
     {
         fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
@@ -538,11 +538,11 @@ void ParserGenerator::check_for_error_symbol_on_left_hand_side_errors()
 /**
 // Calculate identifiers for all symbols.
 */
-void ParserGenerator::calculate_identifiers()
+void LalrGenerator::calculate_identifiers()
 {
-    for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        ParserSymbol* symbol = i->get();
+        LalrSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         symbol->calculate_identifier();
     }
@@ -555,16 +555,16 @@ void ParserGenerator::calculate_identifiers()
 // and any symbols with no productions are assumed to be terminals.  Another
 // pass is made over the symbols in to convert non-terminals symbols that 
 // contain only a single production with one terminal symbol into terminals.
-// See `ParserGrammar::calculate_implicit_terminal_symbols()`.
+// See `LalrGrammar::calculate_implicit_terminal_symbols()`.
 //
 // The `.start`, `.end`, and `.error` symbols are exempt from the above 
 // processing.  They are explicitly assigned their corr
 */
-void ParserGenerator::calculate_terminal_and_non_terminal_symbols()
+void LalrGenerator::calculate_terminal_and_non_terminal_symbols()
 {
-    for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        ParserSymbol* symbol = i->get();
+        LalrSymbol* symbol = i->get();
         if ( symbol->get_type() == SYMBOL_NULL )
         {
             symbol->set_type( symbol->get_productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
@@ -590,14 +590,14 @@ void ParserGenerator::calculate_terminal_and_non_terminal_symbols()
 // more readable name of the non terminal but removing the redundant 
 // reduction.
 */
-void ParserGenerator::calculate_implicit_terminal_symbols()
+void LalrGenerator::calculate_implicit_terminal_symbols()
 {
-    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        ParserSymbol* non_terminal_symbol = i->get();        
+        LalrSymbol* non_terminal_symbol = i->get();        
         if ( non_terminal_symbol && non_terminal_symbol != error_symbol_ )
         {
-            ParserSymbol* terminal_symbol = non_terminal_symbol->get_implicit_terminal();
+            LalrSymbol* terminal_symbol = non_terminal_symbol->get_implicit_terminal();
             if ( terminal_symbol )
             {       
                 SWEET_ASSERT( terminal_symbol != non_terminal_symbol );
@@ -608,7 +608,7 @@ void ParserGenerator::calculate_implicit_terminal_symbols()
         }
     }
     
-    vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin();
+    vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin();
     while ( i != symbols_.end() )
     {
         if ( !i->get() )
@@ -626,15 +626,15 @@ void ParserGenerator::calculate_implicit_terminal_symbols()
 // Calculate the precedence of each production that hasn't had precedence
 // set explicitly as the precedence of its rightmost terminal.
 */
-void ParserGenerator::calculate_precedence_of_productions()
+void LalrGenerator::calculate_precedence_of_productions()
 {
-    for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        ParserProduction* production = i->get();
+        LalrProduction* production = i->get();
         SWEET_ASSERT( production );       
         if ( production->get_precedence() == 0 )
         {
-            const ParserSymbol* symbol = production->find_rightmost_terminal_symbol();
+            const LalrSymbol* symbol = production->find_rightmost_terminal_symbol();
             if ( symbol )
             {
                 production->set_precedence_symbol( symbol );
@@ -646,12 +646,12 @@ void ParserGenerator::calculate_precedence_of_productions()
 /**
 // Calculate the index for each symbol.
 */
-void ParserGenerator::calculate_symbol_indices()
+void LalrGenerator::calculate_symbol_indices()
 {
     int index = 0;
-    for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        ParserSymbol* symbol = i->get();
+        LalrSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         symbol->set_index( index );
         ++index;
@@ -659,18 +659,18 @@ void ParserGenerator::calculate_symbol_indices()
 }
 
 /**
-// Calculate the first position sets for each ParserSymbol until no more 
+// Calculate the first position sets for each LalrSymbol until no more 
 // terminals can be added to any first position sets.
 */
-void ParserGenerator::calculate_first()
+void LalrGenerator::calculate_first()
 {
     int added = 1;
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            ParserSymbol* symbol = i->get();
+            LalrSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             added += symbol->calculate_first();
         }
@@ -678,10 +678,10 @@ void ParserGenerator::calculate_first()
 }
 
 /**
-// Calculate the follow position sets for each ParserSymbol until no more 
+// Calculate the follow position sets for each LalrSymbol until no more 
 // terminals can be added to any follow position sets.
 */
-void ParserGenerator::calculate_follow()
+void LalrGenerator::calculate_follow()
 {
     start_symbol_->add_symbol_to_follow( end_symbol_ );
 
@@ -689,9 +689,9 @@ void ParserGenerator::calculate_follow()
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<unique_ptr<ParserSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            ParserSymbol* symbol = i->get();
+            LalrSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             added += symbol->calculate_follow();
         }
@@ -711,7 +711,7 @@ void ParserGenerator::calculate_follow()
 // @param symbols
 //  The symbols in the grammar.
 */
-void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const ParserSymbol* end_symbol, const std::vector<std::unique_ptr<ParserSymbol>>& symbols )
+void LalrGenerator::generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -719,38 +719,38 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
 
     if ( !start_symbol->get_productions().empty() )
     {
-        std::shared_ptr<ParserState> start_state( new ParserState() );
+        std::shared_ptr<LalrState> start_state( new LalrState() );
         start_state->add_item( start_symbol->get_productions().front(), 0 );
         closure( start_state );
         states_.insert( start_state );
         start_state_ = start_state.get();
 
-        set<const ParserSymbol*> lookahead_symbols;
-        lookahead_symbols.insert( (ParserSymbol*) end_symbol );
+        set<const LalrSymbol*> lookahead_symbols;
+        lookahead_symbols.insert( (LalrSymbol*) end_symbol );
         start_state->add_lookahead_symbols( start_symbol->get_productions().front(), 0, lookahead_symbols );
         
         int added = 1;
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                const std::shared_ptr<ParserState>& state = *i;
+                const std::shared_ptr<LalrState>& state = *i;
                 SWEET_ASSERT( state );
 
                 if ( !state->is_processed() )
                 {
                     state->set_processed( true );
-                    for ( vector<unique_ptr<ParserSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                    for ( vector<unique_ptr<LalrSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                     {
-                        ParserSymbol* symbol = j->get();
+                        LalrSymbol* symbol = j->get();
                         SWEET_ASSERT( symbol );
                         if ( symbol != end_symbol )
                         {
-                            std::shared_ptr<ParserState> goto_state = goto_( state, *symbol );
+                            std::shared_ptr<LalrState> goto_state = goto_( state, *symbol );
                             if ( !goto_state->get_items().empty() )
                             {                    
-                                std::shared_ptr<ParserState> actual_goto_state = *states_.insert( goto_state ).first;
+                                std::shared_ptr<LalrState> actual_goto_state = *states_.insert( goto_state ).first;
                                 added += goto_state == actual_goto_state ? 1 : 0;
                                 state->add_transition( symbol, actual_goto_state.get() );
                             }
@@ -766,9 +766,9 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                ParserState* state = i->get();
+                LalrState* state = i->get();
                 SWEET_ASSERT( state );
                 added += lookahead_closure( state );
                 added += lookahead_goto( state );
@@ -783,12 +783,12 @@ void ParserGenerator::generate_states( const ParserSymbol* start_symbol, const P
 /**
 // Generate indices for states.
 */
-void ParserGenerator::generate_indices_for_states()
+void LalrGenerator::generate_indices_for_states()
 {
     int index = 0;
-    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        ParserState* state = i->get();
+        LalrState* state = i->get();
         SWEET_ASSERT( state );
         state->set_index( index );
         ++index;
@@ -798,21 +798,21 @@ void ParserGenerator::generate_indices_for_states()
 /**
 // Generate reduction transitions.
 */
-void ParserGenerator::generate_reduce_transitions()
+void LalrGenerator::generate_reduce_transitions()
 {
-    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        ParserState* state = i->get();
+        LalrState* state = i->get();
         SWEET_ASSERT( state );
             
-        for ( std::set<ParserItem>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
+        for ( std::set<LalrItem>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
         {
             if ( item->is_dot_at_end() )
             {
-                const set<const ParserSymbol*>& symbols = item->get_lookahead_symbols();
-                for ( set<const ParserSymbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                const set<const LalrSymbol*>& symbols = item->get_lookahead_symbols();
+                for ( set<const LalrSymbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                 {
-                    const ParserSymbol* symbol = *j;
+                    const LalrSymbol* symbol = *j;
                     SWEET_ASSERT( symbol );
                     generate_reduce_transition( state, symbol, item->get_production() );
                 }
@@ -825,21 +825,21 @@ void ParserGenerator::generate_reduce_transitions()
 // Generate a reduction transition.
 //
 // @param state
-//  The ParserState that the reduction occurs from.
+//  The LalrState that the reduction occurs from.
 //
 // @param symbol
-//  The ParserSymbol that the reduction is to be performed on.
+//  The LalrSymbol that the reduction is to be performed on.
 //
 // @param production
-//  The ParserProduction that is to be reduced.
+//  The LalrProduction that is to be reduced.
 */
-void ParserGenerator::generate_reduce_transition( ParserState* state, const ParserSymbol* symbol, const ParserProduction* production )
+void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( production );
 
-    ParserTransition* transition = state->find_transition_by_symbol( symbol );
+    LalrTransition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
         state->add_transition( symbol, production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
@@ -885,11 +885,11 @@ void ParserGenerator::generate_reduce_transition( ParserState* state, const Pars
 /**
 // Generate indices for the transitions in each state.
 */
-void ParserGenerator::generate_indices_for_transitions()
+void LalrGenerator::generate_indices_for_transitions()
 {
-    for ( std::set<std::shared_ptr<ParserState>, shared_ptr_less<ParserState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        ParserState* state = i->get();
+        LalrState* state = i->get();
         SWEET_ASSERT( state );
         state->generate_indices_for_transitions();        
     }
