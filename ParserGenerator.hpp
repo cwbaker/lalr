@@ -69,11 +69,10 @@ class ParserGenerator
         const ParserSymbol* error_symbol();
         ParserState* start_state();
         int errors() const;
-
-        void fire_error( int line, int error, const char* format, ... );
-        void fire_printf( const char* format, ... ) const;
                 
     private:
+        void fire_error( int line, int error, const char* format, ... );
+        void fire_printf( const char* format, ... ) const;
         void generate( ParserGrammar& grammar );
         std::set<const ParserSymbol*> lookahead( const ParserItem& item ) const;
         void closure( const std::shared_ptr<ParserState>& state );
