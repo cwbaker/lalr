@@ -60,9 +60,6 @@ public:
     void symbol( ParserSymbol* symbol );
     void action( ParserAction* action );
     void precedence_symbol( ParserSymbol* symbol );
-
-    void print() const;
-    void print_positions( const std::set<int>& positions ) const;
 };
 
 }
