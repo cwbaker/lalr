@@ -227,23 +227,23 @@ void ParserGenerator::fire_printf( const char* format, ... ) const
 */
 void ParserGenerator::generate( ParserGrammar& grammar )
 {
-    grammar.calculate_identifiers();
-    grammar.check_for_undefined_symbol_errors( this );
-    grammar.check_for_unreferenced_symbol_errors( this );
-    grammar.check_for_error_symbol_on_left_hand_side_errors( this );    
+    identifier_ = grammar.identifier();
+    actions_.swap( grammar.actions() );
+    productions_.swap( grammar.productions() );
+    symbols_.swap( grammar.symbols() );
+    start_symbol_ = grammar.start_symbol();
+    end_symbol_ = grammar.end_symbol();
+    error_symbol_ = grammar.error_symbol();
+    states_.clear();
+    start_state_ = NULL;
+
+    calculate_identifiers();
+    check_for_undefined_symbol_errors();
+    check_for_unreferenced_symbol_errors();
+    check_for_error_symbol_on_left_hand_side_errors();    
 
     if ( errors_ == 0 )
-    {
-        identifier_ = grammar.identifier();
-        actions_.swap( grammar.actions() );
-        productions_.swap( grammar.productions() );
-        symbols_.swap( grammar.symbols() );
-        start_symbol_ = grammar.start_symbol();
-        end_symbol_ = grammar.end_symbol();
-        error_symbol_ = grammar.error_symbol();
-        states_.clear();
-        start_state_ = NULL;
-        
+    {        
         calculate_terminal_and_non_terminal_symbols();
         calculate_implicit_terminal_symbols();
         calculate_first();
@@ -458,6 +458,93 @@ void ParserGenerator::replace_references_to_symbol( ParserSymbol* to_symbol, Par
         ParserProduction* production = i->get();
         SWEET_ASSERT( production );
         production->replace_references_to_symbol( to_symbol, with_symbol );
+    }
+}
+
+/**
+// Check for symbols in the grammar that are referenced but never defined.
+*/
+void ParserGenerator::check_for_undefined_symbol_errors()
+{
+    if ( errors() == 0 )
+    {
+        for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        {
+            const ParserSymbol* symbol = i->get();
+            SWEET_ASSERT( symbol );
+            if ( symbol->get_type() == SYMBOL_NON_TERMINAL && symbol->get_productions().empty() )
+            {
+                fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str() );
+            }
+        }
+    }
+}
+
+/**
+// Check for symbols in the grammar that are defined but never referenced.
+//
+// @param generator
+//  The ParserGenerator for fire any errors from (assumed not null).
+*/
+void ParserGenerator::check_for_unreferenced_symbol_errors()
+{
+    if ( errors() == 0 )
+    {
+        for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        {
+            const ParserSymbol* symbol = i->get();
+            SWEET_ASSERT( symbol );
+            
+            int references = 0;            
+            if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
+            {
+                for ( vector<unique_ptr<ParserProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+                {
+                    const ParserProduction* production = i->get();
+                    SWEET_ASSERT( production );
+                    if ( production->get_symbol()->get_type() != SYMBOL_TERMINAL )
+                    {
+                        references += production->count_references_to_symbol( symbol );
+                    }
+                }
+
+                if ( references == 0 )
+                {
+                    fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->get_identifier().c_str(), symbol->get_lexeme().c_str() );
+                }
+            }
+        }
+    }
+}
+
+/**
+// Check for the error symbol being used in the left hand side of a 
+// production.
+//
+// @param generator
+//  The ParserGenerator for fire any errors from (assumed not null).
+*/
+void ParserGenerator::check_for_error_symbol_on_left_hand_side_errors()
+{
+    SWEET_ASSERT( error_symbol_ );
+
+    const vector<ParserProduction*>& productions = error_symbol_->get_productions();
+    if ( !productions.empty() )
+    {
+        fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
+    }
+}
+
+/**
+// Calculate identifiers for all symbols.
+*/
+void ParserGenerator::calculate_identifiers()
+{
+    for ( vector<unique_ptr<ParserSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        ParserSymbol* symbol = i->get();
+        SWEET_ASSERT( symbol );
+        symbol->calculate_identifier();
     }
 }
 
