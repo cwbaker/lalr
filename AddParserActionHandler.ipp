@@ -35,7 +35,7 @@ AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::AddParserAc
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 const AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>& 
-AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::default_action( LalrActionFunction function ) const
+AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::default_action( ParserActionFunction function ) const
 {
     SWEET_ASSERT( parser_ );
     parser_->set_default_action_handler( function );
@@ -58,7 +58,7 @@ AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::default_act
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 const AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>& 
-AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::operator()( const char* identifier, LalrActionFunction function ) const
+AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::operator()( const char* identifier, ParserActionFunction function ) const
 {
     SWEET_ASSERT( identifier );
     SWEET_ASSERT( parser_ );

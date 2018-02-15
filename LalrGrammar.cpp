@@ -143,6 +143,7 @@ LalrSymbol* LalrGrammar::symbol( const GrammarSymbol* grammar_symbol )
     LalrSymbol* symbol = LalrGrammar::symbol( type, grammar_symbol->lexeme(), 0 );
     symbol->set_associativity( grammar_symbol->associativity() );
     symbol->set_precedence( grammar_symbol->precedence() );
+    symbol->set_lexeme_type( grammar_symbol->lexeme_type() );
     return symbol;
 }
 

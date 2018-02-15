@@ -9,7 +9,7 @@ namespace sweet
 namespace lalr
 {
 
-class LalrSymbol;
+class ParserSymbol;
 template <class Iterator, class UserData, class Char, class Traits, class Allocator> class Parser;
 
 /**
@@ -18,14 +18,14 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 class AddParserActionHandler
 {
-    typedef std::function<UserData (const LalrSymbol* symbol, const ParserNode<UserData, Char, Traits, Allocator>* start, const ParserNode<UserData, Char, Traits, Allocator>* finish)> LalrActionFunction;
+    typedef std::function<UserData (const ParserSymbol* symbol, const ParserNode<UserData, Char, Traits, Allocator>* start, const ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
 
     Parser<Iterator, UserData, Char, Traits, Allocator>* parser_; ///< The Parser to add handlers to.
 
     public:
         AddParserActionHandler( Parser<Iterator, UserData, Char, Traits, Allocator>* parser );
-        const AddParserActionHandler& default_action( LalrActionFunction function ) const;
-        const AddParserActionHandler& operator()( const char* identifier, LalrActionFunction function ) const;
+        const AddParserActionHandler& default_action( ParserActionFunction function ) const;
+        const AddParserActionHandler& operator()( const char* identifier, ParserActionFunction function ) const;
 };
 
 }

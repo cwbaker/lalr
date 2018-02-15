@@ -20,9 +20,13 @@ class GrammarSymbol;
 class GrammarProduction;
 class GrammarAction;
 class GrammarNil;
+class ParserErrorPolicy;
+class LexerErrorPolicy;
+class ParserStateMachine;
 
 class Grammar
 {
+    std::string identifier_;
     std::vector<std::shared_ptr<GrammarDirective>> directives_; ///< The directives in the grammar.
     std::vector<std::shared_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::shared_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
@@ -55,6 +59,7 @@ public:
     Grammar& operator[]( const char* identifier );
     Grammar& operator[]( const GrammarNil& /*nil*/ );
     void end();
+    void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
     GrammarDirective* directive( Associativity associativity );

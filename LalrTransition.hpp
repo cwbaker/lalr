@@ -1,6 +1,7 @@
-#ifndef SWEET_PARSER_PARSERTRANSITION_HPP_INCLUDED
-#define SWEET_PARSER_PARSERTRANSITION_HPP_INCLUDED
+#ifndef SWEET_LALR_LALRTRANSITION_HPP_INCLUDED
+#define SWEET_LALR_LALRTRANSITION_HPP_INCLUDED
 
+#include "TransitionType.hpp"
 #include <string>
 #include <set>
 
@@ -12,15 +13,6 @@ namespace lalr
 
 class LalrState;
 class LalrSymbol;
-
-/**
-// The type of a transition in a parser's state machine.
-*/
-enum LalrTransitionType
-{
-    TRANSITION_SHIFT, ///< Shift a terminal symbol onto the parser's stack.
-    TRANSITION_REDUCE ///< Reduce one or more symbols on the parser's stack into a non terminal.
-};
 
 /**
 // A transition in a parser's state machine.
@@ -37,7 +29,7 @@ class LalrTransition
         mutable int reduced_length_; ///< The number of symbols on the right-hand side of the reduced production.
         mutable int precedence_; ///< The precedence of the reduce production or 0 for the default precedence or no reduction.
         mutable int action_; ///< The index of the action taken on reduce or LalrAction::INVALID_INDEX if there is no action associated with the reduce.
-        mutable LalrTransitionType type_; ///< The type of transition that this is.
+        mutable TransitionType type_; ///< The type of transition that this is.
         mutable int index_; ///< The index of this transition.
 
     public:

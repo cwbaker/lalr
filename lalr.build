@@ -22,8 +22,12 @@ for _, build in build:default_builds() do
         };
 
         build:Cxx () {
+            "ParserAction.cpp",
+            "ParserErrorPolicy.cpp",
             "ParserStateMachine.cpp",
-            "ParserErrorPolicy.cpp"
+            "ParserState.cpp",
+            "ParserSymbol.cpp",
+            "ParserTransition.cpp"
         };
 
         build:Cxx () {
