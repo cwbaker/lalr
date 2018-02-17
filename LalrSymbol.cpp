@@ -23,6 +23,7 @@ LalrSymbol::LalrSymbol()
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),
+  lexeme_type_( LEXEME_NULL ),
   nullable_( false ),
   first_(),
   follow_(),
@@ -50,6 +51,7 @@ LalrSymbol::LalrSymbol( SymbolType type, const std::string& lexeme, int line )
   productions_(),
   precedence_( 0 ),
   associativity_( ASSOCIATE_NULL ),
+  lexeme_type_( LEXEME_NULL ),
   nullable_( false ),
   first_(),
   follow_(),
@@ -346,6 +348,16 @@ void LalrSymbol::set_associativity( Associativity associativity )
 Associativity LalrSymbol::get_associativity() const
 {
     return associativity_;
+}
+
+void LalrSymbol::set_lexeme_type( LexemeType lexeme_type )
+{
+    lexeme_type_ = lexeme_type;
+}
+
+LexemeType LalrSymbol::lexeme_type() const
+{
+    return lexeme_type_;
 }
 
 /**

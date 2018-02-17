@@ -33,6 +33,7 @@ class LalrSymbol : public std::enable_shared_from_this<LalrSymbol>
         std::vector<LalrProduction*> productions_; ///< The productions for this symbol.
         int precedence_; ///< The precedence of this symbol (0 indicates no precedence).
         Associativity associativity_; ///< The associativity of this symbol.
+        LexemeType lexeme_type_; ///< The type of lexeme for this terminal symbol.
         bool nullable_; ///< True if this symbol is nullable otherwise false.
         std::set<const LalrSymbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
         std::set<const LalrSymbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
@@ -72,6 +73,9 @@ class LalrSymbol : public std::enable_shared_from_this<LalrSymbol>
         void set_associativity( Associativity associativity );
         Associativity get_associativity() const;
         
+        void set_lexeme_type( LexemeType lexeme_type );
+        LexemeType lexeme_type() const;
+
         void calculate_identifier();
         int calculate_first();
         int calculate_follow();
