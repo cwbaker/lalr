@@ -44,7 +44,7 @@ class LalrTransition
         LalrTransition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         LalrTransition( const LalrSymbol* symbol, LalrState* state );
 
-        int get_type() const;
+        TransitionType get_type() const;
         LalrState* get_state() const;
         const LalrSymbol* reduced_symbol() const;
         int reduced_length() const;

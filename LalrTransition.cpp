@@ -121,7 +121,7 @@ int LalrTransition::action() const
 // @return
 //  The type of this transition.
 */
-int LalrTransition::get_type() const
+TransitionType LalrTransition::get_type() const
 {
     return type_;
 }
