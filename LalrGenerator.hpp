@@ -1,6 +1,7 @@
 #ifndef SWEET_LALR_PARSERGENERATOR_HPP_INCLUDED
 #define SWEET_LALR_PARSERGENERATOR_HPP_INCLUDED
 
+#include "LexerToken.hpp"
 #include "shared_ptr_less.hpp"
 #include <memory>
 #include <set>
@@ -28,7 +29,9 @@ class LexerErrorPolicy;
 namespace lalr
 {
 
+class LexerErrorPolicy;
 class ParserErrorPolicy;
+class ParserStateMachine;
 class LalrAction;
 class LalrSymbol;
 class LalrItem;
@@ -57,7 +60,7 @@ class LalrGenerator
     int errors_; ///< The number of errors that occured during parsing and generation.
 
     public:
-        LalrGenerator( LalrGrammar& grammar, ParserErrorPolicy* error_policy );
+        LalrGenerator( LalrGrammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
         ~LalrGenerator();
         std::string& identifier();
         std::vector<std::unique_ptr<LalrAction> >& actions();
@@ -73,7 +76,7 @@ class LalrGenerator
     private:
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
-        void generate( LalrGrammar& grammar );
+        void generate( LalrGrammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
         std::set<const LalrSymbol*> lookahead( const LalrItem& item ) const;
         void closure( const std::shared_ptr<LalrState>& state );
         std::shared_ptr<LalrState> goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol );
@@ -95,6 +98,7 @@ class LalrGenerator
         void generate_reduce_transitions();
         void generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production );
         void generate_indices_for_transitions();
+        void populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
 };
 
 }

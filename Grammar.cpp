@@ -12,11 +12,8 @@
 #include "LalrGrammar.hpp"
 #include "LalrAction.hpp"
 #include "LalrState.hpp"
-#include "ParserState.hpp"
-#include "ParserAction.hpp"
-#include "ParserSymbol.hpp"
-#include "ParserTransition.hpp"
 #include "ParserStateMachine.hpp"
+#include "ParserSymbol.hpp"
 #include "LexerStateMachine.hpp"
 #include "LexerTokenType.hpp"
 #include "assert.hpp"
@@ -270,7 +267,6 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 {
     SWEET_ASSERT( state_machine );
 
-    vector<LexerToken> tokens;
     LalrGrammar parser_grammar;
 
     const vector<shared_ptr<GrammarProduction>>& productions = productions_;
@@ -301,6 +297,8 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         parser_grammar.end_production();
     }
 
+    parser_grammar.whitespace_tokens( whitespace_tokens_ );
+
     const vector<shared_ptr<GrammarSymbol>>& symbols = symbols_;
     for ( auto i = symbols.begin(); i != symbols.end(); ++i )
     {
@@ -314,108 +312,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         }
     }
 
-    LalrGenerator generator( parser_grammar, parser_error_policy );
-    if ( generator.errors() == 0 )
-    {
-        const vector<unique_ptr<LalrAction>>& source_actions = generator.actions();
-        int actions_size = source_actions.size();
-        unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
-        for ( int i = 0; i < actions_size; ++i )
-        {
-            const LalrAction* source_action = source_actions[i].get();
-            SWEET_ASSERT( source_action );
-            ParserAction* action = &actions[i];
-            SWEET_ASSERT( action );
-            action->reset( source_action->index, source_action->identifier );
-        }
-
-        const vector<unique_ptr<LalrSymbol>>& source_symbols = generator.symbols();
-        int symbols_size = source_symbols.size();
-        unique_ptr<ParserSymbol[]> symbols( new ParserSymbol [symbols_size] );
-        for ( int i = 0; i < symbols_size; ++i )
-        {
-            const LalrSymbol* source_symbol = source_symbols[i].get();
-            SWEET_ASSERT( source_symbol );
-            ParserSymbol* symbol = &symbols[i];
-            SWEET_ASSERT( symbol );
-            symbol->reset( source_symbol->get_index(), source_symbol->get_identifier().c_str(), source_symbol->get_lexeme().c_str() );
-        }
-    
-        // Generate tokens for generating the lexical analyzer from each of 
-        // the terminal symbols in the grammar.
-        for ( int i = 0; i < symbols_size; ++i )
-        {
-            const LalrSymbol* source_symbol = source_symbols[i].get();
-            SWEET_ASSERT( source_symbol );
-            if ( source_symbol->get_type() == SYMBOL_TERMINAL )
-            {
-                const ParserSymbol* symbol = &symbols[i];
-                SWEET_ASSERT( symbol );
-                LexerTokenType token_type = source_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-                tokens.push_back( LexerToken(token_type, int(tokens.size()) + 1, symbol, symbol->lexeme) );                
-            }
-        }
-
-        const set<shared_ptr<LalrState>, shared_ptr_less<LalrState>>& source_states = generator.states();
-        int states_size = source_states.size();
-        unique_ptr<ParserState[]> states( new ParserState [states_size] );
-
-        int transitions_size = 0;
-        for ( auto i = source_states.begin(); i != source_states.end(); ++i )
-        {
-            const LalrState* source_state = i->get();
-            SWEET_ASSERT( source_state );
-            transitions_size += source_state->get_transitions().size();
-        }
-        unique_ptr<ParserTransition[]> transitions( new ParserTransition [transitions_size] );
-
-        const ParserState* start_state = nullptr;
-        int state_index = 0;
-        int transition_index = 0;
-        for ( auto i = source_states.begin(); i != source_states.end(); ++i )
-        {
-            const LalrState* source_state = i->get();
-            SWEET_ASSERT( source_state );
-            ParserState* state = &states[state_index];
-            SWEET_ASSERT( state );
-            const set<LalrTransition>& source_transitions = source_state->get_transitions();
-            state->index = state_index;
-            state->length = source_transitions.size();
-            state->transitions = &transitions[transition_index];
-            if ( source_state == generator.start_state() )
-            {
-                start_state = state;
-            }
-            for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
-            {
-                const LalrTransition* source_transition = &(*j);
-                SWEET_ASSERT( source_transition );
-                const LalrSymbol* source_symbol = source_transition->get_symbol();
-                SWEET_ASSERT( source_symbol );
-                const LalrState* state_transitioned_to = source_transition->get_state();
-                const LalrSymbol* reduced_symbol = source_transition->reduced_symbol();
-                ParserTransition* transition = &transitions[transition_index];
-                transition->symbol = &symbols[source_symbol->get_index()];
-                transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
-                transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->get_index()] : nullptr;
-                transition->reduced_length = source_transition->reduced_length();
-                transition->precedence = source_transition->precedence();
-                transition->action = source_transition->action();
-                transition->type = source_transition->get_type();
-                transition->index = transition_index;
-                ++transition_index;
-            }
-            ++state_index;
-        }
-
-        shared_ptr<LexerStateMachine> lexer_state_machine( new LexerStateMachine(identifier_, tokens, whitespace_tokens(), lexer_error_policy) );
-
-        state_machine->set_actions( actions, actions_size );
-        state_machine->set_symbols( symbols, symbols_size );
-        state_machine->set_transitions( transitions, transitions_size );
-        state_machine->set_states( states, states_size, start_state );
-        state_machine->set_lexer_state_machine( lexer_state_machine );
-    }
+    LalrGenerator generator( parser_grammar, state_machine, parser_error_policy, lexer_error_policy );
 }
 
 GrammarDirective* Grammar::directive( Associativity associativity )

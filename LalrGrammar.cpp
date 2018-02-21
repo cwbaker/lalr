@@ -31,12 +31,16 @@ using namespace sweet::lalr;
 //
 // @param symbols_reserve
 //  The number of symbols to reserve space for in this LalrGrammar.
+//
+// @param whitespace_tokens_reserve
+//  The number of whitespace tokens to reserve space for in this LalrGrammar.
 */
-LalrGrammar::LalrGrammar( size_t actions_reserve, size_t productions_reserve, size_t symbols_reserve )
+LalrGrammar::LalrGrammar( size_t actions_reserve, size_t productions_reserve, size_t symbols_reserve, size_t whitespace_tokens_reserve )
 : identifier_(),
   actions_(),
   productions_(),
   symbols_(),
+  whitespace_tokens_(),
   start_symbol_( NULL ),
   end_symbol_( NULL ),
   error_symbol_( NULL )
@@ -44,6 +48,7 @@ LalrGrammar::LalrGrammar( size_t actions_reserve, size_t productions_reserve, si
     actions_.reserve( actions_reserve );
     productions_.reserve( productions_reserve );
     symbols_.reserve( symbols_reserve );
+    whitespace_tokens_.reserve( whitespace_tokens_reserve );
     start_symbol_ = add_non_terminal( ".start", 0 );
     end_symbol_ = add_symbol( SYMBOL_END, ".end", 0 );
     error_symbol_ = add_terminal( ".error", 0 );
@@ -101,6 +106,17 @@ std::vector<std::unique_ptr<LalrProduction> >& LalrGrammar::productions()
 std::vector<std::unique_ptr<LalrSymbol> >& LalrGrammar::symbols()
 {
     return symbols_;
+}
+
+/**
+// Get the tokens skipped as whitespace by the lexer.
+//
+// @return 
+//  The tokens skipped as whitespace.
+*/
+const std::vector<LexerToken>& LalrGrammar::whitespace_tokens() const
+{
+    return whitespace_tokens_;
 }
 
 /**
@@ -185,6 +201,11 @@ LalrAction* LalrGrammar::action( const std::string& identifier )
     }
     SWEET_ASSERT( i != actions_.end() );
     return i->get();
+}
+
+void LalrGrammar::whitespace_tokens( const std::vector<LexerToken>& whitespace_tokens )
+{
+    whitespace_tokens_ = whitespace_tokens;
 }
 
 /**

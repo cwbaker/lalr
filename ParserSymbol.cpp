@@ -14,7 +14,8 @@ using namespace sweet::lalr;
 ParserSymbol::ParserSymbol()
 : index( 0 ),
   identifier( nullptr ),
-  lexeme( nullptr )
+  lexeme( nullptr ),
+  type( SYMBOL_NULL )
 {
 }
 
@@ -33,14 +34,16 @@ ParserSymbol::~ParserSymbol()
     }
 }
 
-void ParserSymbol::reset( int iindex, const char* iidentifier, const char* llexeme )
+void ParserSymbol::reset( int iindex, const char* iidentifier, const char* llexeme, SymbolType ttype )
 {
     SWEET_ASSERT( !identifier );
     SWEET_ASSERT( !lexeme );
     SWEET_ASSERT( iindex >= 0 );
     SWEET_ASSERT( iidentifier );
     SWEET_ASSERT( llexeme );
+    SWEET_ASSERT( ttype >= SYMBOL_NULL && ttype < SYMBOL_TYPE_COUNT );
     index = iindex;
     identifier = strdup( iidentifier );
     lexeme = strdup( llexeme );
+    type = ttype;
 }
