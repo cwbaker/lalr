@@ -18,7 +18,7 @@ class GrammarBuilder;
 class GrammarDirective;
 class GrammarSymbol;
 class GrammarProduction;
-class GrammarAction;
+class LalrAction;
 class GrammarNil;
 class ParserErrorPolicy;
 class LexerErrorPolicy;
@@ -30,7 +30,7 @@ class Grammar
     std::vector<std::shared_ptr<GrammarDirective>> directives_; ///< The directives in the grammar.
     std::vector<std::shared_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::shared_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
-    std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
+    std::vector<std::unique_ptr<LalrAction>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     GrammarDirective* active_directive_;
@@ -43,7 +43,7 @@ public:
     const std::vector<std::shared_ptr<GrammarDirective>>& directives() const;
     const std::vector<std::shared_ptr<GrammarSymbol>>& symbols() const;
     const std::vector<std::shared_ptr<GrammarProduction>>& productions() const;
-    const std::vector<std::unique_ptr<GrammarAction>>& actions() const;
+    const std::vector<std::unique_ptr<LalrAction>>& actions() const;
     const std::vector<LexerToken>& whitespace_tokens() const;
     Grammar& begin();
     Grammar& left();
@@ -70,7 +70,7 @@ private:
     GrammarSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
     GrammarSymbol* error_symbol();
     GrammarProduction* production( GrammarSymbol* symbol );
-    GrammarAction* action( const char* id );
+    LalrAction* action( const char* id );
 };
 
 }

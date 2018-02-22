@@ -7,7 +7,7 @@
 #include "GrammarDirective.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
-#include "GrammarAction.hpp"
+#include "LalrAction.hpp"
 #include "LalrGenerator.hpp"
 #include "LalrGrammar.hpp"
 #include "LalrAction.hpp"
@@ -59,7 +59,7 @@ const std::vector<std::shared_ptr<GrammarProduction>>& Grammar::productions() co
     return productions_;
 }
 
-const std::vector<std::unique_ptr<GrammarAction>>& Grammar::actions() const
+const std::vector<std::unique_ptr<LalrAction>>& Grammar::actions() const
 {
     return actions_;
 }
@@ -293,7 +293,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         {
             parser_grammar.symbol( parser_grammar.symbol(*k) );
         }
-        GrammarAction* action = production->action();
+        LalrAction* action = production->action();
         if ( action )
         {
            parser_grammar.action( parser_grammar.action(action->identifier()) );
@@ -381,17 +381,18 @@ GrammarProduction* Grammar::production( GrammarSymbol* symbol )
     return production.get();
 }
 
-GrammarAction* Grammar::action( const char* identifier )
+LalrAction* Grammar::action( const char* identifier )
 {
     SWEET_ASSERT( identifier );
-    vector<unique_ptr<GrammarAction>>::const_iterator i = actions_.begin();
+    vector<unique_ptr<LalrAction>>::const_iterator i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier() != identifier )
     {
         ++i;
     }
     if ( i == actions_.end() )
     {
-        unique_ptr<GrammarAction> action( new GrammarAction(identifier) );
+        int index = int(actions_.size());
+        unique_ptr<LalrAction> action( new LalrAction(index, identifier) );
         actions_.push_back( move(action) );
         return action.get();
     }

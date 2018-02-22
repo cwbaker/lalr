@@ -41,7 +41,7 @@ GrammarSymbol* GrammarProduction::precedence_symbol() const
     return precedence_symbol_;
 }
 
-GrammarAction* GrammarProduction::action() const
+LalrAction* GrammarProduction::action() const
 {
     return action_;
 }
@@ -67,7 +67,7 @@ void GrammarProduction::set_precedence_symbol( GrammarSymbol* precedence_symbol 
     precedence_symbol_ = precedence_symbol;
 }
 
-void GrammarProduction::set_action( GrammarAction* action )
+void GrammarProduction::set_action( LalrAction* action )
 {
     action_ = action;
 }
