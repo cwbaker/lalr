@@ -1,5 +1,5 @@
-#ifndef SWEET_PARSER_GRAMMAR_HPP_INCLUDED
-#define SWEET_PARSER_GRAMMAR_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMAR_HPP_INCLUDED
+#define SWEET_LALR_GRAMMAR_HPP_INCLUDED
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
