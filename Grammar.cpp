@@ -40,6 +40,10 @@ Grammar::Grammar()
 {
 }
 
+Grammar::~Grammar()
+{
+}
+
 const std::vector<std::shared_ptr<GrammarDirective>>& Grammar::directives() const
 {
     return directives_;
@@ -53,6 +57,11 @@ const std::vector<std::shared_ptr<GrammarSymbol>>& Grammar::symbols() const
 const std::vector<std::shared_ptr<GrammarProduction>>& Grammar::productions() const
 {
     return productions_;
+}
+
+const std::vector<std::unique_ptr<GrammarAction>>& Grammar::actions() const
+{
+    return actions_;
 }
 
 const std::vector<LexerToken>& Grammar::whitespace_tokens() const
@@ -375,15 +384,15 @@ GrammarProduction* Grammar::production( GrammarSymbol* symbol )
 GrammarAction* Grammar::action( const char* identifier )
 {
     SWEET_ASSERT( identifier );
-    vector<shared_ptr<GrammarAction>>::const_iterator i = actions_.begin();
+    vector<unique_ptr<GrammarAction>>::const_iterator i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier() != identifier )
     {
         ++i;
     }
     if ( i == actions_.end() )
     {
-        shared_ptr<GrammarAction> action( new GrammarAction(identifier) );
-        actions_.push_back( action );
+        unique_ptr<GrammarAction> action( new GrammarAction(identifier) );
+        actions_.push_back( move(action) );
         return action.get();
     }
     return i->get();
