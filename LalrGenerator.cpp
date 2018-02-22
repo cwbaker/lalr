@@ -54,12 +54,6 @@ LalrGenerator::LalrGenerator( LalrGrammar& grammar, ParserStateMachine* parser_s
 
 LalrGenerator::~LalrGenerator()
 {
-    for ( auto i = actions_.begin(); i != actions_.end(); ++i )
-    {
-        LalrAction* action = i->get();
-        SWEET_ASSERT( action );
-        action->destroy();
-    }
 }
 
 /**
@@ -919,7 +913,7 @@ void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>
         SWEET_ASSERT( source_action );
         ParserAction* action = &actions[i];
         SWEET_ASSERT( action );
-        action->reset( source_action->index, source_action->identifier );
+        action->reset( source_action->index(), source_action->identifier().c_str() );
     }
 
     int symbols_size = symbols_.size();

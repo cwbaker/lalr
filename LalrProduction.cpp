@@ -220,7 +220,7 @@ const LalrAction* LalrProduction::get_action() const
 
 int LalrProduction::action_index() const
 {
-    return action_ ? action_->index : LalrAction::INVALID_INDEX;
+    return action_ ? action_->index() : LalrAction::INVALID_INDEX;
 }
 
 /**

@@ -14,14 +14,14 @@ namespace lalr
 */
 class LalrAction
 {
-    public:
-        static const int INVALID_INDEX = -1;
+    int index_; ///< The index of this action.
+    std::string identifier_; ///< The identifier of this action.
 
-        int index; ///< The index of this action.
-        const char* identifier; ///< The identifier of this action.
-    
-        LalrAction( int iindex, const char* iidentifier );
-        void destroy();
+public:
+    LalrAction( int index, const std::string& identifier );
+    int index() const;
+    const std::string& identifier() const;
+    static const int INVALID_INDEX = -1;
 };
 
 }

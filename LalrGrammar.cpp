@@ -56,12 +56,6 @@ LalrGrammar::LalrGrammar( size_t actions_reserve, size_t productions_reserve, si
 
 LalrGrammar::~LalrGrammar()
 {
-    for ( auto i = actions_.begin(); i != actions_.end(); ++i )
-    {
-        LalrAction* action = i->get();
-        SWEET_ASSERT( action );
-        action->destroy();
-    }
 }
 
 /**
@@ -191,7 +185,7 @@ LalrSymbol* LalrGrammar::non_terminal( const std::string& identifier, int line )
 LalrAction* LalrGrammar::action( const std::string& identifier )
 {
     auto i = actions_.begin();
-    while ( i != actions_.end() && (*i)->identifier != identifier )
+    while ( i != actions_.end() && (*i)->identifier() != identifier )
     {
         ++i;
     }
@@ -280,7 +274,7 @@ LalrAction* LalrGrammar::add_action( const std::string& identifier )
     if ( !identifier.empty() )
     {
         std::vector<std::unique_ptr<LalrAction> >::const_iterator i = actions_.begin();
-        while ( i != actions_.end() && (*i)->identifier != identifier )
+        while ( i != actions_.end() && (*i)->identifier() != identifier )
         {
             ++i;
         }        
