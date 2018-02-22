@@ -21,7 +21,6 @@
 using std::string;
 using std::vector;
 using std::set;
-using std::shared_ptr;
 using std::unique_ptr;
 using namespace sweet;
 using namespace sweet::lalr;
@@ -44,17 +43,17 @@ Grammar::~Grammar()
 {
 }
 
-const std::vector<std::shared_ptr<GrammarDirective>>& Grammar::directives() const
+const std::vector<std::unique_ptr<GrammarDirective>>& Grammar::directives() const
 {
     return directives_;
 }
 
-const std::vector<std::shared_ptr<GrammarSymbol>>& Grammar::symbols() const
+const std::vector<std::unique_ptr<GrammarSymbol>>& Grammar::symbols() const
 {
     return symbols_;
 }
 
-const std::vector<std::shared_ptr<GrammarProduction>>& Grammar::productions() const
+const std::vector<std::unique_ptr<GrammarProduction>>& Grammar::productions() const
 {
     return productions_;
 }
@@ -278,7 +277,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 
     LalrGrammar parser_grammar;
 
-    const vector<shared_ptr<GrammarProduction>>& productions = productions_;
+    const vector<unique_ptr<GrammarProduction>>& productions = productions_;
     for ( auto i = productions.begin(); i != productions.end(); ++i )
     {
         const GrammarProduction* production = i->get();
@@ -308,7 +307,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 
     parser_grammar.whitespace_tokens( whitespace_tokens_ );
 
-    const vector<shared_ptr<GrammarSymbol>>& symbols = symbols_;
+    const vector<unique_ptr<GrammarSymbol>>& symbols = symbols_;
     for ( auto i = symbols.begin(); i != symbols.end(); ++i )
     {
         const GrammarSymbol* symbol = i->get();
@@ -326,9 +325,9 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 
 GrammarDirective* Grammar::directive( Associativity associativity )
 {
-    shared_ptr<GrammarDirective> directive( new GrammarDirective(associativity) );
-    directives_.push_back( directive );
-    return directive.get();
+    unique_ptr<GrammarDirective> directive( new GrammarDirective(associativity) );
+    directives_.push_back( move(directive) );
+    return directives_.back().get();
 }
 
 GrammarSymbol* Grammar::symbol( char literal )
@@ -351,18 +350,18 @@ GrammarSymbol* Grammar::error_symbol()
 GrammarSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type )
 {
     SWEET_ASSERT( lexeme );
-    vector<shared_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
+    vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
     {
         ++i;
     }
     if ( i == symbols_.end() )
     {
-        shared_ptr<GrammarSymbol> symbol( new GrammarSymbol(lexeme) );
+        unique_ptr<GrammarSymbol> symbol( new GrammarSymbol(lexeme) );
         symbol->set_lexeme_type( lexeme_type );
         symbol->set_symbol_type( symbol_type );
-        symbols_.push_back( symbol );
-        return symbol.get();
+        symbols_.push_back( move(symbol) );
+        return symbols_.back().get();
     }
     GrammarSymbol* symbol = i->get();
     SWEET_ASSERT( symbol );
@@ -375,10 +374,10 @@ GrammarProduction* Grammar::production( GrammarSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     int index = int(productions_.size());
-    shared_ptr<GrammarProduction> production( new GrammarProduction(index, symbol) );
-    productions_.push_back( production );
-    symbol->append_production( production.get() );
-    return production.get();
+    unique_ptr<GrammarProduction> production( new GrammarProduction(index, symbol) );
+    productions_.push_back( move(production) );
+    symbol->append_production( productions_.back().get() );
+    return productions_.back().get();
 }
 
 LalrAction* Grammar::action( const char* identifier )
@@ -394,7 +393,7 @@ LalrAction* Grammar::action( const char* identifier )
         int index = int(actions_.size());
         unique_ptr<LalrAction> action( new LalrAction(index, identifier) );
         actions_.push_back( move(action) );
-        return action.get();
+        return actions_.back().get();
     }
     return i->get();
 }
