@@ -194,7 +194,7 @@ Grammar& Grammar::operator()( const char* regex )
     return *this;
 }
 
-Grammar& Grammar::operator()( const GrammarNil& /*nil*/ )
+Grammar& Grammar::operator()( const LalrNil& /*nil*/ )
 {
     SWEET_ASSERT( active_symbol_ );
     if ( active_symbol_ )
@@ -235,7 +235,7 @@ Grammar& Grammar::operator[]( const char* identifier )
     return *this;
 }
 
-Grammar& Grammar::operator[]( const GrammarNil& /*nil*/ )
+Grammar& Grammar::operator[]( const LalrNil& /*nil*/ )
 {
     active_production_ = nullptr;
     return *this;
