@@ -396,10 +396,18 @@ LalrSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolT
 LalrProduction* Grammar::production( LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
-    int index = int(productions_.size());
-    unique_ptr<LalrProduction> production( new LalrProduction(index, symbol, -1, nullptr) );
+    if ( productions_.empty() )
+    {
+        SWEET_ASSERT( start_symbol_ );
+        unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), start_symbol_, 0, NULL) );
+        production->append_symbol( symbol );
+        start_symbol_->append_production( production.get() );
+        productions_.push_back( move(production) );
+    }
+
+    unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), symbol, -1, nullptr) );
+    symbol->append_production( production.get() );
     productions_.push_back( move(production) );
-    symbol->append_production( productions_.back().get() );
     return productions_.back().get();
 }
 
