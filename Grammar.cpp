@@ -4,7 +4,7 @@
 //
 
 #include "Grammar.hpp"
-#include "GrammarDirective.hpp"
+#include "LalrDirective.hpp"
 #include "LalrSymbol.hpp"
 #include "LalrProduction.hpp"
 #include "LalrAction.hpp"
@@ -43,7 +43,7 @@ Grammar::~Grammar()
 {
 }
 
-const std::vector<std::unique_ptr<GrammarDirective>>& Grammar::directives() const
+const std::vector<std::unique_ptr<LalrDirective>>& Grammar::directives() const
 {
     return directives_;
 }
@@ -246,7 +246,7 @@ void Grammar::end()
     int precedence = 1;
     for ( auto i = directives_.begin(); i != directives_.end(); ++i )
     {
-        const GrammarDirective* directive = i->get();
+        const LalrDirective* directive = i->get();
         SWEET_ASSERT( directive );
         const vector<LalrSymbol*>& symbols = directive->symbols();
         for ( auto j = symbols.begin(); j != symbols.end(); ++j )
@@ -323,9 +323,9 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
     LalrGenerator generator( parser_grammar, state_machine, parser_error_policy, lexer_error_policy );
 }
 
-GrammarDirective* Grammar::directive( Associativity associativity )
+LalrDirective* Grammar::directive( Associativity associativity )
 {
-    unique_ptr<GrammarDirective> directive( new GrammarDirective(associativity) );
+    unique_ptr<LalrDirective> directive( new LalrDirective(associativity) );
     directives_.push_back( move(directive) );
     return directives_.back().get();
 }
