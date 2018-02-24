@@ -45,7 +45,7 @@ public:
     LalrSymbol* end_symbol() const;
     LalrSymbol* error_symbol() const;
 
-    LalrSymbol* symbol( const GrammarSymbol* symbol );
+    LalrSymbol* make_symbol( const LalrSymbol* symbol );
     LalrSymbol* symbol( SymbolType type, const std::string& identifier, int line );
     LalrSymbol* terminal( const std::string& identifier, int line );
     LalrSymbol* non_terminal( const std::string& identifier, int line );

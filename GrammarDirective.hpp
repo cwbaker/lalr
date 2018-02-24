@@ -1,5 +1,5 @@
-#ifndef SWEET_PARSER_GRAMMARDIRECTIVE_HPP_INCLUDED
-#define SWEET_PARSER_GRAMMARDIRECTIVE_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMARDIRECTIVE_HPP_INCLUDED
+#define SWEET_LALR_GRAMMARDIRECTIVE_HPP_INCLUDED
 
 #include "Associativity.hpp"
 #include <vector>
@@ -10,18 +10,18 @@ namespace sweet
 namespace lalr
 {
 
-class GrammarSymbol;
+class LalrSymbol;
 
 class GrammarDirective
 {
     Associativity associativity_;
-    std::vector<GrammarSymbol*> symbols_;
+    std::vector<LalrSymbol*> symbols_;
 
 public:
     GrammarDirective( Associativity associativity );
     Associativity associativity() const;
-    const std::vector<GrammarSymbol*>& symbols() const;
-    void append_symbol( GrammarSymbol* symbol );
+    const std::vector<LalrSymbol*>& symbols() const;
+    void append_symbol( LalrSymbol* symbol );
 };
 
 }

@@ -1,10 +1,10 @@
 //
-// GrammarSymbol.cpp
+// LalrSymbol.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "GrammarSymbol.hpp"
-#include "GrammarProduction.hpp"
+#include "LalrSymbol.hpp"
+#include "LalrProduction.hpp"
 #include "assert.hpp"
 
 using std::set;
@@ -12,7 +12,7 @@ using std::vector;
 using std::shared_ptr;
 using namespace sweet::lalr;
 
-GrammarSymbol::GrammarSymbol( const char* lexeme )
+LalrSymbol::LalrSymbol( const std::string& lexeme )
 : lexeme_( lexeme ),
   identifier_(),
   symbol_type_( SYMBOL_NULL ),
@@ -23,62 +23,62 @@ GrammarSymbol::GrammarSymbol( const char* lexeme )
 {
 }
 
-const std::string& GrammarSymbol::lexeme() const
+const std::string& LalrSymbol::lexeme() const
 {
     return lexeme_;
 }
 
-const std::string& GrammarSymbol::identifier() const
+const std::string& LalrSymbol::identifier() const
 {
     return identifier_;
 }
 
-SymbolType GrammarSymbol::symbol_type() const
+SymbolType LalrSymbol::symbol_type() const
 {
     return symbol_type_;
 }
 
-LexemeType GrammarSymbol::lexeme_type() const
+LexemeType LalrSymbol::lexeme_type() const
 {
     return lexeme_type_;
 }
 
-Associativity GrammarSymbol::associativity() const
+Associativity LalrSymbol::associativity() const
 {
     return associativity_;
 }
 
-int GrammarSymbol::precedence() const
+int LalrSymbol::precedence() const
 {
     return precedence_;
 }
 
-int GrammarSymbol::line() const
+int LalrSymbol::line() const
 {
     return line_;
 }
 
-int GrammarSymbol::index() const
+int LalrSymbol::index() const
 {
     return index_;
 }
 
-bool GrammarSymbol::nullable() const
+bool LalrSymbol::nullable() const
 {
     return nullable_;
 }
 
-const std::set<const GrammarSymbol*>& GrammarSymbol::first() const
+const std::set<const LalrSymbol*>& LalrSymbol::first() const
 {
     return first_;
 }
 
-const std::set<const GrammarSymbol*>& GrammarSymbol::follow() const
+const std::set<const LalrSymbol*>& LalrSymbol::follow() const
 {
     return follow_;
 }
 
-const std::vector<GrammarProduction*>& GrammarSymbol::productions() const
+const std::vector<LalrProduction*>& LalrSymbol::productions() const
 {
     return productions_;
 }
@@ -98,16 +98,16 @@ const std::vector<GrammarProduction*>& GrammarSymbol::productions() const
 //  The implict terminal for this symbol or null if this symbol doesn't have
 //  an implicit terminal.
 */
-GrammarSymbol* GrammarSymbol::implicit_terminal() const
+LalrSymbol* LalrSymbol::implicit_terminal() const
 {
-    GrammarSymbol* implicit_terminal_symbol = nullptr;    
+    LalrSymbol* implicit_terminal_symbol = nullptr;    
     if ( productions_.size() == 1 )
     {
-        const GrammarProduction* production = productions_.front();
+        const LalrProduction* production = productions_.front();
         SWEET_ASSERT( production );
         if ( production->length() == 1 && !production->action() )
         {
-            GrammarSymbol* symbol = production->symbols().front();
+            LalrSymbol* symbol = production->symbols().front();
             if ( symbol->symbol_type() == SYMBOL_TERMINAL )
             {
                 implicit_terminal_symbol = symbol;
@@ -118,58 +118,58 @@ GrammarSymbol* GrammarSymbol::implicit_terminal() const
 }
 
 
-void GrammarSymbol::set_lexeme( const std::string& lexeme )
+void LalrSymbol::set_lexeme( const std::string& lexeme )
 {
     lexeme_ = lexeme;
 }
 
-void GrammarSymbol::set_identifier( const std::string& identifier )
+void LalrSymbol::set_identifier( const std::string& identifier )
 {
     identifier_ = identifier;
 }
 
-void GrammarSymbol::set_symbol_type( SymbolType symbol_type )
+void LalrSymbol::set_symbol_type( SymbolType symbol_type )
 {
     SWEET_ASSERT( symbol_type >= SYMBOL_NULL && symbol_type < SYMBOL_TYPE_COUNT );
     symbol_type_ = symbol_type;
 }
 
-void GrammarSymbol::set_lexeme_type( LexemeType lexeme_type )
+void LalrSymbol::set_lexeme_type( LexemeType lexeme_type )
 {
     SWEET_ASSERT( lexeme_type >= LEXEME_NULL && lexeme_type < LEXEME_TYPE_COUNT );
     lexeme_type_ = lexeme_type;
 }
 
-void GrammarSymbol::set_associativity( Associativity associativity )
+void LalrSymbol::set_associativity( Associativity associativity )
 {
     SWEET_ASSERT( associativity >= ASSOCIATE_NONE && associativity <= ASSOCIATE_RIGHT );
     associativity_ = associativity;
 }
 
-void GrammarSymbol::set_precedence( int precedence )
+void LalrSymbol::set_precedence( int precedence )
 {
-    SWEET_ASSERT( precedence > 0 );
+    SWEET_ASSERT( precedence >= 0 );
     precedence_ = precedence;
 }
 
-void GrammarSymbol::set_line( int line )
+void LalrSymbol::set_line( int line )
 {
     SWEET_ASSERT( line >= 0 );
     line_ = line;
 }
 
-void GrammarSymbol::set_index( int index )
+void LalrSymbol::set_index( int index )
 {
     SWEET_ASSERT( index >= 0 );
     index_ = index;
 }
 
-void GrammarSymbol::set_nullable( bool nullable )
+void LalrSymbol::set_nullable( bool nullable )
 {
     nullable_ = nullable;
 }
 
-void GrammarSymbol::append_production( GrammarProduction* production )
+void LalrSymbol::append_production( LalrProduction* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -178,7 +178,7 @@ void GrammarSymbol::append_production( GrammarProduction* production )
 /**
 // Calculate the identifier for this symbol.
 */
-void GrammarSymbol::calculate_identifier()
+void LalrSymbol::calculate_identifier()
 {
     SWEET_ASSERT( !lexeme_.empty() );
 
@@ -361,7 +361,7 @@ void GrammarSymbol::calculate_identifier()
 //  associativity for this symbol with (assumed not null and of type 
 //  `SYMBOL_NON_TERMINAL`).
 */
-void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_symbol )
+void LalrSymbol::replace_by_non_terminal( const LalrSymbol* non_terminal_symbol )
 {
     SWEET_ASSERT( symbol_type() == SYMBOL_TERMINAL );
     SWEET_ASSERT( non_terminal_symbol );    
@@ -381,7 +381,7 @@ void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_s
 // @return
 //  The number of symbols added (0 or 1).
 */
-int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
+int LalrSymbol::add_symbol_to_first( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return first_.insert( symbol ).second ? 1 : 0;
@@ -396,7 +396,7 @@ int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*>& symbols )
+int LalrSymbol::add_symbols_to_first( const std::set<const LalrSymbol*>& symbols )
 {
     size_t original_size = first_.size();
     first_.insert( symbols.begin(), symbols.end() );
@@ -412,7 +412,7 @@ int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*>& s
 // @return
 //  The number of symbols added (0 or 1).
 */
-int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
+int LalrSymbol::add_symbol_to_follow( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return follow_.insert( symbol ).second ? 1 : 0;
@@ -427,7 +427,7 @@ int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*>& symbols )
+int LalrSymbol::add_symbols_to_follow( const std::set<const LalrSymbol*>& symbols )
 {
     size_t original_size = follow_.size();
     follow_.insert( symbols.begin(), symbols.end() );
@@ -441,21 +441,21 @@ int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*>& 
 //  The number of symbols added to the first set and plus one if nullable
 //  changed for this symbol.
 */
-int GrammarSymbol::calculate_first()
+int LalrSymbol::calculate_first()
 {
     int added = 0;
     if ( symbol_type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
-            const GrammarProduction* production = *i;
+            const LalrProduction* production = *i;
             SWEET_ASSERT( production );  
                   
-            const vector<GrammarSymbol*>& symbols = production->symbols();
-            vector<GrammarSymbol*>::const_iterator j = symbols.begin(); 
+            const vector<LalrSymbol*>& symbols = production->symbols();
+            vector<LalrSymbol*>::const_iterator j = symbols.begin(); 
             while ( j != symbols.end() && (*j)->nullable() )
             {
-                const GrammarSymbol* symbol = *j;
+                const LalrSymbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
                 ++j;
@@ -463,7 +463,7 @@ int GrammarSymbol::calculate_first()
             
             if ( j != symbols.end() )
             {
-                const GrammarSymbol* symbol = *j;
+                const LalrSymbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
             }
@@ -487,25 +487,25 @@ int GrammarSymbol::calculate_first()
 // @return
 //  The number of symbols added to the follow set.
 */
-int GrammarSymbol::calculate_follow()
+int LalrSymbol::calculate_follow()
 {
     int added = 0;
-    for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        const GrammarProduction* production = *i;
+        const LalrProduction* production = *i;
         SWEET_ASSERT( production );
                     
-        const vector<GrammarSymbol*>& symbols = production->symbols();
+        const vector<LalrSymbol*>& symbols = production->symbols();
         if ( !symbols.empty() )
         {
-            vector<GrammarSymbol*>::const_reverse_iterator j = symbols.rbegin(); 
-            GrammarSymbol* symbol = *j;
+            vector<LalrSymbol*>::const_reverse_iterator j = symbols.rbegin(); 
+            LalrSymbol* symbol = *j;
             added += symbol->add_symbols_to_follow( follow() );
             ++j;
         
             while ( j != symbols.rend() && symbol->nullable() )
             {
-                GrammarSymbol* previous_symbol = *j;
+                LalrSymbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 added += previous_symbol->add_symbols_to_follow( follow() );
@@ -515,7 +515,7 @@ int GrammarSymbol::calculate_follow()
             
             while ( j != symbols.rend() )
             {
-                GrammarSymbol* previous_symbol = *j;
+                LalrSymbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 ++j;

@@ -7,7 +7,7 @@
 #include "LalrGenerator.hpp"
 #include "LalrProduction.hpp"
 #include "LalrAction.hpp"
-#include "GrammarSymbol.hpp"
+#include "LalrSymbol.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 #include <memory>
@@ -146,7 +146,7 @@ LalrSymbol* LalrGrammar::error_symbol() const
     return error_symbol_;
 }
 
-LalrSymbol* LalrGrammar::symbol( const GrammarSymbol* grammar_symbol )
+LalrSymbol* LalrGrammar::make_symbol( const LalrSymbol* grammar_symbol )
 {
     SWEET_ASSERT( grammar_symbol );
     SymbolType type = grammar_symbol->lexeme_type() == LEXEME_NULL ? SYMBOL_NON_TERMINAL : SYMBOL_TERMINAL;
@@ -160,7 +160,7 @@ LalrSymbol* LalrGrammar::symbol( const GrammarSymbol* grammar_symbol )
 LalrSymbol* LalrGrammar::symbol( SymbolType type, const std::string& identifier, int line )
 {
     auto i = symbols_.begin();
-    while ( i != symbols_.end() && (*i)->get_lexeme() != identifier )
+    while ( i != symbols_.end() && (*i)->lexeme() != identifier )
     {
         ++i;
     }
@@ -219,7 +219,10 @@ void LalrGrammar::whitespace_tokens( const std::vector<LexerToken>& whitespace_t
 */
 LalrSymbol* LalrGrammar::add_symbol( SymbolType type, const std::string& identifier, int line )
 {
-    unique_ptr<LalrSymbol> symbol( new LalrSymbol(type, identifier, line) );
+    unique_ptr<LalrSymbol> symbol( new LalrSymbol(identifier) );
+    symbol->set_identifier( identifier );
+    symbol->set_symbol_type( type );
+    symbol->set_line( line );
     symbols_.push_back( move(symbol) );
     return symbols_.back().get();
 }

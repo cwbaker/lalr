@@ -16,8 +16,8 @@ namespace lalr
 
 class GrammarBuilder;
 class GrammarDirective;
-class GrammarSymbol;
-class GrammarProduction;
+class LalrSymbol;
+class LalrProduction;
 class LalrAction;
 class GrammarNil;
 class ParserErrorPolicy;
@@ -28,21 +28,21 @@ class Grammar
 {
     std::string identifier_;
     std::vector<std::unique_ptr<GrammarDirective>> directives_; ///< The directives in the grammar.
-    std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
-    std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
+    std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the grammar.
+    std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<LalrAction>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     GrammarDirective* active_directive_;
-    GrammarProduction* active_production_;
-    GrammarSymbol* active_symbol_;
+    LalrProduction* active_production_;
+    LalrSymbol* active_symbol_;
 
 public:
     Grammar();
     ~Grammar();
     const std::vector<std::unique_ptr<GrammarDirective>>& directives() const;
-    const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
-    const std::vector<std::unique_ptr<GrammarProduction>>& productions() const;
+    const std::vector<std::unique_ptr<LalrSymbol>>& symbols() const;
+    const std::vector<std::unique_ptr<LalrProduction>>& productions() const;
     const std::vector<std::unique_ptr<LalrAction>>& actions() const;
     const std::vector<LexerToken>& whitespace_tokens() const;
     Grammar& begin();
@@ -65,11 +65,11 @@ public:
 
 private:
     GrammarDirective* directive( Associativity associativity );
-    GrammarSymbol* symbol( char literal );
-    GrammarSymbol* symbol( const char* regex );
-    GrammarSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
-    GrammarSymbol* error_symbol();
-    GrammarProduction* production( GrammarSymbol* symbol );
+    LalrSymbol* symbol( char literal );
+    LalrSymbol* symbol( const char* regex );
+    LalrSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
+    LalrSymbol* error_symbol();
+    LalrProduction* production( LalrSymbol* symbol );
     LalrAction* action( const char* id );
 };
 

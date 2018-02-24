@@ -276,18 +276,18 @@ std::set<const LalrSymbol*> LalrGenerator::lookahead( const LalrItem& item ) con
     const LalrProduction* production = item.get_production();
     SWEET_ASSERT( production );
         
-    const vector<LalrSymbol*>& symbols = production->get_symbols();    
+    const vector<LalrSymbol*>& symbols = production->symbols();    
     vector<LalrSymbol*>::const_iterator i = symbols.begin() + item.get_position();
     if ( i != symbols.end() )
     {
         ++i;
     }
     
-    while ( i != symbols.end() && (*i)->is_nullable() )
+    while ( i != symbols.end() && (*i)->nullable() )
     {
         const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        lookahead_symbols.insert( symbol->get_first().begin(), symbol->get_first().end() );
+        lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
         ++i;
     }
     
@@ -295,7 +295,7 @@ std::set<const LalrSymbol*> LalrGenerator::lookahead( const LalrItem& item ) con
     {
         const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        lookahead_symbols.insert( symbol->get_first().begin(), symbol->get_first().end() );
+        lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
     }
     else
     {
@@ -322,10 +322,10 @@ void LalrGenerator::closure( const std::shared_ptr<LalrState>& state )
         const set<LalrItem>& items = state->get_items();
         for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
-            const LalrSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
+            const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
             if ( symbol )
             {
-                const vector<LalrProduction*>& productions = symbol->get_productions();
+                const vector<LalrProduction*>& productions = symbol->productions();
                 for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
                     LalrProduction* production = *j;
@@ -389,11 +389,11 @@ int LalrGenerator::lookahead_closure( LalrState* state ) const
     const set<LalrItem>& items = state->get_items();
     for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
-        const LalrSymbol* symbol = item->get_production()->get_symbol_by_position( item->get_position() );
+        const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
         if ( symbol )
         {
             set<const LalrSymbol*> lookahead_symbols = lookahead( *item );        
-            const vector<LalrProduction*>& productions = symbol->get_productions();
+            const vector<LalrProduction*>& productions = symbol->productions();
             for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
                 LalrProduction* production = *j;
@@ -437,7 +437,7 @@ int LalrGenerator::lookahead_goto( LalrState* state ) const
         for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
             int position = item->get_position();
-            if ( item->get_production()->get_symbol_by_position(position) == symbol )
+            if ( item->get_production()->symbol_by_position(position) == symbol )
             {
                 LalrState* goto_state = transition->get_state();
                 added += goto_state->add_lookahead_symbols( item->get_production(), position + 1, item->get_lookahead_symbols() );
@@ -478,9 +478,9 @@ void LalrGenerator::check_for_undefined_symbol_errors()
         {
             const LalrSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
-            if ( symbol->get_type() == SYMBOL_NON_TERMINAL && symbol->get_productions().empty() )
+            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() )
             {
-                fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->get_identifier().c_str(), identifier_.c_str() );
+                fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->identifier().c_str(), identifier_.c_str() );
             }
         }
     }
@@ -508,7 +508,7 @@ void LalrGenerator::check_for_unreferenced_symbol_errors()
                 {
                     const LalrProduction* production = i->get();
                     SWEET_ASSERT( production );
-                    if ( production->get_symbol()->get_type() != SYMBOL_TERMINAL )
+                    if ( production->symbol()->symbol_type() != SYMBOL_TERMINAL )
                     {
                         references += production->count_references_to_symbol( symbol );
                     }
@@ -516,7 +516,7 @@ void LalrGenerator::check_for_unreferenced_symbol_errors()
 
                 if ( references == 0 )
                 {
-                    fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->get_identifier().c_str(), symbol->get_lexeme().c_str() );
+                    fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
                 }
             }
         }
@@ -534,7 +534,7 @@ void LalrGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
-    const vector<LalrProduction*>& productions = error_symbol_->get_productions();
+    const vector<LalrProduction*>& productions = error_symbol_->productions();
     if ( !productions.empty() )
     {
         fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
@@ -571,9 +571,9 @@ void LalrGenerator::calculate_terminal_and_non_terminal_symbols()
     for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         LalrSymbol* symbol = i->get();
-        if ( symbol->get_type() == SYMBOL_NULL )
+        if ( symbol->symbol_type() == SYMBOL_NULL )
         {
-            symbol->set_type( symbol->get_productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
+            symbol->set_symbol_type( symbol->productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
         }
     }
 }
@@ -603,7 +603,7 @@ void LalrGenerator::calculate_implicit_terminal_symbols()
         LalrSymbol* non_terminal_symbol = i->get();        
         if ( non_terminal_symbol && non_terminal_symbol != error_symbol_ )
         {
-            LalrSymbol* terminal_symbol = non_terminal_symbol->get_implicit_terminal();
+            LalrSymbol* terminal_symbol = non_terminal_symbol->implicit_terminal();
             if ( terminal_symbol )
             {       
                 SWEET_ASSERT( terminal_symbol != non_terminal_symbol );
@@ -638,7 +638,7 @@ void LalrGenerator::calculate_precedence_of_productions()
     {
         LalrProduction* production = i->get();
         SWEET_ASSERT( production );       
-        if ( production->get_precedence() == 0 )
+        if ( production->precedence() == 0 )
         {
             const LalrSymbol* symbol = production->find_rightmost_terminal_symbol();
             if ( symbol )
@@ -723,17 +723,17 @@ void LalrGenerator::generate_states( const LalrSymbol* start_symbol, const LalrS
     SWEET_ASSERT( end_symbol );
     SWEET_ASSERT( states_.empty() );
 
-    if ( !start_symbol->get_productions().empty() )
+    if ( !start_symbol->productions().empty() )
     {
         std::shared_ptr<LalrState> start_state( new LalrState() );
-        start_state->add_item( start_symbol->get_productions().front(), 0 );
+        start_state->add_item( start_symbol->productions().front(), 0 );
         closure( start_state );
         states_.insert( start_state );
         start_state_ = start_state.get();
 
         set<const LalrSymbol*> lookahead_symbols;
         lookahead_symbols.insert( (LalrSymbol*) end_symbol );
-        start_state->add_lookahead_symbols( start_symbol->get_productions().front(), 0, lookahead_symbols );
+        start_state->add_lookahead_symbols( start_symbol->productions().front(), 0, lookahead_symbols );
         
         int added = 1;
         while ( added > 0 )
@@ -848,7 +848,7 @@ void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymb
     LalrTransition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
-        state->add_transition( symbol, production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
+        state->add_transition( symbol, production->symbol(), production->length(), production->precedence(), production->action_index() );
     }
     else
     {
@@ -856,13 +856,13 @@ void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymb
         {
             case TRANSITION_SHIFT:
             {
-                if ( production->get_precedence() == 0 || symbol->get_precedence() == 0 || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_NULL) )
+                if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
                 {
-                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Shift/reduce conflict on '%s' for '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str() );
+                    fire_error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Shift/reduce conflict on '%s' for '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str() );
                 }
-                else if ( production->get_precedence() > symbol->get_precedence() || (symbol->get_precedence() == production->get_precedence() && symbol->get_associativity() == ASSOCIATE_RIGHT) )
+                else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
                 {
-                    transition->override_shift_to_reduce( production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
+                    transition->override_shift_to_reduce( production->symbol(), production->length(), production->precedence(), production->action_index() );
                 }
 
                 break;
@@ -870,13 +870,13 @@ void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymb
             
             case TRANSITION_REDUCE:
             {
-                if ( production->get_precedence() == 0 || transition->precedence() == 0 || production->get_precedence() == transition->precedence() )
+                if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
                 {
-                    fire_error( production->get_line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->get_identifier().c_str(), production->get_symbol()->get_identifier().c_str(), transition->reduced_symbol()->get_identifier().c_str() );
+                    fire_error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str() );
                 }
-                else if ( production->get_precedence() > transition->precedence() )
+                else if ( production->precedence() > transition->precedence() )
                 {
-                    transition->override_reduce_to_reduce( production->get_symbol(), production->get_length(), production->get_precedence(), production->action_index() );
+                    transition->override_reduce_to_reduce( production->symbol(), production->length(), production->precedence(), production->action_index() );
                 }
                 break;
             }
@@ -924,7 +924,7 @@ void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>
         SWEET_ASSERT( source_symbol );
         ParserSymbol* symbol = &symbols[i];
         SWEET_ASSERT( symbol );
-        symbol->reset( source_symbol->get_index(), source_symbol->get_identifier().c_str(), source_symbol->get_lexeme().c_str(), source_symbol->get_type() );
+        symbol->reset( source_symbol->index(), source_symbol->identifier().c_str(), source_symbol->lexeme().c_str(), source_symbol->symbol_type() );
     }
 
     int states_size = states_.size();
@@ -965,9 +965,9 @@ void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>
             const LalrState* state_transitioned_to = source_transition->get_state();
             const LalrSymbol* reduced_symbol = source_transition->reduced_symbol();
             ParserTransition* transition = &transitions[transition_index];
-            transition->symbol = &symbols[source_symbol->get_index()];
+            transition->symbol = &symbols[source_symbol->index()];
             transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
-            transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->get_index()] : nullptr;
+            transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->index()] : nullptr;
             transition->reduced_length = source_transition->reduced_length();
             transition->precedence = source_transition->precedence();
             transition->action = source_transition->action();
@@ -992,7 +992,7 @@ void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>
         SWEET_ASSERT( source_symbol );
         const ParserSymbol* symbols = parser_state_machine->symbols();
         SWEET_ASSERT( symbols );
-        if ( source_symbol->get_type() == SYMBOL_TERMINAL )
+        if ( source_symbol->symbol_type() == SYMBOL_TERMINAL )
         {
             const ParserSymbol* symbol = &symbols[i];
             SWEET_ASSERT( symbol );

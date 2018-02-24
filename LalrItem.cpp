@@ -37,7 +37,7 @@ LalrItem::LalrItem( LalrProduction* production, int position )
   lookahead_symbols_()
 {
     SWEET_ASSERT( production_ );
-    SWEET_ASSERT( position_ >= 0 && position_ < production_->get_length() + 1 );
+    SWEET_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
 }
 
 /**
@@ -80,7 +80,7 @@ bool LalrItem::is_dot_at_beginning() const
 */
 bool LalrItem::is_dot_at_end() const
 {
-    return position_ == production_->get_length();
+    return position_ == production_->length();
 }
 
 /**
@@ -95,7 +95,7 @@ bool LalrItem::is_dot_at_end() const
 */
 bool LalrItem::is_next_node( const LalrSymbol& symbol ) const
 {
-    return production_->get_symbol_by_position(position_) == &symbol;
+    return production_->symbol_by_position(position_) == &symbol;
 }
 
 /**
@@ -110,13 +110,13 @@ void LalrItem::describe( std::string* description ) const
     SWEET_ASSERT( production_ );
         
     int position = 0;
-    const vector<LalrSymbol*>& symbols = production_->get_symbols();
+    const vector<LalrSymbol*>& symbols = production_->symbols();
     vector<LalrSymbol*>::const_iterator i = symbols.begin(); 
     while ( i != symbols.end() && position < position_ )
     {
         const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        symbol->describe( description );
+        // symbol->describe( description );
         description->append( " " );
         ++i;
         ++position;
@@ -127,7 +127,7 @@ void LalrItem::describe( std::string* description ) const
     {
         const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        symbol->describe( description );
+        // symbol->describe( description );
         description->append( " " );
         ++i;
     }
@@ -138,7 +138,7 @@ void LalrItem::describe( std::string* description ) const
         const LalrSymbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( "; " );
-        symbol->describe( description );
+        // symbol->describe( description );
         ++j;
     }
 
@@ -147,7 +147,7 @@ void LalrItem::describe( std::string* description ) const
         const LalrSymbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( ", " );
-        symbol->describe( description );
+        // symbol->describe( description );
         ++j;
     }
 }
@@ -193,7 +193,7 @@ const std::set<const LalrSymbol*>& LalrItem::get_lookahead_symbols() const
 bool LalrItem::operator<( const LalrItem& item ) const
 {
     return 
-        production_->get_index() < item.production_->get_index() || 
-        (production_->get_index() == item.production_->get_index() && position_ < item.position_)
+        production_->index() < item.production_->index() || 
+        (production_->index() == item.production_->index() && position_ < item.position_)
     ;
 }

@@ -4,9 +4,7 @@ for _, build in build:default_builds() do
         build:Cxx () {
             "Grammar.cpp",
             "GrammarDirective.cpp",
-            "GrammarNil.cpp",
-            "GrammarProduction.cpp",
-            "GrammarSymbol.cpp",
+            "GrammarNil.cpp"
         };
 
         build:Cxx () {

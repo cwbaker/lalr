@@ -43,7 +43,7 @@ LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const L
 // @return
 //  The index.
 */
-int LalrProduction::get_index() const
+int LalrProduction::index() const
 {
     return index_;
 }
@@ -54,7 +54,7 @@ int LalrProduction::get_index() const
 // @return
 //  The symbol.
 */
-LalrSymbol* LalrProduction::get_symbol() const
+LalrSymbol* LalrProduction::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -66,7 +66,7 @@ LalrSymbol* LalrProduction::get_symbol() const
 // @return
 //  The line.
 */
-int LalrProduction::get_line() const
+int LalrProduction::line() const
 {
     return line_;
 }
@@ -106,11 +106,37 @@ int LalrProduction::count_references_to_symbol( const LalrSymbol* symbol ) const
 const LalrSymbol* LalrProduction::find_rightmost_terminal_symbol() const
 {
     vector<LalrSymbol*>::const_reverse_iterator i = symbols_.rbegin();
-    while ( i != symbols_.rend() && (*i)->get_type() != SYMBOL_TERMINAL )
+    while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
     {
         ++i;
     }
     return i != symbols_.rend() ? *i : NULL;
+}
+
+/**
+// Get the symbol at \e position on the right hand side of this production.
+//
+// @param position
+//  The position to get the symbol from.
+//
+// @return
+//  The symbol at \e position or null if \e position refers past the end of
+//  this production.
+*/
+const LalrSymbol* LalrProduction::symbol_by_position( int position ) const
+{
+    return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
+}
+
+/**
+// Get the symbols on the right hand side of this production.
+//
+// @return
+//  The symbols.
+*/
+const std::vector<LalrSymbol*>& LalrProduction::symbols() const
+{
+    return symbols_;
 }
 
 /**
@@ -119,7 +145,7 @@ const LalrSymbol* LalrProduction::find_rightmost_terminal_symbol() const
 // @return
 //  The length of the right-hand side of this production.
 */
-int LalrProduction::get_length() const
+int LalrProduction::length() const
 {
     return int(symbols_.size());
 }
@@ -147,13 +173,13 @@ std::string LalrProduction::description() const
 void LalrProduction::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
-    symbol_->describe( description );
+    // symbol_->describe( description );
     description->append( " <- " );
     for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         const LalrSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
-        symbol->describe( description );
+        // symbol->describe( description );
         description->append( " " );        
     }
 }
@@ -167,32 +193,6 @@ void LalrProduction::describe( std::string* description ) const
 void LalrProduction::append_symbol( LalrSymbol* symbol )
 {
     symbols_.push_back( symbol );
-}
-
-/**
-// Get the symbol at \e position on the right hand side of this production.
-//
-// @param position
-//  The position to get the symbol from.
-//
-// @return
-//  The symbol at \e position or null if \e position refers past the end of
-//  this production.
-*/
-const LalrSymbol* LalrProduction::get_symbol_by_position( int position ) const
-{
-    return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
-}
-
-/**
-// Get the symbols on the right hand side of this production.
-//
-// @return
-//  The symbols.
-*/
-const std::vector<LalrSymbol*>& LalrProduction::get_symbols() const
-{
-    return symbols_;
 }
 
 /**
@@ -213,7 +213,7 @@ void LalrProduction::set_action( const LalrAction* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const LalrAction* LalrProduction::get_action() const
+const LalrAction* LalrProduction::action() const
 {
     return action_;
 }
@@ -223,36 +223,20 @@ int LalrProduction::action_index() const
     return action_ ? action_->index() : LalrAction::INVALID_INDEX;
 }
 
-/**
-// Describe the productions in \e productions.
-//
-// @param productions
-//  The productions to describe.
-//
-// @param description
-//  A variable to receive the description of the productions.
-*/
-void LalrProduction::describe( const std::set<const LalrProduction*>& productions, std::string* description )
+const LalrSymbol* LalrProduction::precedence_symbol() const
 {
-    SWEET_ASSERT( description );
+    return precedence_symbol_;
+}
 
-    std::set<const LalrProduction*>::const_iterator i = productions.begin(); 
-    if ( i != productions.end() )
-    {
-        const LalrProduction* production = *i;
-        SWEET_ASSERT( production );        
-        production->describe( description );
-        ++i;        
-    }
-    
-    while ( i != productions.end() )
-    {
-        const LalrProduction* production = *i;
-        SWEET_ASSERT( production );
-        description->append( ", " );
-        production->describe( description );
-        ++i;        
-    }
+/**
+// Get the precedence of this production.
+//
+// @return
+//  The precedence of this production.
+*/
+int LalrProduction::precedence() const
+{
+    return precedence_symbol_ ? precedence_symbol_->precedence() : 0;
 }
 
 /**
@@ -267,17 +251,6 @@ void LalrProduction::set_precedence_symbol( const LalrSymbol* symbol )
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
     precedence_symbol_ = symbol;
-}
-
-/**
-// Get the precedence of this production.
-//
-// @return
-//  The precedence of this production.
-*/
-int LalrProduction::get_precedence() const
-{
-    return precedence_symbol_ ? precedence_symbol_->get_precedence() : 0;
 }
 
 /**
@@ -309,3 +282,35 @@ void LalrProduction::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSy
         }
     }
 }
+
+/**
+// Describe the productions in \e productions.
+//
+// @param productions
+//  The productions to describe.
+//
+// @param description
+//  A variable to receive the description of the productions.
+*/
+// void LalrProduction::describe( const std::set<const LalrProduction*>& productions, std::string* description )
+// {
+//     SWEET_ASSERT( description );
+
+//     std::set<const LalrProduction*>::const_iterator i = productions.begin(); 
+//     if ( i != productions.end() )
+//     {
+//         const LalrProduction* production = *i;
+//         SWEET_ASSERT( production );        
+//         production->describe( description );
+//         ++i;        
+//     }
+    
+//     while ( i != productions.end() )
+//     {
+//         const LalrProduction* production = *i;
+//         SWEET_ASSERT( production );
+//         description->append( ", " );
+//         production->describe( description );
+//         ++i;        
+//     }
+// }

@@ -179,7 +179,7 @@ void LalrTransition::describe( std::string* description ) const
             // SWEET_ASSERT( reduced_production_ );
             SWEET_ASSERT( reduced_symbol_ );
             char buffer [512];
-            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_symbol_->get_identifier().c_str() );
+            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_symbol_->identifier().c_str() );
             buffer [sizeof(buffer) - 1] = '\0';
             description->append( buffer );
             break;
@@ -189,7 +189,7 @@ void LalrTransition::describe( std::string* description ) const
             break;
     }
     
-    symbol_->describe( description );
+    // symbol_->describe( description );
     description->append( " ; " );
 }
 
