@@ -68,11 +68,6 @@ const std::vector<LexerToken>& Grammar::whitespace_tokens() const
     return whitespace_tokens_;
 }
 
-Grammar& Grammar::begin()
-{
-    return *this;
-}
-
 Grammar& Grammar::left()
 {
     active_whitespace_directive_ = false;
@@ -239,10 +234,6 @@ Grammar& Grammar::operator[]( const LalrNil& /*nil*/ )
 {
     active_production_ = nullptr;
     return *this;
-}
-
-void Grammar::end()
-{
 }
 
 void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )

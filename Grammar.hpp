@@ -44,7 +44,6 @@ public:
     const std::vector<std::unique_ptr<LalrProduction>>& productions() const;
     const std::vector<std::unique_ptr<LalrAction>>& actions() const;
     const std::vector<LexerToken>& whitespace_tokens() const;
-    Grammar& begin();
     Grammar& left();
     Grammar& right();
     Grammar& none();
@@ -59,7 +58,6 @@ public:
     Grammar& error();
     Grammar& operator[]( const char* identifier );
     Grammar& operator[]( const LalrNil& /*nil*/ );
-    void end();
     void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
