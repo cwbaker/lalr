@@ -3,13 +3,9 @@ for _, build in build:default_builds() do
     local lalr = build:Library "lalr" {
         build:Cxx () {
             "Grammar.cpp",
-        };
-
-        build:Cxx () {
             "LalrAction.cpp",
             "LalrDirective.cpp",
             "LalrGenerator.cpp",
-            "LalrGrammar.cpp",
             "LalrItem.cpp",
             "LalrNil.cpp",
             "LalrState.cpp",

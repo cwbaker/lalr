@@ -43,10 +43,10 @@ public:
     Grammar( size_t directives_reserve = 64, size_t symbols_reserve = 64, size_t productions_reserve = 64, size_t actions_reserve = 32, size_t whitespace_tokens_reserve = 8 );
     ~Grammar();
     const std::string& identifier() const;
-    const std::vector<std::unique_ptr<LalrDirective>>& directives() const;
-    const std::vector<std::unique_ptr<LalrSymbol>>& symbols() const;
-    const std::vector<std::unique_ptr<LalrProduction>>& productions() const;
-    const std::vector<std::unique_ptr<LalrAction>>& actions() const;
+    std::vector<std::unique_ptr<LalrDirective>>& directives();
+    std::vector<std::unique_ptr<LalrSymbol>>& symbols();
+    std::vector<std::unique_ptr<LalrProduction>>& productions();
+    std::vector<std::unique_ptr<LalrAction>>& actions();
     const std::vector<LexerToken>& whitespace_tokens() const;
     LalrSymbol* start_symbol() const;
     LalrSymbol* end_symbol() const;
@@ -72,7 +72,6 @@ private:
     LalrSymbol* symbol( char literal );
     LalrSymbol* symbol( const char* regex );
     LalrSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
-    LalrSymbol* error_symbol();
     LalrProduction* production( LalrSymbol* symbol );
     LalrAction* action( const char* id );
 };

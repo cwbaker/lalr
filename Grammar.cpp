@@ -9,7 +9,6 @@
 #include "LalrProduction.hpp"
 #include "LalrAction.hpp"
 #include "LalrGenerator.hpp"
-#include "LalrGrammar.hpp"
 #include "LalrAction.hpp"
 #include "LalrState.hpp"
 #include "ParserStateMachine.hpp"
@@ -47,7 +46,8 @@ Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t prod
     whitespace_tokens_.reserve( whitespace_tokens_reserve );
     start_symbol_ = symbol( ".start", LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = symbol( ".end", LEXEME_NULL, SYMBOL_END );
-    error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_TERMINAL );
+    // error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_TERMINAL );
+    error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_NULL );
 }
 
 Grammar::~Grammar()
@@ -59,22 +59,22 @@ const std::string& Grammar::identifier() const
     return identifier_;
 }
 
-const std::vector<std::unique_ptr<LalrDirective>>& Grammar::directives() const
+std::vector<std::unique_ptr<LalrDirective>>& Grammar::directives()
 {
     return directives_;
 }
 
-const std::vector<std::unique_ptr<LalrSymbol>>& Grammar::symbols() const
+std::vector<std::unique_ptr<LalrSymbol>>& Grammar::symbols()
 {
     return symbols_;
 }
 
-const std::vector<std::unique_ptr<LalrProduction>>& Grammar::productions() const
+std::vector<std::unique_ptr<LalrProduction>>& Grammar::productions()
 {
     return productions_;
 }
 
-const std::vector<std::unique_ptr<LalrAction>>& Grammar::actions() const
+std::vector<std::unique_ptr<LalrAction>>& Grammar::actions()
 {
     return actions_;
 }
@@ -298,52 +298,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         }
     }
 
-    LalrGrammar parser_grammar;
-
-    const vector<unique_ptr<LalrProduction>>& productions = productions_;
-    for ( auto i = productions.begin(); i != productions.end(); ++i )
-    {
-        const LalrProduction* production = i->get();
-        SWEET_ASSERT( production );
-
-        const LalrSymbol* symbol = production->symbol();
-        SWEET_ASSERT( symbol );
-
-        parser_grammar.begin_production( parser_grammar.make_symbol(symbol), 0 );
-        const vector<LalrSymbol*>& symbols = production->symbols();
-        for ( auto k = symbols.begin(); k != symbols.end(); ++k )
-        {
-            parser_grammar.symbol( parser_grammar.make_symbol(*k) );
-        }
-        const LalrAction* action = production->action();
-        if ( action )
-        {
-           parser_grammar.action( parser_grammar.action(action->identifier()) );
-        }
-        const LalrSymbol* precedence_symbol = production->precedence_symbol();
-        if ( precedence_symbol )
-        {
-            parser_grammar.precedence_symbol( parser_grammar.make_symbol(precedence_symbol) );
-        }
-        parser_grammar.end_production();
-    }
-
-    parser_grammar.whitespace_tokens( whitespace_tokens_ );
-
-    const vector<unique_ptr<LalrSymbol>>& symbols = symbols_;
-    for ( auto i = symbols.begin(); i != symbols.end(); ++i )
-    {
-        const LalrSymbol* symbol = i->get();
-        SWEET_ASSERT( symbol );
-        if ( symbol->lexeme_type() != LEXEME_NULL )
-        {
-            LalrSymbol* parser_symbol = parser_grammar.make_symbol( symbol );
-            parser_symbol->set_associativity( symbol->associativity() );
-            parser_symbol->set_precedence( symbol->precedence() );
-        }
-    }
-
-    LalrGenerator generator( parser_grammar, state_machine, parser_error_policy, lexer_error_policy );
+    LalrGenerator generator( *this, state_machine, parser_error_policy, lexer_error_policy );
 }
 
 LalrDirective* Grammar::directive( Associativity associativity )
@@ -363,11 +318,6 @@ LalrSymbol* Grammar::symbol( const char* regex )
 {
     SWEET_ASSERT( regex );
     return symbol( regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL );
-}
-
-LalrSymbol* Grammar::error_symbol()
-{
-    return symbol( ".error", LEXEME_LITERAL, SYMBOL_NULL );
 }
 
 LalrSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type )

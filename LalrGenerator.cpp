@@ -7,7 +7,8 @@
 #include "LalrProduction.hpp"
 #include "LalrState.hpp"
 #include "LalrItem.hpp"
-#include "LalrGrammar.hpp"
+#include "Grammar.hpp"
+#include "LalrSymbol.hpp"   
 #include "LalrAction.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
@@ -30,13 +31,13 @@ using namespace sweet::lalr;
 // Constructor.
 //
 // @param grammar
-//  The LalrGrammar to generate a parser for.
+//  The Grammar to generate a parser for.
 //
 // @param error_policy
 //  The error policy to report errors during generation to or null to silently
 //  swallow errors.
 */
-LalrGenerator::LalrGenerator( LalrGrammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+LalrGenerator::LalrGenerator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : error_policy_( error_policy ),
   identifier_(),
   actions_(),
@@ -218,17 +219,7 @@ void LalrGenerator::fire_printf( const char* format, ... ) const
     }
 }
 
-/**
-// Generate the parser state machine from the parsed grammar in 
-// \e grammar_parser.
-//
-// @param grammar_parser
-//  The GrammarParser that has successfully parsed a grammar.
-//
-// @param parser_state_machine
-//  The `ParserStateMachine` to populate with states.
-*/
-void LalrGenerator::generate( LalrGrammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
+void LalrGenerator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_state_machine );
 
@@ -561,7 +552,7 @@ void LalrGenerator::calculate_identifiers()
 // and any symbols with no productions are assumed to be terminals.  Another
 // pass is made over the symbols in to convert non-terminals symbols that 
 // contain only a single production with one terminal symbol into terminals.
-// See `LalrGrammar::calculate_implicit_terminal_symbols()`.
+// See `Grammar::calculate_implicit_terminal_symbols()`.
 //
 // The `.start`, `.end`, and `.error` symbols are exempt from the above 
 // processing.  They are explicitly assigned their corr
