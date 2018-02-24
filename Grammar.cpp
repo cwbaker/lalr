@@ -43,6 +43,11 @@ Grammar::~Grammar()
 {
 }
 
+const std::string& Grammar::identifier() const
+{
+    return identifier_;
+}
+
 const std::vector<std::unique_ptr<LalrDirective>>& Grammar::directives() const
 {
     return directives_;

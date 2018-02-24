@@ -39,6 +39,7 @@ class Grammar
 public:
     Grammar();
     ~Grammar();
+    const std::string& identifier() const;
     const std::vector<std::unique_ptr<LalrDirective>>& directives() const;
     const std::vector<std::unique_ptr<LalrSymbol>>& symbols() const;
     const std::vector<std::unique_ptr<LalrProduction>>& productions() const;
