@@ -243,6 +243,12 @@ Grammar& Grammar::operator[]( const LalrNil& /*nil*/ )
 
 void Grammar::end()
 {
+}
+
+void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )
+{
+    SWEET_ASSERT( state_machine );
+
     int precedence = 1;
     for ( auto i = directives_.begin(); i != directives_.end(); ++i )
     {
@@ -269,11 +275,6 @@ void Grammar::end()
             symbol->set_symbol_type( SYMBOL_NON_TERMINAL );
         }
     }
-}
-
-void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )
-{
-    SWEET_ASSERT( state_machine );
 
     LalrGrammar parser_grammar;
 
