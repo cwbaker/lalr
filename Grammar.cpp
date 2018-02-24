@@ -26,7 +26,7 @@ using namespace sweet;
 using namespace sweet::lalr;
 using namespace sweet::lalr;
 
-Grammar::Grammar()
+Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t productions_reserve, size_t actions_reserve, size_t whitespace_tokens_reserve )
 : identifier_(),
   directives_(),
   symbols_(),
@@ -35,8 +35,19 @@ Grammar::Grammar()
   whitespace_tokens_(),
   active_directive_( nullptr ),
   active_production_( nullptr ),
-  active_symbol_( nullptr )
+  active_symbol_( nullptr ),
+  start_symbol_( NULL ),
+  end_symbol_( NULL ),
+  error_symbol_( NULL )
 {
+    directives_.reserve( directives_reserve );
+    symbols_.reserve( symbols_reserve );
+    productions_.reserve( productions_reserve );
+    actions_.reserve( actions_reserve );
+    whitespace_tokens_.reserve( whitespace_tokens_reserve );
+    start_symbol_ = symbol( ".start", LEXEME_NULL, SYMBOL_NON_TERMINAL );
+    end_symbol_ = symbol( ".end", LEXEME_NULL, SYMBOL_END );
+    error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_TERMINAL );
 }
 
 Grammar::~Grammar()
@@ -71,6 +82,21 @@ const std::vector<std::unique_ptr<LalrAction>>& Grammar::actions() const
 const std::vector<LexerToken>& Grammar::whitespace_tokens() const
 {
     return whitespace_tokens_;
+}
+
+LalrSymbol* Grammar::start_symbol() const
+{
+    return start_symbol_;
+}
+
+LalrSymbol* Grammar::end_symbol() const
+{
+    return end_symbol_;
+}
+
+LalrSymbol* Grammar::error_symbol() const
+{
+    return error_symbol_;
 }
 
 Grammar& Grammar::left()
