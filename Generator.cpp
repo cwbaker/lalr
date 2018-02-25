@@ -6,7 +6,7 @@
 #include "Generator.hpp"
 #include "LalrProduction.hpp"
 #include "LalrState.hpp"
-#include "LalrItem.hpp"
+#include "Item.hpp"
 #include "Grammar.hpp"
 #include "LalrSymbol.hpp"   
 #include "Action.hpp"
@@ -260,7 +260,7 @@ void Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_mac
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const LalrSymbol*> Generator::lookahead( const LalrItem& item ) const
+std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
 {
     set<const LalrSymbol*> lookahead_symbols;
 
@@ -310,8 +310,8 @@ void Generator::closure( const std::shared_ptr<LalrState>& state )
     while ( added > 0 )
     {
         added = 0;
-        const set<LalrItem>& items = state->get_items();
-        for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<Item>& items = state->get_items();
+        for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
             const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
             if ( symbol )
@@ -346,8 +346,8 @@ std::shared_ptr<LalrState> Generator::goto_( const std::shared_ptr<LalrState>& s
 
     std::shared_ptr<LalrState> goto_state( new LalrState() );
 
-    const set<LalrItem>& items = state->get_items();
-    for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<Item>& items = state->get_items();
+    for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         if ( item->is_next_node(symbol) )
         {
@@ -377,8 +377,8 @@ int Generator::lookahead_closure( LalrState* state ) const
 
     int added = 0;
 
-    const set<LalrItem>& items = state->get_items();
-    for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<Item>& items = state->get_items();
+    for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
         const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
         if ( symbol )
@@ -424,8 +424,8 @@ int Generator::lookahead_goto( LalrState* state ) const
         const LalrSymbol* symbol = transition->get_symbol();
         SWEET_ASSERT( symbol );
 
-        const set<LalrItem>& items = state->get_items();
-        for ( set<LalrItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<Item>& items = state->get_items();
+        for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
             int position = item->get_position();
             if ( item->get_production()->symbol_by_position(position) == symbol )
@@ -802,7 +802,7 @@ void Generator::generate_reduce_transitions()
         LalrState* state = i->get();
         SWEET_ASSERT( state );
             
-        for ( std::set<LalrItem>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
+        for ( std::set<Item>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
         {
             if ( item->is_dot_at_end() )
             {

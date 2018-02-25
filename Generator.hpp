@@ -34,7 +34,7 @@ class ParserErrorPolicy;
 class ParserStateMachine;
 class Action;
 class LalrSymbol;
-class LalrItem;
+class Item;
 class LalrState;
 class LalrProduction;
 class Grammar;
@@ -76,7 +76,7 @@ class Generator
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
         void generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
-        std::set<const LalrSymbol*> lookahead( const LalrItem& item ) const;
+        std::set<const LalrSymbol*> lookahead( const Item& item ) const;
         void closure( const std::shared_ptr<LalrState>& state );
         std::shared_ptr<LalrState> goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol );
         int lookahead_closure( LalrState* state ) const;

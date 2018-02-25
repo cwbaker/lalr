@@ -1,9 +1,9 @@
 //
-// LalrItem.cpp
+// Item.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "LalrItem.hpp"
+#include "Item.hpp"
 #include "LalrSymbol.hpp"
 #include "LalrProduction.hpp"
 #include "assert.hpp"
@@ -15,7 +15,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-LalrItem::LalrItem()
+Item::Item()
 : production_(),
   position_( 0 ),
   lookahead_symbols_()
@@ -31,7 +31,7 @@ LalrItem::LalrItem()
 // @param position
 //  The position of the dot in this item.
 */
-LalrItem::LalrItem( LalrProduction* production, int position )
+Item::Item( LalrProduction* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ LalrItem::LalrItem( LalrProduction* production, int position )
 /**
 // Get the production for this item.
 */
-LalrProduction* LalrItem::get_production() const
+LalrProduction* Item::get_production() const
 {
     return production_;
 }
@@ -54,7 +54,7 @@ LalrProduction* LalrItem::get_production() const
 // @return
 //  The position of the dot in this item.
 */
-int LalrItem::get_position() const
+int Item::get_position() const
 {
     return position_;
 }
@@ -66,7 +66,7 @@ int LalrItem::get_position() const
 // @return
 //  True if the dot is at the beginning of the production otherwise false.
 */
-bool LalrItem::is_dot_at_beginning() const
+bool Item::is_dot_at_beginning() const
 {
     return position_ == 0;
 }
@@ -78,7 +78,7 @@ bool LalrItem::is_dot_at_beginning() const
 // @return
 //  True if the dot is at the end of the production otherwise false.
 */
-bool LalrItem::is_dot_at_end() const
+bool Item::is_dot_at_end() const
 {
     return position_ == production_->length();
 }
@@ -93,7 +93,7 @@ bool LalrItem::is_dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool LalrItem::is_next_node( const LalrSymbol& symbol ) const
+bool Item::is_next_node( const LalrSymbol& symbol ) const
 {
     return production_->symbol_by_position(position_) == &symbol;
 }
@@ -104,7 +104,7 @@ bool LalrItem::is_next_node( const LalrSymbol& symbol ) const
 // @param description
 //  A variable to receive the description of this item (assumed not null).
 */
-void LalrItem::describe( std::string* description ) const
+void Item::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     SWEET_ASSERT( production_ );
@@ -161,7 +161,7 @@ void LalrItem::describe( std::string* description ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int LalrItem::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahead_symbols ) const
+int Item::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
@@ -174,7 +174,7 @@ int LalrItem::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahea
 // @return
 //  The lookahead set.
 */
-const std::set<const LalrSymbol*>& LalrItem::get_lookahead_symbols() const
+const std::set<const LalrSymbol*>& Item::get_lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -190,7 +190,7 @@ const std::set<const LalrSymbol*>& LalrItem::get_lookahead_symbols() const
 //  production is the same as \e item's then if this item's next nodes
 //  are lexically less than item's otherwise false.
 */
-bool LalrItem::operator<( const LalrItem& item ) const
+bool Item::operator<( const Item& item ) const
 {
     return 
         production_->index() < item.production_->index() || 

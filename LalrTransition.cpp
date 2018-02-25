@@ -5,7 +5,6 @@
 
 #include "LalrTransition.hpp"
 #include "LalrSymbol.hpp"
-#include "LalrItem.hpp"
 #include "LalrState.hpp"
 #include "Action.hpp"
 #include "assert.hpp"

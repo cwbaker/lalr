@@ -4,9 +4,9 @@ for _, build in build:default_builds() do
         build:Cxx () {
             "Action.cpp",
             "Directive.cpp",
-            "Grammar.cpp",
             "Generator.cpp",
-            "LalrItem.cpp",
+            "Grammar.cpp",
+            "Item.cpp",
             "LalrNil.cpp",
             "LalrState.cpp",
             "LalrTransition.cpp",

@@ -1,7 +1,7 @@
 #ifndef SWEET_LALR_LALRSTATE_HPP_INCLUDED
 #define SWEET_LALR_LALRSTATE_HPP_INCLUDED
 
-#include "LalrItem.hpp"
+#include "Item.hpp"
 #include "LalrTransition.hpp"
 #include <memory>
 #include <set>
@@ -21,7 +21,7 @@ class LalrState
         static const int INVALID_INDEX = -1;
 
     private:
-        std::set<LalrItem> items_; ///< The items that define the positions within the grammar that this state represents.
+        std::set<Item> items_; ///< The items that define the positions within the grammar that this state represents.
         std::set<LalrTransition> transitions_; ///< The available transitions from this state.
         bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
         int index_; ///< The index of this state.
@@ -31,7 +31,7 @@ class LalrState
 
         int add_item( LalrProduction* production, int position );
         int add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols );
-        const std::set<LalrItem>& get_items() const;
+        const std::set<Item>& get_items() const;
         void describe( std::string* description ) const;
         std::string description() const;
 

@@ -4,7 +4,7 @@
 //
 
 #include "LalrState.hpp"
-#include "LalrItem.hpp"
+#include "Item.hpp"
 #include "LalrTransition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
@@ -44,7 +44,7 @@ LalrState::LalrState()
 int LalrState::add_item( LalrProduction* production, int position )
 {
     SWEET_ASSERT( production );
-    return items_.insert( LalrItem(production, position) ).second ? 1 : 0;
+    return items_.insert( Item(production, position) ).second ? 1 : 0;
 }
 
 /**
@@ -66,7 +66,7 @@ int LalrState::add_item( LalrProduction* production, int position )
 int LalrState::add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
-    std::set<LalrItem>::iterator item = items_.find( LalrItem(production, position) );
+    std::set<Item>::iterator item = items_.find( Item(production, position) );
     SWEET_ASSERT( item != items_.end() );
     return item->add_lookahead_symbols( lookahead_symbols );
 }
@@ -77,7 +77,7 @@ int LalrState::add_lookahead_symbols( LalrProduction* production, int position, 
 // @return
 //  The items.
 */
-const std::set<LalrItem>& LalrState::get_items() const
+const std::set<Item>& LalrState::get_items() const
 {
     return items_;
 }
@@ -98,7 +98,7 @@ void LalrState::describe( std::string* description ) const
     buffer [sizeof(buffer) - 1] = '\0';
     description->append( buffer );
 
-    std::set<LalrItem>::const_iterator item = items_.begin(); 
+    std::set<Item>::const_iterator item = items_.begin(); 
     while ( item != items_.end() )
     {
         item->describe( description );
