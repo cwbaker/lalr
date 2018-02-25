@@ -1,9 +1,9 @@
 //
-// LalrGenerator.cpp
+// Generator.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LalrGenerator.hpp"
+#include "Generator.hpp"
 #include "LalrProduction.hpp"
 #include "LalrState.hpp"
 #include "LalrItem.hpp"
@@ -37,7 +37,7 @@ using namespace sweet::lalr;
 //  The error policy to report errors during generation to or null to silently
 //  swallow errors.
 */
-LalrGenerator::LalrGenerator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+Generator::Generator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 : error_policy_( error_policy ),
   identifier_(),
   actions_(),
@@ -53,7 +53,7 @@ LalrGenerator::LalrGenerator( Grammar& grammar, ParserStateMachine* parser_state
     generate( grammar, parser_state_machine, lexer_error_policy );
 }
 
-LalrGenerator::~LalrGenerator()
+Generator::~Generator()
 {
 }
 
@@ -63,7 +63,7 @@ LalrGenerator::~LalrGenerator()
 // @return
 //  The identifier.
 */
-std::string& LalrGenerator::identifier()
+std::string& Generator::identifier()
 {
     return identifier_;
 }
@@ -74,7 +74,7 @@ std::string& LalrGenerator::identifier()
 // @return
 //  The actions.
 */
-std::vector<std::unique_ptr<Action> >& LalrGenerator::actions()
+std::vector<std::unique_ptr<Action> >& Generator::actions()
 {
     return actions_;
 }
@@ -85,7 +85,7 @@ std::vector<std::unique_ptr<Action> >& LalrGenerator::actions()
 // @return
 //  The productions.
 */
-std::vector<std::unique_ptr<LalrProduction> >& LalrGenerator::productions()
+std::vector<std::unique_ptr<LalrProduction> >& Generator::productions()
 {
     return productions_;
 }
@@ -96,7 +96,7 @@ std::vector<std::unique_ptr<LalrProduction> >& LalrGenerator::productions()
 // @return
 //  The symbols.
 */
-std::vector<std::unique_ptr<LalrSymbol> >& LalrGenerator::symbols()
+std::vector<std::unique_ptr<LalrSymbol> >& Generator::symbols()
 {
     return symbols_;
 }
@@ -107,7 +107,7 @@ std::vector<std::unique_ptr<LalrSymbol> >& LalrGenerator::symbols()
 // @return
 //  The states.
 */
-std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& LalrGenerator::states()
+std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& Generator::states()
 {
     return states_;
 }
@@ -118,7 +118,7 @@ std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& LalrGenerator:
 // @return
 //  The start symbol.
 */
-const LalrSymbol* LalrGenerator::start_symbol()
+const LalrSymbol* Generator::start_symbol()
 {
     return start_symbol_;
 }
@@ -129,7 +129,7 @@ const LalrSymbol* LalrGenerator::start_symbol()
 // @return
 //  The end symbol.
 */
-const LalrSymbol* LalrGenerator::end_symbol()
+const LalrSymbol* Generator::end_symbol()
 {
     return end_symbol_;
 }
@@ -140,7 +140,7 @@ const LalrSymbol* LalrGenerator::end_symbol()
 // @return
 //  The error symbol.
 */
-const LalrSymbol* LalrGenerator::error_symbol()
+const LalrSymbol* Generator::error_symbol()
 {
     return error_symbol_;
 }
@@ -151,7 +151,7 @@ const LalrSymbol* LalrGenerator::error_symbol()
 // @return
 //  The start state.
 */
-LalrState* LalrGenerator::start_state()
+LalrState* Generator::start_state()
 {
     return start_state_;
 }
@@ -159,14 +159,14 @@ LalrState* LalrGenerator::start_state()
 /**
 // Get the number of errors that occured during parsing and generation.
 //
-// Other LalrGenerator functions are invalid if the number of errors
-// returned by this function is not zero after the LalrGenerator has
+// Other Generator functions are invalid if the number of errors
+// returned by this function is not zero after the Generator has
 // been constructed.
 //
 // @return
 //  The number of errors.
 */
-int LalrGenerator::errors() const
+int Generator::errors() const
 {
     return errors_;
 }
@@ -186,7 +186,7 @@ int LalrGenerator::errors() const
 // @param ...
 //  Arguments described by *format*.
 */
-void LalrGenerator::fire_error( int line, int error, const char* format, ... )
+void Generator::fire_error( int line, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
@@ -207,7 +207,7 @@ void LalrGenerator::fire_error( int line, int error, const char* format, ... )
 // @param args
 //  Arguments as described by \e format.
 */
-void LalrGenerator::fire_printf( const char* format, ... ) const
+void Generator::fire_printf( const char* format, ... ) const
 {
     if ( error_policy_ )
     {
@@ -219,7 +219,7 @@ void LalrGenerator::fire_printf( const char* format, ... ) const
     }
 }
 
-void LalrGenerator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
+void Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_state_machine );
 
@@ -260,7 +260,7 @@ void LalrGenerator::generate( Grammar& grammar, ParserStateMachine* parser_state
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const LalrSymbol*> LalrGenerator::lookahead( const LalrItem& item ) const
+std::set<const LalrSymbol*> Generator::lookahead( const LalrItem& item ) const
 {
     set<const LalrSymbol*> lookahead_symbols;
 
@@ -302,7 +302,7 @@ std::set<const LalrSymbol*> LalrGenerator::lookahead( const LalrItem& item ) con
 // @param state
 //  The LalrState that contains the items to generate the closure of.
 */
-void LalrGenerator::closure( const std::shared_ptr<LalrState>& state )
+void Generator::closure( const std::shared_ptr<LalrState>& state )
 {
     SWEET_ASSERT( state );
 
@@ -340,7 +340,7 @@ void LalrGenerator::closure( const std::shared_ptr<LalrState>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<LalrState> LalrGenerator::goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol )
+std::shared_ptr<LalrState> Generator::goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol )
 {
     SWEET_ASSERT( state );
 
@@ -371,7 +371,7 @@ std::shared_ptr<LalrState> LalrGenerator::goto_( const std::shared_ptr<LalrState
 // @return
 //  The number of lookahead symbols generated.
 */
-int LalrGenerator::lookahead_closure( LalrState* state ) const
+int Generator::lookahead_closure( LalrState* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -412,7 +412,7 @@ int LalrGenerator::lookahead_closure( LalrState* state ) const
 // @return
 //  The number of lookahead symbols propagated.
 */
-int LalrGenerator::lookahead_goto( LalrState* state ) const
+int Generator::lookahead_goto( LalrState* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -448,7 +448,7 @@ int LalrGenerator::lookahead_goto( LalrState* state ) const
 // @param with_symbol
 //  The LalrSymbol to replace references with.
 */
-void LalrGenerator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
+void Generator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
 {
     for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
@@ -461,7 +461,7 @@ void LalrGenerator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSym
 /**
 // Check for symbols in the grammar that are referenced but never defined.
 */
-void LalrGenerator::check_for_undefined_symbol_errors()
+void Generator::check_for_undefined_symbol_errors()
 {
     if ( errors() == 0 )
     {
@@ -481,9 +481,9 @@ void LalrGenerator::check_for_undefined_symbol_errors()
 // Check for symbols in the grammar that are defined but never referenced.
 //
 // @param generator
-//  The LalrGenerator for fire any errors from (assumed not null).
+//  The Generator for fire any errors from (assumed not null).
 */
-void LalrGenerator::check_for_unreferenced_symbol_errors()
+void Generator::check_for_unreferenced_symbol_errors()
 {
     if ( errors() == 0 )
     {
@@ -519,9 +519,9 @@ void LalrGenerator::check_for_unreferenced_symbol_errors()
 // production.
 //
 // @param generator
-//  The LalrGenerator for fire any errors from (assumed not null).
+//  The Generator for fire any errors from (assumed not null).
 */
-void LalrGenerator::check_for_error_symbol_on_left_hand_side_errors()
+void Generator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
@@ -535,7 +535,7 @@ void LalrGenerator::check_for_error_symbol_on_left_hand_side_errors()
 /**
 // Calculate identifiers for all symbols.
 */
-void LalrGenerator::calculate_identifiers()
+void Generator::calculate_identifiers()
 {
     for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -557,7 +557,7 @@ void LalrGenerator::calculate_identifiers()
 // The `.start`, `.end`, and `.error` symbols are exempt from the above 
 // processing.  They are explicitly assigned their corr
 */
-void LalrGenerator::calculate_terminal_and_non_terminal_symbols()
+void Generator::calculate_terminal_and_non_terminal_symbols()
 {
     for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -587,7 +587,7 @@ void LalrGenerator::calculate_terminal_and_non_terminal_symbols()
 // more readable name of the non terminal but removing the redundant 
 // reduction.
 */
-void LalrGenerator::calculate_implicit_terminal_symbols()
+void Generator::calculate_implicit_terminal_symbols()
 {
     for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -623,7 +623,7 @@ void LalrGenerator::calculate_implicit_terminal_symbols()
 // Calculate the precedence of each production that hasn't had precedence
 // set explicitly as the precedence of its rightmost terminal.
 */
-void LalrGenerator::calculate_precedence_of_productions()
+void Generator::calculate_precedence_of_productions()
 {
     for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
@@ -643,7 +643,7 @@ void LalrGenerator::calculate_precedence_of_productions()
 /**
 // Calculate the index for each symbol.
 */
-void LalrGenerator::calculate_symbol_indices()
+void Generator::calculate_symbol_indices()
 {
     int index = 0;
     for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
@@ -659,7 +659,7 @@ void LalrGenerator::calculate_symbol_indices()
 // Calculate the first position sets for each LalrSymbol until no more 
 // terminals can be added to any first position sets.
 */
-void LalrGenerator::calculate_first()
+void Generator::calculate_first()
 {
     int added = 1;
     while ( added > 0 )
@@ -678,7 +678,7 @@ void LalrGenerator::calculate_first()
 // Calculate the follow position sets for each LalrSymbol until no more 
 // terminals can be added to any follow position sets.
 */
-void LalrGenerator::calculate_follow()
+void Generator::calculate_follow()
 {
     start_symbol_->add_symbol_to_follow( end_symbol_ );
 
@@ -708,7 +708,7 @@ void LalrGenerator::calculate_follow()
 // @param symbols
 //  The symbols in the grammar.
 */
-void LalrGenerator::generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols )
+void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -780,7 +780,7 @@ void LalrGenerator::generate_states( const LalrSymbol* start_symbol, const LalrS
 /**
 // Generate indices for states.
 */
-void LalrGenerator::generate_indices_for_states()
+void Generator::generate_indices_for_states()
 {
     int index = 0;
     for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::iterator i = states_.begin(); i != states_.end(); ++i )
@@ -795,7 +795,7 @@ void LalrGenerator::generate_indices_for_states()
 /**
 // Generate reduction transitions.
 */
-void LalrGenerator::generate_reduce_transitions()
+void Generator::generate_reduce_transitions()
 {
     for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
@@ -830,7 +830,7 @@ void LalrGenerator::generate_reduce_transitions()
 // @param production
 //  The LalrProduction that is to be reduced.
 */
-void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production )
+void Generator::generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );
@@ -882,7 +882,7 @@ void LalrGenerator::generate_reduce_transition( LalrState* state, const LalrSymb
 /**
 // Generate indices for the transitions in each state.
 */
-void LalrGenerator::generate_indices_for_transitions()
+void Generator::generate_indices_for_transitions()
 {
     for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
@@ -892,7 +892,7 @@ void LalrGenerator::generate_indices_for_transitions()
     }
 }
 
-void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
+void Generator::populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_state_machine );
 

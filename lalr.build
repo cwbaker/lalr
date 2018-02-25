@@ -5,7 +5,7 @@ for _, build in build:default_builds() do
             "Action.cpp",
             "Directive.cpp",
             "Grammar.cpp",
-            "LalrGenerator.cpp",
+            "Generator.cpp",
             "LalrItem.cpp",
             "LalrNil.cpp",
             "LalrState.cpp",

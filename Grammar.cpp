@@ -8,7 +8,7 @@
 #include "LalrSymbol.hpp"
 #include "LalrProduction.hpp"
 #include "Action.hpp"
-#include "LalrGenerator.hpp"
+#include "Generator.hpp"
 #include "Action.hpp"
 #include "LalrState.hpp"
 #include "ParserStateMachine.hpp"
@@ -298,7 +298,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         }
     }
 
-    LalrGenerator generator( *this, state_machine, parser_error_policy, lexer_error_policy );
+    Generator generator( *this, state_machine, parser_error_policy, lexer_error_policy );
 }
 
 Directive* Grammar::directive( Associativity associativity )

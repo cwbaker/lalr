@@ -120,7 +120,7 @@ const LexerState* LexerGenerator::whitespace_start_state() const
 //
 // If the parser already has a LexerAction whose identifier 
 // matches \e identifier then that LexerAction is returned.  Otherwise 
-// a new LexerAction is created, added to this LalrGenerator so that it 
+// a new LexerAction is created, added to this `Generator` so that it 
 // can be returned later if necessary, and returned from this call.
 //
 // @param identifier
