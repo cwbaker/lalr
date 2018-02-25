@@ -35,7 +35,7 @@ class ParserStateMachine;
 class Action;
 class LalrSymbol;
 class Item;
-class LalrState;
+class State;
 class LalrProduction;
 class Grammar;
 
@@ -51,11 +51,11 @@ class Generator
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the parser.
-    std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>> states_; ///< The states in the parser's state machine.
+    std::set<std::shared_ptr<State>, shared_ptr_less<State>> states_; ///< The states in the parser's state machine.
     LalrSymbol* start_symbol_; ///< The start symbol.
     LalrSymbol* end_symbol_; ///< The end symbol.
     LalrSymbol* error_symbol_; ///< The error symbol.
-    LalrState* start_state_; ///< The start state.
+    State* start_state_; ///< The start state.
     int errors_; ///< The number of errors that occured during parsing and generation.
 
     public:
@@ -65,11 +65,11 @@ class Generator
         std::vector<std::unique_ptr<Action> >& actions();
         std::vector<std::unique_ptr<LalrProduction> >& productions();
         std::vector<std::unique_ptr<LalrSymbol> >& symbols();
-        std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& states();
+        std::set<std::shared_ptr<State>, shared_ptr_less<State>>& states();
         const LalrSymbol* start_symbol();
         const LalrSymbol* end_symbol();
         const LalrSymbol* error_symbol();
-        LalrState* start_state();
+        State* start_state();
         int errors() const;
                 
     private:
@@ -77,10 +77,10 @@ class Generator
         void fire_printf( const char* format, ... ) const;
         void generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
         std::set<const LalrSymbol*> lookahead( const Item& item ) const;
-        void closure( const std::shared_ptr<LalrState>& state );
-        std::shared_ptr<LalrState> goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol );
-        int lookahead_closure( LalrState* state ) const;
-        int lookahead_goto( LalrState* state ) const;
+        void closure( const std::shared_ptr<State>& state );
+        std::shared_ptr<State> goto_( const std::shared_ptr<State>& state, const LalrSymbol& symbol );
+        int lookahead_closure( State* state ) const;
+        int lookahead_goto( State* state ) const;
         void replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol );
         void check_for_undefined_symbol_errors();
         void check_for_unreferenced_symbol_errors();
@@ -95,7 +95,7 @@ class Generator
         void generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols );
         void generate_indices_for_states();
         void generate_reduce_transitions();
-        void generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production );
+        void generate_reduce_transition( State* state, const LalrSymbol* symbol, const LalrProduction* production );
         void generate_indices_for_transitions();
         void populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
 };

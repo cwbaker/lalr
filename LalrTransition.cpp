@@ -5,7 +5,7 @@
 
 #include "LalrTransition.hpp"
 #include "LalrSymbol.hpp"
-#include "LalrState.hpp"
+#include "State.hpp"
 #include "Action.hpp"
 #include "assert.hpp"
 #include <stdio.h>
@@ -57,7 +57,7 @@ LalrTransition::LalrTransition( const LalrSymbol* symbol, const LalrSymbol* redu
 // @param state
 //  The state that this transition is to (assumed not null).
 */
-LalrTransition::LalrTransition( const LalrSymbol* symbol, LalrState* state )
+LalrTransition::LalrTransition( const LalrSymbol* symbol, State* state )
 : symbol_( symbol ),
   state_( state ),
   reduced_symbol_( nullptr ),
@@ -77,7 +77,7 @@ LalrTransition::LalrTransition( const LalrSymbol* symbol, LalrState* state )
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-LalrState* LalrTransition::get_state() const
+State* LalrTransition::get_state() const
 {
     return state_;
 }

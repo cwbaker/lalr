@@ -5,7 +5,7 @@
 
 #include "Generator.hpp"
 #include "LalrProduction.hpp"
-#include "LalrState.hpp"
+#include "State.hpp"
 #include "Item.hpp"
 #include "Grammar.hpp"
 #include "LalrSymbol.hpp"   
@@ -107,7 +107,7 @@ std::vector<std::unique_ptr<LalrSymbol> >& Generator::symbols()
 // @return
 //  The states.
 */
-std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& Generator::states()
+std::set<std::shared_ptr<State>, shared_ptr_less<State>>& Generator::states()
 {
     return states_;
 }
@@ -151,7 +151,7 @@ const LalrSymbol* Generator::error_symbol()
 // @return
 //  The start state.
 */
-LalrState* Generator::start_state()
+State* Generator::start_state()
 {
     return start_state_;
 }
@@ -300,9 +300,9 @@ std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
 // Generate the closure of the items contained in \e state.
 //
 // @param state
-//  The LalrState that contains the items to generate the closure of.
+//  The State that contains the items to generate the closure of.
 */
-void Generator::closure( const std::shared_ptr<LalrState>& state )
+void Generator::closure( const std::shared_ptr<State>& state )
 {
     SWEET_ASSERT( state );
 
@@ -340,11 +340,11 @@ void Generator::closure( const std::shared_ptr<LalrState>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<LalrState> Generator::goto_( const std::shared_ptr<LalrState>& state, const LalrSymbol& symbol )
+std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, const LalrSymbol& symbol )
 {
     SWEET_ASSERT( state );
 
-    std::shared_ptr<LalrState> goto_state( new LalrState() );
+    std::shared_ptr<State> goto_state( new State() );
 
     const set<Item>& items = state->get_items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
@@ -371,7 +371,7 @@ std::shared_ptr<LalrState> Generator::goto_( const std::shared_ptr<LalrState>& s
 // @return
 //  The number of lookahead symbols generated.
 */
-int Generator::lookahead_closure( LalrState* state ) const
+int Generator::lookahead_closure( State* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -412,7 +412,7 @@ int Generator::lookahead_closure( LalrState* state ) const
 // @return
 //  The number of lookahead symbols propagated.
 */
-int Generator::lookahead_goto( LalrState* state ) const
+int Generator::lookahead_goto( State* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -430,7 +430,7 @@ int Generator::lookahead_goto( LalrState* state ) const
             int position = item->get_position();
             if ( item->get_production()->symbol_by_position(position) == symbol )
             {
-                LalrState* goto_state = transition->get_state();
+                State* goto_state = transition->get_state();
                 added += goto_state->add_lookahead_symbols( item->get_production(), position + 1, item->get_lookahead_symbols() );
             }
         }        
@@ -716,7 +716,7 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
 
     if ( !start_symbol->productions().empty() )
     {
-        std::shared_ptr<LalrState> start_state( new LalrState() );
+        std::shared_ptr<State> start_state( new State() );
         start_state->add_item( start_symbol->productions().front(), 0 );
         closure( start_state );
         states_.insert( start_state );
@@ -730,9 +730,9 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                const std::shared_ptr<LalrState>& state = *i;
+                const std::shared_ptr<State>& state = *i;
                 SWEET_ASSERT( state );
 
                 if ( !state->is_processed() )
@@ -744,10 +744,10 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
                         SWEET_ASSERT( symbol );
                         if ( symbol != end_symbol )
                         {
-                            std::shared_ptr<LalrState> goto_state = goto_( state, *symbol );
+                            std::shared_ptr<State> goto_state = goto_( state, *symbol );
                             if ( !goto_state->get_items().empty() )
                             {                    
-                                std::shared_ptr<LalrState> actual_goto_state = *states_.insert( goto_state ).first;
+                                std::shared_ptr<State> actual_goto_state = *states_.insert( goto_state ).first;
                                 added += goto_state == actual_goto_state ? 1 : 0;
                                 state->add_transition( symbol, actual_goto_state.get() );
                             }
@@ -763,9 +763,9 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                LalrState* state = i->get();
+                State* state = i->get();
                 SWEET_ASSERT( state );
                 added += lookahead_closure( state );
                 added += lookahead_goto( state );
@@ -783,9 +783,9 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
 void Generator::generate_indices_for_states()
 {
     int index = 0;
-    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        LalrState* state = i->get();
+        State* state = i->get();
         SWEET_ASSERT( state );
         state->set_index( index );
         ++index;
@@ -797,9 +797,9 @@ void Generator::generate_indices_for_states()
 */
 void Generator::generate_reduce_transitions()
 {
-    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        LalrState* state = i->get();
+        State* state = i->get();
         SWEET_ASSERT( state );
             
         for ( std::set<Item>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
@@ -822,7 +822,7 @@ void Generator::generate_reduce_transitions()
 // Generate a reduction transition.
 //
 // @param state
-//  The LalrState that the reduction occurs from.
+//  The State that the reduction occurs from.
 //
 // @param symbol
 //  The LalrSymbol that the reduction is to be performed on.
@@ -830,7 +830,7 @@ void Generator::generate_reduce_transitions()
 // @param production
 //  The LalrProduction that is to be reduced.
 */
-void Generator::generate_reduce_transition( LalrState* state, const LalrSymbol* symbol, const LalrProduction* production )
+void Generator::generate_reduce_transition( State* state, const LalrSymbol* symbol, const LalrProduction* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );
@@ -884,9 +884,9 @@ void Generator::generate_reduce_transition( LalrState* state, const LalrSymbol* 
 */
 void Generator::generate_indices_for_transitions()
 {
-    for ( std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        LalrState* state = i->get();
+        State* state = i->get();
         SWEET_ASSERT( state );
         state->generate_indices_for_transitions();        
     }
@@ -924,7 +924,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
     int transitions_size = 0;
     for ( auto i = states_.begin(); i != states_.end(); ++i )
     {
-        const LalrState* source_state = i->get();
+        const State* source_state = i->get();
         SWEET_ASSERT( source_state );
         transitions_size += source_state->get_transitions().size();
     }
@@ -935,7 +935,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
     int transition_index = 0;
     for ( auto i = states_.begin(); i != states_.end(); ++i )
     {
-        const LalrState* source_state = i->get();
+        const State* source_state = i->get();
         SWEET_ASSERT( source_state );
         ParserState* state = &states[state_index];
         SWEET_ASSERT( state );
@@ -953,7 +953,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
             SWEET_ASSERT( source_transition );
             const LalrSymbol* source_symbol = source_transition->get_symbol();
             SWEET_ASSERT( source_symbol );
-            const LalrState* state_transitioned_to = source_transition->get_state();
+            const State* state_transitioned_to = source_transition->get_state();
             const LalrSymbol* reduced_symbol = source_transition->reduced_symbol();
             ParserTransition* transition = &transitions[transition_index];
             transition->symbol = &symbols[source_symbol->index()];

@@ -1,9 +1,9 @@
 //
-// LalrState.cpp
+// State.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LalrState.hpp"
+#include "State.hpp"
 #include "Item.hpp"
 #include "LalrTransition.hpp"
 #include "assert.hpp"
@@ -21,7 +21,7 @@ using std::set;
 /**
 // Constructor.
 */
-LalrState::LalrState()
+State::State()
 : items_(),
   transitions_(),
   processed_( false ),
@@ -41,7 +41,7 @@ LalrState::LalrState()
 // @return
 //  The number of items added (0 or 1).
 */
-int LalrState::add_item( LalrProduction* production, int position )
+int State::add_item( LalrProduction* production, int position )
 {
     SWEET_ASSERT( production );
     return items_.insert( Item(production, position) ).second ? 1 : 0;
@@ -63,7 +63,7 @@ int LalrState::add_item( LalrProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int LalrState::add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
+int State::add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<Item>::iterator item = items_.find( Item(production, position) );
@@ -77,7 +77,7 @@ int LalrState::add_lookahead_symbols( LalrProduction* production, int position, 
 // @return
 //  The items.
 */
-const std::set<Item>& LalrState::get_items() const
+const std::set<Item>& State::get_items() const
 {
     return items_;
 }
@@ -89,7 +89,7 @@ const std::set<Item>& LalrState::get_items() const
 //  A variable to append the description of this state to (assumed not 
 //  null).
 */
-void LalrState::describe( std::string* description ) const
+void State::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
 
@@ -121,7 +121,7 @@ void LalrState::describe( std::string* description ) const
 // @return
 //  A string describing this state.
 */
-std::string LalrState::description() const
+std::string State::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -138,7 +138,7 @@ std::string LalrState::description() const
 // @param state
 //  The state to transition to (assumed not null).
 */
-void LalrState::add_transition( const LalrSymbol* symbol, LalrState* state )
+void State::add_transition( const LalrSymbol* symbol, State* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
@@ -163,7 +163,7 @@ void LalrState::add_transition( const LalrSymbol* symbol, LalrState* state )
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void LalrState::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void State::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( reduced_symbol );
@@ -200,7 +200,7 @@ void LalrState::add_transition( const LalrSymbol* symbol, const LalrSymbol* redu
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void LalrState::add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void State::add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
@@ -223,7 +223,7 @@ void LalrState::add_transition( const std::set<const LalrSymbol*>& symbols, cons
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* symbol )
+LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol )
 {    
     LalrTransition* transition = NULL;  
       
@@ -250,7 +250,7 @@ LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* symbol )
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* symbol ) const
+const LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol ) const
 {    
     const LalrTransition* transition = NULL;
     
@@ -270,7 +270,7 @@ const LalrTransition* LalrState::find_transition_by_symbol( const LalrSymbol* sy
 /**
 // Generate indices for the transitions in this state.
 */
-void LalrState::generate_indices_for_transitions()
+void State::generate_indices_for_transitions()
 {
     int index = 0;
     for ( std::set<LalrTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
@@ -286,7 +286,7 @@ void LalrState::generate_indices_for_transitions()
 // @return
 //  The transitions.
 */
-const std::set<LalrTransition>& LalrState::get_transitions() const
+const std::set<LalrTransition>& State::get_transitions() const
 {
     return transitions_;
 }
@@ -297,7 +297,7 @@ const std::set<LalrTransition>& LalrState::get_transitions() const
 // @param processed
 //  True to mark this state as processed or false to mark it as not processed.
 */
-void LalrState::set_processed( bool processed )
+void State::set_processed( bool processed )
 {
     processed_ = processed;
 }
@@ -308,7 +308,7 @@ void LalrState::set_processed( bool processed )
 // @return
 //  True if this state has been processed otherwise false.
 */
-bool LalrState::is_processed() const
+bool State::is_processed() const
 {
     return processed_;
 }
@@ -319,7 +319,7 @@ bool LalrState::is_processed() const
 // @param index
 //  The value to set the index of this state to.
 */
-void LalrState::set_index( int index )
+void State::set_index( int index )
 {
     index_ = index;
 }
@@ -330,7 +330,7 @@ void LalrState::set_index( int index )
 // @return
 //  The index of this state.
 */
-int LalrState::get_index() const
+int State::get_index() const
 {
     return index_;
 }
@@ -344,7 +344,7 @@ int LalrState::get_index() const
 // @return
 //  True if the items in this state are less than the items in \e state.
 */
-bool LalrState::operator<( const LalrState& state ) const
+bool State::operator<( const State& state ) const
 {
     return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
 }

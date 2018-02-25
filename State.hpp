@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_LALRSTATE_HPP_INCLUDED
-#define SWEET_LALR_LALRSTATE_HPP_INCLUDED
+#ifndef SWEET_LALR_STATE_HPP_INCLUDED
+#define SWEET_LALR_STATE_HPP_INCLUDED
 
 #include "Item.hpp"
 #include "LalrTransition.hpp"
@@ -15,7 +15,7 @@ namespace lalr
 /**
 // A state in a parser's state machine.
 */
-class LalrState
+class State
 {
     public:
         static const int INVALID_INDEX = -1;
@@ -27,7 +27,7 @@ class LalrState
         int index_; ///< The index of this state.
 
     public:
-        LalrState();
+        State();
 
         int add_item( LalrProduction* production, int position );
         int add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols );
@@ -35,7 +35,7 @@ class LalrState
         void describe( std::string* description ) const;
         std::string description() const;
 
-        void add_transition( const LalrSymbol* symbol, LalrState* state );
+        void add_transition( const LalrSymbol* symbol, State* state );
         void add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         void add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         void generate_indices_for_transitions();
@@ -49,7 +49,7 @@ class LalrState
         void set_index( int index );
         int get_index() const;
 
-        bool operator<( const LalrState& state ) const;
+        bool operator<( const State& state ) const;
 };
 
 }
