@@ -161,7 +161,7 @@ void LalrState::add_transition( const LalrSymbol* symbol, LalrState* state )
 //
 // @param action
 //  The index of the action taken on the reduction or 
-//  `LalrAction::INVALID_INDEX` if no action is taken.
+//  `Action::INVALID_INDEX` if no action is taken.
 */
 void LalrState::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
@@ -198,7 +198,7 @@ void LalrState::add_transition( const LalrSymbol* symbol, const LalrSymbol* redu
 //
 // @param action
 //  The index of the action taken on the reduction or 
-//  `LalrAction::INVALID_INDEX` if no action is taken.
+//  `Action::INVALID_INDEX` if no action is taken.
 */
 void LalrState::add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {

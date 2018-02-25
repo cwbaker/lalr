@@ -5,7 +5,7 @@
 
 #include "LalrProduction.hpp"
 #include "LalrSymbol.hpp"
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const LalrAction* action )
+LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const Action* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -202,7 +202,7 @@ void LalrProduction::append_symbol( LalrSymbol* symbol )
 //  The action to take when this production is reduced or null to set this
 //  production to have no action.
 */
-void LalrProduction::set_action( const LalrAction* action )
+void LalrProduction::set_action( const Action* action )
 {
     action_ = action;
 }
@@ -213,14 +213,14 @@ void LalrProduction::set_action( const LalrAction* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const LalrAction* LalrProduction::action() const
+const Action* LalrProduction::action() const
 {
     return action_;
 }
 
 int LalrProduction::action_index() const
 {
-    return action_ ? action_->index() : LalrAction::INVALID_INDEX;
+    return action_ ? action_->index() : Action::INVALID_INDEX;
 }
 
 const LalrSymbol* LalrProduction::precedence_symbol() const

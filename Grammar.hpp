@@ -17,7 +17,7 @@ namespace lalr
 class LalrDirective;
 class LalrSymbol;
 class LalrProduction;
-class LalrAction;
+class Action;
 class LalrNil;
 class ParserErrorPolicy;
 class LexerErrorPolicy;
@@ -29,7 +29,7 @@ class Grammar
     std::vector<std::unique_ptr<LalrDirective>> directives_; ///< The directives in the grammar.
     std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the grammar.
-    std::vector<std::unique_ptr<LalrAction>> actions_; ///< The actions in the grammar.
+    std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     LalrDirective* active_directive_;
@@ -46,7 +46,7 @@ public:
     std::vector<std::unique_ptr<LalrDirective>>& directives();
     std::vector<std::unique_ptr<LalrSymbol>>& symbols();
     std::vector<std::unique_ptr<LalrProduction>>& productions();
-    std::vector<std::unique_ptr<LalrAction>>& actions();
+    std::vector<std::unique_ptr<Action>>& actions();
     const std::vector<LexerToken>& whitespace_tokens() const;
     LalrSymbol* start_symbol() const;
     LalrSymbol* end_symbol() const;
@@ -73,7 +73,7 @@ private:
     LalrSymbol* symbol( const char* regex );
     LalrSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
     LalrProduction* production( LalrSymbol* symbol );
-    LalrAction* action( const char* id );
+    Action* action( const char* id );
 };
 
 }

@@ -7,7 +7,7 @@
 #include "LalrSymbol.hpp"
 #include "LalrItem.hpp"
 #include "LalrState.hpp"
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -32,7 +32,7 @@ using namespace sweet::lalr;
 //
 // @param action
 //  The index of the action taken on this reduction or 
-//  `LalrAction::INVALID_INDEX` if no action is taken.
+//  `Action::INVALID_INDEX` if no action is taken.
 */
 LalrTransition::LalrTransition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
@@ -64,7 +64,7 @@ LalrTransition::LalrTransition( const LalrSymbol* symbol, LalrState* state )
   reduced_symbol_( nullptr ),
   reduced_length_( 0 ),
   precedence_( 0 ),
-  action_( LalrAction::INVALID_INDEX ),
+  action_( Action::INVALID_INDEX ),
   type_( TRANSITION_SHIFT ),
   index_( INVALID_INDEX )
 {

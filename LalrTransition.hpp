@@ -28,7 +28,7 @@ class LalrTransition
         mutable const LalrSymbol* reduced_symbol_; ///< The symbol that is reduced to or null if this isn't a reducing transition.
         mutable int reduced_length_; ///< The number of symbols on the right-hand side of the reduced production.
         mutable int precedence_; ///< The precedence of the reduce production or 0 for the default precedence or no reduction.
-        mutable int action_; ///< The index of the action taken on reduce or LalrAction::INVALID_INDEX if there is no action associated with the reduce.
+        mutable int action_; ///< The index of the action taken on reduce or Action::INVALID_INDEX if there is no action associated with the reduce.
         mutable TransitionType type_; ///< The type of transition that this is.
         mutable int index_; ///< The index of this transition.
 

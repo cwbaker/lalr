@@ -23,7 +23,7 @@ public:
     const ParserSymbol* reduced_symbol; ///< The symbol that is reduced to or null if this isn't a reducing transition.
     int reduced_length; ///< The number of symbols on the right-hand side of the reduced production.
     int precedence; ///< The precedence of the reduce production or 0 for the default precedence or no reduction.
-    int action; ///< The index of the action taken on reduce or LalrAction::INVALID_INDEX if there is no action associated with the reduce.
+    int action; ///< The index of the action taken on reduce or Action::INVALID_INDEX if there is no action associated with the reduce.
     TransitionType type; ///< The type of transition that this is.
     int index; ///< The index of this transition.
 

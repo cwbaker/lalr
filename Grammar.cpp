@@ -7,9 +7,9 @@
 #include "LalrDirective.hpp"
 #include "LalrSymbol.hpp"
 #include "LalrProduction.hpp"
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "LalrGenerator.hpp"
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "LalrState.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
@@ -74,7 +74,7 @@ std::vector<std::unique_ptr<LalrProduction>>& Grammar::productions()
     return productions_;
 }
 
-std::vector<std::unique_ptr<LalrAction>>& Grammar::actions()
+std::vector<std::unique_ptr<Action>>& Grammar::actions()
 {
     return actions_;
 }
@@ -361,10 +361,10 @@ LalrProduction* Grammar::production( LalrSymbol* symbol )
     return productions_.back().get();
 }
 
-LalrAction* Grammar::action( const char* identifier )
+Action* Grammar::action( const char* identifier )
 {
     SWEET_ASSERT( identifier );
-    vector<unique_ptr<LalrAction>>::const_iterator i = actions_.begin();
+    vector<unique_ptr<Action>>::const_iterator i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier() != identifier )
     {
         ++i;
@@ -372,7 +372,7 @@ LalrAction* Grammar::action( const char* identifier )
     if ( i == actions_.end() )
     {
         int index = int(actions_.size());
-        unique_ptr<LalrAction> action( new LalrAction(index, identifier) );
+        unique_ptr<Action> action( new Action(index, identifier) );
         actions_.push_back( move(action) );
         return actions_.back().get();
     }

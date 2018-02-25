@@ -9,7 +9,7 @@
 #include "LalrItem.hpp"
 #include "Grammar.hpp"
 #include "LalrSymbol.hpp"   
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
@@ -74,7 +74,7 @@ std::string& LalrGenerator::identifier()
 // @return
 //  The actions.
 */
-std::vector<std::unique_ptr<LalrAction> >& LalrGenerator::actions()
+std::vector<std::unique_ptr<Action> >& LalrGenerator::actions()
 {
     return actions_;
 }
@@ -900,7 +900,7 @@ void LalrGenerator::populate_parser_state_machine( const std::vector<LexerToken>
     unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
     for ( int i = 0; i < actions_size; ++i )
     {
-        const LalrAction* source_action = actions_[i].get();
+        const Action* source_action = actions_[i].get();
         SWEET_ASSERT( source_action );
         ParserAction* action = &actions[i];
         SWEET_ASSERT( action );

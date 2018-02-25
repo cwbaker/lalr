@@ -32,7 +32,7 @@ namespace lalr
 class LexerErrorPolicy;
 class ParserErrorPolicy;
 class ParserStateMachine;
-class LalrAction;
+class Action;
 class LalrSymbol;
 class LalrItem;
 class LalrState;
@@ -48,7 +48,7 @@ class LalrGenerator
 {
     ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
-    std::vector<std::unique_ptr<LalrAction>> actions_; ///< The actions in the parser.
+    std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>> states_; ///< The states in the parser's state machine.
@@ -62,7 +62,7 @@ class LalrGenerator
         LalrGenerator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
         ~LalrGenerator();
         std::string& identifier();
-        std::vector<std::unique_ptr<LalrAction> >& actions();
+        std::vector<std::unique_ptr<Action> >& actions();
         std::vector<std::unique_ptr<LalrProduction> >& productions();
         std::vector<std::unique_ptr<LalrSymbol> >& symbols();
         std::set<std::shared_ptr<LalrState>, shared_ptr_less<LalrState>>& states();

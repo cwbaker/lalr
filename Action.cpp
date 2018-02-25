@@ -1,9 +1,9 @@
 //
-// LalrAction.cpp
+// Action.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LalrAction.hpp"
+#include "Action.hpp"
 #include "assert.hpp"
 
 using namespace sweet::lalr;
@@ -17,7 +17,7 @@ using namespace sweet::lalr;
 // @param identifier
 //  The identifier of this action (assumed not empty).
 */
-LalrAction::LalrAction( int index, const std::string& identifier )
+Action::Action( int index, const std::string& identifier )
 : index_( index ),
   identifier_( identifier )
 {
@@ -25,12 +25,12 @@ LalrAction::LalrAction( int index, const std::string& identifier )
     SWEET_ASSERT( !identifier_.empty() );
 }
 
-int LalrAction::index() const
+int Action::index() const
 {
     return index_;
 }
 
-const std::string& LalrAction::identifier() const
+const std::string& Action::identifier() const
 {
     return identifier_;
 }
