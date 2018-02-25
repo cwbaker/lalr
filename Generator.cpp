@@ -8,7 +8,7 @@
 #include "State.hpp"
 #include "Item.hpp"
 #include "Grammar.hpp"
-#include "LalrSymbol.hpp"   
+#include "Symbol.hpp"   
 #include "Action.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
@@ -96,7 +96,7 @@ std::vector<std::unique_ptr<Production> >& Generator::productions()
 // @return
 //  The symbols.
 */
-std::vector<std::unique_ptr<LalrSymbol> >& Generator::symbols()
+std::vector<std::unique_ptr<Symbol> >& Generator::symbols()
 {
     return symbols_;
 }
@@ -118,7 +118,7 @@ std::set<std::shared_ptr<State>, shared_ptr_less<State>>& Generator::states()
 // @return
 //  The start symbol.
 */
-const LalrSymbol* Generator::start_symbol()
+const Symbol* Generator::start_symbol()
 {
     return start_symbol_;
 }
@@ -129,7 +129,7 @@ const LalrSymbol* Generator::start_symbol()
 // @return
 //  The end symbol.
 */
-const LalrSymbol* Generator::end_symbol()
+const Symbol* Generator::end_symbol()
 {
     return end_symbol_;
 }
@@ -140,7 +140,7 @@ const LalrSymbol* Generator::end_symbol()
 // @return
 //  The error symbol.
 */
-const LalrSymbol* Generator::error_symbol()
+const Symbol* Generator::error_symbol()
 {
     return error_symbol_;
 }
@@ -260,15 +260,15 @@ void Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_mac
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
+std::set<const Symbol*> Generator::lookahead( const Item& item ) const
 {
-    set<const LalrSymbol*> lookahead_symbols;
+    set<const Symbol*> lookahead_symbols;
 
     const Production* production = item.get_production();
     SWEET_ASSERT( production );
         
-    const vector<LalrSymbol*>& symbols = production->symbols();    
-    vector<LalrSymbol*>::const_iterator i = symbols.begin() + item.get_position();
+    const vector<Symbol*>& symbols = production->symbols();    
+    vector<Symbol*>::const_iterator i = symbols.begin() + item.get_position();
     if ( i != symbols.end() )
     {
         ++i;
@@ -276,7 +276,7 @@ std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
     
     while ( i != symbols.end() && (*i)->nullable() )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
         ++i;
@@ -284,7 +284,7 @@ std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
     
     if ( i != symbols.end() )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
     }
@@ -313,7 +313,7 @@ void Generator::closure( const std::shared_ptr<State>& state )
         const set<Item>& items = state->get_items();
         for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
-            const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
+            const Symbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
             if ( symbol )
             {
                 const vector<Production*>& productions = symbol->productions();
@@ -340,7 +340,7 @@ void Generator::closure( const std::shared_ptr<State>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, const LalrSymbol& symbol )
+std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, const Symbol& symbol )
 {
     SWEET_ASSERT( state );
 
@@ -380,10 +380,10 @@ int Generator::lookahead_closure( State* state ) const
     const set<Item>& items = state->get_items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
-        const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
+        const Symbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
         if ( symbol )
         {
-            set<const LalrSymbol*> lookahead_symbols = lookahead( *item );        
+            set<const Symbol*> lookahead_symbols = lookahead( *item );        
             const vector<Production*>& productions = symbol->productions();
             for ( vector<Production*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
@@ -421,7 +421,7 @@ int Generator::lookahead_goto( State* state ) const
     const set<Transition>& transitions = state->get_transitions();
     for ( set<Transition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
     {
-        const LalrSymbol* symbol = transition->get_symbol();
+        const Symbol* symbol = transition->get_symbol();
         SWEET_ASSERT( symbol );
 
         const set<Item>& items = state->get_items();
@@ -443,12 +443,12 @@ int Generator::lookahead_goto( State* state ) const
 // Replace references to \e to_symbol with references to \e with_symbol.
 //
 // @param to_symbol
-//  The LalrSymbol to replace references to.
+//  The Symbol to replace references to.
 //
 // @param with_symbol
-//  The LalrSymbol to replace references with.
+//  The Symbol to replace references with.
 */
-void Generator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
+void Generator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
 {
     for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
@@ -465,9 +465,9 @@ void Generator::check_for_undefined_symbol_errors()
 {
     if ( errors() == 0 )
     {
-        for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            const LalrSymbol* symbol = i->get();
+            const Symbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() )
             {
@@ -487,9 +487,9 @@ void Generator::check_for_unreferenced_symbol_errors()
 {
     if ( errors() == 0 )
     {
-        for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            const LalrSymbol* symbol = i->get();
+            const Symbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             
             int references = 0;            
@@ -537,9 +537,9 @@ void Generator::check_for_error_symbol_on_left_hand_side_errors()
 */
 void Generator::calculate_identifiers()
 {
-    for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        LalrSymbol* symbol = i->get();
+        Symbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         symbol->calculate_identifier();
     }
@@ -559,9 +559,9 @@ void Generator::calculate_identifiers()
 */
 void Generator::calculate_terminal_and_non_terminal_symbols()
 {
-    for ( vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        LalrSymbol* symbol = i->get();
+        Symbol* symbol = i->get();
         if ( symbol->symbol_type() == SYMBOL_NULL )
         {
             symbol->set_symbol_type( symbol->productions().empty() ? SYMBOL_TERMINAL : SYMBOL_NON_TERMINAL );
@@ -589,12 +589,12 @@ void Generator::calculate_terminal_and_non_terminal_symbols()
 */
 void Generator::calculate_implicit_terminal_symbols()
 {
-    for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        LalrSymbol* non_terminal_symbol = i->get();        
+        Symbol* non_terminal_symbol = i->get();        
         if ( non_terminal_symbol && non_terminal_symbol != error_symbol_ )
         {
-            LalrSymbol* terminal_symbol = non_terminal_symbol->implicit_terminal();
+            Symbol* terminal_symbol = non_terminal_symbol->implicit_terminal();
             if ( terminal_symbol )
             {       
                 SWEET_ASSERT( terminal_symbol != non_terminal_symbol );
@@ -605,7 +605,7 @@ void Generator::calculate_implicit_terminal_symbols()
         }
     }
     
-    vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin();
+    vector<unique_ptr<Symbol>>::iterator i = symbols_.begin();
     while ( i != symbols_.end() )
     {
         if ( !i->get() )
@@ -631,7 +631,7 @@ void Generator::calculate_precedence_of_productions()
         SWEET_ASSERT( production );       
         if ( production->precedence() == 0 )
         {
-            const LalrSymbol* symbol = production->find_rightmost_terminal_symbol();
+            const Symbol* symbol = production->find_rightmost_terminal_symbol();
             if ( symbol )
             {
                 production->set_precedence_symbol( symbol );
@@ -646,9 +646,9 @@ void Generator::calculate_precedence_of_productions()
 void Generator::calculate_symbol_indices()
 {
     int index = 0;
-    for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        LalrSymbol* symbol = i->get();
+        Symbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         symbol->set_index( index );
         ++index;
@@ -656,7 +656,7 @@ void Generator::calculate_symbol_indices()
 }
 
 /**
-// Calculate the first position sets for each LalrSymbol until no more 
+// Calculate the first position sets for each Symbol until no more 
 // terminals can be added to any first position sets.
 */
 void Generator::calculate_first()
@@ -665,9 +665,9 @@ void Generator::calculate_first()
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            LalrSymbol* symbol = i->get();
+            Symbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             added += symbol->calculate_first();
         }
@@ -675,7 +675,7 @@ void Generator::calculate_first()
 }
 
 /**
-// Calculate the follow position sets for each LalrSymbol until no more 
+// Calculate the follow position sets for each Symbol until no more 
 // terminals can be added to any follow position sets.
 */
 void Generator::calculate_follow()
@@ -686,9 +686,9 @@ void Generator::calculate_follow()
     while ( added > 0 )
     {
         added = 0;
-        for ( vector<unique_ptr<LalrSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
-            LalrSymbol* symbol = i->get();
+            Symbol* symbol = i->get();
             SWEET_ASSERT( symbol );
             added += symbol->calculate_follow();
         }
@@ -708,7 +708,7 @@ void Generator::calculate_follow()
 // @param symbols
 //  The symbols in the grammar.
 */
-void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols )
+void Generator::generate_states( const Symbol* start_symbol, const Symbol* end_symbol, const std::vector<std::unique_ptr<Symbol>>& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -722,8 +722,8 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
         states_.insert( start_state );
         start_state_ = start_state.get();
 
-        set<const LalrSymbol*> lookahead_symbols;
-        lookahead_symbols.insert( (LalrSymbol*) end_symbol );
+        set<const Symbol*> lookahead_symbols;
+        lookahead_symbols.insert( (Symbol*) end_symbol );
         start_state->add_lookahead_symbols( start_symbol->productions().front(), 0, lookahead_symbols );
         
         int added = 1;
@@ -738,9 +738,9 @@ void Generator::generate_states( const LalrSymbol* start_symbol, const LalrSymbo
                 if ( !state->is_processed() )
                 {
                     state->set_processed( true );
-                    for ( vector<unique_ptr<LalrSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                    for ( vector<unique_ptr<Symbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                     {
-                        LalrSymbol* symbol = j->get();
+                        Symbol* symbol = j->get();
                         SWEET_ASSERT( symbol );
                         if ( symbol != end_symbol )
                         {
@@ -806,10 +806,10 @@ void Generator::generate_reduce_transitions()
         {
             if ( item->is_dot_at_end() )
             {
-                const set<const LalrSymbol*>& symbols = item->get_lookahead_symbols();
-                for ( set<const LalrSymbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                const set<const Symbol*>& symbols = item->get_lookahead_symbols();
+                for ( set<const Symbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                 {
-                    const LalrSymbol* symbol = *j;
+                    const Symbol* symbol = *j;
                     SWEET_ASSERT( symbol );
                     generate_reduce_transition( state, symbol, item->get_production() );
                 }
@@ -825,12 +825,12 @@ void Generator::generate_reduce_transitions()
 //  The State that the reduction occurs from.
 //
 // @param symbol
-//  The LalrSymbol that the reduction is to be performed on.
+//  The Symbol that the reduction is to be performed on.
 //
 // @param production
 //  The Production that is to be reduced.
 */
-void Generator::generate_reduce_transition( State* state, const LalrSymbol* symbol, const Production* production )
+void Generator::generate_reduce_transition( State* state, const Symbol* symbol, const Production* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );
@@ -911,7 +911,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
     unique_ptr<ParserSymbol[]> symbols( new ParserSymbol [symbols_size] );
     for ( int i = 0; i < symbols_size; ++i )
     {
-        const LalrSymbol* source_symbol = symbols_[i].get();
+        const Symbol* source_symbol = symbols_[i].get();
         SWEET_ASSERT( source_symbol );
         ParserSymbol* symbol = &symbols[i];
         SWEET_ASSERT( symbol );
@@ -951,10 +951,10 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         {
             const Transition* source_transition = &(*j);
             SWEET_ASSERT( source_transition );
-            const LalrSymbol* source_symbol = source_transition->get_symbol();
+            const Symbol* source_symbol = source_transition->get_symbol();
             SWEET_ASSERT( source_symbol );
             const State* state_transitioned_to = source_transition->get_state();
-            const LalrSymbol* reduced_symbol = source_transition->reduced_symbol();
+            const Symbol* reduced_symbol = source_transition->reduced_symbol();
             ParserTransition* transition = &transitions[transition_index];
             transition->symbol = &symbols[source_symbol->index()];
             transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
@@ -979,7 +979,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
     vector<LexerToken> tokens;
     for ( size_t i = 0; i < symbols_.size(); ++i )
     {
-        const LalrSymbol* source_symbol = symbols_[i].get();
+        const Symbol* source_symbol = symbols_[i].get();
         SWEET_ASSERT( source_symbol );
         const ParserSymbol* symbols = parser_state_machine->symbols();
         SWEET_ASSERT( symbols );

@@ -19,12 +19,12 @@ Associativity Directive::associativity() const
     return associativity_;
 }
 
-const std::vector<LalrSymbol*>& Directive::symbols() const
+const std::vector<Symbol*>& Directive::symbols() const
 {
     return symbols_;
 }
 
-void Directive::append_symbol( LalrSymbol* symbol )
+void Directive::append_symbol( Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     symbols_.push_back( symbol );

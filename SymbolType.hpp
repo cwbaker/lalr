@@ -10,7 +10,7 @@ namespace lalr
 /**
 // The type of a symbol.
 //
-// @relates LalrSymbol
+// @relates Symbol
 */
 enum SymbolType
 {

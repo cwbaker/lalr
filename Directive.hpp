@@ -10,18 +10,18 @@ namespace sweet
 namespace lalr
 {
 
-class LalrSymbol;
+class Symbol;
 
 class Directive
 {
     Associativity associativity_;
-    std::vector<LalrSymbol*> symbols_;
+    std::vector<Symbol*> symbols_;
 
 public:
     Directive( Associativity associativity );
     Associativity associativity() const;
-    const std::vector<LalrSymbol*>& symbols() const;
-    void append_symbol( LalrSymbol* symbol );
+    const std::vector<Symbol*>& symbols() const;
+    void append_symbol( Symbol* symbol );
 };
 
 }

@@ -4,7 +4,7 @@
 //    
 
 #include "Item.hpp"
-#include "LalrSymbol.hpp"
+#include "Symbol.hpp"
 #include "Production.hpp"
 #include "assert.hpp"
 
@@ -93,7 +93,7 @@ bool Item::is_dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool Item::is_next_node( const LalrSymbol& symbol ) const
+bool Item::is_next_node( const Symbol& symbol ) const
 {
     return production_->symbol_by_position(position_) == &symbol;
 }
@@ -110,11 +110,11 @@ void Item::describe( std::string* description ) const
     SWEET_ASSERT( production_ );
         
     int position = 0;
-    const vector<LalrSymbol*>& symbols = production_->symbols();
-    vector<LalrSymbol*>::const_iterator i = symbols.begin(); 
+    const vector<Symbol*>& symbols = production_->symbols();
+    vector<Symbol*>::const_iterator i = symbols.begin(); 
     while ( i != symbols.end() && position < position_ )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         // symbol->describe( description );
         description->append( " " );
@@ -125,17 +125,17 @@ void Item::describe( std::string* description ) const
     
     while ( i != symbols.end() )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         // symbol->describe( description );
         description->append( " " );
         ++i;
     }
 
-    std::set<const LalrSymbol*>::const_iterator j = lookahead_symbols_.begin();
+    std::set<const Symbol*>::const_iterator j = lookahead_symbols_.begin();
     if ( j != lookahead_symbols_.end() )
     {
-        const LalrSymbol* symbol = *j;
+        const Symbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( "; " );
         // symbol->describe( description );
@@ -144,7 +144,7 @@ void Item::describe( std::string* description ) const
 
     while ( j != lookahead_symbols_.end() )
     {
-        const LalrSymbol* symbol = *j;
+        const Symbol* symbol = *j;
         SWEET_ASSERT( symbol );
         description->append( ", " );
         // symbol->describe( description );
@@ -161,7 +161,7 @@ void Item::describe( std::string* description ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int Item::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahead_symbols ) const
+int Item::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
@@ -174,7 +174,7 @@ int Item::add_lookahead_symbols( const std::set<const LalrSymbol*>& lookahead_sy
 // @return
 //  The lookahead set.
 */
-const std::set<const LalrSymbol*>& Item::get_lookahead_symbols() const
+const std::set<const Symbol*>& Item::get_lookahead_symbols() const
 {
     return lookahead_symbols_;
 }

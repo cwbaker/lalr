@@ -1,9 +1,9 @@
 //
-// LalrSymbol.cpp
+// Symbol.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LalrSymbol.hpp"
+#include "Symbol.hpp"
 #include "Production.hpp"
 #include "assert.hpp"
 
@@ -12,7 +12,7 @@ using std::vector;
 using std::shared_ptr;
 using namespace sweet::lalr;
 
-LalrSymbol::LalrSymbol( const std::string& lexeme )
+Symbol::Symbol( const std::string& lexeme )
 : lexeme_( lexeme ),
   identifier_(),
   symbol_type_( SYMBOL_NULL ),
@@ -23,62 +23,62 @@ LalrSymbol::LalrSymbol( const std::string& lexeme )
 {
 }
 
-const std::string& LalrSymbol::lexeme() const
+const std::string& Symbol::lexeme() const
 {
     return lexeme_;
 }
 
-const std::string& LalrSymbol::identifier() const
+const std::string& Symbol::identifier() const
 {
     return identifier_;
 }
 
-SymbolType LalrSymbol::symbol_type() const
+SymbolType Symbol::symbol_type() const
 {
     return symbol_type_;
 }
 
-LexemeType LalrSymbol::lexeme_type() const
+LexemeType Symbol::lexeme_type() const
 {
     return lexeme_type_;
 }
 
-Associativity LalrSymbol::associativity() const
+Associativity Symbol::associativity() const
 {
     return associativity_;
 }
 
-int LalrSymbol::precedence() const
+int Symbol::precedence() const
 {
     return precedence_;
 }
 
-int LalrSymbol::line() const
+int Symbol::line() const
 {
     return line_;
 }
 
-int LalrSymbol::index() const
+int Symbol::index() const
 {
     return index_;
 }
 
-bool LalrSymbol::nullable() const
+bool Symbol::nullable() const
 {
     return nullable_;
 }
 
-const std::set<const LalrSymbol*>& LalrSymbol::first() const
+const std::set<const Symbol*>& Symbol::first() const
 {
     return first_;
 }
 
-const std::set<const LalrSymbol*>& LalrSymbol::follow() const
+const std::set<const Symbol*>& Symbol::follow() const
 {
     return follow_;
 }
 
-const std::vector<Production*>& LalrSymbol::productions() const
+const std::vector<Production*>& Symbol::productions() const
 {
     return productions_;
 }
@@ -98,16 +98,16 @@ const std::vector<Production*>& LalrSymbol::productions() const
 //  The implict terminal for this symbol or null if this symbol doesn't have
 //  an implicit terminal.
 */
-LalrSymbol* LalrSymbol::implicit_terminal() const
+Symbol* Symbol::implicit_terminal() const
 {
-    LalrSymbol* implicit_terminal_symbol = nullptr;    
+    Symbol* implicit_terminal_symbol = nullptr;    
     if ( productions_.size() == 1 )
     {
         const Production* production = productions_.front();
         SWEET_ASSERT( production );
         if ( production->length() == 1 && !production->action() )
         {
-            LalrSymbol* symbol = production->symbols().front();
+            Symbol* symbol = production->symbols().front();
             if ( symbol->symbol_type() == SYMBOL_TERMINAL )
             {
                 implicit_terminal_symbol = symbol;
@@ -118,58 +118,58 @@ LalrSymbol* LalrSymbol::implicit_terminal() const
 }
 
 
-void LalrSymbol::set_lexeme( const std::string& lexeme )
+void Symbol::set_lexeme( const std::string& lexeme )
 {
     lexeme_ = lexeme;
 }
 
-void LalrSymbol::set_identifier( const std::string& identifier )
+void Symbol::set_identifier( const std::string& identifier )
 {
     identifier_ = identifier;
 }
 
-void LalrSymbol::set_symbol_type( SymbolType symbol_type )
+void Symbol::set_symbol_type( SymbolType symbol_type )
 {
     SWEET_ASSERT( symbol_type >= SYMBOL_NULL && symbol_type < SYMBOL_TYPE_COUNT );
     symbol_type_ = symbol_type;
 }
 
-void LalrSymbol::set_lexeme_type( LexemeType lexeme_type )
+void Symbol::set_lexeme_type( LexemeType lexeme_type )
 {
     SWEET_ASSERT( lexeme_type >= LEXEME_NULL && lexeme_type < LEXEME_TYPE_COUNT );
     lexeme_type_ = lexeme_type;
 }
 
-void LalrSymbol::set_associativity( Associativity associativity )
+void Symbol::set_associativity( Associativity associativity )
 {
     SWEET_ASSERT( associativity >= ASSOCIATE_NONE && associativity <= ASSOCIATE_RIGHT );
     associativity_ = associativity;
 }
 
-void LalrSymbol::set_precedence( int precedence )
+void Symbol::set_precedence( int precedence )
 {
     SWEET_ASSERT( precedence >= 0 );
     precedence_ = precedence;
 }
 
-void LalrSymbol::set_line( int line )
+void Symbol::set_line( int line )
 {
     SWEET_ASSERT( line >= 0 );
     line_ = line;
 }
 
-void LalrSymbol::set_index( int index )
+void Symbol::set_index( int index )
 {
     SWEET_ASSERT( index >= 0 );
     index_ = index;
 }
 
-void LalrSymbol::set_nullable( bool nullable )
+void Symbol::set_nullable( bool nullable )
 {
     nullable_ = nullable;
 }
 
-void LalrSymbol::append_production( Production* production )
+void Symbol::append_production( Production* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -178,7 +178,7 @@ void LalrSymbol::append_production( Production* production )
 /**
 // Calculate the identifier for this symbol.
 */
-void LalrSymbol::calculate_identifier()
+void Symbol::calculate_identifier()
 {
     SWEET_ASSERT( !lexeme_.empty() );
 
@@ -361,7 +361,7 @@ void LalrSymbol::calculate_identifier()
 //  associativity for this symbol with (assumed not null and of type 
 //  `SYMBOL_NON_TERMINAL`).
 */
-void LalrSymbol::replace_by_non_terminal( const LalrSymbol* non_terminal_symbol )
+void Symbol::replace_by_non_terminal( const Symbol* non_terminal_symbol )
 {
     SWEET_ASSERT( symbol_type() == SYMBOL_TERMINAL );
     SWEET_ASSERT( non_terminal_symbol );    
@@ -381,7 +381,7 @@ void LalrSymbol::replace_by_non_terminal( const LalrSymbol* non_terminal_symbol 
 // @return
 //  The number of symbols added (0 or 1).
 */
-int LalrSymbol::add_symbol_to_first( const LalrSymbol* symbol )
+int Symbol::add_symbol_to_first( const Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return first_.insert( symbol ).second ? 1 : 0;
@@ -396,7 +396,7 @@ int LalrSymbol::add_symbol_to_first( const LalrSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int LalrSymbol::add_symbols_to_first( const std::set<const LalrSymbol*>& symbols )
+int Symbol::add_symbols_to_first( const std::set<const Symbol*>& symbols )
 {
     size_t original_size = first_.size();
     first_.insert( symbols.begin(), symbols.end() );
@@ -412,7 +412,7 @@ int LalrSymbol::add_symbols_to_first( const std::set<const LalrSymbol*>& symbols
 // @return
 //  The number of symbols added (0 or 1).
 */
-int LalrSymbol::add_symbol_to_follow( const LalrSymbol* symbol )
+int Symbol::add_symbol_to_follow( const Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     return follow_.insert( symbol ).second ? 1 : 0;
@@ -427,7 +427,7 @@ int LalrSymbol::add_symbol_to_follow( const LalrSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int LalrSymbol::add_symbols_to_follow( const std::set<const LalrSymbol*>& symbols )
+int Symbol::add_symbols_to_follow( const std::set<const Symbol*>& symbols )
 {
     size_t original_size = follow_.size();
     follow_.insert( symbols.begin(), symbols.end() );
@@ -441,7 +441,7 @@ int LalrSymbol::add_symbols_to_follow( const std::set<const LalrSymbol*>& symbol
 //  The number of symbols added to the first set and plus one if nullable
 //  changed for this symbol.
 */
-int LalrSymbol::calculate_first()
+int Symbol::calculate_first()
 {
     int added = 0;
     if ( symbol_type_ == SYMBOL_NON_TERMINAL )
@@ -451,11 +451,11 @@ int LalrSymbol::calculate_first()
             const Production* production = *i;
             SWEET_ASSERT( production );  
                   
-            const vector<LalrSymbol*>& symbols = production->symbols();
-            vector<LalrSymbol*>::const_iterator j = symbols.begin(); 
+            const vector<Symbol*>& symbols = production->symbols();
+            vector<Symbol*>::const_iterator j = symbols.begin(); 
             while ( j != symbols.end() && (*j)->nullable() )
             {
-                const LalrSymbol* symbol = *j;
+                const Symbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
                 ++j;
@@ -463,7 +463,7 @@ int LalrSymbol::calculate_first()
             
             if ( j != symbols.end() )
             {
-                const LalrSymbol* symbol = *j;
+                const Symbol* symbol = *j;
                 SWEET_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
             }
@@ -487,7 +487,7 @@ int LalrSymbol::calculate_first()
 // @return
 //  The number of symbols added to the follow set.
 */
-int LalrSymbol::calculate_follow()
+int Symbol::calculate_follow()
 {
     int added = 0;
     for ( vector<Production*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
@@ -495,17 +495,17 @@ int LalrSymbol::calculate_follow()
         const Production* production = *i;
         SWEET_ASSERT( production );
                     
-        const vector<LalrSymbol*>& symbols = production->symbols();
+        const vector<Symbol*>& symbols = production->symbols();
         if ( !symbols.empty() )
         {
-            vector<LalrSymbol*>::const_reverse_iterator j = symbols.rbegin(); 
-            LalrSymbol* symbol = *j;
+            vector<Symbol*>::const_reverse_iterator j = symbols.rbegin(); 
+            Symbol* symbol = *j;
             added += symbol->add_symbols_to_follow( follow() );
             ++j;
         
             while ( j != symbols.rend() && symbol->nullable() )
             {
-                LalrSymbol* previous_symbol = *j;
+                Symbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 added += previous_symbol->add_symbols_to_follow( follow() );
@@ -515,7 +515,7 @@ int LalrSymbol::calculate_follow()
             
             while ( j != symbols.rend() )
             {
-                LalrSymbol* previous_symbol = *j;
+                Symbol* previous_symbol = *j;
                 SWEET_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 ++j;

@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_LALRSYMBOL_HPP_INCLUDED
-#define SWEET_LALR_LALRSYMBOL_HPP_INCLUDED
+#ifndef SWEET_LALR_SYMBOL_HPP_INCLUDED
+#define SWEET_LALR_SYMBOL_HPP_INCLUDED
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
@@ -16,7 +16,7 @@ namespace lalr
 
 class Production;
 
-class LalrSymbol
+class Symbol
 {
     std::string lexeme_;
     std::string identifier_; ///< The identifier for this symbol (generated from its lexeme).
@@ -27,12 +27,12 @@ class LalrSymbol
     int line_;
     int index_;
     bool nullable_; ///< True if this symbol is nullable otherwise false.
-    std::set<const LalrSymbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
-    std::set<const LalrSymbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
+    std::set<const Symbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
+    std::set<const Symbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
     std::vector<Production*> productions_; ///< The productions that reduce to this symbol.
 
 public:
-    LalrSymbol( const std::string& lexeme );
+    Symbol( const std::string& lexeme );
 
     const std::string& lexeme() const;
     const std::string& identifier() const;
@@ -43,10 +43,10 @@ public:
     int line() const;
     int index() const;
     bool nullable() const;
-    const std::set<const LalrSymbol*>& first() const;
-    const std::set<const LalrSymbol*>& follow() const;
+    const std::set<const Symbol*>& first() const;
+    const std::set<const Symbol*>& follow() const;
     const std::vector<Production*>& productions() const;
-    LalrSymbol* implicit_terminal() const;
+    Symbol* implicit_terminal() const;
 
     void set_lexeme( const std::string& lexeme );
     void set_identifier( const std::string& identifier );
@@ -59,11 +59,11 @@ public:
     void set_nullable( bool nullable );
     void append_production( Production* production );
     void calculate_identifier();
-    void replace_by_non_terminal( const LalrSymbol* non_terminal_symbol );    
-    int add_symbol_to_first( const LalrSymbol* symbol );
-    int add_symbols_to_first( const std::set<const LalrSymbol*>& symbols );
-    int add_symbol_to_follow( const LalrSymbol* symbol );
-    int add_symbols_to_follow( const std::set<const LalrSymbol*>& symbols );
+    void replace_by_non_terminal( const Symbol* non_terminal_symbol );    
+    int add_symbol_to_first( const Symbol* symbol );
+    int add_symbols_to_first( const std::set<const Symbol*>& symbols );
+    int add_symbol_to_follow( const Symbol* symbol );
+    int add_symbols_to_follow( const std::set<const Symbol*>& symbols );
     int calculate_first();
     int calculate_follow();
 };

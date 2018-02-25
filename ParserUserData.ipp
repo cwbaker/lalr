@@ -25,7 +25,7 @@ namespace lalr
 //  The lexeme at this user data.
 */
 template <class Char, class Traits, class Allocator>
-ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
+ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
 : symbol_( symbol ),
   lexeme_( lexeme ),
   user_datas_()
@@ -43,7 +43,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbo
 //  The number of user datas that will be added as children of this user data.
 */
 template <class Char, class Traits, class Allocator>
-ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbol, size_t user_datas )
+ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, size_t user_datas )
 : symbol_( symbol ),
   lexeme_(),
   user_datas_()
@@ -66,7 +66,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbo
 //  user data.
 */
 template <class Char, class Traits, class Allocator>
-ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbol, const ParserNode* start, const ParserNode* finish )
+ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const ParserNode* start, const ParserNode* finish )
 : symbol_( symbol ),
   lexeme_(),
   user_datas_()
@@ -97,7 +97,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const LalrSymbol* symbo
 //  The symbol.
 */
 template <class Char, class Traits, class Allocator>
-const LalrSymbol* ParserUserData<Char, Traits, Allocator>::get_symbol() const
+const ParserSymbol* ParserUserData<Char, Traits, Allocator>::get_symbol() const
 {
     return symbol_;
 }

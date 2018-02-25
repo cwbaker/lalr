@@ -63,7 +63,7 @@ int State::add_item( Production* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int State::add_lookahead_symbols( Production* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
+int State::add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<Item>::iterator item = items_.find( Item(production, position) );
@@ -138,7 +138,7 @@ std::string State::description() const
 // @param state
 //  The state to transition to (assumed not null).
 */
-void State::add_transition( const LalrSymbol* symbol, State* state )
+void State::add_transition( const Symbol* symbol, State* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
@@ -163,7 +163,7 @@ void State::add_transition( const LalrSymbol* symbol, State* state )
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void State::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void State::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( reduced_symbol );
@@ -200,14 +200,14 @@ void State::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void State::add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void State::add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
-    for ( set<const LalrSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
+    for ( set<const Symbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
     }
@@ -223,7 +223,7 @@ void State::add_transition( const std::set<const LalrSymbol*>& symbols, const La
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-Transition* State::find_transition_by_symbol( const LalrSymbol* symbol )
+Transition* State::find_transition_by_symbol( const Symbol* symbol )
 {    
     Transition* transition = NULL;  
       
@@ -250,7 +250,7 @@ Transition* State::find_transition_by_symbol( const LalrSymbol* symbol )
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const Transition* State::find_transition_by_symbol( const LalrSymbol* symbol ) const
+const Transition* State::find_transition_by_symbol( const Symbol* symbol ) const
 {    
     const Transition* transition = NULL;
     

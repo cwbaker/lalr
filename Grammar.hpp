@@ -15,7 +15,7 @@ namespace lalr
 {
 
 class Directive;
-class LalrSymbol;
+class Symbol;
 class Production;
 class Action;
 class Nil;
@@ -27,30 +27,30 @@ class Grammar
 {
     std::string identifier_;
     std::vector<std::unique_ptr<Directive>> directives_; ///< The directives in the grammar.
-    std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the grammar.
+    std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<Production>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     Directive* active_directive_;
     Production* active_production_;
-    LalrSymbol* active_symbol_;
-    LalrSymbol* start_symbol_; ///< The start symbol.
-    LalrSymbol* end_symbol_; ///< The end symbol.
-    LalrSymbol* error_symbol_; ///< The error symbol.
+    Symbol* active_symbol_;
+    Symbol* start_symbol_; ///< The start symbol.
+    Symbol* end_symbol_; ///< The end symbol.
+    Symbol* error_symbol_; ///< The error symbol.
 
 public:
     Grammar( size_t directives_reserve = 64, size_t symbols_reserve = 64, size_t productions_reserve = 64, size_t actions_reserve = 32, size_t whitespace_tokens_reserve = 8 );
     ~Grammar();
     const std::string& identifier() const;
     std::vector<std::unique_ptr<Directive>>& directives();
-    std::vector<std::unique_ptr<LalrSymbol>>& symbols();
+    std::vector<std::unique_ptr<Symbol>>& symbols();
     std::vector<std::unique_ptr<Production>>& productions();
     std::vector<std::unique_ptr<Action>>& actions();
     const std::vector<LexerToken>& whitespace_tokens() const;
-    LalrSymbol* start_symbol() const;
-    LalrSymbol* end_symbol() const;
-    LalrSymbol* error_symbol() const;
+    Symbol* start_symbol() const;
+    Symbol* end_symbol() const;
+    Symbol* error_symbol() const;
     Grammar& left();
     Grammar& right();
     Grammar& none();
@@ -69,10 +69,10 @@ public:
 
 private:
     Directive* directive( Associativity associativity );
-    LalrSymbol* symbol( char literal );
-    LalrSymbol* symbol( const char* regex );
-    LalrSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
-    Production* production( LalrSymbol* symbol );
+    Symbol* symbol( char literal );
+    Symbol* symbol( const char* regex );
+    Symbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
+    Production* production( Symbol* symbol );
     Action* action( const char* id );
 };
 

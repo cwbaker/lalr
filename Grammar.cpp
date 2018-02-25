@@ -5,12 +5,11 @@
 
 #include "Grammar.hpp"
 #include "Directive.hpp"
-#include "LalrSymbol.hpp"
+#include "Symbol.hpp"
 #include "Production.hpp"
 #include "Action.hpp"
 #include "Generator.hpp"
 #include "Action.hpp"
-// #include "State.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
 #include "LexerStateMachine.hpp"
@@ -64,7 +63,7 @@ std::vector<std::unique_ptr<Directive>>& Grammar::directives()
     return directives_;
 }
 
-std::vector<std::unique_ptr<LalrSymbol>>& Grammar::symbols()
+std::vector<std::unique_ptr<Symbol>>& Grammar::symbols()
 {
     return symbols_;
 }
@@ -84,17 +83,17 @@ const std::vector<LexerToken>& Grammar::whitespace_tokens() const
     return whitespace_tokens_;
 }
 
-LalrSymbol* Grammar::start_symbol() const
+Symbol* Grammar::start_symbol() const
 {
     return start_symbol_;
 }
 
-LalrSymbol* Grammar::end_symbol() const
+Symbol* Grammar::end_symbol() const
 {
     return end_symbol_;
 }
 
-LalrSymbol* Grammar::error_symbol() const
+Symbol* Grammar::error_symbol() const
 {
     return error_symbol_;
 }
@@ -276,10 +275,10 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
     {
         const Directive* directive = i->get();
         SWEET_ASSERT( directive );
-        const vector<LalrSymbol*>& symbols = directive->symbols();
+        const vector<Symbol*>& symbols = directive->symbols();
         for ( auto j = symbols.begin(); j != symbols.end(); ++j )
         {
-            LalrSymbol* symbol = *j;
+            Symbol* symbol = *j;
             SWEET_ASSERT( symbol );
             symbol->set_associativity( directive->associativity() );
             symbol->set_precedence( precedence );
@@ -289,7 +288,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 
     for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        LalrSymbol* symbol = i->get();
+        Symbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         if ( !symbol->productions().empty() )
         {
@@ -308,42 +307,42 @@ Directive* Grammar::directive( Associativity associativity )
     return directives_.back().get();
 }
 
-LalrSymbol* Grammar::symbol( char literal )
+Symbol* Grammar::symbol( char literal )
 {
     char lexeme [2] = { literal, 0 };
     return Grammar::symbol( lexeme, LEXEME_LITERAL, SYMBOL_NULL );
 }
 
-LalrSymbol* Grammar::symbol( const char* regex )
+Symbol* Grammar::symbol( const char* regex )
 {
     SWEET_ASSERT( regex );
     return symbol( regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL );
 }
 
-LalrSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type )
+Symbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type )
 {
     SWEET_ASSERT( lexeme );
-    vector<unique_ptr<LalrSymbol>>::const_iterator i = symbols_.begin();
+    vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
     {
         ++i;
     }
     if ( i == symbols_.end() )
     {
-        unique_ptr<LalrSymbol> symbol( new LalrSymbol(lexeme) );
+        unique_ptr<Symbol> symbol( new Symbol(lexeme) );
         symbol->set_lexeme_type( lexeme_type );
         symbol->set_symbol_type( symbol_type );
         symbols_.push_back( move(symbol) );
         return symbols_.back().get();
     }
-    LalrSymbol* symbol = i->get();
+    Symbol* symbol = i->get();
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
     SWEET_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 
-Production* Grammar::production( LalrSymbol* symbol )
+Production* Grammar::production( Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     if ( productions_.empty() )

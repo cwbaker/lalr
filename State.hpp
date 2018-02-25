@@ -30,17 +30,17 @@ class State
         State();
 
         int add_item( Production* production, int position );
-        int add_lookahead_symbols( Production* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols );
+        int add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols );
         const std::set<Item>& get_items() const;
         void describe( std::string* description ) const;
         std::string description() const;
 
-        void add_transition( const LalrSymbol* symbol, State* state );
-        void add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
-        void add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+        void add_transition( const Symbol* symbol, State* state );
+        void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
+        void add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
         void generate_indices_for_transitions();
-        Transition* find_transition_by_symbol( const LalrSymbol* symbol );
-        const Transition* find_transition_by_symbol( const LalrSymbol* symbol ) const;
+        Transition* find_transition_by_symbol( const Symbol* symbol );
+        const Transition* find_transition_by_symbol( const Symbol* symbol ) const;
         const std::set<Transition>& get_transitions() const;
 
         void set_processed( bool processed );

@@ -4,7 +4,7 @@
 //
 
 #include "Production.hpp"
-#include "LalrSymbol.hpp"
+#include "Symbol.hpp"
 #include "Action.hpp"
 #include "assert.hpp"
 
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-Production::Production( int index, LalrSymbol* symbol, int line, const Action* action )
+Production::Production( int index, Symbol* symbol, int line, const Action* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -54,7 +54,7 @@ int Production::index() const
 // @return
 //  The symbol.
 */
-LalrSymbol* Production::symbol() const
+Symbol* Production::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -81,10 +81,10 @@ int Production::line() const
 // @return
 //  The number of references.
 */
-int Production::count_references_to_symbol( const LalrSymbol* symbol ) const
+int Production::count_references_to_symbol( const Symbol* symbol ) const
 {
     int references = 0;
-    for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<Symbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         references += (symbol == *i ? 1 : 0);
     }
@@ -103,9 +103,9 @@ int Production::count_references_to_symbol( const LalrSymbol* symbol ) const
 //  The rightmost terminal symbol or null if there was more than one potential
 //  rightmost terminal symbol.
 */
-const LalrSymbol* Production::find_rightmost_terminal_symbol() const
+const Symbol* Production::find_rightmost_terminal_symbol() const
 {
-    vector<LalrSymbol*>::const_reverse_iterator i = symbols_.rbegin();
+    vector<Symbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
     {
         ++i;
@@ -123,7 +123,7 @@ const LalrSymbol* Production::find_rightmost_terminal_symbol() const
 //  The symbol at \e position or null if \e position refers past the end of
 //  this production.
 */
-const LalrSymbol* Production::symbol_by_position( int position ) const
+const Symbol* Production::symbol_by_position( int position ) const
 {
     return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
 }
@@ -134,7 +134,7 @@ const LalrSymbol* Production::symbol_by_position( int position ) const
 // @return
 //  The symbols.
 */
-const std::vector<LalrSymbol*>& Production::symbols() const
+const std::vector<Symbol*>& Production::symbols() const
 {
     return symbols_;
 }
@@ -175,9 +175,9 @@ void Production::describe( std::string* description ) const
     SWEET_ASSERT( description );
     // symbol_->describe( description );
     description->append( " <- " );
-    for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<Symbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        const LalrSymbol* symbol = *i;
+        const Symbol* symbol = *i;
         SWEET_ASSERT( symbol );
         // symbol->describe( description );
         description->append( " " );        
@@ -190,7 +190,7 @@ void Production::describe( std::string* description ) const
 // @param symbol
 //  The symbol to append (assumed not null).
 */
-void Production::append_symbol( LalrSymbol* symbol )
+void Production::append_symbol( Symbol* symbol )
 {
     symbols_.push_back( symbol );
 }
@@ -223,7 +223,7 @@ int Production::action_index() const
     return action_ ? action_->index() : Action::INVALID_INDEX;
 }
 
-const LalrSymbol* Production::precedence_symbol() const
+const Symbol* Production::precedence_symbol() const
 {
     return precedence_symbol_;
 }
@@ -246,7 +246,7 @@ int Production::precedence() const
 //  The symbol to have this production inherit its precedence from (assumed 
 //  not null).
 */
-void Production::set_precedence_symbol( const LalrSymbol* symbol )
+void Production::set_precedence_symbol( const Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
@@ -262,7 +262,7 @@ void Production::set_precedence_symbol( const LalrSymbol* symbol )
 // @param with_symbol
 //  The symbol to replace the references with.
 */
-void Production::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
+void Production::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
 {
     if ( symbol_ == to_symbol )
     {
@@ -274,7 +274,7 @@ void Production::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol
         precedence_symbol_ = with_symbol;
     }
 
-    for ( vector<LalrSymbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<Symbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         if ( *i == to_symbol )
         {

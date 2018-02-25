@@ -163,7 +163,7 @@ const LexerStateMachine* ParserStateMachine::lexer_state_machine() const
 // Find the symbol whose identifier matches \e identifier.
 //
 // @param identifier
-//  The identifier of the LalrSymbol to find (assumed not null).
+//  The identifier of the ParserSymbol to find (assumed not null).
 //
 // @return
 //  The `ParserSymbol` with matching identifier or null if there was no 
