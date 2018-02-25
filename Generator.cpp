@@ -418,8 +418,8 @@ int Generator::lookahead_goto( State* state ) const
 
     int added = 0;
 
-    const set<LalrTransition>& transitions = state->get_transitions();
-    for ( set<LalrTransition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
+    const set<Transition>& transitions = state->get_transitions();
+    for ( set<Transition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
     {
         const LalrSymbol* symbol = transition->get_symbol();
         SWEET_ASSERT( symbol );
@@ -836,7 +836,7 @@ void Generator::generate_reduce_transition( State* state, const LalrSymbol* symb
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( production );
 
-    LalrTransition* transition = state->find_transition_by_symbol( symbol );
+    Transition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
         state->add_transition( symbol, production->symbol(), production->length(), production->precedence(), production->action_index() );
@@ -939,7 +939,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         SWEET_ASSERT( source_state );
         ParserState* state = &states[state_index];
         SWEET_ASSERT( state );
-        const set<LalrTransition>& source_transitions = source_state->get_transitions();
+        const set<Transition>& source_transitions = source_state->get_transitions();
         state->index = state_index;
         state->length = source_transitions.size();
         state->transitions = &transitions[transition_index];
@@ -949,7 +949,7 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         }
         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
         {
-            const LalrTransition* source_transition = &(*j);
+            const Transition* source_transition = &(*j);
             SWEET_ASSERT( source_transition );
             const LalrSymbol* source_symbol = source_transition->get_symbol();
             SWEET_ASSERT( source_symbol );

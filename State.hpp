@@ -2,7 +2,7 @@
 #define SWEET_LALR_STATE_HPP_INCLUDED
 
 #include "Item.hpp"
-#include "LalrTransition.hpp"
+#include "Transition.hpp"
 #include <memory>
 #include <set>
 
@@ -22,7 +22,7 @@ class State
 
     private:
         std::set<Item> items_; ///< The items that define the positions within the grammar that this state represents.
-        std::set<LalrTransition> transitions_; ///< The available transitions from this state.
+        std::set<Transition> transitions_; ///< The available transitions from this state.
         bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
         int index_; ///< The index of this state.
 
@@ -39,9 +39,9 @@ class State
         void add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         void add_transition( const std::set<const LalrSymbol*>& symbols, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
         void generate_indices_for_transitions();
-        LalrTransition* find_transition_by_symbol( const LalrSymbol* symbol );
-        const LalrTransition* find_transition_by_symbol( const LalrSymbol* symbol ) const;
-        const std::set<LalrTransition>& get_transitions() const;
+        Transition* find_transition_by_symbol( const LalrSymbol* symbol );
+        const Transition* find_transition_by_symbol( const LalrSymbol* symbol ) const;
+        const std::set<Transition>& get_transitions() const;
 
         void set_processed( bool processed );
         bool is_processed() const;

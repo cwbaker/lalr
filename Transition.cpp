@@ -1,9 +1,9 @@
 //
-// LalrTransition.cpp
+// Transition.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "LalrTransition.hpp"
+#include "Transition.hpp"
 #include "LalrSymbol.hpp"
 #include "State.hpp"
 #include "Action.hpp"
@@ -33,7 +33,7 @@ using namespace sweet::lalr;
 //  The index of the action taken on this reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-LalrTransition::LalrTransition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+Transition::Transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
   state_( NULL ),
   reduced_symbol_( reduced_symbol ),
@@ -57,7 +57,7 @@ LalrTransition::LalrTransition( const LalrSymbol* symbol, const LalrSymbol* redu
 // @param state
 //  The state that this transition is to (assumed not null).
 */
-LalrTransition::LalrTransition( const LalrSymbol* symbol, State* state )
+Transition::Transition( const LalrSymbol* symbol, State* state )
 : symbol_( symbol ),
   state_( state ),
   reduced_symbol_( nullptr ),
@@ -77,7 +77,7 @@ LalrTransition::LalrTransition( const LalrSymbol* symbol, State* state )
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-State* LalrTransition::get_state() const
+State* Transition::get_state() const
 {
     return state_;
 }
@@ -89,27 +89,27 @@ State* LalrTransition::get_state() const
 //  The production that is reduced on this transition or null if this 
 //  transition is a shift.
 */
-// const LalrProduction* LalrTransition::get_reduced_production() const
+// const LalrProduction* Transition::get_reduced_production() const
 // {
 //     return reduced_production_;
 // }
 
-const LalrSymbol* LalrTransition::reduced_symbol() const
+const LalrSymbol* Transition::reduced_symbol() const
 {
     return reduced_symbol_;
 }
 
-int LalrTransition::reduced_length() const
+int Transition::reduced_length() const
 {
     return reduced_length_;
 }
 
-int LalrTransition::precedence() const
+int Transition::precedence() const
 {
     return precedence_;
 }
 
-int LalrTransition::action() const
+int Transition::action() const
 {
     return action_;
 }
@@ -120,7 +120,7 @@ int LalrTransition::action() const
 // @return
 //  The type of this transition.
 */
-TransitionType LalrTransition::get_type() const
+TransitionType Transition::get_type() const
 {
     return type_;
 }
@@ -134,7 +134,7 @@ TransitionType LalrTransition::get_type() const
 // @return
 //  True if this transition is taken on \e symbol otherwise false.
 */
-bool LalrTransition::is_symbol( const LalrSymbol* symbol ) const
+bool Transition::is_symbol( const LalrSymbol* symbol ) const
 {
     return symbol_ == symbol;
 }
@@ -145,7 +145,7 @@ bool LalrTransition::is_symbol( const LalrSymbol* symbol ) const
 // @return
 //  The symbol.
 */
-const LalrSymbol* LalrTransition::get_symbol() const
+const LalrSymbol* Transition::get_symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -158,7 +158,7 @@ const LalrSymbol* LalrTransition::get_symbol() const
 //  A variable to append the description of this transition to (assumed not 
 //  null).
 */
-void LalrTransition::describe( std::string* description ) const
+void Transition::describe( std::string* description ) const
 {
     SWEET_ASSERT( description != NULL );
 
@@ -198,7 +198,7 @@ void LalrTransition::describe( std::string* description ) const
 // @param index
 //  The value to set the index of this production to.
 */
-void LalrTransition::set_index( int index ) const
+void Transition::set_index( int index ) const
 {
     index_ = index;
 }
@@ -209,7 +209,7 @@ void LalrTransition::set_index( int index ) const
 // @return
 //  The index.
 */
-int LalrTransition::get_index() const
+int Transition::get_index() const
 {
     return index_;
 }
@@ -221,7 +221,7 @@ int LalrTransition::get_index() const
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void LalrTransition::override_shift_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
+void Transition::override_shift_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_SHIFT );
     SWEET_ASSERT( state_ );
@@ -244,7 +244,7 @@ void LalrTransition::override_shift_to_reduce( const LalrSymbol* symbol, int len
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void LalrTransition::override_reduce_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
+void Transition::override_reduce_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_REDUCE );
     SWEET_ASSERT( reduced_symbol_ );
@@ -268,7 +268,7 @@ void LalrTransition::override_reduce_to_reduce( const LalrSymbol* symbol, int le
 //  True if the address of this transition's symbol is less than the address 
 //  of \e transition's symbol.
 */
-bool LalrTransition::operator<( const LalrTransition& transition ) const
+bool Transition::operator<( const Transition& transition ) const
 {
     return symbol_ < transition.symbol_;
 }

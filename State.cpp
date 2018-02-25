@@ -5,7 +5,7 @@
 
 #include "State.hpp"
 #include "Item.hpp"
-#include "LalrTransition.hpp"
+#include "Transition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -106,7 +106,7 @@ void State::describe( std::string* description ) const
         ++item;
     }
 
-    std::set<LalrTransition>::const_iterator transition = transitions_.begin();
+    std::set<Transition>::const_iterator transition = transitions_.begin();
     while ( transition != transitions_.end() )
     {
         transition->describe( description );
@@ -142,8 +142,8 @@ void State::add_transition( const LalrSymbol* symbol, State* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
-    SWEET_ASSERT( transitions_.find(LalrTransition(symbol, state)) == transitions_.end() );
-    transitions_.insert( LalrTransition(symbol, state) );
+    SWEET_ASSERT( transitions_.find(Transition(symbol, state)) == transitions_.end() );
+    transitions_.insert( Transition(symbol, state) );
 }
 
 /**
@@ -170,7 +170,7 @@ void State::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
 
-    std::set<LalrTransition>::iterator transition = transitions_.find( LalrTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
+    std::set<Transition>::iterator transition = transitions_.find( Transition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
         SWEET_ASSERT( transition->get_type() == TRANSITION_SHIFT );
@@ -178,7 +178,7 @@ void State::add_transition( const LalrSymbol* symbol, const LalrSymbol* reduced_
     }
     else
     {
-        transition = transitions_.insert( LalrTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
+        transition = transitions_.insert( Transition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
     }
 }
 
@@ -223,18 +223,18 @@ void State::add_transition( const std::set<const LalrSymbol*>& symbols, const La
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol )
+Transition* State::find_transition_by_symbol( const LalrSymbol* symbol )
 {    
-    LalrTransition* transition = NULL;  
+    Transition* transition = NULL;  
       
     if ( symbol )
     {
-        std::set<LalrTransition>::iterator i = transitions_.begin();
+        std::set<Transition>::iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->is_symbol(symbol) )
         {
             ++i;
         }
-        transition = i != transitions_.end() ? const_cast<LalrTransition*>(&(*i)) : NULL;
+        transition = i != transitions_.end() ? const_cast<Transition*>(&(*i)) : NULL;
     }    
     
     return transition;
@@ -250,13 +250,13 @@ LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol )
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol ) const
+const Transition* State::find_transition_by_symbol( const LalrSymbol* symbol ) const
 {    
-    const LalrTransition* transition = NULL;
+    const Transition* transition = NULL;
     
     if ( symbol )
     {
-        std::set<LalrTransition>::const_iterator i = transitions_.begin();
+        std::set<Transition>::const_iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->is_symbol(symbol) )
         {
             ++i;
@@ -273,7 +273,7 @@ const LalrTransition* State::find_transition_by_symbol( const LalrSymbol* symbol
 void State::generate_indices_for_transitions()
 {
     int index = 0;
-    for ( std::set<LalrTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
+    for ( std::set<Transition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
     {
         transition->set_index( index );
         ++index;
@@ -286,7 +286,7 @@ void State::generate_indices_for_transitions()
 // @return
 //  The transitions.
 */
-const std::set<LalrTransition>& State::get_transitions() const
+const std::set<Transition>& State::get_transitions() const
 {
     return transitions_;
 }

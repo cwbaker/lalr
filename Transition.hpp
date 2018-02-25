@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_LALRTRANSITION_HPP_INCLUDED
-#define SWEET_LALR_LALRTRANSITION_HPP_INCLUDED
+#ifndef SWEET_LALR_TRANSITION_HPP_INCLUDED
+#define SWEET_LALR_TRANSITION_HPP_INCLUDED
 
 #include "TransitionType.hpp"
 #include <string>
@@ -17,7 +17,7 @@ class LalrSymbol;
 /**
 // A transition in a parser's state machine.
 */
-class LalrTransition
+class Transition
 {
     public:
         static const int INVALID_INDEX = -1;
@@ -33,9 +33,8 @@ class LalrTransition
         mutable int index_; ///< The index of this transition.
 
     public:
-        LalrTransition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
-        LalrTransition( const LalrSymbol* symbol, State* state );
-
+        Transition( const LalrSymbol* symbol, const LalrSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+        Transition( const LalrSymbol* symbol, State* state );
         TransitionType get_type() const;
         State* get_state() const;
         const LalrSymbol* reduced_symbol() const;
@@ -45,14 +44,11 @@ class LalrTransition
         bool is_symbol( const LalrSymbol* symbol ) const;
         const LalrSymbol* get_symbol() const;
         void describe( std::string* description ) const;
-        
         void set_index( int index ) const;
         int get_index() const;
-        
         void override_shift_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const;
         void override_reduce_to_reduce( const LalrSymbol* symbol, int length, int precedence, int action ) const;
-        
-        bool operator<( const LalrTransition& transition ) const;
+        bool operator<( const Transition& transition ) const;
 };
 
 }
