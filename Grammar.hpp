@@ -14,7 +14,7 @@ namespace sweet
 namespace lalr
 {
 
-class LalrDirective;
+class Directive;
 class LalrSymbol;
 class LalrProduction;
 class Action;
@@ -26,13 +26,13 @@ class ParserStateMachine;
 class Grammar
 {
     std::string identifier_;
-    std::vector<std::unique_ptr<LalrDirective>> directives_; ///< The directives in the grammar.
+    std::vector<std::unique_ptr<Directive>> directives_; ///< The directives in the grammar.
     std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
-    LalrDirective* active_directive_;
+    Directive* active_directive_;
     LalrProduction* active_production_;
     LalrSymbol* active_symbol_;
     LalrSymbol* start_symbol_; ///< The start symbol.
@@ -43,7 +43,7 @@ public:
     Grammar( size_t directives_reserve = 64, size_t symbols_reserve = 64, size_t productions_reserve = 64, size_t actions_reserve = 32, size_t whitespace_tokens_reserve = 8 );
     ~Grammar();
     const std::string& identifier() const;
-    std::vector<std::unique_ptr<LalrDirective>>& directives();
+    std::vector<std::unique_ptr<Directive>>& directives();
     std::vector<std::unique_ptr<LalrSymbol>>& symbols();
     std::vector<std::unique_ptr<LalrProduction>>& productions();
     std::vector<std::unique_ptr<Action>>& actions();
@@ -68,7 +68,7 @@ public:
     void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
-    LalrDirective* directive( Associativity associativity );
+    Directive* directive( Associativity associativity );
     LalrSymbol* symbol( char literal );
     LalrSymbol* symbol( const char* regex );
     LalrSymbol* symbol( const char* lexeme, LexemeType lexeme_type, SymbolType symbol_type );
