@@ -4,7 +4,7 @@
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
 #include "Associativity.hpp"
-#include "LalrNil.hpp"
+#include "Nil.hpp"
 #include "LexerToken.hpp"
 #include <vector>
 
@@ -18,7 +18,7 @@ class Directive;
 class LalrSymbol;
 class LalrProduction;
 class Action;
-class LalrNil;
+class Nil;
 class ParserErrorPolicy;
 class LexerErrorPolicy;
 class ParserStateMachine;
@@ -61,10 +61,10 @@ public:
     Grammar& end_production();
     Grammar& operator()( char literal );
     Grammar& operator()( const char* regex );
-    Grammar& operator()( const LalrNil& /*nil*/ );
+    Grammar& operator()( const Nil& /*nil*/ );
     Grammar& error();
     Grammar& operator[]( const char* identifier );
-    Grammar& operator[]( const LalrNil& /*nil*/ );
+    Grammar& operator[]( const Nil& /*nil*/ );
     void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:

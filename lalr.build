@@ -7,11 +7,11 @@ for _, build in build:default_builds() do
             "Generator.cpp",
             "Grammar.cpp",
             "Item.cpp",
-            "LalrNil.cpp",
             "LalrState.cpp",
             "LalrTransition.cpp",
             "LalrProduction.cpp",
-            "LalrSymbol.cpp"
+            "LalrSymbol.cpp",
+            "Nil.cpp",
         };
 
         build:Cxx () {
