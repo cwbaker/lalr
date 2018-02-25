@@ -29,8 +29,8 @@ class State
     public:
         State();
 
-        int add_item( LalrProduction* production, int position );
-        int add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols );
+        int add_item( Production* production, int position );
+        int add_lookahead_symbols( Production* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols );
         const std::set<Item>& get_items() const;
         void describe( std::string* description ) const;
         std::string description() const;

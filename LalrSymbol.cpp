@@ -4,7 +4,7 @@
 //
 
 #include "LalrSymbol.hpp"
-#include "LalrProduction.hpp"
+#include "Production.hpp"
 #include "assert.hpp"
 
 using std::set;
@@ -78,7 +78,7 @@ const std::set<const LalrSymbol*>& LalrSymbol::follow() const
     return follow_;
 }
 
-const std::vector<LalrProduction*>& LalrSymbol::productions() const
+const std::vector<Production*>& LalrSymbol::productions() const
 {
     return productions_;
 }
@@ -103,7 +103,7 @@ LalrSymbol* LalrSymbol::implicit_terminal() const
     LalrSymbol* implicit_terminal_symbol = nullptr;    
     if ( productions_.size() == 1 )
     {
-        const LalrProduction* production = productions_.front();
+        const Production* production = productions_.front();
         SWEET_ASSERT( production );
         if ( production->length() == 1 && !production->action() )
         {
@@ -169,7 +169,7 @@ void LalrSymbol::set_nullable( bool nullable )
     nullable_ = nullable;
 }
 
-void LalrSymbol::append_production( LalrProduction* production )
+void LalrSymbol::append_production( Production* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -446,9 +446,9 @@ int LalrSymbol::calculate_first()
     int added = 0;
     if ( symbol_type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<Production*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
-            const LalrProduction* production = *i;
+            const Production* production = *i;
             SWEET_ASSERT( production );  
                   
             const vector<LalrSymbol*>& symbols = production->symbols();
@@ -490,9 +490,9 @@ int LalrSymbol::calculate_first()
 int LalrSymbol::calculate_follow()
 {
     int added = 0;
-    for ( vector<LalrProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<Production*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        const LalrProduction* production = *i;
+        const Production* production = *i;
         SWEET_ASSERT( production );
                     
         const vector<LalrSymbol*>& symbols = production->symbols();

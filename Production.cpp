@@ -1,9 +1,9 @@
 //
-// LalrProduction.cpp
+// Production.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LalrProduction.hpp"
+#include "Production.hpp"
 #include "LalrSymbol.hpp"
 #include "Action.hpp"
 #include "assert.hpp"
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const Action* action )
+Production::Production( int index, LalrSymbol* symbol, int line, const Action* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -43,7 +43,7 @@ LalrProduction::LalrProduction( int index, LalrSymbol* symbol, int line, const A
 // @return
 //  The index.
 */
-int LalrProduction::index() const
+int Production::index() const
 {
     return index_;
 }
@@ -54,7 +54,7 @@ int LalrProduction::index() const
 // @return
 //  The symbol.
 */
-LalrSymbol* LalrProduction::symbol() const
+LalrSymbol* Production::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -66,7 +66,7 @@ LalrSymbol* LalrProduction::symbol() const
 // @return
 //  The line.
 */
-int LalrProduction::line() const
+int Production::line() const
 {
     return line_;
 }
@@ -81,7 +81,7 @@ int LalrProduction::line() const
 // @return
 //  The number of references.
 */
-int LalrProduction::count_references_to_symbol( const LalrSymbol* symbol ) const
+int Production::count_references_to_symbol( const LalrSymbol* symbol ) const
 {
     int references = 0;
     for ( vector<LalrSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
@@ -103,7 +103,7 @@ int LalrProduction::count_references_to_symbol( const LalrSymbol* symbol ) const
 //  The rightmost terminal symbol or null if there was more than one potential
 //  rightmost terminal symbol.
 */
-const LalrSymbol* LalrProduction::find_rightmost_terminal_symbol() const
+const LalrSymbol* Production::find_rightmost_terminal_symbol() const
 {
     vector<LalrSymbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
@@ -123,7 +123,7 @@ const LalrSymbol* LalrProduction::find_rightmost_terminal_symbol() const
 //  The symbol at \e position or null if \e position refers past the end of
 //  this production.
 */
-const LalrSymbol* LalrProduction::symbol_by_position( int position ) const
+const LalrSymbol* Production::symbol_by_position( int position ) const
 {
     return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
 }
@@ -134,7 +134,7 @@ const LalrSymbol* LalrProduction::symbol_by_position( int position ) const
 // @return
 //  The symbols.
 */
-const std::vector<LalrSymbol*>& LalrProduction::symbols() const
+const std::vector<LalrSymbol*>& Production::symbols() const
 {
     return symbols_;
 }
@@ -145,7 +145,7 @@ const std::vector<LalrSymbol*>& LalrProduction::symbols() const
 // @return
 //  The length of the right-hand side of this production.
 */
-int LalrProduction::length() const
+int Production::length() const
 {
     return int(symbols_.size());
 }
@@ -156,7 +156,7 @@ int LalrProduction::length() const
 // @return
 //  The description.
 */
-std::string LalrProduction::description() const
+std::string Production::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -170,7 +170,7 @@ std::string LalrProduction::description() const
 // @param description
 //  A variable to receive the description of this production.
 */
-void LalrProduction::describe( std::string* description ) const
+void Production::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     // symbol_->describe( description );
@@ -190,7 +190,7 @@ void LalrProduction::describe( std::string* description ) const
 // @param symbol
 //  The symbol to append (assumed not null).
 */
-void LalrProduction::append_symbol( LalrSymbol* symbol )
+void Production::append_symbol( LalrSymbol* symbol )
 {
     symbols_.push_back( symbol );
 }
@@ -202,7 +202,7 @@ void LalrProduction::append_symbol( LalrSymbol* symbol )
 //  The action to take when this production is reduced or null to set this
 //  production to have no action.
 */
-void LalrProduction::set_action( const Action* action )
+void Production::set_action( const Action* action )
 {
     action_ = action;
 }
@@ -213,17 +213,17 @@ void LalrProduction::set_action( const Action* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const Action* LalrProduction::action() const
+const Action* Production::action() const
 {
     return action_;
 }
 
-int LalrProduction::action_index() const
+int Production::action_index() const
 {
     return action_ ? action_->index() : Action::INVALID_INDEX;
 }
 
-const LalrSymbol* LalrProduction::precedence_symbol() const
+const LalrSymbol* Production::precedence_symbol() const
 {
     return precedence_symbol_;
 }
@@ -234,7 +234,7 @@ const LalrSymbol* LalrProduction::precedence_symbol() const
 // @return
 //  The precedence of this production.
 */
-int LalrProduction::precedence() const
+int Production::precedence() const
 {
     return precedence_symbol_ ? precedence_symbol_->precedence() : 0;
 }
@@ -246,7 +246,7 @@ int LalrProduction::precedence() const
 //  The symbol to have this production inherit its precedence from (assumed 
 //  not null).
 */
-void LalrProduction::set_precedence_symbol( const LalrSymbol* symbol )
+void Production::set_precedence_symbol( const LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
@@ -262,7 +262,7 @@ void LalrProduction::set_precedence_symbol( const LalrSymbol* symbol )
 // @param with_symbol
 //  The symbol to replace the references with.
 */
-void LalrProduction::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
+void Production::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
 {
     if ( symbol_ == to_symbol )
     {
@@ -292,14 +292,14 @@ void LalrProduction::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSy
 // @param description
 //  A variable to receive the description of the productions.
 */
-// void LalrProduction::describe( const std::set<const LalrProduction*>& productions, std::string* description )
+// void Production::describe( const std::set<const Production*>& productions, std::string* description )
 // {
 //     SWEET_ASSERT( description );
 
-//     std::set<const LalrProduction*>::const_iterator i = productions.begin(); 
+//     std::set<const Production*>::const_iterator i = productions.begin(); 
 //     if ( i != productions.end() )
 //     {
-//         const LalrProduction* production = *i;
+//         const Production* production = *i;
 //         SWEET_ASSERT( production );        
 //         production->describe( description );
 //         ++i;        
@@ -307,7 +307,7 @@ void LalrProduction::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSy
     
 //     while ( i != productions.end() )
 //     {
-//         const LalrProduction* production = *i;
+//         const Production* production = *i;
 //         SWEET_ASSERT( production );
 //         description->append( ", " );
 //         production->describe( description );

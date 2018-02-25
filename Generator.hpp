@@ -36,7 +36,7 @@ class Action;
 class LalrSymbol;
 class Item;
 class State;
-class LalrProduction;
+class Production;
 class Grammar;
 
 /**
@@ -49,7 +49,7 @@ class Generator
     ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the parser.
-    std::vector<std::unique_ptr<LalrProduction>> productions_; ///< The productions in the parser.
+    std::vector<std::unique_ptr<Production>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<LalrSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<State>, shared_ptr_less<State>> states_; ///< The states in the parser's state machine.
     LalrSymbol* start_symbol_; ///< The start symbol.
@@ -63,7 +63,7 @@ class Generator
         ~Generator();
         std::string& identifier();
         std::vector<std::unique_ptr<Action> >& actions();
-        std::vector<std::unique_ptr<LalrProduction> >& productions();
+        std::vector<std::unique_ptr<Production> >& productions();
         std::vector<std::unique_ptr<LalrSymbol> >& symbols();
         std::set<std::shared_ptr<State>, shared_ptr_less<State>>& states();
         const LalrSymbol* start_symbol();
@@ -95,7 +95,7 @@ class Generator
         void generate_states( const LalrSymbol* start_symbol, const LalrSymbol* end_symbol, const std::vector<std::unique_ptr<LalrSymbol>>& symbols );
         void generate_indices_for_states();
         void generate_reduce_transitions();
-        void generate_reduce_transition( State* state, const LalrSymbol* symbol, const LalrProduction* production );
+        void generate_reduce_transition( State* state, const LalrSymbol* symbol, const Production* production );
         void generate_indices_for_transitions();
         void populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
 };

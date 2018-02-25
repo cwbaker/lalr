@@ -5,7 +5,7 @@
 
 #include "Item.hpp"
 #include "LalrSymbol.hpp"
-#include "LalrProduction.hpp"
+#include "Production.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -31,7 +31,7 @@ Item::Item()
 // @param position
 //  The position of the dot in this item.
 */
-Item::Item( LalrProduction* production, int position )
+Item::Item( Production* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ Item::Item( LalrProduction* production, int position )
 /**
 // Get the production for this item.
 */
-LalrProduction* Item::get_production() const
+Production* Item::get_production() const
 {
     return production_;
 }

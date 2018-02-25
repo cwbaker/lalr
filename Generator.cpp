@@ -4,7 +4,7 @@
 //
 
 #include "Generator.hpp"
-#include "LalrProduction.hpp"
+#include "Production.hpp"
 #include "State.hpp"
 #include "Item.hpp"
 #include "Grammar.hpp"
@@ -85,7 +85,7 @@ std::vector<std::unique_ptr<Action> >& Generator::actions()
 // @return
 //  The productions.
 */
-std::vector<std::unique_ptr<LalrProduction> >& Generator::productions()
+std::vector<std::unique_ptr<Production> >& Generator::productions()
 {
     return productions_;
 }
@@ -264,7 +264,7 @@ std::set<const LalrSymbol*> Generator::lookahead( const Item& item ) const
 {
     set<const LalrSymbol*> lookahead_symbols;
 
-    const LalrProduction* production = item.get_production();
+    const Production* production = item.get_production();
     SWEET_ASSERT( production );
         
     const vector<LalrSymbol*>& symbols = production->symbols();    
@@ -316,10 +316,10 @@ void Generator::closure( const std::shared_ptr<State>& state )
             const LalrSymbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
             if ( symbol )
             {
-                const vector<LalrProduction*>& productions = symbol->productions();
-                for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+                const vector<Production*>& productions = symbol->productions();
+                for ( vector<Production*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
-                    LalrProduction* production = *j;
+                    Production* production = *j;
                     SWEET_ASSERT( production );
                     added += state->add_item( production, 0 );
                 }
@@ -384,10 +384,10 @@ int Generator::lookahead_closure( State* state ) const
         if ( symbol )
         {
             set<const LalrSymbol*> lookahead_symbols = lookahead( *item );        
-            const vector<LalrProduction*>& productions = symbol->productions();
-            for ( vector<LalrProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+            const vector<Production*>& productions = symbol->productions();
+            for ( vector<Production*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
-                LalrProduction* production = *j;
+                Production* production = *j;
                 SWEET_ASSERT( production );
                 added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
             }
@@ -450,9 +450,9 @@ int Generator::lookahead_goto( State* state ) const
 */
 void Generator::replace_references_to_symbol( LalrSymbol* to_symbol, LalrSymbol* with_symbol )
 {
-    for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        LalrProduction* production = i->get();
+        Production* production = i->get();
         SWEET_ASSERT( production );
         production->replace_references_to_symbol( to_symbol, with_symbol );
     }
@@ -495,9 +495,9 @@ void Generator::check_for_unreferenced_symbol_errors()
             int references = 0;            
             if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
             {
-                for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+                for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
-                    const LalrProduction* production = i->get();
+                    const Production* production = i->get();
                     SWEET_ASSERT( production );
                     if ( production->symbol()->symbol_type() != SYMBOL_TERMINAL )
                     {
@@ -525,7 +525,7 @@ void Generator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
-    const vector<LalrProduction*>& productions = error_symbol_->productions();
+    const vector<Production*>& productions = error_symbol_->productions();
     if ( !productions.empty() )
     {
         fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
@@ -625,9 +625,9 @@ void Generator::calculate_implicit_terminal_symbols()
 */
 void Generator::calculate_precedence_of_productions()
 {
-    for ( vector<unique_ptr<LalrProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        LalrProduction* production = i->get();
+        Production* production = i->get();
         SWEET_ASSERT( production );       
         if ( production->precedence() == 0 )
         {
@@ -828,9 +828,9 @@ void Generator::generate_reduce_transitions()
 //  The LalrSymbol that the reduction is to be performed on.
 //
 // @param production
-//  The LalrProduction that is to be reduced.
+//  The Production that is to be reduced.
 */
-void Generator::generate_reduce_transition( State* state, const LalrSymbol* symbol, const LalrProduction* production )
+void Generator::generate_reduce_transition( State* state, const LalrSymbol* symbol, const Production* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );

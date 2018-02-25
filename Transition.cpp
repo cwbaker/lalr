@@ -82,18 +82,6 @@ State* Transition::get_state() const
     return state_;
 }
 
-/**
-// Get the production that is reduced on this transition.
-//
-// @return
-//  The production that is reduced on this transition or null if this 
-//  transition is a shift.
-*/
-// const LalrProduction* Transition::get_reduced_production() const
-// {
-//     return reduced_production_;
-// }
-
 const LalrSymbol* Transition::reduced_symbol() const
 {
     return reduced_symbol_;

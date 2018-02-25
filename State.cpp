@@ -41,7 +41,7 @@ State::State()
 // @return
 //  The number of items added (0 or 1).
 */
-int State::add_item( LalrProduction* production, int position )
+int State::add_item( Production* production, int position )
 {
     SWEET_ASSERT( production );
     return items_.insert( Item(production, position) ).second ? 1 : 0;
@@ -63,7 +63,7 @@ int State::add_item( LalrProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int State::add_lookahead_symbols( LalrProduction* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
+int State::add_lookahead_symbols( Production* production, int position, const std::set<const LalrSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<Item>::iterator item = items_.find( Item(production, position) );

@@ -6,7 +6,7 @@
 #include "Grammar.hpp"
 #include "Directive.hpp"
 #include "LalrSymbol.hpp"
-#include "LalrProduction.hpp"
+#include "Production.hpp"
 #include "Action.hpp"
 #include "Generator.hpp"
 #include "Action.hpp"
@@ -69,7 +69,7 @@ std::vector<std::unique_ptr<LalrSymbol>>& Grammar::symbols()
     return symbols_;
 }
 
-std::vector<std::unique_ptr<LalrProduction>>& Grammar::productions()
+std::vector<std::unique_ptr<Production>>& Grammar::productions()
 {
     return productions_;
 }
@@ -343,19 +343,19 @@ LalrSymbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolT
     return symbol;
 }
 
-LalrProduction* Grammar::production( LalrSymbol* symbol )
+Production* Grammar::production( LalrSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     if ( productions_.empty() )
     {
         SWEET_ASSERT( start_symbol_ );
-        unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), start_symbol_, 0, NULL) );
+        unique_ptr<Production> production( new Production(int(productions_.size()), start_symbol_, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
         productions_.push_back( move(production) );
     }
 
-    unique_ptr<LalrProduction> production( new LalrProduction(int(productions_.size()), symbol, -1, nullptr) );
+    unique_ptr<Production> production( new Production(int(productions_.size()), symbol, -1, nullptr) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
     return productions_.back().get();
