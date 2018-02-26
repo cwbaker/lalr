@@ -6,6 +6,7 @@ for _, build in build:default_builds() do
             "Directive.cpp",
             "Generator.cpp",
             "Grammar.cpp",
+            "GrammarParser.cpp",
             "Item.cpp",
             "Nil.cpp",
             "Production.cpp",
