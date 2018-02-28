@@ -30,10 +30,10 @@ class ParserUserData
         ParserUserData( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme );  
         ParserUserData( const ParserSymbol* symbol, size_t user_datas );
         ParserUserData( const ParserSymbol* symbol, const ParserNode* start, const ParserNode* finish );
-        const ParserSymbol* get_symbol() const;
-        const std::basic_string<Char, Traits, Allocator>& get_lexeme() const;        
+        const ParserSymbol* symbol() const;
+        const std::basic_string<Char, Traits, Allocator>& lexeme() const;        
         void append_user_data( std::shared_ptr<ParserUserData> user_data );
-        const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& get_user_datas() const;
+        const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& user_datas() const;
 };
 
 }

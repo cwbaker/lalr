@@ -78,13 +78,13 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
     
     for ( const ParserNode* node = start; node != finish; ++node )
     {
-        if ( node->get_user_data() )
+        if ( node->user_data() )
         {
-            user_datas_.push_back( node->get_user_data() );
+            user_datas_.push_back( node->user_data() );
         }
         else
         {
-            std::shared_ptr<ParserUserData<char> > user_data( new ParserUserData(node->get_symbol(), node->get_lexeme()) );
+            std::shared_ptr<ParserUserData<char> > user_data( new ParserUserData(node->symbol(), node->lexeme()) );
             user_datas_.push_back( user_data );
         }
     }
@@ -97,7 +97,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
 //  The symbol.
 */
 template <class Char, class Traits, class Allocator>
-const ParserSymbol* ParserUserData<Char, Traits, Allocator>::get_symbol() const
+const ParserSymbol* ParserUserData<Char, Traits, Allocator>::symbol() const
 {
     return symbol_;
 }
@@ -109,7 +109,7 @@ const ParserSymbol* ParserUserData<Char, Traits, Allocator>::get_symbol() const
 //  The lexeme.
 */
 template <class Char, class Traits, class Allocator>
-const std::basic_string<Char, Traits, Allocator>& ParserUserData<Char, Traits, Allocator>::get_lexeme() const
+const std::basic_string<Char, Traits, Allocator>& ParserUserData<Char, Traits, Allocator>::lexeme() const
 {
     return lexeme_;
 }
@@ -134,7 +134,7 @@ void ParserUserData<Char, Traits, Allocator>::append_user_data( std::shared_ptr<
 //  The user datas.
 */
 template <class Char, class Traits, class Allocator>
-const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& ParserUserData<Char, Traits, Allocator>::get_user_datas() const
+const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& ParserUserData<Char, Traits, Allocator>::user_datas() const
 {
     return user_datas_;
 }
