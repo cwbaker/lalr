@@ -266,6 +266,24 @@ Grammar& Grammar::operator[]( const Nil& /*nil*/ )
     return *this;
 }
 
+Grammar& Grammar::literal( const char* literal )
+{
+    SWEET_ASSERT( literal );
+    return *this;
+}
+
+Grammar& Grammar::regex( const char* regex )
+{
+    SWEET_ASSERT( regex );
+    return *this;
+}
+
+Grammar& Grammar::identifier( const char* identifier )
+{
+    SWEET_ASSERT( identifier );
+    return *this;
+}
+
 void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( state_machine );

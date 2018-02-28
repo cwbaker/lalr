@@ -65,6 +65,9 @@ public:
     Grammar& error();
     Grammar& operator[]( const char* identifier );
     Grammar& operator[]( const Nil& /*nil*/ );
+    Grammar& literal( const char* literal );
+    Grammar& regex( const char* regex );
+    Grammar& identifier( const char* identifier );
     void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
