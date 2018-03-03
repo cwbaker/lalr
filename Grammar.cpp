@@ -31,6 +31,8 @@ Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t prod
   productions_(),
   actions_(),
   whitespace_tokens_(),
+  active_whitespace_directive_( false ),
+  active_precedence_directive_( false ),
   active_directive_( nullptr ),
   active_production_( nullptr ),
   active_symbol_( nullptr ),
@@ -45,7 +47,6 @@ Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t prod
     whitespace_tokens_.reserve( whitespace_tokens_reserve );
     start_symbol_ = symbol( ".start", LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = symbol( ".end", LEXEME_NULL, SYMBOL_END );
-    // error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_TERMINAL );
     error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_NULL );
 }
 
@@ -101,6 +102,7 @@ Symbol* Grammar::error_symbol() const
 Grammar& Grammar::left()
 {
     active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
     active_directive_ = directive( ASSOCIATE_LEFT );
     active_production_ = nullptr;
     active_symbol_ = nullptr;
@@ -110,6 +112,7 @@ Grammar& Grammar::left()
 Grammar& Grammar::right()
 {
     active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
     active_directive_ = directive( ASSOCIATE_RIGHT );
     active_production_ = nullptr;
     active_symbol_ = nullptr;
@@ -119,6 +122,7 @@ Grammar& Grammar::right()
 Grammar& Grammar::none()
 {
     active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
     active_directive_ = directive( ASSOCIATE_NONE );
     active_production_ = nullptr;
     active_symbol_ = nullptr;
@@ -128,6 +132,7 @@ Grammar& Grammar::none()
 Grammar& Grammar::whitespace()
 {
     active_whitespace_directive_ = true;
+    active_precedence_directive_ = false;
     active_directive_ = nullptr;
     active_production_ = nullptr;
     active_symbol_ = nullptr;
@@ -154,13 +159,24 @@ Grammar& Grammar::precedence( const char* regex )
     return *this;
 }
 
+Grammar& Grammar::precedence()
+{
+    SWEET_ASSERT( active_symbol_ );
+    if ( active_symbol_ )
+    {
+        active_precedence_directive_ = true;
+    }
+    return *this;
+}
+
 Grammar& Grammar::production( const char* identifier )
 {
     SWEET_ASSERT( identifier );
     active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
     active_directive_ = nullptr;
     active_production_ = nullptr;
-    active_symbol_ = symbol( identifier );
+    active_symbol_ = symbol( identifier, LEXEME_NULL, SYMBOL_NON_TERMINAL );
     return *this;
 }
 
@@ -168,6 +184,7 @@ Grammar& Grammar::end_production()
 {
     SWEET_ASSERT( active_symbol_ );
     active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
     active_directive_ = nullptr;
     active_production_ = nullptr;
     active_symbol_ = nullptr;
@@ -177,46 +194,13 @@ Grammar& Grammar::end_production()
 Grammar& Grammar::operator()( char literal )
 {
     SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
-    if ( active_whitespace_directive_ )
-    {
-        char lexeme [2] = { literal, 0 };
-        whitespace_tokens_.push_back( LexerToken(TOKEN_LITERAL, 0, nullptr, lexeme) );
-    }
-    else if ( active_directive_ )
-    {
-        active_directive_->append_symbol( symbol(literal) );
-    }
-    else if ( active_symbol_ )
-    {
-        if ( !active_production_ )
-        {
-            active_production_ = production( active_symbol_ );
-        }
-        active_production_->append_symbol( symbol(literal) );
-    }
-    return *this;
+    char lexeme [2] = { literal, 0 };
+    return Grammar::literal( lexeme );
 }
 
 Grammar& Grammar::operator()( const char* regex )
 {
-    SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
-    if ( active_whitespace_directive_ )
-    {
-        whitespace_tokens_.push_back( LexerToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
-    }
-    else if ( active_directive_ )
-    {
-        active_directive_->append_symbol( symbol(regex) );
-    }
-    else if ( active_symbol_ )
-    {
-        if ( !active_production_ )
-        {
-            active_production_ = production( active_symbol_ );
-        }
-        active_production_->append_symbol( symbol(regex) );
-    }
-    return *this;
+    return Grammar::regex( regex );
 }
 
 Grammar& Grammar::operator()( const Nil& /*nil*/ )
@@ -244,7 +228,7 @@ Grammar& Grammar::error()
         {
             active_production_ = production( active_symbol_ );
         }
-        active_production_->append_symbol( error_symbol() );
+        active_production_->append_symbol( error_symbol() );            
     }
     return *this;
 }
@@ -269,18 +253,89 @@ Grammar& Grammar::operator[]( const Nil& /*nil*/ )
 Grammar& Grammar::literal( const char* literal )
 {
     SWEET_ASSERT( literal );
+    SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
+    if ( active_whitespace_directive_ )
+    {
+        whitespace_tokens_.push_back( LexerToken(TOKEN_LITERAL, 0, nullptr, literal) );
+    }
+    else if ( active_directive_ )
+    {
+        active_directive_->append_symbol( symbol(literal, LEXEME_LITERAL, SYMBOL_NULL) );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }        
+        if ( active_precedence_directive_ )
+        {
+            active_production_->set_precedence_symbol( symbol(literal, LEXEME_LITERAL, SYMBOL_NULL) );
+            active_precedence_directive_ = false;
+        }
+        else
+        {
+            active_production_->append_symbol( symbol(literal, LEXEME_LITERAL, SYMBOL_NULL) );
+        }
+    }
     return *this;
 }
 
 Grammar& Grammar::regex( const char* regex )
 {
     SWEET_ASSERT( regex );
+    SWEET_ASSERT( active_whitespace_directive_ || active_directive_ || active_symbol_ );
+    if ( active_whitespace_directive_ )
+    {
+        whitespace_tokens_.push_back( LexerToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
+    }
+    else if ( active_directive_ )
+    {
+        active_directive_->append_symbol( symbol(regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL) );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+        if ( active_precedence_directive_ )
+        {
+            active_production_->set_precedence_symbol( symbol(regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL) );
+            active_precedence_directive_ = false;
+        }
+        else
+        {
+            active_production_->append_symbol( symbol(regex, LEXEME_REGULAR_EXPRESSION, SYMBOL_NULL) );
+        }
+    }
     return *this;
 }
 
 Grammar& Grammar::identifier( const char* identifier )
 {
     SWEET_ASSERT( identifier );
+    SWEET_ASSERT( active_directive_ || active_symbol_ );
+    if ( active_directive_ )
+    {
+        active_directive_->append_symbol( symbol(identifier, LEXEME_NULL, SYMBOL_NON_TERMINAL) );
+    }
+    else if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+        if ( active_precedence_directive_ )
+        {
+            active_production_->set_precedence_symbol( symbol(identifier, LEXEME_NULL, SYMBOL_NON_TERMINAL) );
+            active_precedence_directive_ = false;
+        }
+        else
+        {
+            active_production_->append_symbol( symbol(identifier, LEXEME_NULL, SYMBOL_NON_TERMINAL) );
+        }
+    }
     return *this;
 }
 
@@ -355,8 +410,8 @@ Symbol* Grammar::symbol( const char* lexeme, LexemeType lexeme_type, SymbolType 
     }
     Symbol* symbol = i->get();
     SWEET_ASSERT( symbol );
-    SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
-    SWEET_ASSERT( symbol->symbol_type() == symbol_type );
+    // SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
+    // SWEET_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 

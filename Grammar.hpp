@@ -32,6 +32,7 @@ class Grammar
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
+    bool active_precedence_directive_;
     Directive* active_directive_;
     Production* active_production_;
     Symbol* active_symbol_;
@@ -57,6 +58,7 @@ public:
     Grammar& whitespace();
     Grammar& precedence( char literal );
     Grammar& precedence( const char* regex );
+    Grammar& precedence();
     Grammar& production( const char* identifier );
     Grammar& end_production();
     Grammar& operator()( char literal );
@@ -67,7 +69,7 @@ public:
     Grammar& operator[]( const Nil& /*nil*/ );
     Grammar& literal( const char* literal );
     Grammar& regex( const char* regex );
-    Grammar& identifier( const char* identifier );
+    Grammar& identifier( const char* identifier );    
     void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
