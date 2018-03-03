@@ -5,6 +5,7 @@
 
 #include "GrammarParser.hpp"
 #include "Grammar.hpp"
+#include "Nil.hpp"
 #include "Parser.ipp"
 #include "ParserStateMachine.hpp"
 #include "assert.hpp"
@@ -155,25 +156,19 @@ bool GrammarParser::match_associativity()
 
 bool GrammarParser::match_expressions()
 {
-    if ( match_expression() )
+    match_expression();
+    while ( match("|") && match_expression() )
     {
-        while ( match("|") && match_expression() )
-        {
-        }
-        return true;
     }
-    return false;
+    return true;
 }
 
 bool GrammarParser::match_expression()
 {
-    if ( match_symbols() )
-    {
-        match_precedence();
-        match_action();
-        return true;
-    }
-    return false;
+    match_symbols();
+    match_precedence();
+    match_action();
+    return true;
 }
 
 bool GrammarParser::match_precedence()
@@ -198,6 +193,7 @@ bool GrammarParser::match_action()
         expect( "]" );
         return true;
     }
+    (*grammar_)[nil];
     return false;
 }
 

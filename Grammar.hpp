@@ -41,7 +41,7 @@ class Grammar
     Symbol* error_symbol_; ///< The error symbol.
 
 public:
-    Grammar( );
+    Grammar();
     ~Grammar();
     const std::string& identifier() const;
     std::vector<std::unique_ptr<Directive>>& directives();
@@ -69,8 +69,9 @@ public:
     Grammar& operator[]( const Nil& /*nil*/ );
     Grammar& literal( const char* literal );
     Grammar& regex( const char* regex );
-    Grammar& identifier( const char* identifier );    
-    void generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
+    Grammar& identifier( const char* identifier );
+    bool parse( const char* begin, const char* end );
+    bool generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
     Directive* directive( Associativity associativity );

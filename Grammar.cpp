@@ -4,6 +4,7 @@
 //
 
 #include "Grammar.hpp"
+#include "GrammarParser.hpp"
 #include "Directive.hpp"
 #include "Symbol.hpp"
 #include "Production.hpp"
@@ -36,9 +37,9 @@ Grammar::Grammar()
   active_directive_( nullptr ),
   active_production_( nullptr ),
   active_symbol_( nullptr ),
-  start_symbol_( NULL ),
-  end_symbol_( NULL ),
-  error_symbol_( NULL )
+  start_symbol_( nullptr ),
+  end_symbol_( nullptr ),
+  error_symbol_( nullptr )
 {
     start_symbol_ = symbol( ".start", LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = symbol( ".end", LEXEME_NULL, SYMBOL_END );
@@ -241,6 +242,16 @@ Grammar& Grammar::operator[]( const char* identifier )
 
 Grammar& Grammar::operator[]( const Nil& /*nil*/ )
 {
+    // If there is an active symbol but no active production then an empty
+    // production is being specified (the nil action marks the end of a 
+    // production for which no symbols have been specified).
+    if ( active_symbol_ )
+    {
+        if ( !active_production_ )
+        {
+            active_production_ = production( active_symbol_ );
+        }
+    }
     active_production_ = nullptr;
     return *this;
 }
@@ -334,7 +345,16 @@ Grammar& Grammar::identifier( const char* identifier )
     return *this;
 }
 
-void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )
+bool Grammar::parse( const char* begin, const char* end )
+{
+    SWEET_ASSERT( begin );
+    SWEET_ASSERT( end );
+    SWEET_ASSERT( begin <= end );
+    GrammarParser parser;
+    return parser.parse( begin, end, this );
+}
+
+bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( state_machine );
 
@@ -366,6 +386,7 @@ void Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
     }
 
     Generator generator( *this, state_machine, parser_error_policy, lexer_error_policy );
+    return true;
 }
 
 Directive* Grammar::directive( Associativity associativity )
