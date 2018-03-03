@@ -24,7 +24,7 @@ using namespace sweet;
 using namespace sweet::lalr;
 using namespace sweet::lalr;
 
-Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t productions_reserve, size_t actions_reserve, size_t whitespace_tokens_reserve )
+Grammar::Grammar()
 : identifier_(),
   directives_(),
   symbols_(),
@@ -40,11 +40,6 @@ Grammar::Grammar( size_t directives_reserve, size_t symbols_reserve, size_t prod
   end_symbol_( NULL ),
   error_symbol_( NULL )
 {
-    directives_.reserve( directives_reserve );
-    symbols_.reserve( symbols_reserve );
-    productions_.reserve( productions_reserve );
-    actions_.reserve( actions_reserve );
-    whitespace_tokens_.reserve( whitespace_tokens_reserve );
     start_symbol_ = symbol( ".start", LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = symbol( ".end", LEXEME_NULL, SYMBOL_END );
     error_symbol_ = symbol( ".error", LEXEME_NULL, SYMBOL_NULL );

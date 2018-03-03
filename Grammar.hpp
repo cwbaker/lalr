@@ -41,7 +41,7 @@ class Grammar
     Symbol* error_symbol_; ///< The error symbol.
 
 public:
-    Grammar( size_t directives_reserve = 64, size_t symbols_reserve = 64, size_t productions_reserve = 64, size_t actions_reserve = 32, size_t whitespace_tokens_reserve = 8 );
+    Grammar( );
     ~Grammar();
     const std::string& identifier() const;
     std::vector<std::unique_ptr<Directive>>& directives();
