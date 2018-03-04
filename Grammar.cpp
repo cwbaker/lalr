@@ -368,6 +368,7 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         {
             Symbol* symbol = *j;
             SWEET_ASSERT( symbol );
+            symbol->set_symbol_type( SYMBOL_TERMINAL );
             symbol->set_associativity( directive->associativity() );
             symbol->set_precedence( precedence );
         }
