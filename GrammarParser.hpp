@@ -38,6 +38,7 @@ private:
     bool match_expression();
     bool match_precedence();
     bool match_action();
+    bool match_error();
     bool match_literal();
     bool match_regex();
     bool match_identifier();

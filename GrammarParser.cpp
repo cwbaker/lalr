@@ -116,7 +116,12 @@ bool GrammarParser::match_symbols()
 
 bool GrammarParser::match_symbol()
 {
-    if ( match_literal() )
+    if ( match_error() )
+    {
+        grammar_->error();
+        return true;
+    }
+    else if ( match_literal() )
     {
         grammar_->literal( lexeme_.c_str() );
         return true;
@@ -195,6 +200,11 @@ bool GrammarParser::match_action()
     }
     (*grammar_)[nil];
     return false;
+}
+
+bool GrammarParser::match_error()
+{
+    return match( "error" );
 }
 
 bool GrammarParser::match_literal()
