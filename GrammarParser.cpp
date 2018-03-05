@@ -86,7 +86,7 @@ bool GrammarParser::match_whitespace_statement()
         grammar_->whitespace();
         if ( match_regex() )
         {
-            grammar_->regex( lexeme_.c_str() );
+            grammar_->regex( lexeme_.c_str(), line_ );
         }
         expect( ";" );
         return true;
@@ -98,7 +98,7 @@ bool GrammarParser::match_production_statement()
 {
     if ( match_identifier() )
     {
-        grammar_->production( lexeme_.c_str() );
+        grammar_->production( lexeme_.c_str(), line_ );
         expect( ":" );
         match_expressions();
         expect( ";" );
@@ -125,17 +125,17 @@ bool GrammarParser::match_symbol()
     }
     else if ( match_literal() )
     {
-        grammar_->literal( lexeme_.c_str() );
+        grammar_->literal( lexeme_.c_str(), line_ );
         return true;
     }
     else if ( match_regex() )
     {
-        grammar_->regex( lexeme_.c_str() );
+        grammar_->regex( lexeme_.c_str(), line_ );
         return true;
     }
     else if ( match_identifier() )
     {
-        grammar_->identifier( lexeme_.c_str() );
+        grammar_->identifier( lexeme_.c_str(), line_ );
         return true;
     }
     return false;
@@ -145,17 +145,17 @@ bool GrammarParser::match_associativity()
 {
     if ( match("%left") )
     {
-        grammar_->left();
+        grammar_->left( line_ );
         return true;
     }
     else if ( match("%right") )
     {
-        grammar_->right();
+        grammar_->right( line_ );
         return true;
     }
     else if ( match("%none") )
     {
-        grammar_->none();
+        grammar_->none( line_ );
         return true;
     }
     return false;

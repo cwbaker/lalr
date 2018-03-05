@@ -987,8 +987,9 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         {
             const ParserSymbol* symbol = &symbols[i];
             SWEET_ASSERT( symbol );
+            int line = source_symbol->line();
             LexerTokenType token_type = source_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( LexerToken(token_type, int(tokens.size()) + 1, symbol, symbol->lexeme) );                
+            tokens.push_back( LexerToken(token_type, line, symbol, symbol->lexeme) );                
         }
     }
 
