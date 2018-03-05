@@ -17,6 +17,7 @@ class GrammarParser
     Grammar* grammar_;
     const char* position_;
     const char* end_;
+    int line_;
     std::string lexeme_;
     bool successful_;
 

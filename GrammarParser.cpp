@@ -18,6 +18,7 @@ GrammarParser::GrammarParser()
 : grammar_( nullptr ),
   position_( nullptr ),
   end_( nullptr ),
+  line_( 1 ),
   lexeme_(),
   successful_( false )
 {
@@ -33,6 +34,7 @@ bool GrammarParser::parse( const char* start, const char* finish, Grammar* gramm
     grammar_ = grammar;
     position_ = start;
     end_ = finish;
+    line_ = 1;
     successful_ = true;
     return match_grammar() && successful_;
 }
@@ -267,10 +269,17 @@ bool GrammarParser::match_identifier()
 
 bool GrammarParser::match_whitespace()
 {
+    bool newline = false;
     const char* position = position_;
     while ( position != end_ && isspace(*position) )
     {
+        if ( !newline && (*position == '\n' || *position == '\r') )
+        {
+            newline = true;
+            ++line_;
+        }
         ++position;
+        newline = false;
     }
     position_ = position;
     return true;
