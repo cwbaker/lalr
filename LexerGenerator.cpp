@@ -20,6 +20,7 @@
 using std::pair;
 using std::vector;
 using std::make_pair;
+using std::unique_ptr;
 using namespace sweet;
 using namespace sweet::lalr;
 
@@ -66,7 +67,7 @@ LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, const std
 // @return
 //  The actions.
 */
-std::vector<std::shared_ptr<RegexAction> >& LexerGenerator::actions()
+std::vector<std::unique_ptr<RegexAction> >& LexerGenerator::actions()
 {
     return actions_;
 }
@@ -133,29 +134,22 @@ const RegexState* LexerGenerator::whitespace_start_state() const
 const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );
-    
-    std::shared_ptr<RegexAction> lexer_action;
-
     if ( !identifier.empty() )
     {    
-        std::vector<std::shared_ptr<RegexAction> >::const_iterator i = actions_.begin();
+        vector<std::unique_ptr<RegexAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
         }
-        
-        if ( i != actions_.end() )
+        if ( i == actions_.end() )
         {
-            lexer_action = *i;
+            unique_ptr<RegexAction> action( new RegexAction(actions_.size(), identifier) );
+            actions_.push_back( move(action) );
+            i = actions_.end() - 1;
         }
-        else
-        {
-            lexer_action.reset( new RegexAction(actions_.size(), identifier) );
-            actions_.push_back( lexer_action );
-        }
+        return i->get();
     }
-
-    return lexer_action.get();
+    return nullptr;
 }
 
 /**

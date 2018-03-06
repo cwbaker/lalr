@@ -33,7 +33,7 @@ class RegexSyntaxTree;
 class LexerGenerator
 {
     LexerErrorPolicy* event_sink_; ///< The event sink to report errors and debug information to or null to ignore errors and debug information.
-    std::vector<std::shared_ptr<RegexAction>> actions_; ///< The lexical analyzer actions.
+    std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexical analyzer actions.
     std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>> states_; ///< The states generated for the lexical analyzer.
     std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>> whitespace_states_; ///< The states generated for the whitespace lexical analyzer.
     const RegexState* start_state_; ///< The starting state for the lexical analyzer.
@@ -44,7 +44,7 @@ class LexerGenerator
         LexerGenerator( const LexerToken& token, LexerErrorPolicy* event_sink );
         LexerGenerator( const std::vector<LexerToken>& tokens, const std::vector<LexerToken>& whitespace_tokens, LexerErrorPolicy* event_sink );
 
-        std::vector<std::shared_ptr<RegexAction> >& actions();
+        std::vector<std::unique_ptr<RegexAction> >& actions();
         std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>& states();
         std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>& whitespace_states();
         const RegexState* start_state() const;

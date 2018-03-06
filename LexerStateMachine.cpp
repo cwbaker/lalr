@@ -5,8 +5,7 @@
 
 #include "LexerStateMachine.hpp"
 #include "RegexNodeLess.hpp"
-// #include "LexerItem.hpp"
-// #include "LexerTransition.hpp"
+#include "RegexAction.hpp"
 #include "RegexState.hpp"
 #include "LexerToken.hpp"
 #include "LexerGenerator.hpp"
@@ -84,6 +83,10 @@ LexerStateMachine::LexerStateMachine( const std::string& identifier, const std::
     whitespace_start_state_ = lexer_generator.whitespace_start_state();
 }
 
+LexerStateMachine::~LexerStateMachine()
+{
+}
+
 /**
 // Get the identifier of this LexerStateMachine.
 //
@@ -101,7 +104,7 @@ const std::string& LexerStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<std::shared_ptr<RegexAction> >& LexerStateMachine::actions() const
+const std::vector<std::unique_ptr<RegexAction>>& LexerStateMachine::actions() const
 {
     return actions_;
 }

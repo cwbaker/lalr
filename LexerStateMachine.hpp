@@ -22,7 +22,7 @@ class LexerErrorPolicy;
 class LexerStateMachine
 {
     std::string identifier_; ///< The identifier of this LexerStateMachine.
-    std::vector<std::shared_ptr<RegexAction> > actions_; ///< The lexer actions for this ParserStateMachine.
+    std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexer actions for this ParserStateMachine.
     std::vector<std::shared_ptr<RegexState> > states_; ///< The states that make up the state machine for this LexerStateMachine.
     std::vector<std::shared_ptr<RegexState> > whitespace_states_; ///< The states that make up the state machine for whitespace in this LexerStateMachine.
     const RegexState* start_state_; ///< The starting state for the state machine.
@@ -31,8 +31,9 @@ class LexerStateMachine
     public:
         LexerStateMachine( const std::string& regular_expression, void* symbol, LexerErrorPolicy* event_sink = NULL );
         LexerStateMachine( const std::string& identifier, const std::vector<LexerToken>& tokens, const std::vector<LexerToken>& whitespace_tokens = std::vector<LexerToken>(), LexerErrorPolicy* event_sink = NULL );
+        ~LexerStateMachine();
         const std::string& identifier() const;
-        const std::vector<std::shared_ptr<RegexAction> >& actions() const;
+        const std::vector<std::unique_ptr<RegexAction>>& actions() const;
         const std::vector<std::shared_ptr<RegexState> >& states() const;
         const std::vector<std::shared_ptr<RegexState> >& whitespace_states() const;
         const RegexState* start_state() const;
