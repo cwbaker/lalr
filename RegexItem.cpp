@@ -1,9 +1,9 @@
 //
-// LexerItem.cpp
+// RegexItem.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LexerItem.hpp"
+#include "RegexItem.hpp"
 #include "RegexNode.hpp"
 #include "assert.hpp"
 #include <string>
@@ -19,7 +19,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-LexerItem::LexerItem()
+RegexItem::RegexItem()
 : next_nodes_()
 {
 }
@@ -30,7 +30,7 @@ LexerItem::LexerItem()
 // @param next_nodes
 //  The nodes that appear after the dot in this item.
 */
-LexerItem::LexerItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes )
+RegexItem::RegexItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes )
 : next_nodes_( next_nodes )
 {
 }
@@ -41,7 +41,7 @@ LexerItem::LexerItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes )
 // @return
 //  The next nodes.
 */
-const std::set<RegexNode*, RegexNodeLess>& LexerItem::get_next_nodes() const
+const std::set<RegexNode*, RegexNodeLess>& RegexItem::get_next_nodes() const
 {
     return next_nodes_;
 }
@@ -69,7 +69,7 @@ const std::set<RegexNode*, RegexNodeLess>& LexerItem::get_next_nodes() const
 // @return
 //  The next nodes after [\e begin, \e end) is transitioned on from this item.
 */
-std::set<RegexNode*, RegexNodeLess> LexerItem::next_nodes( int begin, int end ) const
+std::set<RegexNode*, RegexNodeLess> RegexItem::next_nodes( int begin, int end ) const
 {
     std::set<RegexNode*, RegexNodeLess> next_nodes;
     
@@ -130,7 +130,7 @@ std::set<RegexNode*, RegexNodeLess> LexerItem::next_nodes( int begin, int end ) 
 //  The action that should be taken after [\e begin, \e end) is 
 //  transitioned on or null if there is no such action.
 */
-const LexerAction* LexerItem::find_action_by_interval( int begin, int end ) const
+const RegexAction* RegexItem::find_action_by_interval( int begin, int end ) const
 {
     std::set<RegexNode*, RegexNodeLess>::const_iterator i = next_nodes_.begin();
     while ( i != next_nodes_.end() && !(*i)->is_action() && !(*i)->is_match(begin, end) )
@@ -156,7 +156,7 @@ const LexerAction* LexerItem::find_action_by_interval( int begin, int end ) cons
 // @param description
 //  A variable to append the description to (assumed not null).
 */
-void LexerItem::describe( std::string* description ) const
+void RegexItem::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     
@@ -178,7 +178,7 @@ void LexerItem::describe( std::string* description ) const
 //  True if the next nodes of this item are less than the next nodes of 
 //  \e item.
 */
-bool LexerItem::operator<( const LexerItem& item ) const
+bool RegexItem::operator<( const RegexItem& item ) const
 {
     return next_nodes_ < item.next_nodes_;
 }

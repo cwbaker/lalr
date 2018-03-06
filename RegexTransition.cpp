@@ -1,11 +1,11 @@
 //
-// LexerTransition.cpp
+// RegexTransition.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LexerTransition.hpp"
-#include "LexerAction.hpp"
-#include "LexerState.hpp"
+#include "RegexTransition.hpp"
+#include "RegexAction.hpp"
+#include "RegexState.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -32,7 +32,7 @@ using namespace sweet::lalr;
 //  The action to take when this transition is taken or null if this 
 //  transition doesn't take an action.
 */
-LexerTransition::LexerTransition( int begin, int end, const LexerState* state, const LexerAction* action )
+RegexTransition::RegexTransition( int begin, int end, const RegexState* state, const RegexAction* action )
 : begin_( begin ),
   end_( end ),
   state_( state ),
@@ -48,7 +48,7 @@ LexerTransition::LexerTransition( int begin, int end, const LexerState* state, c
 // @return
 //  True if this transition is taken on character otherwise false.
 */
-bool LexerTransition::is_on_character( int character ) const
+bool RegexTransition::is_on_character( int character ) const
 {
     return character >= begin_ && character < end_;
 }
@@ -60,7 +60,7 @@ bool LexerTransition::is_on_character( int character ) const
 // @return
 //  The first character.
 */
-int LexerTransition::get_begin() const
+int RegexTransition::get_begin() const
 {
     return begin_;
 }
@@ -72,7 +72,7 @@ int LexerTransition::get_begin() const
 // @return
 //  The last character.
 */
-int LexerTransition::get_end() const
+int RegexTransition::get_end() const
 {
     return end_;
 }
@@ -83,7 +83,7 @@ int LexerTransition::get_end() const
 // @return
 //  The action or null if this transition doesn't have an action.
 */
-const LexerAction* LexerTransition::get_action() const
+const RegexAction* RegexTransition::get_action() const
 {
     return action_;
 }
@@ -94,7 +94,7 @@ const LexerAction* LexerTransition::get_action() const
 // @return
 //  The state.
 */
-const LexerState* LexerTransition::get_state() const
+const RegexState* RegexTransition::get_state() const
 {
     SWEET_ASSERT( state_ );
     return state_;
@@ -107,7 +107,7 @@ const LexerState* LexerTransition::get_state() const
 //  A variable to receive the description of this transition (assumed not 
 //  null).
 */
-void LexerTransition::describe( std::string* description ) const
+void RegexTransition::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     SWEET_ASSERT( state_ );    
@@ -132,7 +132,7 @@ void LexerTransition::describe( std::string* description ) const
 //  True if both the beginning and end of this transition's interval is less
 //  than the beginning of \e transition's interval.
 */
-bool LexerTransition::operator<( const LexerTransition& transition ) const
+bool RegexTransition::operator<( const RegexTransition& transition ) const
 {
     return begin_ < transition.begin_ && end_ <= transition.begin_;
 }

@@ -4,7 +4,7 @@
 //
 
 #include "RegexNode.hpp"
-#include "LexerAction.hpp"
+#include "RegexAction.hpp"
 #include "assert.hpp"
 #include <algorithm>
 #include <stdio.h>
@@ -117,7 +117,7 @@ RegexNode::RegexNode( int index, int begin_character, int end_character, const L
 // @param action
 //  The action taken at this node (assumed not null).
 */
-RegexNode::RegexNode( int index, const LexerAction* action )
+RegexNode::RegexNode( int index, const RegexAction* action )
 : index_( index ),
   type_( LEXER_NODE_ACTION ),
   begin_character_( BEGIN_CHARACTER ),
@@ -239,7 +239,7 @@ const LexerToken* RegexNode::get_token() const
 // @return
 //  The action.
 */
-const LexerAction* RegexNode::get_action() const
+const RegexAction* RegexNode::get_action() const
 {
     return action_;
 }

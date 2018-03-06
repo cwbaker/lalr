@@ -1,9 +1,9 @@
 //
-// LexerAction.cpp
+// RegexAction.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LexerAction.hpp"
+#include "RegexAction.hpp"
 
 using namespace sweet::lalr;
 
@@ -16,7 +16,7 @@ using namespace sweet::lalr;
 // @param identifier
 //  The identifier of this action.
 */
-LexerAction::LexerAction( int index, const std::string& identifier )
+RegexAction::RegexAction( int index, const std::string& identifier )
 : index_( index ),
   identifier_( identifier )
 {
@@ -28,7 +28,7 @@ LexerAction::LexerAction( int index, const std::string& identifier )
 // @return
 //  The index.
 */
-int LexerAction::get_index() const
+int RegexAction::get_index() const
 {
     return index_;
 }
@@ -39,7 +39,7 @@ int LexerAction::get_index() const
 // @return
 //  The identifier of this action.
 */
-const std::string& LexerAction::get_identifier() const
+const std::string& RegexAction::get_identifier() const
 {
     return identifier_;
 }

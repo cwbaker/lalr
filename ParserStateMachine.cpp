@@ -8,7 +8,6 @@
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
 #include "ParserTransition.hpp"
-#include "LexerAction.hpp"
 #include "LexerStateMachine.hpp"
 #include "assert.hpp"
 

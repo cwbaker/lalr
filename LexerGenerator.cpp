@@ -6,9 +6,9 @@
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "LexerToken.hpp"
-#include "LexerItem.hpp"
-#include "LexerState.hpp"
-#include "LexerAction.hpp"
+#include "RegexItem.hpp"
+#include "RegexState.hpp"
+#include "RegexAction.hpp"
 #include "LexerErrorPolicy.hpp"
 #include "RegexNode.hpp"
 #include "RegexSyntaxTree.hpp"
@@ -66,7 +66,7 @@ LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, const std
 // @return
 //  The actions.
 */
-std::vector<std::shared_ptr<LexerAction> >& LexerGenerator::actions()
+std::vector<std::shared_ptr<RegexAction> >& LexerGenerator::actions()
 {
     return actions_;
 }
@@ -77,7 +77,7 @@ std::vector<std::shared_ptr<LexerAction> >& LexerGenerator::actions()
 // @return
 //  The generated states.
 */
-std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerator::states()
+std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>& LexerGenerator::states()
 {
     return states_;
 }
@@ -88,7 +88,7 @@ std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerat
 // @return
 //  The generated whitespace states.
 */
-std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerator::whitespace_states()
+std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>& LexerGenerator::whitespace_states()
 {
     return whitespace_states_;
 }
@@ -99,7 +99,7 @@ std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>& LexerGenerat
 // @return
 //  The start state.
 */
-const LexerState* LexerGenerator::start_state() const
+const RegexState* LexerGenerator::start_state() const
 {
     return start_state_;
 }
@@ -110,35 +110,35 @@ const LexerState* LexerGenerator::start_state() const
 // @return
 //  The whitespace start state.
 */
-const LexerState* LexerGenerator::whitespace_start_state() const
+const RegexState* LexerGenerator::whitespace_start_state() const
 {
     return whitespace_start_state_;
 }
 
 /**
-// Add a new or retrieve an existing LexerAction.
+// Add a new or retrieve an existing RegexAction.
 //
-// If the parser already has a LexerAction whose identifier 
-// matches \e identifier then that LexerAction is returned.  Otherwise 
-// a new LexerAction is created, added to this `Generator` so that it 
+// If the parser already has a RegexAction whose identifier 
+// matches \e identifier then that RegexAction is returned.  Otherwise 
+// a new RegexAction is created, added to this `Generator` so that it 
 // can be returned later if necessary, and returned from this call.
 //
 // @param identifier
-//  The identifier of the LexerAction to add or retrieve.
+//  The identifier of the RegexAction to add or retrieve.
 //
 // @return
-//  The LexerAction whose identifier matches \e identifier or null if 
+//  The RegexAction whose identifier matches \e identifier or null if 
 //  \e identifier is empty.
 */
-const LexerAction* LexerGenerator::add_lexer_action( const std::string& identifier )
+const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );
     
-    std::shared_ptr<LexerAction> lexer_action;
+    std::shared_ptr<RegexAction> lexer_action;
 
     if ( !identifier.empty() )
     {    
-        std::vector<std::shared_ptr<LexerAction> >::const_iterator i = actions_.begin();
+        std::vector<std::shared_ptr<RegexAction> >::const_iterator i = actions_.begin();
         while ( i != actions_.end() && (*i)->get_identifier() != identifier )
         {
             ++i;
@@ -150,7 +150,7 @@ const LexerAction* LexerGenerator::add_lexer_action( const std::string& identifi
         }
         else
         {
-            lexer_action.reset( new LexerAction(actions_.size(), identifier) );
+            lexer_action.reset( new RegexAction(actions_.size(), identifier) );
             actions_.push_back( lexer_action );
         }
     }
@@ -224,16 +224,16 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
 // @return
 //  The state generated when accepting [\e begin, \e end) from \e state.
 */
-std::shared_ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int begin, int end )
+std::shared_ptr<RegexState> LexerGenerator::goto_( const RegexState* state, int begin, int end )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
     SWEET_ASSERT( begin <= end );
 
-    std::shared_ptr<LexerState> goto_state( new LexerState() );
+    std::shared_ptr<RegexState> goto_state( new RegexState() );
 
-    const std::set<LexerItem>& items = state->get_items();
-    for ( std::set<LexerItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const std::set<RegexItem>& items = state->get_items();
+    for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         std::set<RegexNode*, RegexNodeLess> next_nodes = item->next_nodes( begin, end );
         if ( !next_nodes.empty() )
@@ -260,7 +260,7 @@ std::shared_ptr<LexerState> LexerGenerator::goto_( const LexerState* state, int 
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>* states, const LexerState** start_state )
+void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>* states, const RegexState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
@@ -269,7 +269,7 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
 
     if ( !syntax_tree.empty() && syntax_tree.errors() == 0 )
     {
-        std::shared_ptr<LexerState> state( new LexerState() );    
+        std::shared_ptr<RegexState> state( new RegexState() );    
         state->add_item( syntax_tree.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         states->insert( state );
@@ -279,9 +279,9 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::const_iterator i = states->begin(); i != states->end(); ++i )
+            for ( std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>::const_iterator i = states->begin(); i != states->end(); ++i )
             {
-                LexerState* state = i->get();
+                RegexState* state = i->get();
                 SWEET_ASSERT( state );
 
                 if ( !state->is_processed() )
@@ -293,8 +293,8 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                 // transitioned on from the current state.
                 //
                     clear();                
-                    const std::set<LexerItem>& items = state->get_items();
-                    for ( std::set<LexerItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+                    const std::set<RegexItem>& items = state->get_items();
+                    for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
                     {
                         const std::set<RegexNode*, RegexNodeLess>& next_nodes = item->get_next_nodes();
                         for ( std::set<RegexNode*, RegexNodeLess>::const_iterator j = next_nodes.begin(); j != next_nodes.end(); ++j )
@@ -319,10 +319,10 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                         int end = (j + 1)->first;
                         SWEET_ASSERT( begin < end );
                         
-                        std::shared_ptr<LexerState> goto_state = goto_( state, begin, end );
+                        std::shared_ptr<RegexState> goto_state = goto_( state, begin, end );
                         if ( !goto_state->get_items().empty() )
                         {                    
-                            std::shared_ptr<LexerState> actual_goto_state = *states->insert( goto_state ).first;
+                            std::shared_ptr<RegexState> actual_goto_state = *states->insert( goto_state ).first;
                             if ( goto_state == actual_goto_state )
                             {
                                 added += 1;
@@ -353,17 +353,17 @@ void LexerGenerator::generate_indices_for_states()
 {
     int index = 0;
     
-    for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
-        LexerState* state = i->get();
+        RegexState* state = i->get();
         SWEET_ASSERT( state );
         state->set_index( index );
         ++index;
     }
 
-    for ( std::set<std::shared_ptr<LexerState>, shared_ptr_less<LexerState>>::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
+    for ( std::set<std::shared_ptr<RegexState>, shared_ptr_less<RegexState>>::iterator i = whitespace_states_.begin(); i != whitespace_states_.end(); ++i )
     {
-        LexerState* state = i->get();
+        RegexState* state = i->get();
         SWEET_ASSERT( state );
         state->set_index( index );
         ++index;
@@ -376,7 +376,7 @@ void LexerGenerator::generate_indices_for_states()
 // @param state
 //  The state to generate a matching symbol for.
 */
-void LexerGenerator::generate_symbol_for_state( LexerState* state ) const
+void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -384,8 +384,8 @@ void LexerGenerator::generate_symbol_for_state( LexerState* state ) const
     LexerTokenType type = TOKEN_NULL;
     const LexerToken* token = NULL;
 
-    const std::set<LexerItem>& items = state->get_items();
-    for ( std::set<LexerItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const std::set<RegexItem>& items = state->get_items();
+    for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         std::set<RegexNode*, RegexNodeLess>::const_iterator i = item->get_next_nodes().begin();
         while ( i != item->get_next_nodes().end() )

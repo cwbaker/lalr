@@ -50,7 +50,7 @@ extern const int INVALID_BEGIN_CHARACTER;
 extern const int INVALID_END_CHARACTER;
 
 class LexerToken;
-class LexerAction;
+class RegexAction;
 
 /**
 // @internal
@@ -64,7 +64,7 @@ class RegexNode : public std::enable_shared_from_this<RegexNode>
     int begin_character_; ///< The first character in the interval of characters represented by the node.
     int end_character_; ///< One past the last character in the interval of characters represented by the node.
     const LexerToken* token_; ///< The token recognized at the node or null if the node doesn't recognize a token.
-    const LexerAction* action_; ///< The action taken at the node or null if no action is taken at the node.
+    const RegexAction* action_; ///< The action taken at the node or null if no action is taken at the node.
     std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The child nodes.
     bool nullable_; ///< True if the node is nullable otherwise false.
     std::set<RegexNode*, RegexNodeLess> first_positions_; ///< The first positions at the node.
@@ -75,7 +75,7 @@ class RegexNode : public std::enable_shared_from_this<RegexNode>
         RegexNode( int index, RegexNodeType type );
         RegexNode( int index, int begin_character, int end_character );
         RegexNode( int index, int begin_character, int end_character, const LexerToken* token );
-        RegexNode( int index, const LexerAction* action );
+        RegexNode( int index, const RegexAction* action );
 
         int get_index() const;
         RegexNodeType get_type() const;
@@ -83,7 +83,7 @@ class RegexNode : public std::enable_shared_from_this<RegexNode>
         int get_begin_character() const;
         int get_end_character() const;
         const LexerToken* get_token() const;
-        const LexerAction* get_action() const;
+        const RegexAction* get_action() const;
         bool is_match( int begin, int end ) const;
         bool is_end() const;
         bool is_action() const;

@@ -553,11 +553,11 @@ std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( int begin, int end, cons
 // Create a RegexNode to represent a lexical analyzer action.
 //
 // @param action
-//  The LexerAction that this RegexNode represents.
+//  The RegexAction that this RegexNode represents.
 // @return
 //  The RegexNode.
 */
-std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( const LexerAction* action )
+std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( const RegexAction* action )
 {
     std::shared_ptr<RegexNode> node( new RegexNode(index_, action) );
     ++index_;

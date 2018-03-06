@@ -5,9 +5,9 @@
 
 #include "LexerStateMachine.hpp"
 #include "RegexNodeLess.hpp"
-#include "LexerItem.hpp"
-#include "LexerTransition.hpp"
-#include "LexerState.hpp"
+// #include "LexerItem.hpp"
+// #include "LexerTransition.hpp"
+#include "RegexState.hpp"
 #include "LexerToken.hpp"
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
@@ -101,7 +101,7 @@ const std::string& LexerStateMachine::identifier() const
 // @return
 //  The actions.
 */
-const std::vector<std::shared_ptr<LexerAction> >& LexerStateMachine::actions() const
+const std::vector<std::shared_ptr<RegexAction> >& LexerStateMachine::actions() const
 {
     return actions_;
 }
@@ -112,7 +112,7 @@ const std::vector<std::shared_ptr<LexerAction> >& LexerStateMachine::actions() c
 // @return
 //  The states.
 */
-const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::states() const
+const std::vector<std::shared_ptr<RegexState> >& LexerStateMachine::states() const
 {
     return states_;
 }
@@ -123,7 +123,7 @@ const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::states() con
 // @return
 //  The whitespace states.
 */
-const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::whitespace_states() const
+const std::vector<std::shared_ptr<RegexState> >& LexerStateMachine::whitespace_states() const
 {
     return whitespace_states_;
 }
@@ -134,7 +134,7 @@ const std::vector<std::shared_ptr<LexerState> >& LexerStateMachine::whitespace_s
 // @return
 //  The starting state.
 */
-const LexerState* LexerStateMachine::start_state() const
+const RegexState* LexerStateMachine::start_state() const
 {
     return start_state_;
 }
@@ -145,7 +145,7 @@ const LexerState* LexerStateMachine::start_state() const
 // @return
 //  The whitespace start state in this LexerStateMachine.
 */
-const LexerState* LexerStateMachine::whitespace_start_state() const
+const RegexState* LexerStateMachine::whitespace_start_state() const
 {
     return whitespace_start_state_;
 }
@@ -159,10 +159,10 @@ const LexerState* LexerStateMachine::whitespace_start_state() const
 void LexerStateMachine::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
-    std::vector<std::shared_ptr<LexerState> >::const_iterator i = states_.begin(); 
+    std::vector<std::shared_ptr<RegexState> >::const_iterator i = states_.begin(); 
     while ( i != states_.end() )
     {
-        const LexerState* state = i->get();
+        const RegexState* state = i->get();
         SWEET_ASSERT( state );
         state->describe( description );
         description->append( "\n" );

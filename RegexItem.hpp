@@ -1,5 +1,5 @@
-#ifndef SWEET_LEXER_LEXERITEM_HPP_INCLUDED
-#define SWEET_LEXER_LEXERITEM_HPP_INCLUDED
+#ifndef SWEET_LALR_REGEXITEM_HPP_INCLUDED
+#define SWEET_LALR_REGEXITEM_HPP_INCLUDED
 
 #include "RegexNodeLess.hpp"
 #include <string>
@@ -12,25 +12,24 @@ namespace lalr
 {
 
 class RegexNode;
-class LexerAction;
+class RegexAction;
 
 /**
 // An item that defines the positions in a regular expression that a state 
 // represents.
 */
-class LexerItem
+class RegexItem
 {
     std::set<RegexNode*, RegexNodeLess> next_nodes_; ///< The nodes that appear after the dot in this item.
 
     public:
-        LexerItem();
-        LexerItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
-        
+        RegexItem();
+        RegexItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
         const std::set<RegexNode*, RegexNodeLess>& get_next_nodes() const;
         std::set<RegexNode*, RegexNodeLess> next_nodes( int begin, int end ) const;
-        const LexerAction* find_action_by_interval( int begin, int end ) const;
+        const RegexAction* find_action_by_interval( int begin, int end ) const;
         void describe( std::string* description ) const;
-        bool operator<( const LexerItem& item ) const;
+        bool operator<( const RegexItem& item ) const;
 };
 
 }

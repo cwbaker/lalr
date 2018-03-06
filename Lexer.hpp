@@ -9,8 +9,8 @@ namespace sweet
 namespace lalr
 {
 
-class LexerAction;
-class LexerState;
+class RegexAction;
+// class RegexState;
 class LexerStateMachine;
 class LexerErrorPolicy;
 
@@ -24,9 +24,9 @@ class Lexer
 
     struct LexerActionHandler
     {
-        const LexerAction*  action_;
+        const RegexAction*  action_;
         LexerActionFunction function_;
-        LexerActionHandler( const LexerAction* action, LexerActionFunction function );
+        LexerActionHandler( const RegexAction* action, LexerActionFunction function );
     };
 
     const LexerStateMachine*                   state_machine_;   ///< The state machine for this lexer.

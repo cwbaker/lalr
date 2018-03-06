@@ -25,14 +25,14 @@ for _, build in build:default_builds() do
         };
 
         build:Cxx () {
-            "LexerAction.cpp",
             "LexerErrorPolicy.cpp",
             "LexerGenerator.cpp",
-            "LexerItem.cpp",
-            "LexerState.cpp",
             "LexerStateMachine.cpp",
             "LexerToken.cpp",
-            "LexerTransition.cpp",
+            "RegexAction.cpp",
+            "RegexItem.cpp",
+            "RegexState.cpp",
+            "RegexTransition.cpp",
             "RegexCharacter.cpp",
             "RegexNode.cpp",
             "RegexNodeLess.cpp",

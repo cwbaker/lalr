@@ -17,7 +17,7 @@ namespace lalr
 {
 
 class LexerGenerator;
-class LexerAction;
+class RegexAction;
 class RegexNode;
 
 /**
@@ -88,7 +88,7 @@ class RegexSyntaxTree
         std::shared_ptr<RegexNode> regex_node( RegexNodeType type );
         std::shared_ptr<RegexNode> regex_node( int begin, int end );
         std::shared_ptr<RegexNode> regex_node( int begin, int end, const LexerToken* token );
-        std::shared_ptr<RegexNode> regex_node( const LexerAction* action );
+        std::shared_ptr<RegexNode> regex_node( const RegexAction* action );
 
         void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
         void print_nodes( const std::vector<std::shared_ptr<RegexNode> >& nodes, int level ) const;

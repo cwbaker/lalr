@@ -3,8 +3,8 @@
 
 #include "Lexer.hpp"
 #include "LexerStateMachine.hpp"
-#include "LexerState.hpp"
-#include "LexerAction.hpp"
+#include "RegexState.hpp"
+#include "RegexAction.hpp"
 #include "LexerErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
@@ -25,7 +25,7 @@ namespace lalr
 //  The function to call when the lexer action is recognized.
 */
 template <class Iterator, class Char, class Traits, class Allocator>
-Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler( const LexerAction* action, LexerActionFunction function )
+Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler( const RegexAction* action, LexerActionFunction function )
 : action_( action ),
   function_( function )
 {
@@ -62,9 +62,9 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
     if ( state_machine_ )
     {
         action_handlers_.reserve( state_machine_->actions().size() );
-        for ( std::vector<std::shared_ptr<LexerAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
+        for ( std::vector<std::shared_ptr<RegexAction> >::const_iterator i = state_machine_->actions().begin(); i != state_machine_->actions().end(); ++i )
         {
-            LexerAction* action = i->get();
+            RegexAction* action = i->get();
             SWEET_ASSERT( action );
             action_handlers_.push_back( LexerActionHandler(action, NULL) );
         }
@@ -195,10 +195,10 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
 {    
     SWEET_ASSERT( state_machine_ );
 
-    const LexerState* state = state_machine_->whitespace_start_state();
+    const RegexState* state = state_machine_->whitespace_start_state();
     if ( state )
     {
-        const LexerTransition* transition = NULL;
+        const RegexTransition* transition = NULL;
         while ( position_ != end_ && (transition = state->find_transition_by_character(*position_)) )
         {
             state = transition->get_state();            
@@ -238,11 +238,11 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
     SWEET_ASSERT( state_machine_->start_state() );
     
     const void* symbol = NULL;
-    const LexerState* state = state_machine_->start_state();
+    const RegexState* state = state_machine_->start_state();
     if ( state )
     {
         symbol = state->get_symbol();
-        const LexerTransition* transition = NULL;
+        const RegexTransition* transition = NULL;
         while ( position_ != end_ && (transition = state->find_transition_by_character(*position_)) )
         {
             state = transition->get_state();
@@ -288,8 +288,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 
     fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
-    const LexerTransition* transition = NULL;
-    const LexerState* state = state_machine_->start_state();
+    const RegexTransition* transition = NULL;
+    const RegexState* state = state_machine_->start_state();
     while ( position_ != end_ && !(transition = state->find_transition_by_character(*position_)) )
     {
         ++position_;
