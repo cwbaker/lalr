@@ -4,185 +4,95 @@
 //
 
 #include "LexerStateMachine.hpp"
-#include "RegexNodeLess.hpp"
-#include "RegexAction.hpp"
-#include "RegexState.hpp"
-#include "LexerToken.hpp"
-#include "LexerGenerator.hpp"
-#include "ErrorCode.hpp"
+#include "LexerState.hpp"
+#include "LexerTransition.hpp"
+#include "LexerAction.hpp"
 #include "assert.hpp"
+#include <algorithm>
 
+using std::move;
+using std::unique_ptr;
 using namespace sweet;
 using namespace sweet::lalr;
 
-/**
-// Constructor.
-//
-// @param regular_expression
-//  The regular expression to create a lexical analyzer to recognize.
-//
-// @param symbol
-//  The symbol to return when the regular expression is recognized.
-//
-// @param event_sink
-//  The object to report errors and debug information to or null to ignore 
-//  errors and debug information.
-*/
-LexerStateMachine::LexerStateMachine( const std::string& regular_expression, void* symbol, LexerErrorPolicy* event_sink )
-: identifier_(),
-  actions_(),
-  states_(),
-  whitespace_states_(),
-  start_state_( NULL ),
-  whitespace_start_state_( NULL )
+LexerStateMachine::LexerStateMachine()
+: allocated_actions_(),
+  allocated_transitions_(),
+  allocated_states_(),
+  actions_size_( 0 ),
+  transitions_size_( 0 ),
+  states_size_( 0 ),
+  actions_( nullptr ),
+  transitions_( nullptr ),
+  states_( nullptr ),
+  start_state_( nullptr )
 {
-    LexerGenerator lexer_generator( LexerToken(TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression), event_sink );
-    actions_.swap( lexer_generator.actions() );
-    states_.reserve( lexer_generator.states().size() );
-    copy( lexer_generator.states().begin(), lexer_generator.states().end(), back_inserter(states_) );
-    whitespace_states_.reserve( lexer_generator.states().size() );
-    copy( lexer_generator.whitespace_states().begin(), lexer_generator.whitespace_states().end(), back_inserter(whitespace_states_) );
-    start_state_ = lexer_generator.start_state();
-    whitespace_start_state_ = lexer_generator.whitespace_start_state();
-}
-
-/**
-// Constructor.
-//
-// @param index
-//  The index of this LexerStateMachine.
-//
-// @param identifier
-//  The identifier of this LexerStateMachine.
-//
-// @param tokens
-//  The tokens to generate a lexical analyzer to recognize.
-//
-// @param whitespace_tokens
-//  The tokens to ignore as whitespace.
-//
-// @param event_sink
-//  The object to report errors and debug information to or null to ignore 
-//  errors and debug information.
-*/
-LexerStateMachine::LexerStateMachine( const std::string& identifier, const std::vector<LexerToken>& tokens, const std::vector<LexerToken>& whitespace_tokens, LexerErrorPolicy* event_sink )
-: identifier_( identifier ),
-  actions_(),
-  states_(),
-  whitespace_states_(),
-  start_state_( NULL ),
-  whitespace_start_state_( NULL )
-{
-    LexerGenerator lexer_generator( tokens, whitespace_tokens, event_sink );
-    actions_.swap( lexer_generator.actions() );
-    states_.reserve( lexer_generator.states().size() );
-    copy( lexer_generator.states().begin(), lexer_generator.states().end(), back_inserter(states_) );
-    whitespace_states_.reserve( lexer_generator.states().size() );
-    copy( lexer_generator.whitespace_states().begin(), lexer_generator.whitespace_states().end(), back_inserter(whitespace_states_) );
-    start_state_ = lexer_generator.start_state();
-    whitespace_start_state_ = lexer_generator.whitespace_start_state();
 }
 
 LexerStateMachine::~LexerStateMachine()
 {
 }
 
-/**
-// Get the identifier of this LexerStateMachine.
-//
-// @return
-//  The identifier.
-*/
-const std::string& LexerStateMachine::identifier() const
+int LexerStateMachine::actions_size() const
 {
-    return identifier_;
+    return actions_size_;
 }
 
-/**
-// Get the actions in this LexerStateMachine.
-//
-// @return
-//  The actions.
-*/
-const std::vector<std::unique_ptr<RegexAction>>& LexerStateMachine::actions() const
+int LexerStateMachine::transitions_size() const
+{
+    return transitions_size_;
+}
+
+int LexerStateMachine::states_size() const
+{
+    return states_size_;
+}
+
+const LexerAction* LexerStateMachine::actions() const
 {
     return actions_;
 }
 
-/**
-// Get the states in this LexerStateMachine.
-//
-// @return
-//  The states.
-*/
-const std::vector<std::shared_ptr<RegexState> >& LexerStateMachine::states() const
+const LexerTransition* LexerStateMachine::transitions() const
+{
+    return transitions_;
+}
+
+const LexerState* LexerStateMachine::states() const
 {
     return states_;
 }
 
-/**
-// Get the whitespace states in this LexerStateMachine.
-//
-// @return
-//  The whitespace states.
-*/
-const std::vector<std::shared_ptr<RegexState> >& LexerStateMachine::whitespace_states() const
-{
-    return whitespace_states_;
-}
-
-/**
-// Get the starting state for the lexical analyzer.
-//
-// @return
-//  The starting state.
-*/
-const RegexState* LexerStateMachine::start_state() const
+const LexerState* LexerStateMachine::start_state() const
 {
     return start_state_;
 }
 
-/**
-// Get the whitespace start state in this LexerStateMachine.
-//
-// @return
-//  The whitespace start state in this LexerStateMachine.
-*/
-const RegexState* LexerStateMachine::whitespace_start_state() const
+void LexerStateMachine::set_actions( std::unique_ptr<LexerAction[]>& actions, int actions_size )
 {
-    return whitespace_start_state_;
+    SWEET_ASSERT( actions || actions_size == 0 );
+    SWEET_ASSERT( actions_size >= 0 );
+    allocated_actions_ = move( actions );
+    actions_size_ = actions_size;
+    actions_ = allocated_actions_.get();
 }
 
-/**
-// Describe the lexical analyzer.
-//
-// @param description
-//  A variable to receive the description (assumed not null).
-*/
-void LexerStateMachine::describe( std::string* description ) const
+void LexerStateMachine::set_transitions( std::unique_ptr<LexerTransition[]>& transitions, int transitions_size )
 {
-    SWEET_ASSERT( description );
-    std::vector<std::shared_ptr<RegexState> >::const_iterator i = states_.begin(); 
-    while ( i != states_.end() )
-    {
-        const RegexState* state = i->get();
-        SWEET_ASSERT( state );
-        state->describe( description );
-        description->append( "\n" );
-        ++i;
-    }
+    SWEET_ASSERT( transitions );
+    SWEET_ASSERT( transitions_size >= 0 );
+    allocated_transitions_ = move( transitions );
+    transitions_size_ = transitions_size;
+    transitions_ = allocated_transitions_.get();
 }
 
-/**
-// Get a description of this lexical analyzer.
-//
-// @return
-//  The description.
-*/
-std::string LexerStateMachine::description() const
+void LexerStateMachine::set_states( std::unique_ptr<LexerState[]>& states, int states_size, const LexerState* start_state )
 {
-    std::string description;
-    description.reserve( 1024 );
-    describe( &description );
-    return description;
+    SWEET_ASSERT( states || states_size == 0 );
+    SWEET_ASSERT( states_size >= 0 );
+    SWEET_ASSERT( start_state || states_size == 0 );
+    allocated_states_ = move( states );
+    states_size_ = states_size;
+    states_ = allocated_states_.get();
+    start_state_ = start_state;
 }

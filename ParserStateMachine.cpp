@@ -23,30 +23,29 @@ using namespace sweet::lalr;
 ParserStateMachine::ParserStateMachine()
 : allocated_actions_(),
   allocated_symbols_(),
+  allocated_transitions_(),
   allocated_states_(),
+  allocated_lexer_state_machine_(),
+  allocated_whitespace_lexer_state_machine_(),
   actions_size_( 0 ),
   symbols_size_( 0 ),
   transitions_size_( 0 ),
   states_size_( 0 ),
   actions_( nullptr ),
   symbols_( nullptr ),
+  transitions_( nullptr ),
   states_( nullptr ),
   start_symbol_( nullptr ),
   end_symbol_( nullptr ),
   error_symbol_( nullptr ),
   start_state_( nullptr ),
-  lexer_state_machine_()
+  lexer_state_machine_( nullptr ),
+  whitespace_lexer_state_machine_( nullptr )
 {
 }
 
 ParserStateMachine::~ParserStateMachine()
 {
-    // for ( auto i = actions_.begin(); i != actions_.end(); ++i )
-    // {
-    //     ParserAction* action = i->get();
-    //     SWEET_ASSERT( action );
-    //     action->destroy();
-    // }
 }
 
 int ParserStateMachine::actions_size() const
@@ -155,7 +154,12 @@ const ParserState* ParserStateMachine::start_state() const
 */
 const LexerStateMachine* ParserStateMachine::lexer_state_machine() const
 {
-    return lexer_state_machine_.get();
+    return lexer_state_machine_;
+}
+
+const LexerStateMachine* ParserStateMachine::whitespace_lexer_state_machine() const
+{
+    return whitespace_lexer_state_machine_;
 }
 
 /**
@@ -182,7 +186,7 @@ const ParserSymbol* ParserStateMachine::find_symbol_by_identifier( const char* i
 
 void ParserStateMachine::set_actions( std::unique_ptr<ParserAction[]>& actions, int actions_size )
 {
-    SWEET_ASSERT( actions );
+    SWEET_ASSERT( actions || actions_size == 0 );
     SWEET_ASSERT( actions_size >= 0 );
     allocated_actions_ = move( actions );
     actions_size_ = actions_size;
@@ -221,8 +225,18 @@ void ParserStateMachine::set_states( std::unique_ptr<ParserState[]>& states, int
     start_state_ = start_state;
 }
 
-void ParserStateMachine::set_lexer_state_machine( const std::shared_ptr<LexerStateMachine>& lexer_state_machine )
+void ParserStateMachine::set_lexer_state_machine( std::unique_ptr<LexerStateMachine>& lexer_state_machine )
 {
     SWEET_ASSERT( lexer_state_machine.get() );
-    lexer_state_machine_ = lexer_state_machine;
+    allocated_lexer_state_machine_ = move( lexer_state_machine );
+    lexer_state_machine_ = allocated_lexer_state_machine_.get();
+}
+
+void ParserStateMachine::set_whitespace_lexer_state_machine( std::unique_ptr<LexerStateMachine>& whitespace_lexer_state_machine )
+{
+    if ( whitespace_lexer_state_machine )
+    {
+        allocated_whitespace_lexer_state_machine_ = move( whitespace_lexer_state_machine );
+        whitespace_lexer_state_machine_ = allocated_whitespace_lexer_state_machine_.get();
+    }
 }

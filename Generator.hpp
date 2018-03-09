@@ -97,7 +97,7 @@ class Generator
         void generate_reduce_transitions();
         void generate_reduce_transition( State* state, const Symbol* symbol, const Production* production );
         void generate_indices_for_transitions();
-        void populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
+        void populate_parser_state_machine( const Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
 };
 
 }

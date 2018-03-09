@@ -16,6 +16,7 @@
 #include "ParserSymbol.hpp"
 #include "ParserTransition.hpp"
 #include "ParserStateMachine.hpp"
+#include "LexerGenerator.hpp"
 #include "LexerStateMachine.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
@@ -247,7 +248,7 @@ void Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_mac
         calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
-        populate_parser_state_machine( grammar.whitespace_tokens(), parser_state_machine, lexer_error_policy );
+        populate_parser_state_machine( grammar, parser_state_machine, lexer_error_policy );
     }
 }
 
@@ -892,7 +893,7 @@ void Generator::generate_indices_for_transitions()
     }
 }
 
-void Generator::populate_parser_state_machine( const std::vector<LexerToken>& whitespace_tokens, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
+void Generator::populate_parser_state_machine( const Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_state_machine );
 
@@ -969,11 +970,6 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         ++state_index;
     }
 
-    parser_state_machine->set_actions( actions, actions_size );
-    parser_state_machine->set_symbols( symbols, symbols_size );
-    parser_state_machine->set_transitions( transitions, transitions_size );
-    parser_state_machine->set_states( states, states_size, start_state );
-
     // Generate tokens for generating the lexical analyzer from each of 
     // the terminal symbols in the grammar.
     vector<LexerToken> tokens;
@@ -981,8 +977,6 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
     {
         const Symbol* source_symbol = symbols_[i].get();
         SWEET_ASSERT( source_symbol );
-        const ParserSymbol* symbols = parser_state_machine->symbols();
-        SWEET_ASSERT( symbols );
         if ( source_symbol->symbol_type() == SYMBOL_TERMINAL )
         {
             const ParserSymbol* symbol = &symbols[i];
@@ -993,6 +987,21 @@ void Generator::populate_parser_state_machine( const std::vector<LexerToken>& wh
         }
     }
 
-    shared_ptr<LexerStateMachine> lexer_state_machine( new LexerStateMachine(identifier_, tokens, whitespace_tokens, lexer_error_policy) );
+    unique_ptr<LexerStateMachine> lexer_state_machine( new LexerStateMachine );
+    LexerGenerator lexer_generator( tokens, lexer_state_machine.get(), lexer_error_policy );
+
+    unique_ptr<LexerStateMachine> whitespace_lexer_state_machine;
+    const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
+    if ( !whitespace_tokens.empty() )
+    {
+        whitespace_lexer_state_machine.reset( new LexerStateMachine );
+        LexerGenerator whitespace_lexer_generator( whitespace_tokens, whitespace_lexer_state_machine.get(), lexer_error_policy );        
+    }
+
+    parser_state_machine->set_actions( actions, actions_size );
+    parser_state_machine->set_symbols( symbols, symbols_size );
+    parser_state_machine->set_transitions( transitions, transitions_size );
+    parser_state_machine->set_states( states, states_size, start_state );
     parser_state_machine->set_lexer_state_machine( lexer_state_machine );
+    parser_state_machine->set_whitespace_lexer_state_machine( whitespace_lexer_state_machine );
 }

@@ -65,7 +65,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 : state_machine_( state_machine ),
   error_policy_( error_policy ),
   nodes_(),
-  lexer_( state_machine_->lexer_state_machine(), state_machine_->end_symbol(), lexer_error_policy ),
+  lexer_( state_machine_->lexer_state_machine(), state_machine_->whitespace_lexer_state_machine(), state_machine_->end_symbol(), lexer_error_policy ),
   action_handlers_(),
   default_action_handler_( NULL ),
   debug_enabled_( false ),

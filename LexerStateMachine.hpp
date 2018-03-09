@@ -1,10 +1,7 @@
-#ifndef SWEET_LEXER_LEXERSTATEMACHINE_HPP_INCLUDED
-#define SWEET_LEXER_LEXERSTATEMACHINE_HPP_INCLUDED
+#ifndef SWEET_LALR_LEXERSTATEMACHINE_HPP_INCLUDED
+#define SWEET_LALR_LEXERSTATEMACHINE_HPP_INCLUDED
 
 #include <memory>
-#include <string>
-#include <vector>
-#include "LexerToken.hpp"
 
 namespace sweet
 {
@@ -12,34 +9,41 @@ namespace sweet
 namespace lalr
 {
 
-class RegexAction;
-class RegexState;
 class LexerErrorPolicy;
+class LexerAction;
+class LexerTransition;
+class LexerState;
 
 /**
 // The data that defines the state machine for a lexical analyzer.
 */
 class LexerStateMachine
 {
-    std::string identifier_; ///< The identifier of this LexerStateMachine.
-    std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexer actions for this ParserStateMachine.
-    std::vector<std::shared_ptr<RegexState> > states_; ///< The states that make up the state machine for this LexerStateMachine.
-    std::vector<std::shared_ptr<RegexState> > whitespace_states_; ///< The states that make up the state machine for whitespace in this LexerStateMachine.
-    const RegexState* start_state_; ///< The starting state for the state machine.
-    const RegexState* whitespace_start_state_; ///< The starting state for the whitespace state machine.
+    std::unique_ptr<LexerAction[]> allocated_actions_; ///< The actions in this LexerStateMachine.
+    std::unique_ptr<LexerTransition[]> allocated_transitions_; ///< The transitions in this LexerStateMachine.
+    std::unique_ptr<LexerState[]> allocated_states_; ///< The states in this LexerStateMachine.
+    int actions_size_;
+    int transitions_size_;
+    int states_size_;
+    const LexerAction* actions_;
+    const LexerTransition* transitions_;
+    const LexerState* states_;
+    const LexerState* start_state_; ///< The starting state for the state machine.
 
-    public:
-        LexerStateMachine( const std::string& regular_expression, void* symbol, LexerErrorPolicy* event_sink = NULL );
-        LexerStateMachine( const std::string& identifier, const std::vector<LexerToken>& tokens, const std::vector<LexerToken>& whitespace_tokens = std::vector<LexerToken>(), LexerErrorPolicy* event_sink = NULL );
-        ~LexerStateMachine();
-        const std::string& identifier() const;
-        const std::vector<std::unique_ptr<RegexAction>>& actions() const;
-        const std::vector<std::shared_ptr<RegexState> >& states() const;
-        const std::vector<std::shared_ptr<RegexState> >& whitespace_states() const;
-        const RegexState* start_state() const;
-        const RegexState* whitespace_start_state() const;
-        void describe( std::string* description ) const;
-        std::string description() const;
+public:
+    LexerStateMachine();
+    ~LexerStateMachine();
+    int actions_size() const;
+    int transitions_size() const;
+    int states_size() const;
+    const LexerAction* actions() const;
+    const LexerTransition* transitions() const;
+    const LexerState* states() const;
+    const LexerState* start_state() const;
+    const LexerState* whitespace_start_state() const;
+    void set_actions( std::unique_ptr<LexerAction[]>& actions, int actions_size );
+    void set_transitions( std::unique_ptr<LexerTransition[]>& transitions, int transitions_size );
+    void set_states( std::unique_ptr<LexerState[]>& states, int states_size, const LexerState* start_state );
 };
 
 }

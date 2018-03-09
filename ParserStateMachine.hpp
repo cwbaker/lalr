@@ -33,6 +33,8 @@ class ParserStateMachine
     std::unique_ptr<ParserSymbol[]> allocated_symbols_; ///< The symbols in the grammar for this ParserStateMachine.
     std::unique_ptr<ParserTransition[]> allocated_transitions_; ///< The transitions in the state machine for this ParserStateMachine.
     std::unique_ptr<ParserState[]> allocated_states_; ///< The states in the state machine for this ParserStateMachine.
+    std::unique_ptr<LexerStateMachine> allocated_lexer_state_machine_; ///< Allocated lexer state machine.
+    std::unique_ptr<LexerStateMachine> allocated_whitespace_lexer_state_machine_; ///< Allocated whitespace lexer state machine.
     int actions_size_;
     int symbols_size_;
     int transitions_size_;
@@ -45,7 +47,8 @@ class ParserStateMachine
     const ParserSymbol* end_symbol_; ///< The end symbol.
     const ParserSymbol* error_symbol_; ///< The error symbol.
     const ParserState* start_state_; ///< The start state.
-    std::shared_ptr<LexerStateMachine> lexer_state_machine_; ///< The LexerStateMachine that are used for lexical analysis in this ParserStateMachine.
+    LexerStateMachine* lexer_state_machine_; ///< The state machine used by the lexer to match tokens
+    LexerStateMachine* whitespace_lexer_state_machine_; ///< The state machine used by the lexer to skip whitespace
 
     public:
         ParserStateMachine();
@@ -62,12 +65,14 @@ class ParserStateMachine
         const ParserSymbol* error_symbol() const;
         const ParserState* start_state() const;
         const LexerStateMachine* lexer_state_machine() const;
+        const LexerStateMachine* whitespace_lexer_state_machine() const;
         const ParserSymbol* find_symbol_by_identifier( const char* identifier ) const;
         void set_actions( std::unique_ptr<ParserAction[]>& actions, int actions_size );
         void set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int symbols_size );
         void set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size );
         void set_states( std::unique_ptr<ParserState[]>& states, int states_size, const ParserState* start_state );
-        void set_lexer_state_machine( const std::shared_ptr<LexerStateMachine>& lexer_state_machine );
+        void set_lexer_state_machine( std::unique_ptr<LexerStateMachine>& lexer_state_machine );
+        void set_whitespace_lexer_state_machine( std::unique_ptr<LexerStateMachine>& whitespace_lexer_state_machine );
 };
 
 }
