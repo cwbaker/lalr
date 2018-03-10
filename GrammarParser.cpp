@@ -195,12 +195,12 @@ bool GrammarParser::match_action()
     {
         if ( match_identifier() )
         {
-            (*grammar_)[lexeme_.c_str()];
+            grammar_->action( lexeme_.c_str() );
         }
         expect( "]" );
         return true;
     }
-    (*grammar_)[nil];
+    grammar_->end_expression();
     return false;
 }
 

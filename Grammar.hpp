@@ -59,9 +59,9 @@ public:
     Grammar& precedence();
     Grammar& production( const char* identifier, int line );
     Grammar& end_production();
+    Grammar& end_expression();
     Grammar& error();
-    Grammar& operator[]( const char* identifier );
-    Grammar& operator[]( const Nil& /*nil*/ );
+    Grammar& action( const char* identifier );
     Grammar& literal( const char* literal, int line );
     Grammar& regex( const char* regex, int line );
     Grammar& identifier( const char* identifier, int line );
@@ -73,9 +73,9 @@ private:
     Symbol* literal_symbol( const char* lexeme, int line );
     Symbol* regex_symbol( const char* lexeme, int line );
     Symbol* non_terminal_symbol( const char* lexeme, int line );
-    Symbol* symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
-    Production* production( Symbol* symbol );
-    Action* action( const char* id );
+    Symbol* add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
+    Production* add_production( Symbol* symbol );
+    Action* add_action( const char* id );
 };
 
 }
