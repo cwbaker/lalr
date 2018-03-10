@@ -5,7 +5,6 @@
 
 #include "GrammarParser.hpp"
 #include "Grammar.hpp"
-#include "Nil.hpp"
 #include "Parser.ipp"
 #include "ParserStateMachine.hpp"
 #include "assert.hpp"

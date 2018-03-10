@@ -4,7 +4,6 @@
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
 #include "Associativity.hpp"
-#include "Nil.hpp"
 #include "LexerToken.hpp"
 #include <vector>
 
@@ -18,7 +17,6 @@ class Directive;
 class Symbol;
 class Production;
 class Action;
-class Nil;
 class ParserErrorPolicy;
 class LexerErrorPolicy;
 class ParserStateMachine;

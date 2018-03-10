@@ -8,7 +8,6 @@ for _, build in build:default_builds() do
             "Grammar.cpp",
             "GrammarParser.cpp",
             "Item.cpp",
-            "Nil.cpp",
             "Production.cpp",
             "State.cpp",
             "Symbol.cpp",
