@@ -13,7 +13,6 @@ namespace sweet
 namespace lalr
 {
 
-class Directive;
 class Symbol;
 class Production;
 class Action;
@@ -24,14 +23,14 @@ class ParserStateMachine;
 class Grammar
 {
     std::string identifier_;
-    std::vector<std::unique_ptr<Directive>> directives_; ///< The directives in the grammar.
     std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<Production>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     bool active_precedence_directive_;
-    Directive* active_directive_;
+    Associativity associativity_;
+    int precedence_;
     Production* active_production_;
     Symbol* active_symbol_;
     Symbol* start_symbol_; ///< The start symbol.
@@ -42,7 +41,6 @@ public:
     Grammar();
     ~Grammar();
     const std::string& identifier() const;
-    std::vector<std::unique_ptr<Directive>>& directives();
     std::vector<std::unique_ptr<Symbol>>& symbols();
     std::vector<std::unique_ptr<Production>>& productions();
     std::vector<std::unique_ptr<Action>>& actions();
@@ -67,7 +65,6 @@ public:
     bool generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
-    Directive* directive( Associativity associativity );
     Symbol* literal_symbol( const char* lexeme, int line );
     Symbol* regex_symbol( const char* lexeme, int line );
     Symbol* non_terminal_symbol( const char* lexeme, int line );
