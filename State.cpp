@@ -83,53 +83,6 @@ const std::set<Item>& State::get_items() const
 }
 
 /**
-// Describe this state.
-//
-// @param description
-//  A variable to append the description of this state to (assumed not 
-//  null).
-*/
-void State::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-
-    char buffer [32];
-    snprintf( buffer, sizeof(buffer), "%d:\n", get_index() );
-    buffer [sizeof(buffer) - 1] = '\0';
-    description->append( buffer );
-
-    std::set<Item>::const_iterator item = items_.begin(); 
-    while ( item != items_.end() )
-    {
-        item->describe( description );
-        description->append( "\n" );
-        ++item;
-    }
-
-    std::set<Transition>::const_iterator transition = transitions_.begin();
-    while ( transition != transitions_.end() )
-    {
-        transition->describe( description );
-        description->append( "\n" );
-        ++transition;
-    }
-}
-
-/**
-// Describe this state.
-//
-// @return
-//  A string describing this state.
-*/
-std::string State::description() const
-{
-    std::string description;
-    description.reserve( 1024 );
-    describe( &description );
-    return description;
-}
-
-/**
 // Add a transition on \e symbol from this state to \e state.
 //
 // @param symbol

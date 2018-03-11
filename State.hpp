@@ -32,8 +32,6 @@ class State
         int add_item( Production* production, int position );
         int add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols );
         const std::set<Item>& get_items() const;
-        void describe( std::string* description ) const;
-        std::string description() const;
 
         void add_transition( const Symbol* symbol, State* state );
         void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );

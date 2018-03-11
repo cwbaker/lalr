@@ -167,11 +167,11 @@ std::set<const Symbol*> Generator::lookahead( const Item& item ) const
 {
     set<const Symbol*> lookahead_symbols;
 
-    const Production* production = item.get_production();
+    const Production* production = item.production();
     SWEET_ASSERT( production );
         
     const vector<Symbol*>& symbols = production->symbols();    
-    vector<Symbol*>::const_iterator i = symbols.begin() + item.get_position();
+    vector<Symbol*>::const_iterator i = symbols.begin() + item.position();
     if ( i != symbols.end() )
     {
         ++i;
@@ -193,7 +193,7 @@ std::set<const Symbol*> Generator::lookahead( const Item& item ) const
     }
     else
     {
-        lookahead_symbols.insert( item.get_lookahead_symbols().begin(), item.get_lookahead_symbols().end() );
+        lookahead_symbols.insert( item.lookahead_symbols().begin(), item.lookahead_symbols().end() );
     }
 
     return lookahead_symbols;    
@@ -216,7 +216,7 @@ void Generator::closure( const std::shared_ptr<State>& state )
         const set<Item>& items = state->get_items();
         for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
-            const Symbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
+            const Symbol* symbol = item->production()->symbol_by_position( item->position() );
             if ( symbol )
             {
                 const vector<Production*>& productions = symbol->productions();
@@ -252,9 +252,9 @@ std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, co
     const set<Item>& items = state->get_items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
-        if ( item->is_next_node(symbol) )
+        if ( item->next_node(symbol) )
         {
-            goto_state->add_item( item->get_production(), item->get_position() + 1 );
+            goto_state->add_item( item->production(), item->position() + 1 );
         }
     }
 
@@ -283,7 +283,7 @@ int Generator::lookahead_closure( State* state ) const
     const set<Item>& items = state->get_items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
-        const Symbol* symbol = item->get_production()->symbol_by_position( item->get_position() );
+        const Symbol* symbol = item->production()->symbol_by_position( item->position() );
         if ( symbol )
         {
             set<const Symbol*> lookahead_symbols = lookahead( *item );        
@@ -330,11 +330,11 @@ int Generator::lookahead_goto( State* state ) const
         const set<Item>& items = state->get_items();
         for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
-            int position = item->get_position();
-            if ( item->get_production()->symbol_by_position(position) == symbol )
+            int position = item->position();
+            if ( item->production()->symbol_by_position(position) == symbol )
             {
                 State* goto_state = transition->get_state();
-                added += goto_state->add_lookahead_symbols( item->get_production(), position + 1, item->get_lookahead_symbols() );
+                added += goto_state->add_lookahead_symbols( item->production(), position + 1, item->lookahead_symbols() );
             }
         }        
     }
@@ -707,14 +707,14 @@ void Generator::generate_reduce_transitions()
             
         for ( std::set<Item>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
         {
-            if ( item->is_dot_at_end() )
+            if ( item->dot_at_end() )
             {
-                const set<const Symbol*>& symbols = item->get_lookahead_symbols();
+                const set<const Symbol*>& symbols = item->lookahead_symbols();
                 for ( set<const Symbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                 {
                     const Symbol* symbol = *j;
                     SWEET_ASSERT( symbol );
-                    generate_reduce_transition( state, symbol, item->get_production() );
+                    generate_reduce_transition( state, symbol, item->production() );
                 }
             }                
         }

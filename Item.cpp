@@ -43,7 +43,7 @@ Item::Item( Production* production, int position )
 /**
 // Get the production for this item.
 */
-Production* Item::get_production() const
+Production* Item::production() const
 {
     return production_;
 }
@@ -54,7 +54,7 @@ Production* Item::get_production() const
 // @return
 //  The position of the dot in this item.
 */
-int Item::get_position() const
+int Item::position() const
 {
     return position_;
 }
@@ -66,7 +66,7 @@ int Item::get_position() const
 // @return
 //  True if the dot is at the beginning of the production otherwise false.
 */
-bool Item::is_dot_at_beginning() const
+bool Item::dot_at_beginning() const
 {
     return position_ == 0;
 }
@@ -78,7 +78,7 @@ bool Item::is_dot_at_beginning() const
 // @return
 //  True if the dot is at the end of the production otherwise false.
 */
-bool Item::is_dot_at_end() const
+bool Item::dot_at_end() const
 {
     return position_ == production_->length();
 }
@@ -93,79 +93,9 @@ bool Item::is_dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool Item::is_next_node( const Symbol& symbol ) const
+bool Item::next_node( const Symbol& symbol ) const
 {
     return production_->symbol_by_position(position_) == &symbol;
-}
-
-/**
-// Get a string that describes the nodes that make up this item.
-//
-// @param description
-//  A variable to receive the description of this item (assumed not null).
-*/
-void Item::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-    SWEET_ASSERT( production_ );
-        
-    int position = 0;
-    const vector<Symbol*>& symbols = production_->symbols();
-    vector<Symbol*>::const_iterator i = symbols.begin(); 
-    while ( i != symbols.end() && position < position_ )
-    {
-        const Symbol* symbol = *i;
-        SWEET_ASSERT( symbol );
-        // symbol->describe( description );
-        description->append( " " );
-        ++i;
-        ++position;
-    }
-    description->append( ". " );
-    
-    while ( i != symbols.end() )
-    {
-        const Symbol* symbol = *i;
-        SWEET_ASSERT( symbol );
-        // symbol->describe( description );
-        description->append( " " );
-        ++i;
-    }
-
-    std::set<const Symbol*>::const_iterator j = lookahead_symbols_.begin();
-    if ( j != lookahead_symbols_.end() )
-    {
-        const Symbol* symbol = *j;
-        SWEET_ASSERT( symbol );
-        description->append( "; " );
-        // symbol->describe( description );
-        ++j;
-    }
-
-    while ( j != lookahead_symbols_.end() )
-    {
-        const Symbol* symbol = *j;
-        SWEET_ASSERT( symbol );
-        description->append( ", " );
-        // symbol->describe( description );
-        ++j;
-    }
-}
-
-/**
-// Add \e lookahead_symbols to the lookahead symbols for this item.
-//
-// @param lookahead_symbols
-//  The lookahead symbols to add to this item.
-//
-// @return
-//  The number of symbols added to the lookahead set of this item.
-*/
-int Item::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
-{
-    size_t original_size = lookahead_symbols_.size();
-    lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
-    return lookahead_symbols_.size() - original_size;
 }
 
 /**
@@ -174,7 +104,7 @@ int Item::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbol
 // @return
 //  The lookahead set.
 */
-const std::set<const Symbol*>& Item::get_lookahead_symbols() const
+const std::set<const Symbol*>& Item::lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -196,4 +126,20 @@ bool Item::operator<( const Item& item ) const
         production_->index() < item.production_->index() || 
         (production_->index() == item.production_->index() && position_ < item.position_)
     ;
+}
+
+/**
+// Add \e lookahead_symbols to the lookahead symbols for this item.
+//
+// @param lookahead_symbols
+//  The lookahead symbols to add to this item.
+//
+// @return
+//  The number of symbols added to the lookahead set of this item.
+*/
+int Item::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
+{
+    size_t original_size = lookahead_symbols_.size();
+    lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
+    return lookahead_symbols_.size() - original_size;
 }
