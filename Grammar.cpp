@@ -347,8 +347,8 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         }
     }
 
-    Generator generator( *this, state_machine, parser_error_policy, lexer_error_policy );
-    return true;
+    Generator generator;
+    return generator.generate( *this, state_machine, parser_error_policy, lexer_error_policy ) == 0;
 }
 
 Directive* Grammar::directive( Associativity associativity )

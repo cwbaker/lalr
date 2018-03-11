@@ -59,14 +59,13 @@ class Generator
     int errors_; ///< The number of errors that occured during parsing and generation.
 
     public:
-        Generator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
+        Generator();
         ~Generator();
-        int errors() const;
+        int generate( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
                 
     private:
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
-        void generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
         std::set<const Symbol*> lookahead( const Item& item ) const;
         void closure( const std::shared_ptr<State>& state );
         std::shared_ptr<State> goto_( const std::shared_ptr<State>& state, const Symbol& symbol );

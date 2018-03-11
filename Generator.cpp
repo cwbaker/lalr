@@ -38,39 +38,72 @@ using namespace sweet::lalr;
 //  The error policy to report errors during generation to or null to silently
 //  swallow errors.
 */
-Generator::Generator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
-: error_policy_( error_policy ),
+Generator::Generator()
+: error_policy_( nullptr ),
   identifier_(),
   actions_(),
   productions_(),
   symbols_(),
   states_(),
-  start_symbol_( NULL ),
-  end_symbol_( NULL ),
-  error_symbol_( NULL ),
+  start_symbol_( nullptr ),
+  end_symbol_( nullptr ),
+  error_symbol_( nullptr ),
   start_state_(),
   errors_( 0 )
 {
-    generate( grammar, parser_state_machine, lexer_error_policy );
 }
 
 Generator::~Generator()
 {
 }
 
-/**
-// Get the number of errors that occured during parsing and generation.
-//
-// Other Generator functions are invalid if the number of errors
-// returned by this function is not zero after the Generator has
-// been constructed.
-//
-// @return
-//  The number of errors.
-*/
-int Generator::errors() const
+int Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 {
-    return errors_;
+    SWEET_ASSERT( parser_state_machine );
+
+    error_policy_ = error_policy;
+    identifier_ = grammar.identifier();
+    actions_.swap( grammar.actions() );
+    productions_.swap( grammar.productions() );
+    symbols_.swap( grammar.symbols() );
+    states_.clear();
+    start_symbol_ = grammar.start_symbol();
+    end_symbol_ = grammar.end_symbol();
+    error_symbol_ = grammar.error_symbol();
+    start_state_ = nullptr;
+    errors_ = 0;
+
+    calculate_identifiers();
+    check_for_undefined_symbol_errors();
+    check_for_unreferenced_symbol_errors();
+    check_for_error_symbol_on_left_hand_side_errors();    
+
+    if ( errors_ == 0 )
+    {        
+        calculate_terminal_and_non_terminal_symbols();
+        calculate_implicit_terminal_symbols();
+        calculate_first();
+        calculate_follow();
+        calculate_symbol_indices();
+        calculate_precedence_of_productions();
+        generate_states( start_symbol_, end_symbol_, symbols_ );
+        populate_parser_state_machine( grammar, parser_state_machine, lexer_error_policy );
+    }
+
+    error_policy_ = nullptr;
+    identifier_.clear();
+    actions_.clear();
+    productions_.clear();
+    symbols_.clear();
+    states_.clear();
+    start_symbol_ = nullptr;
+    end_symbol_ = nullptr;
+    error_symbol_ = nullptr;
+    start_state_ = nullptr;
+
+    int errors = errors_;
+    errors_ = 0;
+    return errors;
 }
 
 /**
@@ -118,38 +151,6 @@ void Generator::fire_printf( const char* format, ... ) const
         va_start( args, format );
         error_policy_->parser_vprintf( format, args );
         va_end( args );
-    }
-}
-
-void Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
-{
-    SWEET_ASSERT( parser_state_machine );
-
-    identifier_ = grammar.identifier();
-    actions_.swap( grammar.actions() );
-    productions_.swap( grammar.productions() );
-    symbols_.swap( grammar.symbols() );
-    start_symbol_ = grammar.start_symbol();
-    end_symbol_ = grammar.end_symbol();
-    error_symbol_ = grammar.error_symbol();
-    states_.clear();
-    start_state_ = NULL;
-
-    calculate_identifiers();
-    check_for_undefined_symbol_errors();
-    check_for_unreferenced_symbol_errors();
-    check_for_error_symbol_on_left_hand_side_errors();    
-
-    if ( errors_ == 0 )
-    {        
-        calculate_terminal_and_non_terminal_symbols();
-        calculate_implicit_terminal_symbols();
-        calculate_first();
-        calculate_follow();
-        calculate_symbol_indices();
-        calculate_precedence_of_productions();
-        generate_states( start_symbol_, end_symbol_, symbols_ );
-        populate_parser_state_machine( grammar, parser_state_machine, lexer_error_policy );
     }
 }
 
@@ -365,7 +366,7 @@ void Generator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_sy
 */
 void Generator::check_for_undefined_symbol_errors()
 {
-    if ( errors() == 0 )
+    if ( errors_ == 0 )
     {
         for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
@@ -387,7 +388,7 @@ void Generator::check_for_undefined_symbol_errors()
 */
 void Generator::check_for_unreferenced_symbol_errors()
 {
-    if ( errors() == 0 )
+    if ( errors_ == 0 )
     {
         for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
         {
