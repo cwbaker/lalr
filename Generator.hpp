@@ -61,15 +61,6 @@ class Generator
     public:
         Generator( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
         ~Generator();
-        std::string& identifier();
-        std::vector<std::unique_ptr<Action> >& actions();
-        std::vector<std::unique_ptr<Production> >& productions();
-        std::vector<std::unique_ptr<Symbol> >& symbols();
-        std::set<std::shared_ptr<State>, shared_ptr_less<State>>& states();
-        const Symbol* start_symbol();
-        const Symbol* end_symbol();
-        const Symbol* error_symbol();
-        State* start_state();
         int errors() const;
                 
     private:
