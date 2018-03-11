@@ -213,7 +213,7 @@ void Generator::closure( const std::shared_ptr<State>& state )
     while ( added > 0 )
     {
         added = 0;
-        const set<Item>& items = state->get_items();
+        const set<Item>& items = state->items();
         for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
             const Symbol* symbol = item->production()->symbol_by_position( item->position() );
@@ -249,7 +249,7 @@ std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, co
 
     std::shared_ptr<State> goto_state( new State() );
 
-    const set<Item>& items = state->get_items();
+    const set<Item>& items = state->items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         if ( item->next_node(symbol) )
@@ -280,7 +280,7 @@ int Generator::lookahead_closure( State* state ) const
 
     int added = 0;
 
-    const set<Item>& items = state->get_items();
+    const set<Item>& items = state->items();
     for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
         const Symbol* symbol = item->production()->symbol_by_position( item->position() );
@@ -321,19 +321,19 @@ int Generator::lookahead_goto( State* state ) const
 
     int added = 0;
 
-    const set<Transition>& transitions = state->get_transitions();
+    const set<Transition>& transitions = state->transitions();
     for ( set<Transition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
     {
-        const Symbol* symbol = transition->get_symbol();
+        const Symbol* symbol = transition->symbol();
         SWEET_ASSERT( symbol );
 
-        const set<Item>& items = state->get_items();
+        const set<Item>& items = state->items();
         for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
             int position = item->position();
             if ( item->production()->symbol_by_position(position) == symbol )
             {
-                State* goto_state = transition->get_state();
+                State* goto_state = transition->state();
                 added += goto_state->add_lookahead_symbols( item->production(), position + 1, item->lookahead_symbols() );
             }
         }        
@@ -638,7 +638,7 @@ void Generator::generate_states( const Symbol* start_symbol, const Symbol* end_s
                 const std::shared_ptr<State>& state = *i;
                 SWEET_ASSERT( state );
 
-                if ( !state->is_processed() )
+                if ( !state->processed() )
                 {
                     state->set_processed( true );
                     for ( vector<unique_ptr<Symbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
@@ -648,7 +648,7 @@ void Generator::generate_states( const Symbol* start_symbol, const Symbol* end_s
                         if ( symbol != end_symbol )
                         {
                             std::shared_ptr<State> goto_state = goto_( state, *symbol );
-                            if ( !goto_state->get_items().empty() )
+                            if ( !goto_state->items().empty() )
                             {                    
                                 std::shared_ptr<State> actual_goto_state = *states_.insert( goto_state ).first;
                                 added += goto_state == actual_goto_state ? 1 : 0;
@@ -705,7 +705,7 @@ void Generator::generate_reduce_transitions()
         State* state = i->get();
         SWEET_ASSERT( state );
             
-        for ( std::set<Item>::const_iterator item = state->get_items().begin(); item != state->get_items().end(); ++item )
+        for ( std::set<Item>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
             if ( item->dot_at_end() )
             {
@@ -746,7 +746,7 @@ void Generator::generate_reduce_transition( State* state, const Symbol* symbol, 
     }
     else
     {
-        switch ( transition->get_type() )
+        switch ( transition->type() )
         {
             case TRANSITION_SHIFT:
             {
@@ -829,7 +829,7 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
     {
         const State* source_state = i->get();
         SWEET_ASSERT( source_state );
-        transitions_size += source_state->get_transitions().size();
+        transitions_size += source_state->transitions().size();
     }
     unique_ptr<ParserTransition[]> transitions( new ParserTransition [transitions_size] );
 
@@ -842,7 +842,7 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
         SWEET_ASSERT( source_state );
         ParserState* state = &states[state_index];
         SWEET_ASSERT( state );
-        const set<Transition>& source_transitions = source_state->get_transitions();
+        const set<Transition>& source_transitions = source_state->transitions();
         state->index = state_index;
         state->length = source_transitions.size();
         state->transitions = &transitions[transition_index];
@@ -854,18 +854,18 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
         {
             const Transition* source_transition = &(*j);
             SWEET_ASSERT( source_transition );
-            const Symbol* source_symbol = source_transition->get_symbol();
+            const Symbol* source_symbol = source_transition->symbol();
             SWEET_ASSERT( source_symbol );
-            const State* state_transitioned_to = source_transition->get_state();
+            const State* state_transitioned_to = source_transition->state();
             const Symbol* reduced_symbol = source_transition->reduced_symbol();
             ParserTransition* transition = &transitions[transition_index];
             transition->symbol = &symbols[source_symbol->index()];
-            transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
+            transition->state = state_transitioned_to ? &states[state_transitioned_to->index()] : nullptr;
             transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->index()] : nullptr;
             transition->reduced_length = source_transition->reduced_length();
             transition->precedence = source_transition->precedence();
             transition->action = source_transition->action();
-            transition->type = source_transition->get_type();
+            transition->type = source_transition->type();
             transition->index = transition_index;
             ++transition_index;
         }

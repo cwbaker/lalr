@@ -1,5 +1,5 @@
-#ifndef SWEET_LEXER_LEXER_IPP_INCLUDED
-#define SWEET_LEXER_LEXER_IPP_INCLUDED
+#ifndef SWEET_LALR_LEXER_IPP_INCLUDED
+#define SWEET_LALR_LEXER_IPP_INCLUDED
 
 #include "Lexer.hpp"
 #include "LexerAction.hpp"

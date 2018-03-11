@@ -1,8 +1,6 @@
 #ifndef SWEET_LALR_REGEXTRANSITION_HPP_INCLUDED
 #define SWEET_LALR_REGEXTRANSITION_HPP_INCLUDED
 
-#include <string>
-
 namespace sweet
 {
 
@@ -24,12 +22,11 @@ class RegexTransition
 
     public:
         RegexTransition( int begin, int end, const RegexState* state, const RegexAction* action );
-        int get_begin() const;
-        int get_end() const;
-        bool is_on_character( int character ) const;
-        const RegexState* get_state() const;
-        const RegexAction* get_action() const;
-        void describe( std::string* description ) const;
+        int begin() const;
+        int end() const;
+        bool on_character( int character ) const;
+        const RegexState* state() const;
+        const RegexAction* action() const;
         bool operator<( const RegexTransition& transition ) const;
 };
 

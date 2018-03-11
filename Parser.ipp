@@ -3,8 +3,8 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#ifndef SWEET_PARSER_PARSER_IPP_INCLUDED
-#define SWEET_PARSER_PARSER_IPP_INCLUDED
+#ifndef SWEET_LALR_PARSER_IPP_INCLUDED
+#define SWEET_LALR_PARSER_IPP_INCLUDED
 
 #include "Parser.hpp"
 #include "ParserState.hpp"

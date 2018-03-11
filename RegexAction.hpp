@@ -14,17 +14,15 @@ namespace lalr
 */
 class RegexAction
 {
-    public:
-        static const int INVALID_INDEX = -1;
+    int index_; ///< The index of this action.
+    std::string identifier_; ///< The identifier of this action.
 
-    private:
-        int index_; ///< The index of this action.
-        std::string identifier_; ///< The identifier of this action.
-    
-    public:
-        RegexAction( int index, const std::string& identifier );
-        int get_index() const;
-        const std::string& get_identifier() const;
+public:
+    RegexAction( int index, const std::string& identifier );
+    int index() const;
+    const std::string& identifier() const;
+
+    static const int INVALID_INDEX = -1;
 };
 
 }

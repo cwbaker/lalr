@@ -189,13 +189,13 @@ void RegexSyntaxTree::begin_negative_bracket_expression()
 void RegexSyntaxTree::end_bracket_expression()
 {
     set<RegexCharacter>::const_iterator character = bracket_expression_characters_.begin();
-    std::shared_ptr<RegexNode> node = regex_node( character->get_begin_character(), character->get_end_character() );
+    std::shared_ptr<RegexNode> node = regex_node( character->begin_character(), character->end_character() );
     nodes_.push_back( node );
     ++character;
     
     while ( character != bracket_expression_characters_.end() )
     {
-        node = regex_node( character->get_begin_character(), character->get_end_character() );
+        node = regex_node( character->begin_character(), character->end_character() );
         nodes_.push_back( node );
         or_expression();
         ++character;
@@ -876,9 +876,9 @@ void RegexSyntaxTree::insert_characters( int begin, int end )
     std::pair<set<RegexCharacter>::iterator, bool> result = bracket_expression_characters_.insert( RegexCharacter(begin, end) );
     while ( !result.second )
     {
-        SWEET_ASSERT( result.first->get_end_character() >= begin || end >= result.first->get_begin_character() );
-        begin = std::min( begin, result.first->get_begin_character() );
-        end = std::max( end, result.first->get_end_character() );
+        SWEET_ASSERT( result.first->end_character() >= begin || end >= result.first->begin_character() );
+        begin = std::min( begin, result.first->begin_character() );
+        end = std::max( end, result.first->end_character() );
         bracket_expression_characters_.erase( result.first );
         result = bracket_expression_characters_.insert( RegexCharacter(begin, end) );
     }
@@ -899,11 +899,11 @@ void RegexSyntaxTree::erase_characters( int begin, int end )
     set<RegexCharacter>::iterator i = bracket_expression_characters_.find( RegexCharacter(begin, end) );
     if ( i != bracket_expression_characters_.end() )
     {
-        int pre_begin = i->get_begin_character();
+        int pre_begin = i->begin_character();
         int pre_end = begin;
 
         int post_begin = end;
-        int post_end = i->get_end_character();
+        int post_end = i->end_character();
         
         bracket_expression_characters_.erase( i );
 

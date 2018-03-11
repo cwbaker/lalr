@@ -7,13 +7,8 @@
 #include "RegexAction.hpp"
 #include "RegexState.hpp"
 #include "assert.hpp"
-#include <stdio.h>
 
 using namespace sweet::lalr;
-
-#if defined(BUILD_PLATFORM_MSVC)
-#define snprintf _snprintf
-#endif
 
 /**
 // Constructor.
@@ -48,7 +43,7 @@ RegexTransition::RegexTransition( int begin, int end, const RegexState* state, c
 // @return
 //  True if this transition is taken on character otherwise false.
 */
-bool RegexTransition::is_on_character( int character ) const
+bool RegexTransition::on_character( int character ) const
 {
     return character >= begin_ && character < end_;
 }
@@ -60,7 +55,7 @@ bool RegexTransition::is_on_character( int character ) const
 // @return
 //  The first character.
 */
-int RegexTransition::get_begin() const
+int RegexTransition::begin() const
 {
     return begin_;
 }
@@ -72,7 +67,7 @@ int RegexTransition::get_begin() const
 // @return
 //  The last character.
 */
-int RegexTransition::get_end() const
+int RegexTransition::end() const
 {
     return end_;
 }
@@ -83,7 +78,7 @@ int RegexTransition::get_end() const
 // @return
 //  The action or null if this transition doesn't have an action.
 */
-const RegexAction* RegexTransition::get_action() const
+const RegexAction* RegexTransition::action() const
 {
     return action_;
 }
@@ -94,35 +89,10 @@ const RegexAction* RegexTransition::get_action() const
 // @return
 //  The state.
 */
-const RegexState* RegexTransition::get_state() const
+const RegexState* RegexTransition::state() const
 {
     SWEET_ASSERT( state_ );
     return state_;
-}
-
-/**
-// Describe this transition.
-//
-// @param description
-//  A variable to receive the description of this transition (assumed not 
-//  null).
-*/
-void RegexTransition::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-    SWEET_ASSERT( state_ );    
-    
-    char buffer [512];
-    snprintf( buffer, sizeof(buffer), "to %d on ['%c' %d, '%c' %d) %s", 
-        state_->get_index(), 
-        begin_ > 32 && begin_ < 128 ? begin_ : '.', 
-        begin_, 
-        end_ > 32 && end_ < 128 ? end_ : '.', 
-        end_, 
-        action_ ? action_->get_identifier().c_str() : ""
-    );
-    buffer [sizeof(buffer) - 1] = '\0';
-    description->append( buffer );
 }
 
 /**

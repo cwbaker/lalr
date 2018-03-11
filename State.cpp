@@ -30,6 +30,91 @@ State::State()
 }
 
 /**
+// Get the items in this state.
+//
+// @return
+//  The items.
+*/
+const std::set<Item>& State::items() const
+{
+    return items_;
+}
+
+/**
+// Find a transition on \e symbol from this state.
+//
+// @param symbol
+//  The symbol to find a transition for.
+//
+// @return
+//  The transition or null if there is no transition on \e symbol from this
+//  state.
+*/
+const Transition* State::find_transition_by_symbol( const Symbol* symbol ) const
+{    
+    const Transition* transition = NULL;
+    
+    if ( symbol )
+    {
+        std::set<Transition>::const_iterator i = transitions_.begin();
+        while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
+        {
+            ++i;
+        }
+        transition = i != transitions_.end() ? &(*i) : NULL;
+    }
+    
+    return transition;
+}
+
+/**
+// Get the transitions from this state.
+//
+// @return
+//  The transitions.
+*/
+const std::set<Transition>& State::transitions() const
+{
+    return transitions_;
+}
+
+/**
+// Has this state been processed?
+//
+// @return
+//  True if this state has been processed otherwise false.
+*/
+bool State::processed() const
+{
+    return processed_;
+}
+
+/**
+// Get the index of this state.
+//
+// @return
+//  The index of this state.
+*/
+int State::index() const
+{
+    return index_;
+}
+
+/**
+// Less than operator.
+//
+// @param state
+//  The state to compare this state with.
+//
+// @return
+//  True if the items in this state are less than the items in \e state.
+*/
+bool State::operator<( const State& state ) const
+{
+    return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
+}
+
+/**
 // Add an item to this state.
 //
 // @param production
@@ -69,17 +154,6 @@ int State::add_lookahead_symbols( Production* production, int position, const st
     std::set<Item>::iterator item = items_.find( Item(production, position) );
     SWEET_ASSERT( item != items_.end() );
     return item->add_lookahead_symbols( lookahead_symbols );
-}
-
-/**
-// Get the items in this state.
-//
-// @return
-//  The items.
-*/
-const std::set<Item>& State::get_items() const
-{
-    return items_;
 }
 
 /**
@@ -126,7 +200,7 @@ void State::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, 
     std::set<Transition>::iterator transition = transitions_.find( Transition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
-        SWEET_ASSERT( transition->get_type() == TRANSITION_SHIFT );
+        SWEET_ASSERT( transition->type() == TRANSITION_SHIFT );
         transition->override_shift_to_reduce( reduced_symbol, reduced_length, precedence, action );
     }
     else
@@ -183,39 +257,12 @@ Transition* State::find_transition_by_symbol( const Symbol* symbol )
     if ( symbol )
     {
         std::set<Transition>::iterator i = transitions_.begin();
-        while ( i != transitions_.end() && !i->is_symbol(symbol) )
+        while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
         {
             ++i;
         }
         transition = i != transitions_.end() ? const_cast<Transition*>(&(*i)) : NULL;
     }    
-    
-    return transition;
-}
-
-/**
-// Find a transition on \e symbol from this state.
-//
-// @param symbol
-//  The symbol to find a transition for.
-//
-// @return
-//  The transition or null if there is no transition on \e symbol from this
-//  state.
-*/
-const Transition* State::find_transition_by_symbol( const Symbol* symbol ) const
-{    
-    const Transition* transition = NULL;
-    
-    if ( symbol )
-    {
-        std::set<Transition>::const_iterator i = transitions_.begin();
-        while ( i != transitions_.end() && !i->is_symbol(symbol) )
-        {
-            ++i;
-        }
-        transition = i != transitions_.end() ? &(*i) : NULL;
-    }
     
     return transition;
 }
@@ -234,17 +281,6 @@ void State::generate_indices_for_transitions()
 }
 
 /**
-// Get the transitions from this state.
-//
-// @return
-//  The transitions.
-*/
-const std::set<Transition>& State::get_transitions() const
-{
-    return transitions_;
-}
-
-/**
 // Set this state as having been processed.
 //
 // @param processed
@@ -256,17 +292,6 @@ void State::set_processed( bool processed )
 }
 
 /**
-// Has this state been processed?
-//
-// @return
-//  True if this state has been processed otherwise false.
-*/
-bool State::is_processed() const
-{
-    return processed_;
-}
-
-/**
 // Set the index of this state.
 //
 // @param index
@@ -275,29 +300,4 @@ bool State::is_processed() const
 void State::set_index( int index )
 {
     index_ = index;
-}
-
-/**
-// Get the index of this state.
-//
-// @return
-//  The index of this state.
-*/
-int State::get_index() const
-{
-    return index_;
-}
-
-/**
-// Less than operator.
-//
-// @param state
-//  The state to compare this state with.
-//
-// @return
-//  True if the items in this state are less than the items in \e state.
-*/
-bool State::operator<( const State& state ) const
-{
-    return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
 }

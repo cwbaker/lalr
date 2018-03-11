@@ -35,20 +35,20 @@ class Transition
     public:
         Transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
         Transition( const Symbol* symbol, State* state );
-        TransitionType get_type() const;
-        State* get_state() const;
+        TransitionType type() const;
+        State* state() const;
         const Symbol* reduced_symbol() const;
         int reduced_length() const;
         int precedence() const;
         int action() const;
-        bool is_symbol( const Symbol* symbol ) const;
-        const Symbol* get_symbol() const;
-        void describe( std::string* description ) const;
+        bool taken_on_symbol( const Symbol* symbol ) const;
+        const Symbol* symbol() const;
+        int index() const;
+        bool operator<( const Transition& transition ) const;
+
         void set_index( int index ) const;
-        int get_index() const;
         void override_shift_to_reduce( const Symbol* symbol, int length, int precedence, int action ) const;
         void override_reduce_to_reduce( const Symbol* symbol, int length, int precedence, int action ) const;
-        bool operator<( const Transition& transition ) const;
 };
 
 }

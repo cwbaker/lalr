@@ -77,7 +77,7 @@ Transition::Transition( const Symbol* symbol, State* state )
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-State* Transition::get_state() const
+State* Transition::state() const
 {
     return state_;
 }
@@ -108,7 +108,7 @@ int Transition::action() const
 // @return
 //  The type of this transition.
 */
-TransitionType Transition::get_type() const
+TransitionType Transition::type() const
 {
     return type_;
 }
@@ -122,7 +122,7 @@ TransitionType Transition::get_type() const
 // @return
 //  True if this transition is taken on \e symbol otherwise false.
 */
-bool Transition::is_symbol( const Symbol* symbol ) const
+bool Transition::taken_on_symbol( const Symbol* symbol ) const
 {
     return symbol_ == symbol;
 }
@@ -133,51 +133,36 @@ bool Transition::is_symbol( const Symbol* symbol ) const
 // @return
 //  The symbol.
 */
-const Symbol* Transition::get_symbol() const
+const Symbol* Transition::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
 }
 
 /**
-// Describe this transition.
+// Get the index of this transition.
 //
-// @param description
-//  A variable to append the description of this transition to (assumed not 
-//  null).
+// @return
+//  The index.
 */
-void Transition::describe( std::string* description ) const
+int Transition::index() const
 {
-    SWEET_ASSERT( description != NULL );
+    return index_;
+}
 
-    switch ( type_ )
-    {
-        case TRANSITION_SHIFT:
-        {
-            SWEET_ASSERT( state_ );
-            char buffer [512];
-            snprintf( buffer, sizeof(buffer), "shift to %d on ", state_->get_index() );
-            buffer [sizeof(buffer) - 1] = '\0';
-            description->append( buffer );
-            break;
-        }
-            
-        case TRANSITION_REDUCE:
-            // SWEET_ASSERT( reduced_production_ );
-            SWEET_ASSERT( reduced_symbol_ );
-            char buffer [512];
-            snprintf( buffer, sizeof(buffer), "reduce to %s on ", reduced_symbol_->identifier().c_str() );
-            buffer [sizeof(buffer) - 1] = '\0';
-            description->append( buffer );
-            break;
-            
-        default:
-            SWEET_ASSERT( false );
-            break;
-    }
-    
-    // symbol_->describe( description );
-    description->append( " ; " );
+/**
+// Less than operator.
+//
+// @param transition
+//  The transition to compare this transition with.
+//
+// @return
+//  True if the address of this transition's symbol is less than the address 
+//  of \e transition's symbol.
+*/
+bool Transition::operator<( const Transition& transition ) const
+{
+    return symbol_ < transition.symbol_;
 }
 
 /**
@@ -189,17 +174,6 @@ void Transition::describe( std::string* description ) const
 void Transition::set_index( int index ) const
 {
     index_ = index;
-}
-
-/**
-// Get the index of this transition.
-//
-// @return
-//  The index.
-*/
-int Transition::get_index() const
-{
-    return index_;
 }
 
 /**
@@ -244,19 +218,4 @@ void Transition::override_reduce_to_reduce( const Symbol* symbol, int length, in
     reduced_length_ = length;
     precedence_ = precedence;
     action_ = action;
-}
-
-/**
-// Less than operator.
-//
-// @param transition
-//  The transition to compare this transition with.
-//
-// @return
-//  True if the address of this transition's symbol is less than the address 
-//  of \e transition's symbol.
-*/
-bool Transition::operator<( const Transition& transition ) const
-{
-    return symbol_ < transition.symbol_;
 }

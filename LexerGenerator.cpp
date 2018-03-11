@@ -115,7 +115,7 @@ const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifi
     if ( !identifier.empty() )
     {    
         vector<std::unique_ptr<RegexAction> >::const_iterator i = actions_.begin();
-        while ( i != actions_.end() && (*i)->get_identifier() != identifier )
+        while ( i != actions_.end() && (*i)->identifier() != identifier )
         {
             ++i;
         }
@@ -251,7 +251,7 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                     const std::set<RegexItem>& items = state->get_items();
                     for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
                     {
-                        const std::set<RegexNode*, RegexNodeLess>& next_nodes = item->get_next_nodes();
+                        const std::set<RegexNode*, RegexNodeLess>& next_nodes = item->next_nodes();
                         for ( std::set<RegexNode*, RegexNodeLess>::const_iterator j = next_nodes.begin(); j != next_nodes.end(); ++j )
                         {
                             const RegexNode* next_node = *j;
@@ -337,8 +337,8 @@ void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
     const std::set<RegexItem>& items = state->get_items();
     for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
-        std::set<RegexNode*, RegexNodeLess>::const_iterator i = item->get_next_nodes().begin();
-        while ( i != item->get_next_nodes().end() )
+        std::set<RegexNode*, RegexNodeLess>::const_iterator i = item->next_nodes().begin();
+        while ( i != item->next_nodes().end() )
         {
             const RegexNode* node = *i;
             SWEET_ASSERT( node );
@@ -394,7 +394,7 @@ void LexerGenerator::populate_state_machine( LexerStateMachine* state_machine ) 
         const RegexAction* source_action = actions_[i].get();
         SWEET_ASSERT( source_action );
         LexerAction* action = &actions[i];
-        action->reset( source_action->get_index(), source_action->get_identifier().c_str() );
+        action->reset( source_action->index(), source_action->identifier().c_str() );
     }
 
     int state_index = 0;
@@ -419,13 +419,13 @@ void LexerGenerator::populate_state_machine( LexerStateMachine* state_machine ) 
         {
             const RegexTransition* source_transition = &(*j);
             SWEET_ASSERT( source_transition );
-            const RegexState* state_transitioned_to = source_transition->get_state();
-            const RegexAction* action = source_transition->get_action();
+            const RegexState* state_transitioned_to = source_transition->state();
+            const RegexAction* action = source_transition->action();
             LexerTransition* transition = &transitions[transition_index];
-            transition->begin = source_transition->get_begin();
-            transition->end = source_transition->get_end();
+            transition->begin = source_transition->begin();
+            transition->end = source_transition->end();
             transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
-            transition->action = action ? &actions[action->get_index()] : nullptr;
+            transition->action = action ? &actions[action->index()] : nullptr;
             ++transition_index;
         }
         ++state_index;

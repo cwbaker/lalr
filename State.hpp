@@ -17,37 +17,32 @@ namespace lalr
 */
 class State
 {
-    public:
-        static const int INVALID_INDEX = -1;
+    std::set<Item> items_; ///< The items that define the positions within the grammar that this state represents.
+    std::set<Transition> transitions_; ///< The available transitions from this state.
+    bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
+    int index_; ///< The index of this state.
 
-    private:
-        std::set<Item> items_; ///< The items that define the positions within the grammar that this state represents.
-        std::set<Transition> transitions_; ///< The available transitions from this state.
-        bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
-        int index_; ///< The index of this state.
+public:
+    State();
 
-    public:
-        State();
+    const std::set<Item>& items() const;
+    const Transition* find_transition_by_symbol( const Symbol* symbol ) const;
+    const std::set<Transition>& transitions() const;
+    bool processed() const;
+    int index() const;
+    bool operator<( const State& state ) const;
 
-        int add_item( Production* production, int position );
-        int add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols );
-        const std::set<Item>& get_items() const;
+    int add_item( Production* production, int position );
+    int add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols );
+    void add_transition( const Symbol* symbol, State* state );
+    void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
+    void add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
+    void generate_indices_for_transitions();
+    Transition* find_transition_by_symbol( const Symbol* symbol );
+    void set_processed( bool processed );
+    void set_index( int index );
 
-        void add_transition( const Symbol* symbol, State* state );
-        void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
-        void add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
-        void generate_indices_for_transitions();
-        Transition* find_transition_by_symbol( const Symbol* symbol );
-        const Transition* find_transition_by_symbol( const Symbol* symbol ) const;
-        const std::set<Transition>& get_transitions() const;
-
-        void set_processed( bool processed );
-        bool is_processed() const;
-
-        void set_index( int index );
-        int get_index() const;
-
-        bool operator<( const State& state ) const;
+    static const int INVALID_INDEX = -1;
 };
 
 }

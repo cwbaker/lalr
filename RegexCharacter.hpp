@@ -1,5 +1,5 @@
-#ifndef SWEET_LEXER_REGEXCHARACTER_HPP_INCLUDED
-#define SWEET_LEXER_REGEXCHARACTER_HPP_INCLUDED
+#ifndef SWEET_LALR_REGEXCHARACTER_HPP_INCLUDED
+#define SWEET_LALR_REGEXCHARACTER_HPP_INCLUDED
 
 namespace sweet
 {
@@ -19,8 +19,8 @@ class RegexCharacter
 
     public:
         RegexCharacter( int begin_character, int end_character );        
-        int get_begin_character() const;
-        int get_end_character() const;
+        int begin_character() const;
+        int end_character() const;
         bool operator<( const RegexCharacter& regex_character ) const;
 };
 

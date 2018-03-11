@@ -52,7 +52,7 @@ const std::set<RegexItem>& RegexState::get_items() const
 const RegexTransition* RegexState::find_transition_by_character( int character ) const
 {
     std::set<RegexTransition>::const_iterator transition = transitions_.begin();
-    while ( transition != transitions_.end() && !transition->is_on_character(character) )
+    while ( transition != transitions_.end() && !transition->on_character(character) )
     {
         ++transition;
     }
@@ -115,38 +115,6 @@ int RegexState::get_index() const
 bool RegexState::operator<( const RegexState& state ) const
 {
     return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
-}
-
-/**
-// Describe this state.
-//
-// @param description
-//  A variable to append the description of this state to (assumed not null).
-*/
-void RegexState::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-
-    char buffer [512];
-    snprintf( buffer, sizeof(buffer), "%d (%p):\n", index_, symbol_ );
-    buffer [sizeof(buffer) - 1] = '\0';
-    description->append( buffer );
-
-    std::set<RegexItem>::const_iterator item = items_.begin(); 
-    while ( item != items_.end() )
-    {
-        item->describe( description );
-        description->append( "\n" );
-        ++item;
-    }
-
-    std::set<RegexTransition>::const_iterator transition = transitions_.begin();
-    while ( transition != transitions_.end() )
-    {
-        transition->describe( description );
-        description->append( "\n" );
-        ++transition;
-    }
 }
 
 /**

@@ -7,14 +7,9 @@
 #include "RegexNode.hpp"
 #include "assert.hpp"
 #include <string>
-#include <stdio.h>
 
 using namespace sweet;
 using namespace sweet::lalr;
-
-#if defined(BUILD_PLATFORM_MSVC)
-#define snprintf _snprintf
-#endif
 
 /**
 // Constructor.
@@ -41,7 +36,7 @@ RegexItem::RegexItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes )
 // @return
 //  The next nodes.
 */
-const std::set<RegexNode*, RegexNodeLess>& RegexItem::get_next_nodes() const
+const std::set<RegexNode*, RegexNodeLess>& RegexItem::next_nodes() const
 {
     return next_nodes_;
 }
@@ -148,27 +143,6 @@ const RegexAction* RegexItem::find_action_by_interval( int begin, int end ) cons
     }
     
     return i != next_nodes_.end() ? (*i)->get_action() : NULL;
-}
-
-/**
-// Describe this item
-//
-// @param description
-//  A variable to append the description to (assumed not null).
-*/
-void RegexItem::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-    
-    for ( std::set<RegexNode*, RegexNodeLess>::const_iterator i = next_nodes_.begin(); i != next_nodes_.end(); ++i )
-    {
-        const RegexNode* node = *i;
-        SWEET_ASSERT( node );
-        char buffer [32];
-        snprintf( buffer, sizeof(buffer), "%d ", node->get_index() );
-        buffer [sizeof(buffer) - 1] = '\0';
-        description->append( buffer );
-    }
 }
 
 /**

@@ -33,7 +33,6 @@ class RegexState
         const void* get_symbol() const;
         bool is_processed() const;
         int get_index() const;
-        void describe( std::string* description ) const;
         bool operator<( const RegexState& state ) const;
         int add_item( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
         void add_transition( int begin, int end, RegexState* state );

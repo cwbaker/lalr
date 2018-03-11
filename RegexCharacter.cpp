@@ -30,7 +30,7 @@ RegexCharacter::RegexCharacter( int begin_character, int end_character )
 // @return
 //  The begin character.
 */
-int RegexCharacter::get_begin_character() const
+int RegexCharacter::begin_character() const
 {
     return begin_character_;
 }
@@ -42,7 +42,7 @@ int RegexCharacter::get_begin_character() const
 // @return
 //  The end character.
 */
-int RegexCharacter::get_end_character() const
+int RegexCharacter::end_character() const
 {
     return end_character_;
 }

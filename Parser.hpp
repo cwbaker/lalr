@@ -1,5 +1,5 @@
-#ifndef SWEET_PARSER_PARSER_HPP_INCLUDED
-#define SWEET_PARSER_PARSER_HPP_INCLUDED
+#ifndef SWEET_LALR_PARSER_HPP_INCLUDED
+#define SWEET_LALR_PARSER_HPP_INCLUDED
 
 #include "ParserNode.hpp"
 #include "ParserUserData.hpp"

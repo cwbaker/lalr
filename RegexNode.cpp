@@ -660,7 +660,7 @@ void RegexNode::print( const std::set<RegexNode*>& dot_nodes ) const
     }
     else if ( type_ == LEXER_NODE_ACTION )
     {
-        printf( "%s", action_ != NULL ? action_->get_identifier().c_str() : "null" );
+        printf( "%s", action_ != NULL ? action_->identifier().c_str() : "null" );
     }    
 
     for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )

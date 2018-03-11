@@ -28,7 +28,7 @@ RegexAction::RegexAction( int index, const std::string& identifier )
 // @return
 //  The index.
 */
-int RegexAction::get_index() const
+int RegexAction::index() const
 {
     return index_;
 }
@@ -39,7 +39,7 @@ int RegexAction::get_index() const
 // @return
 //  The identifier of this action.
 */
-const std::string& RegexAction::get_identifier() const
+const std::string& RegexAction::identifier() const
 {
     return identifier_;
 }
