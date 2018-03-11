@@ -890,14 +890,15 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
     }
 
     unique_ptr<LexerStateMachine> lexer_state_machine( new LexerStateMachine );
-    LexerGenerator lexer_generator( tokens, lexer_state_machine.get(), lexer_error_policy );
+    LexerGenerator lexer_generator;
+    lexer_generator.generate( tokens, lexer_state_machine.get(), lexer_error_policy );
 
     unique_ptr<LexerStateMachine> whitespace_lexer_state_machine;
     const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
     if ( !whitespace_tokens.empty() )
     {
         whitespace_lexer_state_machine.reset( new LexerStateMachine );
-        LexerGenerator whitespace_lexer_generator( whitespace_tokens, whitespace_lexer_state_machine.get(), lexer_error_policy );        
+        lexer_generator.generate( whitespace_tokens, whitespace_lexer_state_machine.get(), lexer_error_policy );        
     }
 
     parser_state_machine->set_actions( actions, actions_size );

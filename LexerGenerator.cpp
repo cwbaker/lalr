@@ -30,77 +30,18 @@ using namespace sweet::lalr;
 
 /**
 // Constructor.
-//
-// @param token
-//  The token to generate a LexerStateMachine from.
 */
-LexerGenerator::LexerGenerator( const std::string& regular_expression, void* symbol, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
-: error_policy_( error_policy ),
+LexerGenerator::LexerGenerator()
+: error_policy_( nullptr ),
   actions_(),
   states_(),
-  start_state_( NULL ),
+  start_state_( nullptr ),
   ranges_()
 {
-    LexerToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
-    generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
-    populate_state_machine( state_machine );
-}
-
-/**
-// Constructor.
-//
-// @param symbols
-//  The regular expressions and addresses to generate a LexerStateMachine to recognize.
-*/
-LexerGenerator::LexerGenerator( const std::vector<LexerToken>& tokens, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
-: error_policy_( error_policy ),
-  actions_(),
-  states_(),
-  start_state_( NULL ),
-  ranges_()
-{    
-    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
-    populate_state_machine( state_machine );
 }
 
 LexerGenerator::~LexerGenerator()
 {
-}
-
-/**
-// Add a new or retrieve an existing RegexAction.
-//
-// If the parser already has a RegexAction whose identifier 
-// matches \e identifier then that RegexAction is returned.  Otherwise 
-// a new RegexAction is created, added to this `Generator` so that it 
-// can be returned later if necessary, and returned from this call.
-//
-// @param identifier
-//  The identifier of the RegexAction to add or retrieve.
-//
-// @return
-//  The RegexAction whose identifier matches \e identifier or null if 
-//  \e identifier is empty.
-*/
-const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifier )
-{
-    SWEET_ASSERT( !identifier.empty() );
-    if ( !identifier.empty() )
-    {    
-        vector<std::unique_ptr<RegexAction> >::const_iterator i = actions_.begin();
-        while ( i != actions_.end() && (*i)->get_identifier() != identifier )
-        {
-            ++i;
-        }
-        if ( i == actions_.end() )
-        {
-            unique_ptr<RegexAction> action( new RegexAction(actions_.size(), identifier) );
-            actions_.push_back( move(action) );
-            i = actions_.end() - 1;
-        }
-        return i->get();
-    }
-    return nullptr;
 }
 
 /**
@@ -152,6 +93,79 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
     }
 }
 
+
+/**
+// Add a new or retrieve an existing RegexAction.
+//
+// If the parser already has a RegexAction whose identifier 
+// matches \e identifier then that RegexAction is returned.  Otherwise 
+// a new RegexAction is created, added to this `Generator` so that it 
+// can be returned later if necessary, and returned from this call.
+//
+// @param identifier
+//  The identifier of the RegexAction to add or retrieve.
+//
+// @return
+//  The RegexAction whose identifier matches \e identifier or null if 
+//  \e identifier is empty.
+*/
+const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifier )
+{
+    SWEET_ASSERT( !identifier.empty() );
+    if ( !identifier.empty() )
+    {    
+        vector<std::unique_ptr<RegexAction> >::const_iterator i = actions_.begin();
+        while ( i != actions_.end() && (*i)->get_identifier() != identifier )
+        {
+            ++i;
+        }
+        if ( i == actions_.end() )
+        {
+            unique_ptr<RegexAction> action( new RegexAction(actions_.size(), identifier) );
+            actions_.push_back( move(action) );
+            i = actions_.end() - 1;
+        }
+        return i->get();
+    }
+    return nullptr;
+}
+
+void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
+{
+    error_policy_ = error_policy;
+    actions_.clear();
+    states_.clear();
+    start_state_ = nullptr;
+    ranges_.clear();
+ 
+    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
+    populate_state_machine( state_machine );
+ 
+    error_policy_ = nullptr;
+    actions_.clear();
+    states_.clear();
+    start_state_ = nullptr;
+    ranges_.clear();
+}
+
+void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
+{
+    error_policy_ = error_policy;
+    actions_.clear();
+    states_.clear();
+    start_state_ = nullptr;
+    ranges_.clear();
+
+    LexerToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
+    generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
+    populate_state_machine( state_machine );
+
+    error_policy_ = nullptr;
+    actions_.clear();
+    states_.clear();
+    start_state_ = nullptr;
+    ranges_.clear();
+}
 
 /**
 // Generate the state that results from accepting any character in the range

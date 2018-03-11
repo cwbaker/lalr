@@ -40,12 +40,13 @@ class LexerGenerator
     std::vector<std::pair<int, bool>> ranges_; ///< Ranges generated for the current transition while generating.
 
     public:
-        LexerGenerator( const std::string& regular_expression, void* symbol, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy = nullptr );
-        LexerGenerator( const std::vector<LexerToken>& tokens, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy = nullptr );
+        LexerGenerator();
         ~LexerGenerator();
-        const RegexAction* add_lexer_action( const std::string& identifier );
         void fire_error( int line, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
+        const RegexAction* add_lexer_action( const std::string& identifier );
+        void generate( const std::string& regular_expression, void* symbol, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy = nullptr );
+        void generate( const std::vector<LexerToken>& tokens, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy = nullptr );
 
     private:
         std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );
