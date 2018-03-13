@@ -91,6 +91,17 @@ const ParserSymbol* ParserStateMachine::symbols() const
 }
 
 /**
+// Get the transitions in this state machine
+//
+// @return
+//  The transitions.
+*/
+const ParserTransition* ParserStateMachine::transitions() const
+{
+    return transitions_;
+}
+
+/**
 // Get the states.
 //
 // @return

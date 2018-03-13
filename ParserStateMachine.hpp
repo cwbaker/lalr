@@ -59,6 +59,7 @@ class ParserStateMachine
         int states_size() const;
         const ParserAction* actions() const;
         const ParserSymbol* symbols() const;
+        const ParserTransition* transitions() const;
         const ParserState* states() const;
         const ParserSymbol* start_symbol() const;
         const ParserSymbol* end_symbol() const;
