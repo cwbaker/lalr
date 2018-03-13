@@ -42,6 +42,7 @@ bool GrammarParser::match_grammar()
 {
     if ( match_identifier() )
     {
+        grammar_->grammar( lexeme_.c_str() );
         expect( "{" );
         match_statements();
         expect( "}" );

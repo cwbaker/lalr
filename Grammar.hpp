@@ -48,6 +48,7 @@ public:
     Symbol* start_symbol() const;
     Symbol* end_symbol() const;
     Symbol* error_symbol() const;
+    Grammar& grammar( const std::string& identifier );
     Grammar& left( int line );
     Grammar& right( int line );
     Grammar& none( int line );

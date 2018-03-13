@@ -89,6 +89,12 @@ Symbol* Grammar::error_symbol() const
     return error_symbol_;
 }
 
+Grammar& Grammar::grammar( const std::string& identifier )
+{
+    identifier_ = identifier;
+    return *this;
+}
+
 Grammar& Grammar::left( int line )
 {
     SWEET_ASSERT( line >= 0 );
