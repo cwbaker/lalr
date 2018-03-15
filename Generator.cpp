@@ -10,6 +10,7 @@
 #include "Grammar.hpp"
 #include "Symbol.hpp"   
 #include "Action.hpp"
+#include "ParserAllocations.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
@@ -48,7 +49,7 @@ Generator::Generator()
   start_symbol_( nullptr ),
   end_symbol_( nullptr ),
   error_symbol_( nullptr ),
-  start_state_(),
+  start_state_( nullptr ),
   errors_( 0 )
 {
 }
@@ -57,9 +58,9 @@ Generator::~Generator()
 {
 }
 
-int Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+int Generator::generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 {
-    SWEET_ASSERT( parser_state_machine );
+    SWEET_ASSERT( parser_allocations );
 
     error_policy_ = error_policy;
     identifier_ = grammar.identifier();
@@ -87,7 +88,7 @@ int Generator::generate( Grammar& grammar, ParserStateMachine* parser_state_mach
         calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
-        populate_parser_state_machine( grammar, parser_state_machine, lexer_error_policy );
+        populate_parser_allocations( grammar, parser_allocations, lexer_error_policy );
     }
 
     error_policy_ = nullptr;
@@ -795,9 +796,9 @@ void Generator::generate_indices_for_transitions()
     }
 }
 
-void Generator::populate_parser_state_machine( const Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy )
+void Generator::populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy )
 {
-    SWEET_ASSERT( parser_state_machine );
+    SWEET_ASSERT( parser_allocations );
 
     int actions_size = actions_.size();
     unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
@@ -807,7 +808,8 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
         SWEET_ASSERT( source_action );
         ParserAction* action = &actions[i];
         SWEET_ASSERT( action );
-        action->reset( source_action->index(), source_action->identifier().c_str() );
+        action->index = source_action->index();
+        action->identifier = parser_allocations->add_string( source_action->identifier() );
     }
 
     int symbols_size = symbols_.size();
@@ -818,7 +820,10 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
         SWEET_ASSERT( source_symbol );
         ParserSymbol* symbol = &symbols[i];
         SWEET_ASSERT( symbol );
-        symbol->reset( source_symbol->index(), source_symbol->identifier().c_str(), source_symbol->lexeme().c_str(), source_symbol->symbol_type() );
+        symbol->index = source_symbol->index();
+        symbol->identifier = parser_allocations->add_string( source_symbol->identifier() );
+        symbol->lexeme = parser_allocations->add_string( source_symbol->lexeme() );
+        symbol->type = source_symbol->symbol_type();
     }
 
     int states_size = states_.size();
@@ -901,10 +906,10 @@ void Generator::populate_parser_state_machine( const Grammar& grammar, ParserSta
         lexer_generator.generate( whitespace_tokens, whitespace_lexer_state_machine.get(), lexer_error_policy );        
     }
 
-    parser_state_machine->set_actions( actions, actions_size );
-    parser_state_machine->set_symbols( symbols, symbols_size );
-    parser_state_machine->set_transitions( transitions, transitions_size );
-    parser_state_machine->set_states( states, states_size, start_state );
-    parser_state_machine->set_lexer_state_machine( lexer_state_machine );
-    parser_state_machine->set_whitespace_lexer_state_machine( whitespace_lexer_state_machine );
+    parser_allocations->set_actions( actions, actions_size );
+    parser_allocations->set_symbols( symbols, symbols_size );
+    parser_allocations->set_transitions( transitions, transitions_size );
+    parser_allocations->set_states( states, states_size, start_state );
+    parser_allocations->set_lexer_state_machine( lexer_state_machine );
+    parser_allocations->set_whitespace_lexer_state_machine( whitespace_lexer_state_machine );
 }

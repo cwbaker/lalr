@@ -10,6 +10,7 @@
 #include "Action.hpp"
 #include "Generator.hpp"
 #include "Action.hpp"
+#include "ParserAllocations.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
 #include "LexerStateMachine.hpp"
@@ -38,7 +39,8 @@ Grammar::Grammar()
   active_symbol_( nullptr ),
   start_symbol_( nullptr ),
   end_symbol_( nullptr ),
-  error_symbol_( nullptr )
+  error_symbol_( nullptr ),
+  parser_allocations_()
 {
     start_symbol_ = add_symbol( ".start", 0, LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = add_symbol( ".end", 0, LEXEME_NULL, SYMBOL_END );
@@ -342,7 +344,10 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
     }
 
     Generator generator;
-    return generator.generate( *this, state_machine, parser_error_policy, lexer_error_policy ) == 0;
+    parser_allocations_.reset( new ParserAllocations );
+    int errors = generator.generate(*this, parser_allocations_.get(), parser_error_policy, lexer_error_policy );
+    *state_machine = *parser_allocations_->parser_state_machine();
+    return errors == 0;
 }
 
 Symbol* Grammar::literal_symbol( const char* lexeme, int line )

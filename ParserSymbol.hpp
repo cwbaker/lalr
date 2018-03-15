@@ -19,10 +19,6 @@ public:
     const char* identifier; ///< The identifier of this symbol.
     const char* lexeme; ///< The lexeme of this symbol or null if this symbol is non-terminal.
     SymbolType type; ///< The type of this symbol.
-
-    ParserSymbol();
-    ~ParserSymbol();
-    void reset( int iindex, const char* iidentifier, const char* llexeme, SymbolType ttype );
 };
 
 }

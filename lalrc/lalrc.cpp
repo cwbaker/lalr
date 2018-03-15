@@ -4,6 +4,7 @@
 //
 
 #include <sweet/lalr/Grammar.hpp>
+#include <sweet/lalr/ParserAllocations.hpp>
 #include <sweet/lalr/ParserStateMachine.hpp>
 #include <sweet/lalr/ParserState.hpp>
 #include <sweet/lalr/ParserTransition.hpp>
@@ -116,16 +117,19 @@ int main( int argc, char** argv )
         fprintf( file, "\n" );
         fprintf( file, "using namespace sweet::lalr;\n" );
         fprintf( file, "\n" );
-        fprintf( file, "static const ParserAction actions [];\n" );
-        fprintf( file, "static const ParserSymbol symbols [];\n" );
-        fprintf( file, "static const ParserTransition transitions [];\n" );
-        fprintf( file, "static const ParserState states [];\n" );
+        fprintf( file, "namespace\n" );
+        fprintf( file, "{\n" );
+        fprintf( file, "\n" );
+        fprintf( file, "extern const ParserAction actions [];\n" );
+        fprintf( file, "extern const ParserSymbol symbols [];\n" );
+        fprintf( file, "extern const ParserTransition transitions [];\n" );
+        fprintf( file, "extern const ParserState states [];\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "static const ParserAction actions [] = \n" );
+        fprintf( file, "const ParserAction actions [] = \n" );
         fprintf( file, "{\n" );
-        const ParserAction* actions = state_machine.actions();
-        const ParserAction* actions_end = actions + state_machine.actions_size();
+        const ParserAction* actions = state_machine.actions;
+        const ParserAction* actions_end = actions + state_machine.actions_size;
         for ( const ParserAction* action = actions; action != actions_end; ++action )
         {
             fprintf( file, "    {%d, \"%s\"}%s\n", 
@@ -137,13 +141,13 @@ int main( int argc, char** argv )
         fprintf( file, "};\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "static const ParserSymbol symbols [] = \n" );
+        fprintf( file, "const ParserSymbol symbols [] = \n" );
         fprintf( file, "{\n" );
-        const ParserSymbol* symbols = state_machine.symbols();
-        const ParserSymbol* symbols_end = symbols + state_machine.symbols_size();
+        const ParserSymbol* symbols = state_machine.symbols;
+        const ParserSymbol* symbols_end = symbols + state_machine.symbols_size;
         for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
         {
-            fprintf( file, "    {%d, \"%s\", \"%s\", %d}%s\n", 
+            fprintf( file, "    {%d, \"%s\", \"%s\", (SymbolType) %d}%s\n", 
                 symbol->index, 
                 symbol->identifier, 
                 symbol->lexeme,
@@ -154,15 +158,15 @@ int main( int argc, char** argv )
         fprintf( file, "};\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "static const ParserTransition transitions [] = \n" );
+        fprintf( file, "const ParserTransition transitions [] = \n" );
         fprintf( file, "{\n" );
-        const ParserTransition* transitions = state_machine.transitions();
-        const ParserTransition* transitions_end = transitions + state_machine.transitions_size();
+        const ParserTransition* transitions = state_machine.transitions;
+        const ParserTransition* transitions_end = transitions + state_machine.transitions_size;
         for ( const ParserTransition* transition = transitions; transition != transitions_end; ++transition )
         {
             if ( transition->reduced_symbol )
             {
-                fprintf( file, "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, %d, %d}%s\n",
+                fprintf( file, "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, (TransitionType) %d, %d}%s\n",
                     transition->symbol ? transition->symbol->index : -1,
                     transition->reduced_symbol->index,
                     transition->reduced_length,
@@ -175,7 +179,7 @@ int main( int argc, char** argv )
             }
             else
             {
-                fprintf( file, "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, %d, %d}%s\n",
+                fprintf( file, "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, (TransitionType) %d, %d}%s\n",
                     transition->symbol ? transition->symbol->index : -1,
                     transition->state ? transition->state->index : -1,
                     transition->reduced_length,
@@ -190,10 +194,10 @@ int main( int argc, char** argv )
         fprintf( file, "};\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "static const ParserState states [] = \n" );
+        fprintf( file, "const ParserState states [] = \n" );
         fprintf( file, "{\n" );
-        const ParserState* states = state_machine.states();
-        const ParserState* states_end = states + state_machine.states_size();
+        const ParserState* states = state_machine.states;
+        const ParserState* states_end = states + state_machine.states_size;
         for ( const ParserState* state = states; state != states_end; ++state )
         {
             fprintf( file, "    {%d, %d, &transitions[%d]}%s\n",
@@ -214,21 +218,24 @@ int main( int argc, char** argv )
         fprintf( file, "    nullptr,\n" );
         fprintf( file, "    nullptr,\n" );
         fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    %d, // #actions\n", state_machine.actions_size() );
-        fprintf( file, "    %d, // #symbols\n", state_machine.symbols_size() );
-        fprintf( file, "    %d, // #transitions\n", state_machine.transitions_size() );
-        fprintf( file, "    %d, // #states\n", state_machine.states_size() );
+        fprintf( file, "    %d, // #actions\n", state_machine.actions_size );
+        fprintf( file, "    %d, // #symbols\n", state_machine.symbols_size );
+        fprintf( file, "    %d, // #transitions\n", state_machine.transitions_size );
+        fprintf( file, "    %d, // #states\n", state_machine.states_size );
         fprintf( file, "    actions,\n" );
         fprintf( file, "    symbols,\n" );
         fprintf( file, "    transitions,\n" );
         fprintf( file, "    states,\n" );
-        fprintf( file, "    &symbols[%d], // start symbol\n", state_machine.start_symbol()->index );
-        fprintf( file, "    &symbols[%d], // end symbol\n", state_machine.end_symbol()->index );
-        fprintf( file, "    &symbols[%d], // error symbol\n", state_machine.error_symbol()->index );
-        fprintf( file, "    &states[%d], // start state\n", state_machine.start_state()->index );
+        fprintf( file, "    &symbols[%d], // start symbol\n", state_machine.start_symbol->index );
+        fprintf( file, "    &symbols[%d], // end symbol\n", state_machine.end_symbol->index );
+        fprintf( file, "    &symbols[%d], // error symbol\n", state_machine.error_symbol->index );
+        fprintf( file, "    &states[%d], // start state\n", state_machine.start_state->index );
         fprintf( file, "    nullptr, // lexer state machine\n" );
         fprintf( file, "    nullptr // whitespace lexer state machine\n" );
         fprintf( file, "};\n" );
+        fprintf( file, "\n" );
+        fprintf( file, "}\n" );
+        fprintf( file, "\n" );
 
         fclose( file );
         file = nullptr;

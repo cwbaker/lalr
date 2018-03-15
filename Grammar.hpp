@@ -16,8 +16,9 @@ namespace lalr
 class Symbol;
 class Production;
 class Action;
-class ParserErrorPolicy;
 class LexerErrorPolicy;
+class ParserErrorPolicy;
+class ParserAllocations;
 class ParserStateMachine;
 
 class Grammar
@@ -36,6 +37,7 @@ class Grammar
     Symbol* start_symbol_; ///< The start symbol.
     Symbol* end_symbol_; ///< The end symbol.
     Symbol* error_symbol_; ///< The error symbol.
+    std::unique_ptr<ParserAllocations> parser_allocations_;
 
 public:
     Grammar();
@@ -63,7 +65,7 @@ public:
     Grammar& regex( const char* regex, int line );
     Grammar& identifier( const char* identifier, int line );
     bool parse( const char* begin, const char* end );
-    bool generate( ParserStateMachine* state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
+    bool generate( ParserStateMachine* parser_state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
     Symbol* literal_symbol( const char* lexeme, int line );

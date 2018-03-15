@@ -65,7 +65,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 : state_machine_( state_machine ),
   error_policy_( error_policy ),
   nodes_(),
-  lexer_( state_machine_->lexer_state_machine(), state_machine_->whitespace_lexer_state_machine(), state_machine_->end_symbol(), lexer_error_policy ),
+  lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, lexer_error_policy ),
   action_handlers_(),
   default_action_handler_( NULL ),
   debug_enabled_( false ),
@@ -74,9 +74,9 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 {
     SWEET_ASSERT( state_machine_ );
     
-    action_handlers_.reserve( state_machine_->actions_size() );
-    const ParserAction* action = state_machine_->actions();
-    const ParserAction* actions_end = action + state_machine_->actions_size();
+    action_handlers_.reserve( state_machine_->actions_size );
+    const ParserAction* action = state_machine_->actions;
+    const ParserAction* actions_end = action + state_machine_->actions_size;
     while ( action != actions_end )
     {
         action_handlers_.push_back( ParserActionHandler(action, NULL) );
@@ -84,7 +84,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     }
 
     nodes_.reserve( 64 );       
-    nodes_.push_back( ParserNode(state_machine_->start_state(), NULL, UserData()) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
 }
 
 /**
@@ -96,7 +96,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
     accepted_ = false;
     full_ = false;
     nodes_.clear();
-    nodes_.push_back( ParserNode(state_machine_->start_state(), NULL, UserData()) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
 }
 
 /**
@@ -568,7 +568,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
     SWEET_ASSERT( accepted );
     
     const ParserSymbol* symbol = transition->reduced_symbol;
-    if ( symbol != state_machine_->start_symbol() )
+    if ( symbol != state_machine_->start_symbol )
     {
         typename std::vector<ParserNode>::iterator i = find_node_to_reduce_to( transition, nodes_ );
         const ParserNode* start = i != nodes_.end() ? &(*i) : &nodes_.back() + 1;
@@ -614,7 +614,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     bool handled = false;
     while ( !nodes_.empty() && !handled && !*accepted && !*rejected )
     {
-        const ParserTransition* transition = find_transition( state_machine_->error_symbol(), nodes_.back().state() );
+        const ParserTransition* transition = find_transition( state_machine_->error_symbol, nodes_.back().state() );
         if ( transition )
         {
             switch ( transition->type )

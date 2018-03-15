@@ -32,6 +32,7 @@ namespace lalr
 class LexerErrorPolicy;
 class ParserErrorPolicy;
 class ParserStateMachine;
+class ParserAllocations;
 class Action;
 class Symbol;
 class Item;
@@ -61,7 +62,7 @@ class Generator
     public:
         Generator();
         ~Generator();
-        int generate( Grammar& grammar, ParserStateMachine* parser_state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
+        int generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
                 
     private:
         void fire_error( int line, int error, const char* format, ... );
@@ -87,7 +88,7 @@ class Generator
         void generate_reduce_transitions();
         void generate_reduce_transition( State* state, const Symbol* symbol, const Production* production );
         void generate_indices_for_transitions();
-        void populate_parser_state_machine( const Grammar& grammar, ParserStateMachine* parser_state_machine, LexerErrorPolicy* lexer_error_policy );
+        void populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy );
 };
 
 }

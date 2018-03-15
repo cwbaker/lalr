@@ -14,15 +14,10 @@ namespace lalr
 */
 class ParserAction
 {
-    public:
-        static const int INVALID_INDEX = -1;
-
-        int index; ///< The index of this action.
-        const char* identifier; ///< The identifier of this action.
-    
-        ParserAction();
-        ~ParserAction();
-        void reset( int iindex, const char* identifier );
+public:
+    static const int INVALID_INDEX = -1;
+    int index; ///< The index of this action.
+    const char* identifier; ///< The identifier of this action.
 };
 
 }

@@ -9,14 +9,6 @@
 
 using namespace sweet::lalr;
 
-ParserState::ParserState()
-: index( 0 ),
-  length( 0 ),
-  transitions( nullptr )
-{
-    (void) index;
-}
-
 const ParserTransition* ParserState::find_transition_by_symbol( const ParserSymbol* symbol ) const
 {
     const ParserTransition* transition = transitions;

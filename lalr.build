@@ -13,6 +13,7 @@ for _, build in build:default_builds() do
             "State.cpp",
             "Symbol.cpp",
             "Transition.cpp",
+            'ParserAllocations.cpp'
         };
 
         build:Cxx () {

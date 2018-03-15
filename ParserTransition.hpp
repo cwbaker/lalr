@@ -26,9 +26,6 @@ public:
     int action; ///< The index of the action taken on reduce or Action::INVALID_INDEX if there is no action associated with the reduce.
     TransitionType type; ///< The type of transition that this is.
     int index; ///< The index of this transition.
-
-public:
-    ParserTransition();
 };
 
 }

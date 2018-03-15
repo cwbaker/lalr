@@ -1,10 +1,6 @@
 #ifndef SWEET_LALR_PARSERSTATEMACHINE_HPP_INCLUDED
 #define SWEET_LALR_PARSERSTATEMACHINE_HPP_INCLUDED
 
-#include <memory>
-#include <vector>
-#include <string>
-
 namespace sweet
 {
 
@@ -29,51 +25,23 @@ class ParserState;
 */
 class ParserStateMachine
 {
-    std::unique_ptr<ParserAction[]> allocated_actions_; ///< The parser actions for this ParserStateMachine.
-    std::unique_ptr<ParserSymbol[]> allocated_symbols_; ///< The symbols in the grammar for this ParserStateMachine.
-    std::unique_ptr<ParserTransition[]> allocated_transitions_; ///< The transitions in the state machine for this ParserStateMachine.
-    std::unique_ptr<ParserState[]> allocated_states_; ///< The states in the state machine for this ParserStateMachine.
-    std::unique_ptr<LexerStateMachine> allocated_lexer_state_machine_; ///< Allocated lexer state machine.
-    std::unique_ptr<LexerStateMachine> allocated_whitespace_lexer_state_machine_; ///< Allocated whitespace lexer state machine.
-    int actions_size_;
-    int symbols_size_;
-    int transitions_size_;
-    int states_size_;
-    const ParserAction* actions_; ///< The parser actions for this ParserStateMachine.
-    const ParserSymbol* symbols_; ///< The symbols in the grammar for this ParserStateMachine.
-    const ParserTransition* transitions_; ///< The transitions in the state machine for this ParserStateMachine.
-    const ParserState* states_; ///< The states in the state machine for this ParserStateMachine.
-    const ParserSymbol* start_symbol_; ///< The start symbol.
-    const ParserSymbol* end_symbol_; ///< The end symbol.
-    const ParserSymbol* error_symbol_; ///< The error symbol.
-    const ParserState* start_state_; ///< The start state.
-    LexerStateMachine* lexer_state_machine_; ///< The state machine used by the lexer to match tokens
-    LexerStateMachine* whitespace_lexer_state_machine_; ///< The state machine used by the lexer to skip whitespace
+public:
+    int actions_size;
+    int symbols_size;
+    int transitions_size;
+    int states_size;
+    const ParserAction* actions; ///< The parser actions for this ParserStateMachine.
+    const ParserSymbol* symbols; ///< The symbols in the grammar for this ParserStateMachine.
+    const ParserTransition* transitions; ///< The transitions in the state machine for this ParserStateMachine.
+    const ParserState* states; ///< The states in the state machine for this ParserStateMachine.
+    const ParserSymbol* start_symbol; ///< The start symbol.
+    const ParserSymbol* end_symbol; ///< The end symbol.
+    const ParserSymbol* error_symbol; ///< The error symbol.
+    const ParserState* start_state; ///< The start state.
+    LexerStateMachine* lexer_state_machine; ///< The state machine used by the lexer to match tokens
+    LexerStateMachine* whitespace_lexer_state_machine; ///< The state machine used by the lexer to skip whitespace
 
-    public:
-        ParserStateMachine();
-        ~ParserStateMachine();
-        int actions_size() const;
-        int symbols_size() const;
-        int transitions_size() const;
-        int states_size() const;
-        const ParserAction* actions() const;
-        const ParserSymbol* symbols() const;
-        const ParserTransition* transitions() const;
-        const ParserState* states() const;
-        const ParserSymbol* start_symbol() const;
-        const ParserSymbol* end_symbol() const;
-        const ParserSymbol* error_symbol() const;
-        const ParserState* start_state() const;
-        const LexerStateMachine* lexer_state_machine() const;
-        const LexerStateMachine* whitespace_lexer_state_machine() const;
-        const ParserSymbol* find_symbol_by_identifier( const char* identifier ) const;
-        void set_actions( std::unique_ptr<ParserAction[]>& actions, int actions_size );
-        void set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int symbols_size );
-        void set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size );
-        void set_states( std::unique_ptr<ParserState[]>& states, int states_size, const ParserState* start_state );
-        void set_lexer_state_machine( std::unique_ptr<LexerStateMachine>& lexer_state_machine );
-        void set_whitespace_lexer_state_machine( std::unique_ptr<LexerStateMachine>& whitespace_lexer_state_machine );
+    const ParserSymbol* find_symbol_by_identifier( const char* identifier ) const;
 };
 
 }
