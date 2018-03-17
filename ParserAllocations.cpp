@@ -9,7 +9,7 @@
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
 #include "ParserTransition.hpp"
-#include "LexerStateMachine.hpp"
+#include "LexerAllocations.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -26,12 +26,12 @@ ParserAllocations::ParserAllocations()
   symbols_(),
   transitions_(),
   states_(),
-  lexer_state_machine_(),
-  whitespace_lexer_state_machine_(),
+  lexer_allocations_(),
+  whitespace_lexer_allocations_(),
   parser_state_machine_()
 {
-    lexer_state_machine_.reset( new LexerStateMachine );
-    whitespace_lexer_state_machine_.reset( new LexerStateMachine );
+    lexer_allocations_.reset( new LexerAllocations );
+    whitespace_lexer_allocations_.reset( new LexerAllocations );
     parser_state_machine_.reset( new ParserStateMachine );
     memset( parser_state_machine_.get(), 0, sizeof(*parser_state_machine_) );
 }
@@ -40,14 +40,14 @@ ParserAllocations::~ParserAllocations()
 {
 }
 
-const LexerStateMachine* ParserAllocations::lexer_state_machine() const
+const LexerAllocations* ParserAllocations::lexer_allocations() const
 {
-    return lexer_state_machine_.get();
+    return lexer_allocations_.get();
 }
 
-const LexerStateMachine* ParserAllocations::whitespace_lexer_state_machine() const
+const LexerAllocations* ParserAllocations::whitespace_lexer_allocations() const
 {
-    return whitespace_lexer_state_machine_.get();
+    return whitespace_lexer_allocations_.get();
 }
 
 const ParserStateMachine* ParserAllocations::parser_state_machine() const
@@ -104,21 +104,21 @@ void ParserAllocations::set_states( std::unique_ptr<ParserState[]>& states, int 
     parser_state_machine_->start_state = start_state;
 }
 
-void ParserAllocations::set_lexer_state_machine( std::unique_ptr<LexerStateMachine>& lexer_state_machine )
+void ParserAllocations::set_lexer_allocations( std::unique_ptr<LexerAllocations>& lexer_allocations )
 {
-    SWEET_ASSERT( lexer_state_machine.get() );
-    if ( lexer_state_machine )
+    SWEET_ASSERT( lexer_allocations.get() );
+    if ( lexer_allocations )
     {
-        lexer_state_machine_ = move( lexer_state_machine );
-        parser_state_machine_->lexer_state_machine = lexer_state_machine_.get();
+        lexer_allocations_ = move( lexer_allocations );
+        parser_state_machine_->lexer_state_machine = lexer_allocations_->state_machine();
     }
 }
 
-void ParserAllocations::set_whitespace_lexer_state_machine( std::unique_ptr<LexerStateMachine>& whitespace_lexer_state_machine )
+void ParserAllocations::set_whitespace_lexer_allocations( std::unique_ptr<LexerAllocations>& whitespace_lexer_allocations )
 {
-    if ( whitespace_lexer_state_machine )
+    if ( whitespace_lexer_allocations )
     {
-        whitespace_lexer_state_machine_ = move( whitespace_lexer_state_machine );
-        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_state_machine_.get();
+        whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );
+        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_allocations_->state_machine();
     }
 }

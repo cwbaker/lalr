@@ -10,6 +10,11 @@
 #include <sweet/lalr/ParserTransition.hpp>
 #include <sweet/lalr/ParserSymbol.hpp>
 #include <sweet/lalr/ParserAction.hpp>
+#include <sweet/lalr/LexerAllocations.hpp>
+#include <sweet/lalr/LexerStateMachine.hpp>
+#include <sweet/lalr/LexerState.hpp>
+#include <sweet/lalr/LexerTransition.hpp>
+#include <sweet/lalr/LexerAction.hpp>
 #include <string>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,6 +24,8 @@
 using std::string;
 using std::vector;
 using namespace sweet::lalr;
+
+static void generate_lexer_state_machine( FILE* file, const LexerStateMachine* lexer_state_machine, const char* prefix );
 
 int main( int argc, char** argv )
 {
@@ -114,12 +121,22 @@ int main( int argc, char** argv )
         fprintf( file, "#include <sweet/lalr/ParserTransition.hpp>\n" );
         fprintf( file, "#include <sweet/lalr/ParserSymbol.hpp>\n" );
         fprintf( file, "#include <sweet/lalr/ParserAction.hpp>\n" );
+        fprintf( file, "#include <sweet/lalr/LexerStateMachine.hpp>\n" );
+        fprintf( file, "#include <sweet/lalr/LexerState.hpp>\n" );
+        fprintf( file, "#include <sweet/lalr/LexerTransition.hpp>\n" );
+        fprintf( file, "#include <sweet/lalr/LexerAction.hpp>\n" );
         fprintf( file, "\n" );
         fprintf( file, "using namespace sweet::lalr;\n" );
         fprintf( file, "\n" );
         fprintf( file, "namespace\n" );
         fprintf( file, "{\n" );
         fprintf( file, "\n" );
+        fprintf( file, "extern const LexerAction lexer_actions [];\n" );
+        fprintf( file, "extern const LexerTransition lexer_transitions [];\n" );
+        fprintf( file, "extern const LexerState lexer_states [];\n" );
+        fprintf( file, "extern const LexerAction whitespace_lexer_actions [];\n" );
+        fprintf( file, "extern const LexerTransition whitespace_lexer_transitions [];\n" );
+        fprintf( file, "extern const LexerState whitespace_lexer_states [];\n" );
         fprintf( file, "extern const ParserAction actions [];\n" );
         fprintf( file, "extern const ParserSymbol symbols [];\n" );
         fprintf( file, "extern const ParserTransition transitions [];\n" );
@@ -210,14 +227,14 @@ int main( int argc, char** argv )
         fprintf( file, "};\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "const ParserStateMachine %s_parser_state_machine = \n", grammar.identifier().c_str() );
+        generate_lexer_state_machine( file, state_machine.lexer_state_machine, "lexer" );
+        generate_lexer_state_machine( file, state_machine.whitespace_lexer_state_machine, "whitespace_lexer" );
+
+        fprintf( file, "}\n" );
+        fprintf( file, "\n" );
+
+        fprintf( file, "extern const ParserStateMachine %s_parser_state_machine = \n", grammar.identifier().c_str() );
         fprintf( file, "{\n" );
-        fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    nullptr,\n" );
-        fprintf( file, "    nullptr,\n" );
         fprintf( file, "    %d, // #actions\n", state_machine.actions_size );
         fprintf( file, "    %d, // #symbols\n", state_machine.symbols_size );
         fprintf( file, "    %d, // #transitions\n", state_machine.transitions_size );
@@ -230,14 +247,93 @@ int main( int argc, char** argv )
         fprintf( file, "    &symbols[%d], // end symbol\n", state_machine.end_symbol->index );
         fprintf( file, "    &symbols[%d], // error symbol\n", state_machine.error_symbol->index );
         fprintf( file, "    &states[%d], // start state\n", state_machine.start_state->index );
-        fprintf( file, "    nullptr, // lexer state machine\n" );
-        fprintf( file, "    nullptr // whitespace lexer state machine\n" );
+        fprintf( file, "    &lexer_state_machine, // lexer state machine\n" );
+        fprintf( file, "    &whitespace_lexer_state_machine // whitespace lexer state machine\n" );
         fprintf( file, "};\n" );
-        fprintf( file, "\n" );
-        fprintf( file, "}\n" );
         fprintf( file, "\n" );
 
         fclose( file );
         file = nullptr;
     }
+}
+
+void generate_lexer_state_machine( FILE* file, const LexerStateMachine* state_machine, const char* prefix )
+{
+    fprintf( file, "const LexerAction %s_actions [] = \n", prefix );
+    fprintf( file, "{\n" );
+    const LexerAction* actions = state_machine->actions;
+    const LexerAction* actions_end = actions + state_machine->actions_size;
+    for ( const LexerAction* action = actions; action != actions_end; ++action )
+    {
+        fprintf( file, "    {%d, \"%s\"}%s\n", 
+            action->index, 
+            action->identifier,
+            action + 1 != actions_end ? "," : ""
+        );
+    }
+    fprintf( file, "};\n" );
+    fprintf( file, "\n" );
+
+    fprintf( file, "const LexerTransition %s_transitions [] = \n", prefix );
+    fprintf( file, "{\n" );
+    const LexerTransition* transitions = state_machine->transitions;
+    const LexerTransition* transitions_end = transitions + state_machine->transitions_size;
+    for ( const LexerTransition* transition = transitions; transition != transitions_end; ++transition )
+    {
+        fprintf( file, "    {%d, %d, &%s_states[%d], ",
+            transition->begin,
+            transition->end,
+            prefix,
+            transition->state->index
+        );
+        if ( transition->action )
+        {
+            fprintf( file, "&%s_actions[%d]}", prefix, transition->action->index );
+        }
+        else
+        {
+            fprintf( file, "nullptr}" );
+        }
+        fprintf( file, "%s\n", transition + 1 != transitions_end ? "," : "" );
+    }
+    fprintf( file, "};\n" );
+    fprintf( file, "\n" );
+
+    fprintf( file, "const LexerState %s_states [] = \n", prefix );
+    fprintf( file, "{\n" );
+    const LexerState* states = state_machine->states;
+    const LexerState* states_end = states + state_machine->states_size;
+    for ( const LexerState* state = states; state != states_end; ++state )
+    {
+        fprintf( file, "    {%d, %d, &%s_transitions[%d], ",
+            state->index,
+            state->length,
+            prefix,
+            int(state->transitions - state_machine->transitions)
+        );
+        const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( state->symbol );
+        if ( symbol )
+        {
+            fprintf( file, "&symbols[%d]}", symbol->index );
+        }
+        else
+        {
+            fprintf( file, "nullptr}" );
+        }
+        fprintf( file, "%s\n", state + 1 != states_end ? "," : "" );
+    }
+    fprintf( file, "};\n" );
+    fprintf( file, "\n" );
+
+    fprintf( file, "const LexerStateMachine %s_state_machine = \n", prefix );
+    fprintf( file, "{\n" );
+    fprintf( file, "    %d, // #actions\n", state_machine->actions_size );
+    fprintf( file, "    %d, // #transitions\n", state_machine->transitions_size );
+    fprintf( file, "    %d, // #states\n", state_machine->states_size );
+    fprintf( file, "    %s_actions, // actions\n", prefix );
+    fprintf( file, "    %s_transitions, // transitions\n", prefix );
+    fprintf( file, "    %s_states, // states\n", prefix );
+    fprintf( file, "    &%s_states[%d] // start state\n", prefix, state_machine->start_state->index );
+    fprintf( file, "};\n" );
+    fprintf( file, "\n" );
 }

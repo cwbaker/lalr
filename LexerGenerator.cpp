@@ -7,7 +7,7 @@
 #include "ErrorCode.hpp"
 #include "LexerToken.hpp"
 #include "LexerErrorPolicy.hpp"
-#include "LexerStateMachine.hpp"
+#include "LexerAllocations.hpp"
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
 #include "LexerAction.hpp"
@@ -130,7 +130,7 @@ const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAllocations* allocations, LexerErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -139,7 +139,7 @@ void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerState
     ranges_.clear();
  
     generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
-    populate_state_machine( state_machine );
+    populate_allocations( allocations );
  
     error_policy_ = nullptr;
     actions_.clear();
@@ -148,7 +148,7 @@ void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerState
     ranges_.clear();
 }
 
-void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerStateMachine* state_machine, LexerErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerAllocations* allocations, LexerErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -158,7 +158,7 @@ void LexerGenerator::generate( const std::string& regular_expression, void* symb
 
     LexerToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
     generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
-    populate_state_machine( state_machine );
+    populate_allocations( allocations );
 
     error_policy_ = nullptr;
     actions_.clear();
@@ -373,9 +373,9 @@ void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
     state->set_symbol( token ? token->symbol() : NULL );
 }
 
-void LexerGenerator::populate_state_machine( LexerStateMachine* state_machine ) const
+void LexerGenerator::populate_allocations( LexerAllocations* allocations ) const
 {
-    SWEET_ASSERT( state_machine );
+    SWEET_ASSERT( allocations );
 
     size_t transitions_size = 0;
     for ( auto i = states_.begin(); i != states_.end(); ++i )
@@ -394,7 +394,8 @@ void LexerGenerator::populate_state_machine( LexerStateMachine* state_machine ) 
         const RegexAction* source_action = actions_[i].get();
         SWEET_ASSERT( source_action );
         LexerAction* action = &actions[i];
-        action->reset( source_action->index(), source_action->identifier().c_str() );
+        action->index = source_action->index();
+        action->identifier = allocations->add_string( source_action->identifier() );
     }
 
     int state_index = 0;
@@ -431,9 +432,9 @@ void LexerGenerator::populate_state_machine( LexerStateMachine* state_machine ) 
         ++state_index;
     }
 
-    state_machine->set_actions( actions, int(actions_.size()) );
-    state_machine->set_transitions( transitions, transitions_size );
-    state_machine->set_states( states, int(states_.size()), start_state );
+    allocations->set_actions( actions, int(actions_.size()) );
+    allocations->set_transitions( transitions, transitions_size );
+    allocations->set_states( states, int(states_.size()), start_state );
 }
 
 /**

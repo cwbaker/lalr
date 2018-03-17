@@ -21,7 +21,6 @@ public:
     const LexerState* state; ///< The state that is transitioned to.
     const LexerAction* action; ///< The action that is taken on the transition or null if no action is taken.
 
-    LexerTransition();
     bool is_on_character( int character ) const;
 };
 

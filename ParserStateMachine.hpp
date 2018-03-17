@@ -38,8 +38,8 @@ public:
     const ParserSymbol* end_symbol; ///< The end symbol.
     const ParserSymbol* error_symbol; ///< The error symbol.
     const ParserState* start_state; ///< The start state.
-    LexerStateMachine* lexer_state_machine; ///< The state machine used by the lexer to match tokens
-    LexerStateMachine* whitespace_lexer_state_machine; ///< The state machine used by the lexer to skip whitespace
+    const LexerStateMachine* lexer_state_machine; ///< The state machine used by the lexer to match tokens
+    const LexerStateMachine* whitespace_lexer_state_machine; ///< The state machine used by the lexer to skip whitespace
 
     const ParserSymbol* find_symbol_by_identifier( const char* identifier ) const;
 };

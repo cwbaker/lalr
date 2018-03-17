@@ -8,14 +8,6 @@
 
 using namespace sweet::lalr;
 
-LexerState::LexerState()
-: index( 0 ),
-  length( 0 ),
-  transitions( nullptr ),
-  symbol( nullptr )
-{
-}
-
 const LexerTransition* LexerState::find_transition_by_character( int character ) const
 {
     const LexerTransition* transition = transitions;

@@ -63,15 +63,15 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 {
     if ( state_machine_ )
     {
-        int actions_size = state_machine_->actions_size();
+        int actions_size = state_machine_->actions_size;
         if ( whitespace_state_machine_ )
         {
-            actions_size += whitespace_state_machine_->actions_size();   
+            actions_size += whitespace_state_machine_->actions_size;   
         }
         action_handlers_.reserve( actions_size );
 
-        const LexerAction* actions = state_machine_->actions();
-        const LexerAction* actions_end = actions + state_machine_->actions_size();
+        const LexerAction* actions = state_machine_->actions;
+        const LexerAction* actions_end = actions + state_machine_->actions_size;
         for ( auto action = actions; action != actions_end; ++action )
         {
             action_handlers_.push_back( LexerActionHandler(action, nullptr) );
@@ -79,8 +79,8 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 
         if ( whitespace_state_machine_ )
         {
-            const LexerAction* actions = whitespace_state_machine_->actions();
-            const LexerAction* actions_end = actions + whitespace_state_machine_->actions_size();
+            const LexerAction* actions = whitespace_state_machine_->actions;
+            const LexerAction* actions_end = actions + whitespace_state_machine_->actions_size;
             for ( auto action = actions; action != actions_end; ++action )
             {
                 action_handlers_.push_back( LexerActionHandler(action, nullptr) );
@@ -215,7 +215,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
 
     if ( whitespace_state_machine_ )
     {
-        const LexerState* state = whitespace_state_machine_->start_state();
+        const LexerState* state = whitespace_state_machine_->start_state;
         SWEET_ASSERT( state );
         const LexerTransition* transition = nullptr;
         while ( position_ != end_ && (transition = state->find_transition_by_character(*position_)) )
@@ -254,10 +254,10 @@ template <class Iterator, class Char, class Traits, class Allocator>
 const void* Lexer<Iterator, Char, Traits, Allocator>::run()
 {    
     SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( state_machine_->start_state() );
+    SWEET_ASSERT( state_machine_->start_state );
     
     const void* symbol = nullptr;
-    const LexerState* state = state_machine_->start_state();
+    const LexerState* state = state_machine_->start_state;
     if ( state )
     {
         symbol = state->symbol;
@@ -302,13 +302,13 @@ template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::error()
 {   
     SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( state_machine_->start_state() );
+    SWEET_ASSERT( state_machine_->start_state );
     SWEET_ASSERT( position_ != end_ );
 
     fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
     const LexerTransition* transition = NULL;
-    const LexerState* state = state_machine_->start_state();
+    const LexerState* state = state_machine_->start_state;
     while ( position_ != end_ && !(transition = state->find_transition_by_character(*position_)) )
     {
         ++position_;

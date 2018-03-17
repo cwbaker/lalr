@@ -13,7 +13,7 @@
 #include "ParserAllocations.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
-#include "LexerStateMachine.hpp"
+#include "LexerAllocations.hpp"
 #include "LexerTokenType.hpp"
 #include "assert.hpp"
 

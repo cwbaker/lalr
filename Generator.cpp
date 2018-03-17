@@ -18,7 +18,7 @@
 #include "ParserTransition.hpp"
 #include "ParserStateMachine.hpp"
 #include "LexerGenerator.hpp"
-#include "LexerStateMachine.hpp"
+#include "LexerAllocations.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -894,22 +894,22 @@ void Generator::populate_parser_allocations( const Grammar& grammar, ParserAlloc
         }
     }
 
-    unique_ptr<LexerStateMachine> lexer_state_machine( new LexerStateMachine );
+    unique_ptr<LexerAllocations> lexer_allocations( new LexerAllocations );
     LexerGenerator lexer_generator;
-    lexer_generator.generate( tokens, lexer_state_machine.get(), lexer_error_policy );
+    lexer_generator.generate( tokens, lexer_allocations.get(), lexer_error_policy );
 
-    unique_ptr<LexerStateMachine> whitespace_lexer_state_machine;
+    unique_ptr<LexerAllocations> whitespace_lexer_allocations;
     const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
     if ( !whitespace_tokens.empty() )
     {
-        whitespace_lexer_state_machine.reset( new LexerStateMachine );
-        lexer_generator.generate( whitespace_tokens, whitespace_lexer_state_machine.get(), lexer_error_policy );        
+        whitespace_lexer_allocations.reset( new LexerAllocations );
+        lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), lexer_error_policy );        
     }
 
     parser_allocations->set_actions( actions, actions_size );
     parser_allocations->set_symbols( symbols, symbols_size );
     parser_allocations->set_transitions( transitions, transitions_size );
     parser_allocations->set_states( states, states_size, start_state );
-    parser_allocations->set_lexer_state_machine( lexer_state_machine );
-    parser_allocations->set_whitespace_lexer_state_machine( whitespace_lexer_state_machine );
+    parser_allocations->set_lexer_allocations( lexer_allocations );
+    parser_allocations->set_whitespace_lexer_allocations( whitespace_lexer_allocations );
 }

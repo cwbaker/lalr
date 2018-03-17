@@ -27,6 +27,7 @@ for _, build in build:default_builds() do
 
         build:Cxx () {
             "LexerAction.cpp",
+            "LexerAllocations.cpp",
             "LexerErrorPolicy.cpp",
             "LexerGenerator.cpp",
             "LexerState.cpp",

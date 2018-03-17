@@ -17,6 +17,7 @@ class Symbol;
 class Production;
 class Action;
 class LexerErrorPolicy;
+class LexerAllocations;
 class ParserErrorPolicy;
 class ParserAllocations;
 class ParserStateMachine;
@@ -38,6 +39,8 @@ class Grammar
     Symbol* end_symbol_; ///< The end symbol.
     Symbol* error_symbol_; ///< The error symbol.
     std::unique_ptr<ParserAllocations> parser_allocations_;
+    std::unique_ptr<LexerAllocations> lexer_allocations_;
+    std::unique_ptr<LexerAllocations> whitespace_lexer_allocations_;
 
 public:
     Grammar();
