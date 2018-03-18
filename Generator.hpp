@@ -33,7 +33,7 @@ class LexerErrorPolicy;
 class ParserErrorPolicy;
 class ParserStateMachine;
 class ParserAllocations;
-class Action;
+class GrammarAction;
 class Symbol;
 class Item;
 class State;
@@ -49,7 +49,7 @@ class Generator
 {
     ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
-    std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the parser.
+    std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<Production>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<State>, shared_ptr_less<State>> states_; ///< The states in the parser's state machine.

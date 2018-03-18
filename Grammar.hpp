@@ -15,7 +15,7 @@ namespace lalr
 
 class Symbol;
 class Production;
-class Action;
+class GrammarAction;
 class LexerErrorPolicy;
 class LexerAllocations;
 class ParserErrorPolicy;
@@ -27,7 +27,7 @@ class Grammar
     std::string identifier_;
     std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<Production>> productions_; ///< The productions in the grammar.
-    std::vector<std::unique_ptr<Action>> actions_; ///< The actions in the grammar.
+    std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     bool active_precedence_directive_;
@@ -48,7 +48,7 @@ public:
     const std::string& identifier() const;
     std::vector<std::unique_ptr<Symbol>>& symbols();
     std::vector<std::unique_ptr<Production>>& productions();
-    std::vector<std::unique_ptr<Action>>& actions();
+    std::vector<std::unique_ptr<GrammarAction>>& actions();
     const std::vector<LexerToken>& whitespace_tokens() const;
     Symbol* start_symbol() const;
     Symbol* end_symbol() const;
@@ -76,7 +76,7 @@ private:
     Symbol* non_terminal_symbol( const char* lexeme, int line );
     Symbol* add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
     Production* add_production( Symbol* symbol );
-    Action* add_action( const char* id );
+    GrammarAction* add_action( const char* id );
 };
 
 }

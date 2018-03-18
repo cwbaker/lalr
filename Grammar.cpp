@@ -7,9 +7,8 @@
 #include "GrammarParser.hpp"
 #include "Symbol.hpp"
 #include "Production.hpp"
-#include "Action.hpp"
+#include "GrammarAction.hpp"
 #include "Generator.hpp"
-#include "Action.hpp"
 #include "ParserAllocations.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
@@ -66,7 +65,7 @@ std::vector<std::unique_ptr<Production>>& Grammar::productions()
     return productions_;
 }
 
-std::vector<std::unique_ptr<Action>>& Grammar::actions()
+std::vector<std::unique_ptr<GrammarAction>>& Grammar::actions()
 {
     return actions_;
 }
@@ -415,10 +414,10 @@ Production* Grammar::add_production( Symbol* symbol )
     return productions_.back().get();
 }
 
-Action* Grammar::add_action( const char* identifier )
+GrammarAction* Grammar::add_action( const char* identifier )
 {
     SWEET_ASSERT( identifier );
-    vector<unique_ptr<Action>>::const_iterator i = actions_.begin();
+    vector<unique_ptr<GrammarAction>>::const_iterator i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier() != identifier )
     {
         ++i;
@@ -426,7 +425,7 @@ Action* Grammar::add_action( const char* identifier )
     if ( i == actions_.end() )
     {
         int index = int(actions_.size());
-        unique_ptr<Action> action( new Action(index, identifier) );
+        unique_ptr<GrammarAction> action( new GrammarAction(index, identifier) );
         actions_.push_back( move(action) );
         return actions_.back().get();
     }

@@ -4,7 +4,7 @@ buildfile 'lalrc/lalrc.build';
 for _, build in build:default_builds() do    
     local lalr = build:Library "lalr" {
         build:Cxx () {
-            "Action.cpp",
+            "GrammarAction.cpp",
             "Generator.cpp",
             "Grammar.cpp",
             "GrammarParser.cpp",

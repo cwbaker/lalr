@@ -1,9 +1,9 @@
 //
-// Action.cpp
+// GrammarAction.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "Action.hpp"
+#include "GrammarAction.hpp"
 #include "assert.hpp"
 
 using namespace sweet::lalr;
@@ -17,7 +17,7 @@ using namespace sweet::lalr;
 // @param identifier
 //  The identifier of this action (assumed not empty).
 */
-Action::Action( int index, const std::string& identifier )
+GrammarAction::GrammarAction( int index, const std::string& identifier )
 : index_( index ),
   identifier_( identifier )
 {
@@ -25,12 +25,12 @@ Action::Action( int index, const std::string& identifier )
     SWEET_ASSERT( !identifier_.empty() );
 }
 
-int Action::index() const
+int GrammarAction::index() const
 {
     return index_;
 }
 
-const std::string& Action::identifier() const
+const std::string& GrammarAction::identifier() const
 {
     return identifier_;
 }

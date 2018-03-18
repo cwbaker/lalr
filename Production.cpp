@@ -5,7 +5,7 @@
 
 #include "Production.hpp"
 #include "Symbol.hpp"
-#include "Action.hpp"
+#include "GrammarAction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-Production::Production( int index, Symbol* symbol, int line, const Action* action )
+Production::Production( int index, Symbol* symbol, int line, const GrammarAction* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -202,7 +202,7 @@ void Production::append_symbol( Symbol* symbol )
 //  The action to take when this production is reduced or null to set this
 //  production to have no action.
 */
-void Production::set_action( const Action* action )
+void Production::set_action( const GrammarAction* action )
 {
     action_ = action;
 }
@@ -213,14 +213,14 @@ void Production::set_action( const Action* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const Action* Production::action() const
+const GrammarAction* Production::action() const
 {
     return action_;
 }
 
 int Production::action_index() const
 {
-    return action_ ? action_->index() : Action::INVALID_INDEX;
+    return action_ ? action_->index() : GrammarAction::INVALID_INDEX;
 }
 
 const Symbol* Production::precedence_symbol() const

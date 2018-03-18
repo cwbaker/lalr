@@ -6,7 +6,7 @@
 #include "Transition.hpp"
 #include "Symbol.hpp"
 #include "State.hpp"
-#include "Action.hpp"
+#include "GrammarAction.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -31,7 +31,7 @@ using namespace sweet::lalr;
 //
 // @param action
 //  The index of the action taken on this reduction or 
-//  `Action::INVALID_INDEX` if no action is taken.
+//  `GrammarAction::INVALID_INDEX` if no action is taken.
 */
 Transition::Transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
@@ -63,7 +63,7 @@ Transition::Transition( const Symbol* symbol, State* state )
   reduced_symbol_( nullptr ),
   reduced_length_( 0 ),
   precedence_( 0 ),
-  action_( Action::INVALID_INDEX ),
+  action_( GrammarAction::INVALID_INDEX ),
   type_( TRANSITION_SHIFT ),
   index_( INVALID_INDEX )
 {

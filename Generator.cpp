@@ -9,7 +9,7 @@
 #include "Item.hpp"
 #include "Grammar.hpp"
 #include "Symbol.hpp"   
-#include "Action.hpp"
+#include "GrammarAction.hpp"
 #include "ParserAllocations.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
@@ -804,12 +804,12 @@ void Generator::populate_parser_allocations( const Grammar& grammar, ParserAlloc
     unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
     for ( int i = 0; i < actions_size; ++i )
     {
-        const Action* source_action = actions_[i].get();
-        SWEET_ASSERT( source_action );
+        const GrammarAction* grammar_action = actions_[i].get();
+        SWEET_ASSERT( grammar_action );
         ParserAction* action = &actions[i];
         SWEET_ASSERT( action );
-        action->index = source_action->index();
-        action->identifier = parser_allocations->add_string( source_action->identifier() );
+        action->index = grammar_action->index();
+        action->identifier = parser_allocations->add_string( grammar_action->identifier() );
     }
 
     int symbols_size = symbols_.size();
