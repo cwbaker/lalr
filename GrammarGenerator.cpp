@@ -322,8 +322,8 @@ int GrammarGenerator::lookahead_goto( GrammarState* state ) const
 
     int added = 0;
 
-    const set<Transition>& transitions = state->transitions();
-    for ( set<Transition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
+    const set<GrammarTransition>& transitions = state->transitions();
+    for ( set<GrammarTransition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
     {
         const GrammarSymbol* symbol = transition->symbol();
         SWEET_ASSERT( symbol );
@@ -740,7 +740,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( production );
 
-    Transition* transition = state->find_transition_by_symbol( symbol );
+    GrammarTransition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
         state->add_transition( symbol, production->symbol(), production->length(), production->precedence(), production->action_index() );
@@ -847,7 +847,7 @@ void GrammarGenerator::populate_parser_allocations( const Grammar& grammar, Pars
         SWEET_ASSERT( source_state );
         ParserState* state = &states[state_index];
         SWEET_ASSERT( state );
-        const set<Transition>& source_transitions = source_state->transitions();
+        const set<GrammarTransition>& source_transitions = source_state->transitions();
         state->index = state_index;
         state->length = source_transitions.size();
         state->transitions = &transitions[transition_index];
@@ -857,7 +857,7 @@ void GrammarGenerator::populate_parser_allocations( const Grammar& grammar, Pars
         }
         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
         {
-            const Transition* source_transition = &(*j);
+            const GrammarTransition* source_transition = &(*j);
             SWEET_ASSERT( source_transition );
             const GrammarSymbol* source_symbol = source_transition->symbol();
             SWEET_ASSERT( source_symbol );

@@ -5,7 +5,7 @@
 
 #include "GrammarState.hpp"
 #include "GrammarItem.hpp"
-#include "Transition.hpp"
+#include "GrammarTransition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -45,13 +45,13 @@ const std::set<GrammarItem>& GrammarState::items() const
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol ) const
+const GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol ) const
 {    
-    const Transition* transition = NULL;
+    const GrammarTransition* transition = NULL;
     
     if ( symbol )
     {
-        std::set<Transition>::const_iterator i = transitions_.begin();
+        std::set<GrammarTransition>::const_iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
         {
             ++i;
@@ -68,7 +68,7 @@ const Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* 
 // @return
 //  The transitions.
 */
-const std::set<Transition>& GrammarState::transitions() const
+const std::set<GrammarTransition>& GrammarState::transitions() const
 {
     return transitions_;
 }
@@ -164,8 +164,8 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* st
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
-    SWEET_ASSERT( transitions_.find(Transition(symbol, state)) == transitions_.end() );
-    transitions_.insert( Transition(symbol, state) );
+    SWEET_ASSERT( transitions_.find(GrammarTransition(symbol, state)) == transitions_.end() );
+    transitions_.insert( GrammarTransition(symbol, state) );
 }
 
 /**
@@ -192,7 +192,7 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSym
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
 
-    std::set<Transition>::iterator transition = transitions_.find( Transition(symbol, reduced_symbol, reduced_length, precedence, action) );
+    std::set<GrammarTransition>::iterator transition = transitions_.find( GrammarTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
         SWEET_ASSERT( transition->type() == TRANSITION_SHIFT );
@@ -200,7 +200,7 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSym
     }
     else
     {
-        transition = transitions_.insert( Transition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
+        transition = transitions_.insert( GrammarTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
     }
 }
 
@@ -245,18 +245,18 @@ void GrammarState::add_transition( const std::set<const GrammarSymbol*>& symbols
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol )
+GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol )
 {    
-    Transition* transition = NULL;  
+    GrammarTransition* transition = NULL;  
       
     if ( symbol )
     {
-        std::set<Transition>::iterator i = transitions_.begin();
+        std::set<GrammarTransition>::iterator i = transitions_.begin();
         while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
         {
             ++i;
         }
-        transition = i != transitions_.end() ? const_cast<Transition*>(&(*i)) : NULL;
+        transition = i != transitions_.end() ? const_cast<GrammarTransition*>(&(*i)) : NULL;
     }    
     
     return transition;
@@ -268,7 +268,7 @@ Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol
 void GrammarState::generate_indices_for_transitions()
 {
     int index = 0;
-    for ( std::set<Transition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
+    for ( std::set<GrammarTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
     {
         transition->set_index( index );
         ++index;

@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_TRANSITION_HPP_INCLUDED
-#define SWEET_LALR_TRANSITION_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMARTRANSITION_HPP_INCLUDED
+#define SWEET_LALR_GRAMMARTRANSITION_HPP_INCLUDED
 
 #include "TransitionType.hpp"
 #include <string>
@@ -17,7 +17,7 @@ class GrammarSymbol;
 /**
 // A transition in a parser's state machine.
 */
-class Transition
+class GrammarTransition
 {
     public:
         static const int INVALID_INDEX = -1;
@@ -33,8 +33,8 @@ class Transition
         mutable int index_; ///< The index of this transition.
 
     public:
-        Transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
-        Transition( const GrammarSymbol* symbol, GrammarState* state );
+        GrammarTransition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+        GrammarTransition( const GrammarSymbol* symbol, GrammarState* state );
         TransitionType type() const;
         GrammarState* state() const;
         const GrammarSymbol* reduced_symbol() const;
@@ -44,7 +44,7 @@ class Transition
         bool taken_on_symbol( const GrammarSymbol* symbol ) const;
         const GrammarSymbol* symbol() const;
         int index() const;
-        bool operator<( const Transition& transition ) const;
+        bool operator<( const GrammarTransition& transition ) const;
 
         void set_index( int index ) const;
         void override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const;

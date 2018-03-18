@@ -1,19 +1,15 @@
 //
-// Transition.cpp
+// GrammarTransition.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "Transition.hpp"
+#include "GrammarTransition.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
 using namespace sweet::lalr;
-
-#if defined(BUILD_PLATFORM_MSVC)
-#define snprintf _snprintf
-#endif
 
 /**
 // Constructor.
@@ -32,7 +28,7 @@ using namespace sweet::lalr;
 //  The index of the action taken on this reduction or 
 //  `GrammarAction::INVALID_INDEX` if no action is taken.
 */
-Transition::Transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 : symbol_( symbol ),
   state_( NULL ),
   reduced_symbol_( reduced_symbol ),
@@ -56,7 +52,7 @@ Transition::Transition( const GrammarSymbol* symbol, const GrammarSymbol* reduce
 // @param state
 //  The state that this transition is to (assumed not null).
 */
-Transition::Transition( const GrammarSymbol* symbol, GrammarState* state )
+GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, GrammarState* state )
 : symbol_( symbol ),
   state_( state ),
   reduced_symbol_( nullptr ),
@@ -76,27 +72,27 @@ Transition::Transition( const GrammarSymbol* symbol, GrammarState* state )
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-GrammarState* Transition::state() const
+GrammarState* GrammarTransition::state() const
 {
     return state_;
 }
 
-const GrammarSymbol* Transition::reduced_symbol() const
+const GrammarSymbol* GrammarTransition::reduced_symbol() const
 {
     return reduced_symbol_;
 }
 
-int Transition::reduced_length() const
+int GrammarTransition::reduced_length() const
 {
     return reduced_length_;
 }
 
-int Transition::precedence() const
+int GrammarTransition::precedence() const
 {
     return precedence_;
 }
 
-int Transition::action() const
+int GrammarTransition::action() const
 {
     return action_;
 }
@@ -107,7 +103,7 @@ int Transition::action() const
 // @return
 //  The type of this transition.
 */
-TransitionType Transition::type() const
+TransitionType GrammarTransition::type() const
 {
     return type_;
 }
@@ -121,7 +117,7 @@ TransitionType Transition::type() const
 // @return
 //  True if this transition is taken on \e symbol otherwise false.
 */
-bool Transition::taken_on_symbol( const GrammarSymbol* symbol ) const
+bool GrammarTransition::taken_on_symbol( const GrammarSymbol* symbol ) const
 {
     return symbol_ == symbol;
 }
@@ -132,7 +128,7 @@ bool Transition::taken_on_symbol( const GrammarSymbol* symbol ) const
 // @return
 //  The symbol.
 */
-const GrammarSymbol* Transition::symbol() const
+const GrammarSymbol* GrammarTransition::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -144,7 +140,7 @@ const GrammarSymbol* Transition::symbol() const
 // @return
 //  The index.
 */
-int Transition::index() const
+int GrammarTransition::index() const
 {
     return index_;
 }
@@ -159,7 +155,7 @@ int Transition::index() const
 //  True if the address of this transition's symbol is less than the address 
 //  of \e transition's symbol.
 */
-bool Transition::operator<( const Transition& transition ) const
+bool GrammarTransition::operator<( const GrammarTransition& transition ) const
 {
     return symbol_ < transition.symbol_;
 }
@@ -170,7 +166,7 @@ bool Transition::operator<( const Transition& transition ) const
 // @param index
 //  The value to set the index of this production to.
 */
-void Transition::set_index( int index ) const
+void GrammarTransition::set_index( int index ) const
 {
     index_ = index;
 }
@@ -182,7 +178,7 @@ void Transition::set_index( int index ) const
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void Transition::override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
+void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_SHIFT );
     SWEET_ASSERT( state_ );
@@ -205,7 +201,7 @@ void Transition::override_shift_to_reduce( const GrammarSymbol* symbol, int leng
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void Transition::override_reduce_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
+void GrammarTransition::override_reduce_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
 {
     SWEET_ASSERT( type_ == TRANSITION_REDUCE );
     SWEET_ASSERT( reduced_symbol_ );
