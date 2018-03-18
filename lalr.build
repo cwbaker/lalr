@@ -13,7 +13,7 @@ for _, build in build:default_builds() do
             "GrammarState.cpp",
             "GrammarSymbol.cpp",
             "GrammarTransition.cpp",
-            'ParserAllocations.cpp'
+            'GrammarCompiler.cpp'
         };
 
         build:Cxx () {

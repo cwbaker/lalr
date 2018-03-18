@@ -31,8 +31,7 @@ namespace lalr
 
 class LexerErrorPolicy;
 class ParserErrorPolicy;
-class ParserStateMachine;
-class ParserAllocations;
+class GrammarCompiler;
 class GrammarAction;
 class GrammarSymbol;
 class GrammarItem;
@@ -62,7 +61,11 @@ class GrammarGenerator
     public:
         GrammarGenerator();
         ~GrammarGenerator();
-        int generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
+        const std::vector<std::unique_ptr<GrammarAction>>& actions() const;
+        const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
+        const std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& states() const;
+        const GrammarState* start_state() const;
+        int generate( Grammar& grammar, GrammarCompiler* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
                 
     private:
         void fire_error( int line, int error, const char* format, ... );
@@ -88,7 +91,6 @@ class GrammarGenerator
         void generate_reduce_transitions();
         void generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production );
         void generate_indices_for_transitions();
-        void populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy );
 };
 
 }

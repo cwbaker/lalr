@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_PARSERALLOCATIONS_HPP_INCLUDED
-#define SWEET_LALR_PARSERALLOCATIONS_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMARCOMPILER_HPP_INCLUDED
+#define SWEET_LALR_GRAMMARCOMPILER_HPP_INCLUDED
 
 #include <deque>
 #include <string>
@@ -11,6 +11,10 @@ namespace sweet
 namespace lalr
 {
 
+class ParserErrorPolicy;
+class LexerErrorPolicy;
+class Grammar;
+class GrammarGenerator;
 class ParserAction;
 class ParserSymbol;
 class ParserTransition;
@@ -18,7 +22,7 @@ class ParserState;
 class ParserStateMachine;
 class LexerAllocations;
 
-class ParserAllocations
+class GrammarCompiler
 {    
     std::deque<std::string> strings_;
     std::unique_ptr<ParserAction[]> actions_; ///< The parser actions for this ParserStateMachine.
@@ -30,11 +34,14 @@ class ParserAllocations
     std::unique_ptr<ParserStateMachine> parser_state_machine_; ///< Allocated parser state machine.
 
 public:
-    ParserAllocations();
-    ~ParserAllocations();
+    GrammarCompiler();
+    ~GrammarCompiler();
     const LexerAllocations* lexer_allocations() const;
     const LexerAllocations* whitespace_lexer_allocations() const;
     const ParserStateMachine* parser_state_machine() const;
+    void compile( const char* begin, const char* end, ParserErrorPolicy* error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
+
+private:
     const char* add_string( const std::string& string );
     void set_actions( std::unique_ptr<ParserAction[]>& actions, int actions_size );
     void set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int symbols_size );
@@ -42,6 +49,9 @@ public:
     void set_states( std::unique_ptr<ParserState[]>& states, int states_size, const ParserState* start_state );
     void set_lexer_allocations( std::unique_ptr<LexerAllocations>& lexer_allocations );
     void set_whitespace_lexer_allocations( std::unique_ptr<LexerAllocations>& whitespace_lexer_allocations );
+    void populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator );
+    void populate_lexer_state_machine( const Grammar& grammar, const GrammarGenerator& generator, LexerErrorPolicy* lexer_error_policy );
+    void populate_whitespace_lexer_state_machine( const Grammar& grammar, const GrammarGenerator& generator, LexerErrorPolicy* lexer_error_policy );
 };
 
 }

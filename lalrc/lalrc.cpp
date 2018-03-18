@@ -4,7 +4,7 @@
 //
 
 #include <sweet/lalr/Grammar.hpp>
-#include <sweet/lalr/ParserAllocations.hpp>
+#include <sweet/lalr/GrammarCompiler.hpp>
 #include <sweet/lalr/ParserStateMachine.hpp>
 #include <sweet/lalr/ParserState.hpp>
 #include <sweet/lalr/ParserTransition.hpp>

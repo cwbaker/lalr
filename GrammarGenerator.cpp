@@ -10,7 +10,7 @@
 #include "Grammar.hpp"
 #include "GrammarSymbol.hpp"   
 #include "GrammarAction.hpp"
-#include "ParserAllocations.hpp"
+#include "GrammarCompiler.hpp"
 #include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
@@ -58,7 +58,27 @@ GrammarGenerator::~GrammarGenerator()
 {
 }
 
-int GrammarGenerator::generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+const std::vector<std::unique_ptr<GrammarAction>>& GrammarGenerator::actions() const
+{
+    return actions_;
+}
+
+const std::vector<std::unique_ptr<GrammarSymbol>>& GrammarGenerator::symbols() const
+{
+    return symbols_;
+}
+
+const std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& GrammarGenerator::states() const
+{
+    return states_;
+}
+
+const GrammarState* GrammarGenerator::start_state() const
+{
+    return start_state_;
+}
+
+int GrammarGenerator::generate( Grammar& grammar, GrammarCompiler* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* /*lexer_error_policy*/ )
 {
     SWEET_ASSERT( parser_allocations );
 
@@ -88,19 +108,7 @@ int GrammarGenerator::generate( Grammar& grammar, ParserAllocations* parser_allo
         calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
-        populate_parser_allocations( grammar, parser_allocations, lexer_error_policy );
     }
-
-    error_policy_ = nullptr;
-    identifier_.clear();
-    actions_.clear();
-    productions_.clear();
-    symbols_.clear();
-    states_.clear();
-    start_symbol_ = nullptr;
-    end_symbol_ = nullptr;
-    error_symbol_ = nullptr;
-    start_state_ = nullptr;
 
     int errors = errors_;
     errors_ = 0;
@@ -794,122 +802,4 @@ void GrammarGenerator::generate_indices_for_transitions()
         SWEET_ASSERT( state );
         state->generate_indices_for_transitions();        
     }
-}
-
-void GrammarGenerator::populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy )
-{
-    SWEET_ASSERT( parser_allocations );
-
-    int actions_size = actions_.size();
-    unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
-    for ( int i = 0; i < actions_size; ++i )
-    {
-        const GrammarAction* grammar_action = actions_[i].get();
-        SWEET_ASSERT( grammar_action );
-        ParserAction* action = &actions[i];
-        SWEET_ASSERT( action );
-        action->index = grammar_action->index();
-        action->identifier = parser_allocations->add_string( grammar_action->identifier() );
-    }
-
-    int symbols_size = symbols_.size();
-    unique_ptr<ParserSymbol[]> symbols( new ParserSymbol [symbols_size] );
-    for ( int i = 0; i < symbols_size; ++i )
-    {
-        const GrammarSymbol* source_symbol = symbols_[i].get();
-        SWEET_ASSERT( source_symbol );
-        ParserSymbol* symbol = &symbols[i];
-        SWEET_ASSERT( symbol );
-        symbol->index = source_symbol->index();
-        symbol->identifier = parser_allocations->add_string( source_symbol->identifier() );
-        symbol->lexeme = parser_allocations->add_string( source_symbol->lexeme() );
-        symbol->type = source_symbol->symbol_type();
-    }
-
-    int states_size = states_.size();
-    unique_ptr<ParserState[]> states( new ParserState [states_size] );
-
-    int transitions_size = 0;
-    for ( auto i = states_.begin(); i != states_.end(); ++i )
-    {
-        const GrammarState* source_state = i->get();
-        SWEET_ASSERT( source_state );
-        transitions_size += source_state->transitions().size();
-    }
-    unique_ptr<ParserTransition[]> transitions( new ParserTransition [transitions_size] );
-
-    const ParserState* start_state = nullptr;
-    int state_index = 0;
-    int transition_index = 0;
-    for ( auto i = states_.begin(); i != states_.end(); ++i )
-    {
-        const GrammarState* source_state = i->get();
-        SWEET_ASSERT( source_state );
-        ParserState* state = &states[state_index];
-        SWEET_ASSERT( state );
-        const set<GrammarTransition>& source_transitions = source_state->transitions();
-        state->index = state_index;
-        state->length = source_transitions.size();
-        state->transitions = &transitions[transition_index];
-        if ( source_state == start_state_ )
-        {
-            start_state = state;
-        }
-        for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
-        {
-            const GrammarTransition* source_transition = &(*j);
-            SWEET_ASSERT( source_transition );
-            const GrammarSymbol* source_symbol = source_transition->symbol();
-            SWEET_ASSERT( source_symbol );
-            const GrammarState* state_transitioned_to = source_transition->state();
-            const GrammarSymbol* reduced_symbol = source_transition->reduced_symbol();
-            ParserTransition* transition = &transitions[transition_index];
-            transition->symbol = &symbols[source_symbol->index()];
-            transition->state = state_transitioned_to ? &states[state_transitioned_to->index()] : nullptr;
-            transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->index()] : nullptr;
-            transition->reduced_length = source_transition->reduced_length();
-            transition->precedence = source_transition->precedence();
-            transition->action = source_transition->action();
-            transition->type = source_transition->type();
-            transition->index = transition_index;
-            ++transition_index;
-        }
-        ++state_index;
-    }
-
-    // Generate tokens for generating the lexical analyzer from each of 
-    // the terminal symbols in the grammar.
-    vector<LexerToken> tokens;
-    for ( size_t i = 0; i < symbols_.size(); ++i )
-    {
-        const GrammarSymbol* source_symbol = symbols_[i].get();
-        SWEET_ASSERT( source_symbol );
-        if ( source_symbol->symbol_type() == SYMBOL_TERMINAL )
-        {
-            const ParserSymbol* symbol = &symbols[i];
-            SWEET_ASSERT( symbol );
-            int line = source_symbol->line();
-            LexerTokenType token_type = source_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( LexerToken(token_type, line, symbol, symbol->lexeme) );                
-        }
-    }
-
-    unique_ptr<LexerAllocations> lexer_allocations( new LexerAllocations );
-    LexerGenerator lexer_generator;
-    lexer_generator.generate( tokens, lexer_allocations.get(), lexer_error_policy );
-
-    unique_ptr<LexerAllocations> whitespace_lexer_allocations;
-    const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
-    if ( !whitespace_tokens.empty() )
-    {
-        whitespace_lexer_allocations.reset( new LexerAllocations );
-        lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), lexer_error_policy );        
-    }
-
-    parser_allocations->set_actions( actions, actions_size );
-    parser_allocations->set_symbols( symbols, symbols_size );
-    parser_allocations->set_transitions( transitions, transitions_size );
-    parser_allocations->set_states( states, states_size, start_state );
-    parser_allocations->set_lexer_allocations( lexer_allocations );
-    parser_allocations->set_whitespace_lexer_allocations( whitespace_lexer_allocations );
 }
