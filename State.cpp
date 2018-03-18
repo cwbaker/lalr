@@ -4,7 +4,7 @@
 //
 
 #include "State.hpp"
-#include "Item.hpp"
+#include "GrammarItem.hpp"
 #include "Transition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
@@ -35,7 +35,7 @@ State::State()
 // @return
 //  The items.
 */
-const std::set<Item>& State::items() const
+const std::set<GrammarItem>& State::items() const
 {
     return items_;
 }
@@ -129,7 +129,7 @@ bool State::operator<( const State& state ) const
 int State::add_item( Production* production, int position )
 {
     SWEET_ASSERT( production );
-    return items_.insert( Item(production, position) ).second ? 1 : 0;
+    return items_.insert( GrammarItem(production, position) ).second ? 1 : 0;
 }
 
 /**
@@ -151,7 +151,7 @@ int State::add_item( Production* production, int position )
 int State::add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
-    std::set<Item>::iterator item = items_.find( Item(production, position) );
+    std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
     SWEET_ASSERT( item != items_.end() );
     return item->add_lookahead_symbols( lookahead_symbols );
 }

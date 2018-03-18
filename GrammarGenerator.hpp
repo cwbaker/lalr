@@ -35,7 +35,7 @@ class ParserStateMachine;
 class ParserAllocations;
 class GrammarAction;
 class Symbol;
-class Item;
+class GrammarItem;
 class State;
 class Production;
 class Grammar;
@@ -67,7 +67,7 @@ class GrammarGenerator
     private:
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
-        std::set<const Symbol*> lookahead( const Item& item ) const;
+        std::set<const Symbol*> lookahead( const GrammarItem& item ) const;
         void closure( const std::shared_ptr<State>& state );
         std::shared_ptr<State> goto_( const std::shared_ptr<State>& state, const Symbol& symbol );
         int lookahead_closure( State* state ) const;

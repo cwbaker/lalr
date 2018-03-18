@@ -6,7 +6,7 @@
 #include "GrammarGenerator.hpp"
 #include "Production.hpp"
 #include "State.hpp"
-#include "Item.hpp"
+#include "GrammarItem.hpp"
 #include "Grammar.hpp"
 #include "Symbol.hpp"   
 #include "GrammarAction.hpp"
@@ -164,7 +164,7 @@ void GrammarGenerator::fire_printf( const char* format, ... ) const
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const Symbol*> GrammarGenerator::lookahead( const Item& item ) const
+std::set<const Symbol*> GrammarGenerator::lookahead( const GrammarItem& item ) const
 {
     set<const Symbol*> lookahead_symbols;
 
@@ -214,8 +214,8 @@ void GrammarGenerator::closure( const std::shared_ptr<State>& state )
     while ( added > 0 )
     {
         added = 0;
-        const set<Item>& items = state->items();
-        for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<GrammarItem>& items = state->items();
+        for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {          
             const Symbol* symbol = item->production()->symbol_by_position( item->position() );
             if ( symbol )
@@ -250,8 +250,8 @@ std::shared_ptr<State> GrammarGenerator::goto_( const std::shared_ptr<State>& st
 
     std::shared_ptr<State> goto_state( new State() );
 
-    const set<Item>& items = state->items();
-    for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<GrammarItem>& items = state->items();
+    for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
         if ( item->next_node(symbol) )
         {
@@ -281,8 +281,8 @@ int GrammarGenerator::lookahead_closure( State* state ) const
 
     int added = 0;
 
-    const set<Item>& items = state->items();
-    for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
+    const set<GrammarItem>& items = state->items();
+    for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {          
         const Symbol* symbol = item->production()->symbol_by_position( item->position() );
         if ( symbol )
@@ -328,8 +328,8 @@ int GrammarGenerator::lookahead_goto( State* state ) const
         const Symbol* symbol = transition->symbol();
         SWEET_ASSERT( symbol );
 
-        const set<Item>& items = state->items();
-        for ( set<Item>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const set<GrammarItem>& items = state->items();
+        for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
         {
             int position = item->position();
             if ( item->production()->symbol_by_position(position) == symbol )
@@ -706,7 +706,7 @@ void GrammarGenerator::generate_reduce_transitions()
         State* state = i->get();
         SWEET_ASSERT( state );
             
-        for ( std::set<Item>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
+        for ( std::set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
             if ( item->dot_at_end() )
             {

@@ -1,7 +1,7 @@
 #ifndef SWEET_LALR_STATE_HPP_INCLUDED
 #define SWEET_LALR_STATE_HPP_INCLUDED
 
-#include "Item.hpp"
+#include "GrammarItem.hpp"
 #include "Transition.hpp"
 #include <memory>
 #include <set>
@@ -17,7 +17,7 @@ namespace lalr
 */
 class State
 {
-    std::set<Item> items_; ///< The items that define the positions within the grammar that this state represents.
+    std::set<GrammarItem> items_; ///< The items that define the positions within the grammar that this state represents.
     std::set<Transition> transitions_; ///< The available transitions from this state.
     bool processed_; ///< True if this state has been processed during state machine generation otherwise false.
     int index_; ///< The index of this state.
@@ -25,7 +25,7 @@ class State
 public:
     State();
 
-    const std::set<Item>& items() const;
+    const std::set<GrammarItem>& items() const;
     const Transition* find_transition_by_symbol( const Symbol* symbol ) const;
     const std::set<Transition>& transitions() const;
     bool processed() const;

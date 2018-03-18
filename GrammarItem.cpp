@@ -1,9 +1,9 @@
 //
-// Item.cpp
+// GrammarItem.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
 
-#include "Item.hpp"
+#include "GrammarItem.hpp"
 #include "Symbol.hpp"
 #include "Production.hpp"
 #include "assert.hpp"
@@ -15,7 +15,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-Item::Item()
+GrammarItem::GrammarItem()
 : production_(),
   position_( 0 ),
   lookahead_symbols_()
@@ -31,7 +31,7 @@ Item::Item()
 // @param position
 //  The position of the dot in this item.
 */
-Item::Item( Production* production, int position )
+GrammarItem::GrammarItem( Production* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ Item::Item( Production* production, int position )
 /**
 // Get the production for this item.
 */
-Production* Item::production() const
+Production* GrammarItem::production() const
 {
     return production_;
 }
@@ -54,7 +54,7 @@ Production* Item::production() const
 // @return
 //  The position of the dot in this item.
 */
-int Item::position() const
+int GrammarItem::position() const
 {
     return position_;
 }
@@ -66,7 +66,7 @@ int Item::position() const
 // @return
 //  True if the dot is at the beginning of the production otherwise false.
 */
-bool Item::dot_at_beginning() const
+bool GrammarItem::dot_at_beginning() const
 {
     return position_ == 0;
 }
@@ -78,7 +78,7 @@ bool Item::dot_at_beginning() const
 // @return
 //  True if the dot is at the end of the production otherwise false.
 */
-bool Item::dot_at_end() const
+bool GrammarItem::dot_at_end() const
 {
     return position_ == production_->length();
 }
@@ -93,7 +93,7 @@ bool Item::dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool Item::next_node( const Symbol& symbol ) const
+bool GrammarItem::next_node( const Symbol& symbol ) const
 {
     return production_->symbol_by_position(position_) == &symbol;
 }
@@ -104,7 +104,7 @@ bool Item::next_node( const Symbol& symbol ) const
 // @return
 //  The lookahead set.
 */
-const std::set<const Symbol*>& Item::lookahead_symbols() const
+const std::set<const Symbol*>& GrammarItem::lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -120,7 +120,7 @@ const std::set<const Symbol*>& Item::lookahead_symbols() const
 //  production is the same as \e item's then if this item's next nodes
 //  are lexically less than item's otherwise false.
 */
-bool Item::operator<( const Item& item ) const
+bool GrammarItem::operator<( const GrammarItem& item ) const
 {
     return 
         production_->index() < item.production_->index() || 
@@ -137,7 +137,7 @@ bool Item::operator<( const Item& item ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int Item::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
+int GrammarItem::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
