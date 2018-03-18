@@ -8,7 +8,7 @@
 #include "Symbol.hpp"
 #include "Production.hpp"
 #include "GrammarAction.hpp"
-#include "Generator.hpp"
+#include "GrammarGenerator.hpp"
 #include "ParserAllocations.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
@@ -342,7 +342,7 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
         }
     }
 
-    Generator generator;
+    GrammarGenerator generator;
     parser_allocations_.reset( new ParserAllocations );
     int errors = generator.generate(*this, parser_allocations_.get(), parser_error_policy, lexer_error_policy );
     *state_machine = *parser_allocations_->parser_state_machine();

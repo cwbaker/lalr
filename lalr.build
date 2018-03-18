@@ -5,7 +5,7 @@ for _, build in build:default_builds() do
     local lalr = build:Library "lalr" {
         build:Cxx () {
             "GrammarAction.cpp",
-            "Generator.cpp",
+            "GrammarGenerator.cpp",
             "Grammar.cpp",
             "GrammarParser.cpp",
             "Item.cpp",

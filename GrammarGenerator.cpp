@@ -1,9 +1,9 @@
 //
-// Generator.cpp
+// GrammarGenerator.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "Generator.hpp"
+#include "GrammarGenerator.hpp"
 #include "Production.hpp"
 #include "State.hpp"
 #include "Item.hpp"
@@ -39,7 +39,7 @@ using namespace sweet::lalr;
 //  The error policy to report errors during generation to or null to silently
 //  swallow errors.
 */
-Generator::Generator()
+GrammarGenerator::GrammarGenerator()
 : error_policy_( nullptr ),
   identifier_(),
   actions_(),
@@ -54,11 +54,11 @@ Generator::Generator()
 {
 }
 
-Generator::~Generator()
+GrammarGenerator::~GrammarGenerator()
 {
 }
 
-int Generator::generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+int GrammarGenerator::generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_allocations );
 
@@ -122,7 +122,7 @@ int Generator::generate( Grammar& grammar, ParserAllocations* parser_allocations
 // @param ...
 //  Arguments described by *format*.
 */
-void Generator::fire_error( int line, int error, const char* format, ... )
+void GrammarGenerator::fire_error( int line, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
@@ -143,7 +143,7 @@ void Generator::fire_error( int line, int error, const char* format, ... )
 // @param args
 //  Arguments as described by \e format.
 */
-void Generator::fire_printf( const char* format, ... ) const
+void GrammarGenerator::fire_printf( const char* format, ... ) const
 {
     if ( error_policy_ )
     {
@@ -164,7 +164,7 @@ void Generator::fire_printf( const char* format, ... ) const
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const Symbol*> Generator::lookahead( const Item& item ) const
+std::set<const Symbol*> GrammarGenerator::lookahead( const Item& item ) const
 {
     set<const Symbol*> lookahead_symbols;
 
@@ -206,7 +206,7 @@ std::set<const Symbol*> Generator::lookahead( const Item& item ) const
 // @param state
 //  The State that contains the items to generate the closure of.
 */
-void Generator::closure( const std::shared_ptr<State>& state )
+void GrammarGenerator::closure( const std::shared_ptr<State>& state )
 {
     SWEET_ASSERT( state );
 
@@ -244,7 +244,7 @@ void Generator::closure( const std::shared_ptr<State>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, const Symbol& symbol )
+std::shared_ptr<State> GrammarGenerator::goto_( const std::shared_ptr<State>& state, const Symbol& symbol )
 {
     SWEET_ASSERT( state );
 
@@ -275,7 +275,7 @@ std::shared_ptr<State> Generator::goto_( const std::shared_ptr<State>& state, co
 // @return
 //  The number of lookahead symbols generated.
 */
-int Generator::lookahead_closure( State* state ) const
+int GrammarGenerator::lookahead_closure( State* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -316,7 +316,7 @@ int Generator::lookahead_closure( State* state ) const
 // @return
 //  The number of lookahead symbols propagated.
 */
-int Generator::lookahead_goto( State* state ) const
+int GrammarGenerator::lookahead_goto( State* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -352,7 +352,7 @@ int Generator::lookahead_goto( State* state ) const
 // @param with_symbol
 //  The Symbol to replace references with.
 */
-void Generator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
+void GrammarGenerator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
 {
     for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
@@ -365,7 +365,7 @@ void Generator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_sy
 /**
 // Check for symbols in the grammar that are referenced but never defined.
 */
-void Generator::check_for_undefined_symbol_errors()
+void GrammarGenerator::check_for_undefined_symbol_errors()
 {
     if ( errors_ == 0 )
     {
@@ -385,9 +385,9 @@ void Generator::check_for_undefined_symbol_errors()
 // Check for symbols in the grammar that are defined but never referenced.
 //
 // @param generator
-//  The Generator for fire any errors from (assumed not null).
+//  The GrammarGenerator for fire any errors from (assumed not null).
 */
-void Generator::check_for_unreferenced_symbol_errors()
+void GrammarGenerator::check_for_unreferenced_symbol_errors()
 {
     if ( errors_ == 0 )
     {
@@ -423,9 +423,9 @@ void Generator::check_for_unreferenced_symbol_errors()
 // production.
 //
 // @param generator
-//  The Generator for fire any errors from (assumed not null).
+//  The GrammarGenerator for fire any errors from (assumed not null).
 */
-void Generator::check_for_error_symbol_on_left_hand_side_errors()
+void GrammarGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
@@ -439,7 +439,7 @@ void Generator::check_for_error_symbol_on_left_hand_side_errors()
 /**
 // Calculate identifiers for all symbols.
 */
-void Generator::calculate_identifiers()
+void GrammarGenerator::calculate_identifiers()
 {
     for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -461,7 +461,7 @@ void Generator::calculate_identifiers()
 // The `.start`, `.end`, and `.error` symbols are exempt from the above 
 // processing.  They are explicitly assigned their corr
 */
-void Generator::calculate_terminal_and_non_terminal_symbols()
+void GrammarGenerator::calculate_terminal_and_non_terminal_symbols()
 {
     for ( vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -491,7 +491,7 @@ void Generator::calculate_terminal_and_non_terminal_symbols()
 // more readable name of the non terminal but removing the redundant 
 // reduction.
 */
-void Generator::calculate_implicit_terminal_symbols()
+void GrammarGenerator::calculate_implicit_terminal_symbols()
 {
     for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -527,7 +527,7 @@ void Generator::calculate_implicit_terminal_symbols()
 // Calculate the precedence of each production that hasn't had precedence
 // set explicitly as the precedence of its rightmost terminal.
 */
-void Generator::calculate_precedence_of_productions()
+void GrammarGenerator::calculate_precedence_of_productions()
 {
     for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
@@ -547,7 +547,7 @@ void Generator::calculate_precedence_of_productions()
 /**
 // Calculate the index for each symbol.
 */
-void Generator::calculate_symbol_indices()
+void GrammarGenerator::calculate_symbol_indices()
 {
     int index = 0;
     for ( vector<unique_ptr<Symbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
@@ -563,7 +563,7 @@ void Generator::calculate_symbol_indices()
 // Calculate the first position sets for each Symbol until no more 
 // terminals can be added to any first position sets.
 */
-void Generator::calculate_first()
+void GrammarGenerator::calculate_first()
 {
     int added = 1;
     while ( added > 0 )
@@ -582,7 +582,7 @@ void Generator::calculate_first()
 // Calculate the follow position sets for each Symbol until no more 
 // terminals can be added to any follow position sets.
 */
-void Generator::calculate_follow()
+void GrammarGenerator::calculate_follow()
 {
     start_symbol_->add_symbol_to_follow( end_symbol_ );
 
@@ -612,7 +612,7 @@ void Generator::calculate_follow()
 // @param symbols
 //  The symbols in the grammar.
 */
-void Generator::generate_states( const Symbol* start_symbol, const Symbol* end_symbol, const std::vector<std::unique_ptr<Symbol>>& symbols )
+void GrammarGenerator::generate_states( const Symbol* start_symbol, const Symbol* end_symbol, const std::vector<std::unique_ptr<Symbol>>& symbols )
 {
     SWEET_ASSERT( start_symbol );
     SWEET_ASSERT( end_symbol );
@@ -684,7 +684,7 @@ void Generator::generate_states( const Symbol* start_symbol, const Symbol* end_s
 /**
 // Generate indices for states.
 */
-void Generator::generate_indices_for_states()
+void GrammarGenerator::generate_indices_for_states()
 {
     int index = 0;
     for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::iterator i = states_.begin(); i != states_.end(); ++i )
@@ -699,7 +699,7 @@ void Generator::generate_indices_for_states()
 /**
 // Generate reduction transitions.
 */
-void Generator::generate_reduce_transitions()
+void GrammarGenerator::generate_reduce_transitions()
 {
     for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
@@ -734,7 +734,7 @@ void Generator::generate_reduce_transitions()
 // @param production
 //  The Production that is to be reduced.
 */
-void Generator::generate_reduce_transition( State* state, const Symbol* symbol, const Production* production )
+void GrammarGenerator::generate_reduce_transition( State* state, const Symbol* symbol, const Production* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );
@@ -786,7 +786,7 @@ void Generator::generate_reduce_transition( State* state, const Symbol* symbol, 
 /**
 // Generate indices for the transitions in each state.
 */
-void Generator::generate_indices_for_transitions()
+void GrammarGenerator::generate_indices_for_transitions()
 {
     for ( std::set<std::shared_ptr<State>, shared_ptr_less<State>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
@@ -796,7 +796,7 @@ void Generator::generate_indices_for_transitions()
     }
 }
 
-void Generator::populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy )
+void GrammarGenerator::populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy )
 {
     SWEET_ASSERT( parser_allocations );
 

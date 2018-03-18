@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_GENERATOR_HPP_INCLUDED
-#define SWEET_LALR_GENERATOR_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
+#define SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
 #include "LexerToken.hpp"
 #include "shared_ptr_less.hpp"
@@ -45,7 +45,7 @@ class Grammar;
 //
 // %Parser state machine generator.
 */
-class Generator
+class GrammarGenerator
 {
     ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
@@ -60,8 +60,8 @@ class Generator
     int errors_; ///< The number of errors that occured during parsing and generation.
 
     public:
-        Generator();
-        ~Generator();
+        GrammarGenerator();
+        ~GrammarGenerator();
         int generate( Grammar& grammar, ParserAllocations* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
                 
     private:
