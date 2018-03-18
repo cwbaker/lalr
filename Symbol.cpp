@@ -4,7 +4,7 @@
 //
 
 #include "Symbol.hpp"
-#include "Production.hpp"
+#include "GrammarProduction.hpp"
 #include "assert.hpp"
 
 using std::set;
@@ -78,7 +78,7 @@ const std::set<const Symbol*>& Symbol::follow() const
     return follow_;
 }
 
-const std::vector<Production*>& Symbol::productions() const
+const std::vector<GrammarProduction*>& Symbol::productions() const
 {
     return productions_;
 }
@@ -103,7 +103,7 @@ Symbol* Symbol::implicit_terminal() const
     Symbol* implicit_terminal_symbol = nullptr;    
     if ( productions_.size() == 1 )
     {
-        const Production* production = productions_.front();
+        const GrammarProduction* production = productions_.front();
         SWEET_ASSERT( production );
         if ( production->length() == 1 && !production->action() )
         {
@@ -169,7 +169,7 @@ void Symbol::set_nullable( bool nullable )
     nullable_ = nullable;
 }
 
-void Symbol::append_production( Production* production )
+void Symbol::append_production( GrammarProduction* production )
 {
     SWEET_ASSERT( production );
     productions_.push_back( production );
@@ -446,9 +446,9 @@ int Symbol::calculate_first()
     int added = 0;
     if ( symbol_type_ == SYMBOL_NON_TERMINAL )
     {
-        for ( vector<Production*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+        for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
-            const Production* production = *i;
+            const GrammarProduction* production = *i;
             SWEET_ASSERT( production );  
                   
             const vector<Symbol*>& symbols = production->symbols();
@@ -490,9 +490,9 @@ int Symbol::calculate_first()
 int Symbol::calculate_follow()
 {
     int added = 0;
-    for ( vector<Production*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        const Production* production = *i;
+        const GrammarProduction* production = *i;
         SWEET_ASSERT( production );
                     
         const vector<Symbol*>& symbols = production->symbols();

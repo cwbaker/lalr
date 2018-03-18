@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_PRODUCTION_HPP_INCLUDED
-#define SWEET_LALR_PRODUCTION_HPP_INCLUDED
+#ifndef SWEET_LALR_GRAMMARPRODUCTION_HPP_INCLUDED
+#define SWEET_LALR_GRAMMARPRODUCTION_HPP_INCLUDED
 
 #include <string>
 #include <vector>
@@ -18,17 +18,17 @@ class Symbol;
 // A production specifying a symbol on the left hand side that is reduced
 // from zero or more nodes on the right hand side.
 */
-class Production
+class GrammarProduction
 {
-    int index_; ///< The index of this Production.
-    Symbol* symbol_; ///< The symbol on the left hand side of this Production.
-    int line_; ///< The line in the grammar that this Production was defined on.
-    const GrammarAction* action_; ///< The action taken when this Production is reduced or null if there is no action.
+    int index_; ///< The index of this GrammarProduction.
+    Symbol* symbol_; ///< The symbol on the left hand side of this GrammarProduction.
+    int line_; ///< The line in the grammar that this GrammarProduction was defined on.
+    const GrammarAction* action_; ///< The action taken when this GrammarProduction is reduced or null if there is no action.
     std::vector<Symbol*> symbols_; ///< The symbols on the right hand side of this production.
     const Symbol* precedence_symbol_; /// The symbol that defines precedence for this production or null to use the right most terminal.
 
     public:
-        Production( int index, Symbol* symbol, int line, const GrammarAction* action );
+        GrammarProduction( int index, Symbol* symbol, int line, const GrammarAction* action );
 
         int index() const;
         Symbol* symbol() const;

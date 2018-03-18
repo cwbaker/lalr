@@ -5,7 +5,7 @@
 
 #include "GrammarItem.hpp"
 #include "Symbol.hpp"
-#include "Production.hpp"
+#include "GrammarProduction.hpp"
 #include "assert.hpp"
 
 using std::vector;
@@ -31,7 +31,7 @@ GrammarItem::GrammarItem()
 // @param position
 //  The position of the dot in this item.
 */
-GrammarItem::GrammarItem( Production* production, int position )
+GrammarItem::GrammarItem( GrammarProduction* production, int position )
 : production_( production ),
   position_( position ),
   lookahead_symbols_()
@@ -43,7 +43,7 @@ GrammarItem::GrammarItem( Production* production, int position )
 /**
 // Get the production for this item.
 */
-Production* GrammarItem::production() const
+GrammarProduction* GrammarItem::production() const
 {
     return production_;
 }

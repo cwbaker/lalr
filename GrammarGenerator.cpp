@@ -4,7 +4,7 @@
 //
 
 #include "GrammarGenerator.hpp"
-#include "Production.hpp"
+#include "GrammarProduction.hpp"
 #include "State.hpp"
 #include "GrammarItem.hpp"
 #include "Grammar.hpp"
@@ -168,7 +168,7 @@ std::set<const Symbol*> GrammarGenerator::lookahead( const GrammarItem& item ) c
 {
     set<const Symbol*> lookahead_symbols;
 
-    const Production* production = item.production();
+    const GrammarProduction* production = item.production();
     SWEET_ASSERT( production );
         
     const vector<Symbol*>& symbols = production->symbols();    
@@ -220,10 +220,10 @@ void GrammarGenerator::closure( const std::shared_ptr<State>& state )
             const Symbol* symbol = item->production()->symbol_by_position( item->position() );
             if ( symbol )
             {
-                const vector<Production*>& productions = symbol->productions();
-                for ( vector<Production*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+                const vector<GrammarProduction*>& productions = symbol->productions();
+                for ( vector<GrammarProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
                 {
-                    Production* production = *j;
+                    GrammarProduction* production = *j;
                     SWEET_ASSERT( production );
                     added += state->add_item( production, 0 );
                 }
@@ -288,10 +288,10 @@ int GrammarGenerator::lookahead_closure( State* state ) const
         if ( symbol )
         {
             set<const Symbol*> lookahead_symbols = lookahead( *item );        
-            const vector<Production*>& productions = symbol->productions();
-            for ( vector<Production*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
+            const vector<GrammarProduction*>& productions = symbol->productions();
+            for ( vector<GrammarProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
-                Production* production = *j;
+                GrammarProduction* production = *j;
                 SWEET_ASSERT( production );
                 added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
             }
@@ -354,9 +354,9 @@ int GrammarGenerator::lookahead_goto( State* state ) const
 */
 void GrammarGenerator::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
 {
-    for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        Production* production = i->get();
+        GrammarProduction* production = i->get();
         SWEET_ASSERT( production );
         production->replace_references_to_symbol( to_symbol, with_symbol );
     }
@@ -399,9 +399,9 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
             int references = 0;            
             if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
             {
-                for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+                for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
-                    const Production* production = i->get();
+                    const GrammarProduction* production = i->get();
                     SWEET_ASSERT( production );
                     if ( production->symbol()->symbol_type() != SYMBOL_TERMINAL )
                     {
@@ -429,7 +429,7 @@ void GrammarGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     SWEET_ASSERT( error_symbol_ );
 
-    const vector<Production*>& productions = error_symbol_->productions();
+    const vector<GrammarProduction*>& productions = error_symbol_->productions();
     if ( !productions.empty() )
     {
         fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
@@ -529,9 +529,9 @@ void GrammarGenerator::calculate_implicit_terminal_symbols()
 */
 void GrammarGenerator::calculate_precedence_of_productions()
 {
-    for ( vector<unique_ptr<Production>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
-        Production* production = i->get();
+        GrammarProduction* production = i->get();
         SWEET_ASSERT( production );       
         if ( production->precedence() == 0 )
         {
@@ -732,9 +732,9 @@ void GrammarGenerator::generate_reduce_transitions()
 //  The Symbol that the reduction is to be performed on.
 //
 // @param production
-//  The Production that is to be reduced.
+//  The GrammarProduction that is to be reduced.
 */
-void GrammarGenerator::generate_reduce_transition( State* state, const Symbol* symbol, const Production* production )
+void GrammarGenerator::generate_reduce_transition( State* state, const Symbol* symbol, const GrammarProduction* production )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( symbol );

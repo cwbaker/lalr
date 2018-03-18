@@ -9,7 +9,7 @@ for _, build in build:default_builds() do
             "Grammar.cpp",
             "GrammarParser.cpp",
             "GrammarItem.cpp",
-            "Production.cpp",
+            "GrammarProduction.cpp",
             "State.cpp",
             "Symbol.cpp",
             "Transition.cpp",

@@ -11,7 +11,7 @@ namespace lalr
 {
 
 class Symbol;
-class Production;
+class GrammarProduction;
 
 /**
 // An item that defines the positions in the grammar that a state 
@@ -19,14 +19,14 @@ class Production;
 */
 class GrammarItem
 {
-    Production* production_; ///< The production that this item is for.
+    GrammarProduction* production_; ///< The production that this item is for.
     int position_; ///< The position of the dot in this item.
     mutable std::set<const Symbol*> lookahead_symbols_; ///< The lookahead Symbols for this item.
 
     public:
         GrammarItem();
-        GrammarItem( Production* production, int position );
-        Production* production() const;
+        GrammarItem( GrammarProduction* production, int position );
+        GrammarProduction* production() const;
         int position() const;
         bool dot_at_beginning() const;
         bool dot_at_end() const;

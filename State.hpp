@@ -32,8 +32,8 @@ public:
     int index() const;
     bool operator<( const State& state ) const;
 
-    int add_item( Production* production, int position );
-    int add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols );
+    int add_item( GrammarProduction* production, int position );
+    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols );
     void add_transition( const Symbol* symbol, State* state );
     void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
     void add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );

@@ -126,7 +126,7 @@ bool State::operator<( const State& state ) const
 // @return
 //  The number of items added (0 or 1).
 */
-int State::add_item( Production* production, int position )
+int State::add_item( GrammarProduction* production, int position )
 {
     SWEET_ASSERT( production );
     return items_.insert( GrammarItem(production, position) ).second ? 1 : 0;
@@ -148,7 +148,7 @@ int State::add_item( Production* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int State::add_lookahead_symbols( Production* production, int position, const std::set<const Symbol*>& lookahead_symbols )
+int State::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );

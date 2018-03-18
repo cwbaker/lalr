@@ -1,9 +1,9 @@
 //
-// Production.cpp
+// GrammarProduction.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "Production.hpp"
+#include "GrammarProduction.hpp"
 #include "Symbol.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-Production::Production( int index, Symbol* symbol, int line, const GrammarAction* action )
+GrammarProduction::GrammarProduction( int index, Symbol* symbol, int line, const GrammarAction* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -43,7 +43,7 @@ Production::Production( int index, Symbol* symbol, int line, const GrammarAction
 // @return
 //  The index.
 */
-int Production::index() const
+int GrammarProduction::index() const
 {
     return index_;
 }
@@ -54,7 +54,7 @@ int Production::index() const
 // @return
 //  The symbol.
 */
-Symbol* Production::symbol() const
+Symbol* GrammarProduction::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -66,7 +66,7 @@ Symbol* Production::symbol() const
 // @return
 //  The line.
 */
-int Production::line() const
+int GrammarProduction::line() const
 {
     return line_;
 }
@@ -81,7 +81,7 @@ int Production::line() const
 // @return
 //  The number of references.
 */
-int Production::count_references_to_symbol( const Symbol* symbol ) const
+int GrammarProduction::count_references_to_symbol( const Symbol* symbol ) const
 {
     int references = 0;
     for ( vector<Symbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
@@ -103,7 +103,7 @@ int Production::count_references_to_symbol( const Symbol* symbol ) const
 //  The rightmost terminal symbol or null if there was more than one potential
 //  rightmost terminal symbol.
 */
-const Symbol* Production::find_rightmost_terminal_symbol() const
+const Symbol* GrammarProduction::find_rightmost_terminal_symbol() const
 {
     vector<Symbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
@@ -123,7 +123,7 @@ const Symbol* Production::find_rightmost_terminal_symbol() const
 //  The symbol at \e position or null if \e position refers past the end of
 //  this production.
 */
-const Symbol* Production::symbol_by_position( int position ) const
+const Symbol* GrammarProduction::symbol_by_position( int position ) const
 {
     return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
 }
@@ -134,7 +134,7 @@ const Symbol* Production::symbol_by_position( int position ) const
 // @return
 //  The symbols.
 */
-const std::vector<Symbol*>& Production::symbols() const
+const std::vector<Symbol*>& GrammarProduction::symbols() const
 {
     return symbols_;
 }
@@ -145,7 +145,7 @@ const std::vector<Symbol*>& Production::symbols() const
 // @return
 //  The length of the right-hand side of this production.
 */
-int Production::length() const
+int GrammarProduction::length() const
 {
     return int(symbols_.size());
 }
@@ -156,7 +156,7 @@ int Production::length() const
 // @return
 //  The description.
 */
-std::string Production::description() const
+std::string GrammarProduction::description() const
 {
     std::string description;
     description.reserve( 1024 );
@@ -170,7 +170,7 @@ std::string Production::description() const
 // @param description
 //  A variable to receive the description of this production.
 */
-void Production::describe( std::string* description ) const
+void GrammarProduction::describe( std::string* description ) const
 {
     SWEET_ASSERT( description );
     // symbol_->describe( description );
@@ -190,7 +190,7 @@ void Production::describe( std::string* description ) const
 // @param symbol
 //  The symbol to append (assumed not null).
 */
-void Production::append_symbol( Symbol* symbol )
+void GrammarProduction::append_symbol( Symbol* symbol )
 {
     symbols_.push_back( symbol );
 }
@@ -202,7 +202,7 @@ void Production::append_symbol( Symbol* symbol )
 //  The action to take when this production is reduced or null to set this
 //  production to have no action.
 */
-void Production::set_action( const GrammarAction* action )
+void GrammarProduction::set_action( const GrammarAction* action )
 {
     action_ = action;
 }
@@ -213,17 +213,17 @@ void Production::set_action( const GrammarAction* action )
 // @return
 //  The action or null if this production doesn't have an action.
 */
-const GrammarAction* Production::action() const
+const GrammarAction* GrammarProduction::action() const
 {
     return action_;
 }
 
-int Production::action_index() const
+int GrammarProduction::action_index() const
 {
     return action_ ? action_->index() : GrammarAction::INVALID_INDEX;
 }
 
-const Symbol* Production::precedence_symbol() const
+const Symbol* GrammarProduction::precedence_symbol() const
 {
     return precedence_symbol_;
 }
@@ -234,7 +234,7 @@ const Symbol* Production::precedence_symbol() const
 // @return
 //  The precedence of this production.
 */
-int Production::precedence() const
+int GrammarProduction::precedence() const
 {
     return precedence_symbol_ ? precedence_symbol_->precedence() : 0;
 }
@@ -246,7 +246,7 @@ int Production::precedence() const
 //  The symbol to have this production inherit its precedence from (assumed 
 //  not null).
 */
-void Production::set_precedence_symbol( const Symbol* symbol )
+void GrammarProduction::set_precedence_symbol( const Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
@@ -262,7 +262,7 @@ void Production::set_precedence_symbol( const Symbol* symbol )
 // @param with_symbol
 //  The symbol to replace the references with.
 */
-void Production::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
+void GrammarProduction::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
 {
     if ( symbol_ == to_symbol )
     {
@@ -282,35 +282,3 @@ void Production::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_s
         }
     }
 }
-
-/**
-// Describe the productions in \e productions.
-//
-// @param productions
-//  The productions to describe.
-//
-// @param description
-//  A variable to receive the description of the productions.
-*/
-// void Production::describe( const std::set<const Production*>& productions, std::string* description )
-// {
-//     SWEET_ASSERT( description );
-
-//     std::set<const Production*>::const_iterator i = productions.begin(); 
-//     if ( i != productions.end() )
-//     {
-//         const Production* production = *i;
-//         SWEET_ASSERT( production );        
-//         production->describe( description );
-//         ++i;        
-//     }
-    
-//     while ( i != productions.end() )
-//     {
-//         const Production* production = *i;
-//         SWEET_ASSERT( production );
-//         description->append( ", " );
-//         production->describe( description );
-//         ++i;        
-//     }
-// }

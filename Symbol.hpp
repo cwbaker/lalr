@@ -14,7 +14,7 @@ namespace sweet
 namespace lalr
 {
 
-class Production;
+class GrammarProduction;
 
 class Symbol
 {
@@ -29,7 +29,7 @@ class Symbol
     bool nullable_; ///< True if this symbol is nullable otherwise false.
     std::set<const Symbol*> first_; ///< The symbols that can start this symbol in a production or regular expression.
     std::set<const Symbol*> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
-    std::vector<Production*> productions_; ///< The productions that reduce to this symbol.
+    std::vector<GrammarProduction*> productions_; ///< The productions that reduce to this symbol.
 
 public:
     Symbol( const std::string& lexeme );
@@ -45,7 +45,7 @@ public:
     bool nullable() const;
     const std::set<const Symbol*>& first() const;
     const std::set<const Symbol*>& follow() const;
-    const std::vector<Production*>& productions() const;
+    const std::vector<GrammarProduction*>& productions() const;
     Symbol* implicit_terminal() const;
 
     void set_lexeme( const std::string& lexeme );
@@ -57,7 +57,7 @@ public:
     void set_line( int line );
     void set_index( int index );
     void set_nullable( bool nullable );
-    void append_production( Production* production );
+    void append_production( GrammarProduction* production );
     void calculate_identifier();
     void replace_by_non_terminal( const Symbol* non_terminal_symbol );    
     int add_symbol_to_first( const Symbol* symbol );

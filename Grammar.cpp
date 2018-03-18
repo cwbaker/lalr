@@ -6,7 +6,7 @@
 #include "Grammar.hpp"
 #include "GrammarParser.hpp"
 #include "Symbol.hpp"
-#include "Production.hpp"
+#include "GrammarProduction.hpp"
 #include "GrammarAction.hpp"
 #include "GrammarGenerator.hpp"
 #include "ParserAllocations.hpp"
@@ -60,7 +60,7 @@ std::vector<std::unique_ptr<Symbol>>& Grammar::symbols()
     return symbols_;
 }
 
-std::vector<std::unique_ptr<Production>>& Grammar::productions()
+std::vector<std::unique_ptr<GrammarProduction>>& Grammar::productions()
 {
     return productions_;
 }
@@ -396,19 +396,19 @@ Symbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lexeme_typ
     return symbol;
 }
 
-Production* Grammar::add_production( Symbol* symbol )
+GrammarProduction* Grammar::add_production( Symbol* symbol )
 {
     SWEET_ASSERT( symbol );
     if ( productions_.empty() )
     {
         SWEET_ASSERT( start_symbol_ );
-        unique_ptr<Production> production( new Production(int(productions_.size()), start_symbol_, 0, NULL) );
+        unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
         productions_.push_back( move(production) );
     }
 
-    unique_ptr<Production> production( new Production(int(productions_.size()), symbol, -1, nullptr) );
+    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, -1, nullptr) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
     return productions_.back().get();
