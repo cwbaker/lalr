@@ -5,7 +5,6 @@
 
 #include "Transition.hpp"
 #include "Symbol.hpp"
-#include "State.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
 #include <stdio.h>
@@ -57,7 +56,7 @@ Transition::Transition( const Symbol* symbol, const Symbol* reduced_symbol, int 
 // @param state
 //  The state that this transition is to (assumed not null).
 */
-Transition::Transition( const Symbol* symbol, State* state )
+Transition::Transition( const Symbol* symbol, GrammarState* state )
 : symbol_( symbol ),
   state_( state ),
   reduced_symbol_( nullptr ),
@@ -77,7 +76,7 @@ Transition::Transition( const Symbol* symbol, State* state )
 // @return
 //  The state or null if this transition is a reduce transition.
 */
-State* Transition::state() const
+GrammarState* Transition::state() const
 {
     return state_;
 }

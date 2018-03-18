@@ -1,27 +1,22 @@
 //
-// State.cpp
+// GrammarState.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "State.hpp"
+#include "GrammarState.hpp"
 #include "GrammarItem.hpp"
 #include "Transition.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
+using std::set;
 using namespace sweet;
 using namespace sweet::lalr;
-
-using std::set;
-
-#if defined(BUILD_PLATFORM_MSVC)
-#define snprintf _snprintf
-#endif
 
 /**
 // Constructor.
 */
-State::State()
+GrammarState::GrammarState()
 : items_(),
   transitions_(),
   processed_( false ),
@@ -35,7 +30,7 @@ State::State()
 // @return
 //  The items.
 */
-const std::set<GrammarItem>& State::items() const
+const std::set<GrammarItem>& GrammarState::items() const
 {
     return items_;
 }
@@ -50,7 +45,7 @@ const std::set<GrammarItem>& State::items() const
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const Transition* State::find_transition_by_symbol( const Symbol* symbol ) const
+const Transition* GrammarState::find_transition_by_symbol( const Symbol* symbol ) const
 {    
     const Transition* transition = NULL;
     
@@ -73,7 +68,7 @@ const Transition* State::find_transition_by_symbol( const Symbol* symbol ) const
 // @return
 //  The transitions.
 */
-const std::set<Transition>& State::transitions() const
+const std::set<Transition>& GrammarState::transitions() const
 {
     return transitions_;
 }
@@ -84,7 +79,7 @@ const std::set<Transition>& State::transitions() const
 // @return
 //  True if this state has been processed otherwise false.
 */
-bool State::processed() const
+bool GrammarState::processed() const
 {
     return processed_;
 }
@@ -95,7 +90,7 @@ bool State::processed() const
 // @return
 //  The index of this state.
 */
-int State::index() const
+int GrammarState::index() const
 {
     return index_;
 }
@@ -109,7 +104,7 @@ int State::index() const
 // @return
 //  True if the items in this state are less than the items in \e state.
 */
-bool State::operator<( const State& state ) const
+bool GrammarState::operator<( const GrammarState& state ) const
 {
     return std::lexicographical_compare( items_.begin(), items_.end(), state.items_.begin(), state.items_.end() );
 }
@@ -126,7 +121,7 @@ bool State::operator<( const State& state ) const
 // @return
 //  The number of items added (0 or 1).
 */
-int State::add_item( GrammarProduction* production, int position )
+int GrammarState::add_item( GrammarProduction* production, int position )
 {
     SWEET_ASSERT( production );
     return items_.insert( GrammarItem(production, position) ).second ? 1 : 0;
@@ -148,7 +143,7 @@ int State::add_item( GrammarProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int State::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols )
+int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
@@ -165,7 +160,7 @@ int State::add_lookahead_symbols( GrammarProduction* production, int position, c
 // @param state
 //  The state to transition to (assumed not null).
 */
-void State::add_transition( const Symbol* symbol, State* state )
+void GrammarState::add_transition( const Symbol* symbol, GrammarState* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
@@ -190,7 +185,7 @@ void State::add_transition( const Symbol* symbol, State* state )
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void State::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( reduced_symbol );
@@ -227,7 +222,7 @@ void State::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, 
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void State::add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
@@ -250,7 +245,7 @@ void State::add_transition( const std::set<const Symbol*>& symbols, const Symbol
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-Transition* State::find_transition_by_symbol( const Symbol* symbol )
+Transition* GrammarState::find_transition_by_symbol( const Symbol* symbol )
 {    
     Transition* transition = NULL;  
       
@@ -270,7 +265,7 @@ Transition* State::find_transition_by_symbol( const Symbol* symbol )
 /**
 // Generate indices for the transitions in this state.
 */
-void State::generate_indices_for_transitions()
+void GrammarState::generate_indices_for_transitions()
 {
     int index = 0;
     for ( std::set<Transition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
@@ -286,7 +281,7 @@ void State::generate_indices_for_transitions()
 // @param processed
 //  True to mark this state as processed or false to mark it as not processed.
 */
-void State::set_processed( bool processed )
+void GrammarState::set_processed( bool processed )
 {
     processed_ = processed;
 }
@@ -297,7 +292,7 @@ void State::set_processed( bool processed )
 // @param index
 //  The value to set the index of this state to.
 */
-void State::set_index( int index )
+void GrammarState::set_index( int index )
 {
     index_ = index;
 }

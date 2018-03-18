@@ -11,7 +11,7 @@ namespace sweet
 namespace lalr
 {
 
-class State;
+class GrammarState;
 class Symbol;
 
 /**
@@ -24,7 +24,7 @@ class Transition
 
     private:
         const Symbol* symbol_; ///< The symbol that the transition is taken on.
-        mutable State* state_; ///< The state that is transitioned to.
+        mutable GrammarState* state_; ///< The state that is transitioned to.
         mutable const Symbol* reduced_symbol_; ///< The symbol that is reduced to or null if this isn't a reducing transition.
         mutable int reduced_length_; ///< The number of symbols on the right-hand side of the reduced production.
         mutable int precedence_; ///< The precedence of the reduce production or 0 for the default precedence or no reduction.
@@ -34,9 +34,9 @@ class Transition
 
     public:
         Transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
-        Transition( const Symbol* symbol, State* state );
+        Transition( const Symbol* symbol, GrammarState* state );
         TransitionType type() const;
-        State* state() const;
+        GrammarState* state() const;
         const Symbol* reduced_symbol() const;
         int reduced_length() const;
         int precedence() const;
