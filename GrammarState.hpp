@@ -12,6 +12,8 @@ namespace sweet
 namespace lalr
 {
 
+class GrammarSymbol;
+
 /**
 // A state in a parser's state machine.
 */
@@ -26,19 +28,19 @@ public:
     GrammarState();
 
     const std::set<GrammarItem>& items() const;
-    const Transition* find_transition_by_symbol( const Symbol* symbol ) const;
+    const Transition* find_transition_by_symbol( const GrammarSymbol* symbol ) const;
     const std::set<Transition>& transitions() const;
     bool processed() const;
     int index() const;
     bool operator<( const GrammarState& state ) const;
 
     int add_item( GrammarProduction* production, int position );
-    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols );
-    void add_transition( const Symbol* symbol, GrammarState* state );
-    void add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
-    void add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action );
+    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*>& lookahead_symbols );
+    void add_transition( const GrammarSymbol* symbol, GrammarState* state );
+    void add_transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+    void add_transition( const std::set<const GrammarSymbol*>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
     void generate_indices_for_transitions();
-    Transition* find_transition_by_symbol( const Symbol* symbol );
+    Transition* find_transition_by_symbol( const GrammarSymbol* symbol );
     void set_processed( bool processed );
     void set_index( int index );
 

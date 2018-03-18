@@ -45,7 +45,7 @@ const std::set<GrammarItem>& GrammarState::items() const
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-const Transition* GrammarState::find_transition_by_symbol( const Symbol* symbol ) const
+const Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol ) const
 {    
     const Transition* transition = NULL;
     
@@ -143,7 +143,7 @@ int GrammarState::add_item( GrammarProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const Symbol*>& lookahead_symbols )
+int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
@@ -160,7 +160,7 @@ int GrammarState::add_lookahead_symbols( GrammarProduction* production, int posi
 // @param state
 //  The state to transition to (assumed not null).
 */
-void GrammarState::add_transition( const Symbol* symbol, GrammarState* state )
+void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* state )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( state );
@@ -185,7 +185,7 @@ void GrammarState::add_transition( const Symbol* symbol, GrammarState* state )
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void GrammarState::add_transition( const Symbol* symbol, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( reduced_symbol );
@@ -222,14 +222,14 @@ void GrammarState::add_transition( const Symbol* symbol, const Symbol* reduced_s
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void GrammarState::add_transition( const std::set<const Symbol*>& symbols, const Symbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_transition( const std::set<const GrammarSymbol*>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );
     SWEET_ASSERT( precedence >= 0 );
-    for ( set<const Symbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
+    for ( set<const GrammarSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
-        const Symbol* symbol = *i;
+        const GrammarSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
     }
@@ -245,7 +245,7 @@ void GrammarState::add_transition( const std::set<const Symbol*>& symbols, const
 //  The transition or null if there is no transition on \e symbol from this
 //  state.
 */
-Transition* GrammarState::find_transition_by_symbol( const Symbol* symbol )
+Transition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol )
 {    
     Transition* transition = NULL;  
       

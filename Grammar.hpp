@@ -13,7 +13,7 @@ namespace sweet
 namespace lalr
 {
 
-class Symbol;
+class GrammarSymbol;
 class GrammarProduction;
 class GrammarAction;
 class LexerErrorPolicy;
@@ -25,7 +25,7 @@ class ParserStateMachine;
 class Grammar
 {
     std::string identifier_;
-    std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the grammar.
+    std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
     std::vector<LexerToken> whitespace_tokens_;
@@ -34,10 +34,10 @@ class Grammar
     Associativity associativity_;
     int precedence_;
     GrammarProduction* active_production_;
-    Symbol* active_symbol_;
-    Symbol* start_symbol_; ///< The start symbol.
-    Symbol* end_symbol_; ///< The end symbol.
-    Symbol* error_symbol_; ///< The error symbol.
+    GrammarSymbol* active_symbol_;
+    GrammarSymbol* start_symbol_; ///< The start symbol.
+    GrammarSymbol* end_symbol_; ///< The end symbol.
+    GrammarSymbol* error_symbol_; ///< The error symbol.
     std::unique_ptr<ParserAllocations> parser_allocations_;
     std::unique_ptr<LexerAllocations> lexer_allocations_;
     std::unique_ptr<LexerAllocations> whitespace_lexer_allocations_;
@@ -46,13 +46,13 @@ public:
     Grammar();
     ~Grammar();
     const std::string& identifier() const;
-    std::vector<std::unique_ptr<Symbol>>& symbols();
+    std::vector<std::unique_ptr<GrammarSymbol>>& symbols();
     std::vector<std::unique_ptr<GrammarProduction>>& productions();
     std::vector<std::unique_ptr<GrammarAction>>& actions();
     const std::vector<LexerToken>& whitespace_tokens() const;
-    Symbol* start_symbol() const;
-    Symbol* end_symbol() const;
-    Symbol* error_symbol() const;
+    GrammarSymbol* start_symbol() const;
+    GrammarSymbol* end_symbol() const;
+    GrammarSymbol* error_symbol() const;
     Grammar& grammar( const std::string& identifier );
     Grammar& left( int line );
     Grammar& right( int line );
@@ -71,11 +71,11 @@ public:
     bool generate( ParserStateMachine* parser_state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
-    Symbol* literal_symbol( const char* lexeme, int line );
-    Symbol* regex_symbol( const char* lexeme, int line );
-    Symbol* non_terminal_symbol( const char* lexeme, int line );
-    Symbol* add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
-    GrammarProduction* add_production( Symbol* symbol );
+    GrammarSymbol* literal_symbol( const char* lexeme, int line );
+    GrammarSymbol* regex_symbol( const char* lexeme, int line );
+    GrammarSymbol* non_terminal_symbol( const char* lexeme, int line );
+    GrammarSymbol* add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
+    GrammarProduction* add_production( GrammarSymbol* symbol );
     GrammarAction* add_action( const char* id );
 };
 

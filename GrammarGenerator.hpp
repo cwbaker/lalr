@@ -34,7 +34,7 @@ class ParserErrorPolicy;
 class ParserStateMachine;
 class ParserAllocations;
 class GrammarAction;
-class Symbol;
+class GrammarSymbol;
 class GrammarItem;
 class GrammarState;
 class GrammarProduction;
@@ -51,11 +51,11 @@ class GrammarGenerator
     std::string identifier_; ///< The identifier of the parser.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.
-    std::vector<std::unique_ptr<Symbol>> symbols_; ///< The symbols in the parser.
+    std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>> states_; ///< The states in the parser's state machine.
-    Symbol* start_symbol_; ///< The start symbol.
-    Symbol* end_symbol_; ///< The end symbol.
-    Symbol* error_symbol_; ///< The error symbol.
+    GrammarSymbol* start_symbol_; ///< The start symbol.
+    GrammarSymbol* end_symbol_; ///< The end symbol.
+    GrammarSymbol* error_symbol_; ///< The error symbol.
     GrammarState* start_state_; ///< The start state.
     int errors_; ///< The number of errors that occured during parsing and generation.
 
@@ -67,12 +67,12 @@ class GrammarGenerator
     private:
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
-        std::set<const Symbol*> lookahead( const GrammarItem& item ) const;
+        std::set<const GrammarSymbol*> lookahead( const GrammarItem& item ) const;
         void closure( const std::shared_ptr<GrammarState>& state );
-        std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const Symbol& symbol );
+        std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol );
         int lookahead_closure( GrammarState* state ) const;
         int lookahead_goto( GrammarState* state ) const;
-        void replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol );
+        void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
         void check_for_undefined_symbol_errors();
         void check_for_unreferenced_symbol_errors();
         void check_for_error_symbol_on_left_hand_side_errors();
@@ -83,10 +83,10 @@ class GrammarGenerator
         void calculate_symbol_indices();
         void calculate_first();
         void calculate_follow();
-        void generate_states( const Symbol* start_symbol, const Symbol* end_symbol, const std::vector<std::unique_ptr<Symbol>>& symbols );
+        void generate_states( const GrammarSymbol* start_symbol, const GrammarSymbol* end_symbol, const std::vector<std::unique_ptr<GrammarSymbol>>& symbols );
         void generate_indices_for_states();
         void generate_reduce_transitions();
-        void generate_reduce_transition( GrammarState* state, const Symbol* symbol, const GrammarProduction* production );
+        void generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production );
         void generate_indices_for_transitions();
         void populate_parser_allocations( const Grammar& grammar, ParserAllocations* parser_allocations, LexerErrorPolicy* lexer_error_policy );
 };

@@ -4,7 +4,7 @@
 //
 
 #include "GrammarProduction.hpp"
-#include "Symbol.hpp"
+#include "GrammarSymbol.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
 
@@ -27,7 +27,7 @@ using namespace sweet::lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-GrammarProduction::GrammarProduction( int index, Symbol* symbol, int line, const GrammarAction* action )
+GrammarProduction::GrammarProduction( int index, GrammarSymbol* symbol, int line, const GrammarAction* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
@@ -54,7 +54,7 @@ int GrammarProduction::index() const
 // @return
 //  The symbol.
 */
-Symbol* GrammarProduction::symbol() const
+GrammarSymbol* GrammarProduction::symbol() const
 {
     SWEET_ASSERT( symbol_ );
     return symbol_;
@@ -81,10 +81,10 @@ int GrammarProduction::line() const
 // @return
 //  The number of references.
 */
-int GrammarProduction::count_references_to_symbol( const Symbol* symbol ) const
+int GrammarProduction::count_references_to_symbol( const GrammarSymbol* symbol ) const
 {
     int references = 0;
-    for ( vector<Symbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<GrammarSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         references += (symbol == *i ? 1 : 0);
     }
@@ -103,9 +103,9 @@ int GrammarProduction::count_references_to_symbol( const Symbol* symbol ) const
 //  The rightmost terminal symbol or null if there was more than one potential
 //  rightmost terminal symbol.
 */
-const Symbol* GrammarProduction::find_rightmost_terminal_symbol() const
+const GrammarSymbol* GrammarProduction::find_rightmost_terminal_symbol() const
 {
-    vector<Symbol*>::const_reverse_iterator i = symbols_.rbegin();
+    vector<GrammarSymbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
     {
         ++i;
@@ -123,7 +123,7 @@ const Symbol* GrammarProduction::find_rightmost_terminal_symbol() const
 //  The symbol at \e position or null if \e position refers past the end of
 //  this production.
 */
-const Symbol* GrammarProduction::symbol_by_position( int position ) const
+const GrammarSymbol* GrammarProduction::symbol_by_position( int position ) const
 {
     return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
 }
@@ -134,7 +134,7 @@ const Symbol* GrammarProduction::symbol_by_position( int position ) const
 // @return
 //  The symbols.
 */
-const std::vector<Symbol*>& GrammarProduction::symbols() const
+const std::vector<GrammarSymbol*>& GrammarProduction::symbols() const
 {
     return symbols_;
 }
@@ -175,9 +175,9 @@ void GrammarProduction::describe( std::string* description ) const
     SWEET_ASSERT( description );
     // symbol_->describe( description );
     description->append( " <- " );
-    for ( vector<Symbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<GrammarSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        const Symbol* symbol = *i;
+        const GrammarSymbol* symbol = *i;
         SWEET_ASSERT( symbol );
         // symbol->describe( description );
         description->append( " " );        
@@ -190,7 +190,7 @@ void GrammarProduction::describe( std::string* description ) const
 // @param symbol
 //  The symbol to append (assumed not null).
 */
-void GrammarProduction::append_symbol( Symbol* symbol )
+void GrammarProduction::append_symbol( GrammarSymbol* symbol )
 {
     symbols_.push_back( symbol );
 }
@@ -223,7 +223,7 @@ int GrammarProduction::action_index() const
     return action_ ? action_->index() : GrammarAction::INVALID_INDEX;
 }
 
-const Symbol* GrammarProduction::precedence_symbol() const
+const GrammarSymbol* GrammarProduction::precedence_symbol() const
 {
     return precedence_symbol_;
 }
@@ -246,7 +246,7 @@ int GrammarProduction::precedence() const
 //  The symbol to have this production inherit its precedence from (assumed 
 //  not null).
 */
-void GrammarProduction::set_precedence_symbol( const Symbol* symbol )
+void GrammarProduction::set_precedence_symbol( const GrammarSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     SWEET_ASSERT( !precedence_symbol_ );
@@ -262,7 +262,7 @@ void GrammarProduction::set_precedence_symbol( const Symbol* symbol )
 // @param with_symbol
 //  The symbol to replace the references with.
 */
-void GrammarProduction::replace_references_to_symbol( Symbol* to_symbol, Symbol* with_symbol )
+void GrammarProduction::replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol )
 {
     if ( symbol_ == to_symbol )
     {
@@ -274,7 +274,7 @@ void GrammarProduction::replace_references_to_symbol( Symbol* to_symbol, Symbol*
         precedence_symbol_ = with_symbol;
     }
 
-    for ( vector<Symbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    for ( vector<GrammarSymbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         if ( *i == to_symbol )
         {

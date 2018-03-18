@@ -5,7 +5,7 @@
 
 #include "Grammar.hpp"
 #include "GrammarParser.hpp"
-#include "Symbol.hpp"
+#include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "GrammarAction.hpp"
 #include "GrammarGenerator.hpp"
@@ -55,7 +55,7 @@ const std::string& Grammar::identifier() const
     return identifier_;
 }
 
-std::vector<std::unique_ptr<Symbol>>& Grammar::symbols()
+std::vector<std::unique_ptr<GrammarSymbol>>& Grammar::symbols()
 {
     return symbols_;
 }
@@ -75,17 +75,17 @@ const std::vector<LexerToken>& Grammar::whitespace_tokens() const
     return whitespace_tokens_;
 }
 
-Symbol* Grammar::start_symbol() const
+GrammarSymbol* Grammar::start_symbol() const
 {
     return start_symbol_;
 }
 
-Symbol* Grammar::end_symbol() const
+GrammarSymbol* Grammar::end_symbol() const
 {
     return end_symbol_;
 }
 
-Symbol* Grammar::error_symbol() const
+GrammarSymbol* Grammar::error_symbol() const
 {
     return error_symbol_;
 }
@@ -194,7 +194,7 @@ Grammar& Grammar::error()
 {
     if ( associativity_ != ASSOCIATE_NULL )
     {
-        Symbol* symbol = error_symbol();
+        GrammarSymbol* symbol = error_symbol();
         symbol->set_associativity( associativity_ );        
         symbol->set_precedence( precedence_ );        
     }
@@ -231,7 +231,7 @@ Grammar& Grammar::literal( const char* literal, int line )
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {
-        Symbol* symbol = literal_symbol( literal, line );
+        GrammarSymbol* symbol = literal_symbol( literal, line );
         symbol->set_associativity( associativity_ );
         symbol->set_precedence( precedence_ );
     }
@@ -265,7 +265,7 @@ Grammar& Grammar::regex( const char* regex, int line )
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {
-        Symbol* symbol = regex_symbol( regex, line );
+        GrammarSymbol* symbol = regex_symbol( regex, line );
         symbol->set_associativity( associativity_ );
         symbol->set_precedence( precedence_ );
     }
@@ -295,7 +295,7 @@ Grammar& Grammar::identifier( const char* identifier, int line )
     SWEET_ASSERT( active_symbol_ || associativity_ != ASSOCIATE_NULL );
     if ( associativity_ != ASSOCIATE_NULL )
     {
-        Symbol* symbol = add_symbol( identifier, line, LEXEME_NULL, SYMBOL_TERMINAL );
+        GrammarSymbol* symbol = add_symbol( identifier, line, LEXEME_NULL, SYMBOL_TERMINAL );
         symbol->set_associativity( associativity_ );
         symbol->set_precedence( precedence_ );
     }
@@ -333,7 +333,7 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
 
     for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        Symbol* symbol = i->get();
+        GrammarSymbol* symbol = i->get();
         SWEET_ASSERT( symbol );
         if ( !symbol->productions().empty() )
         {
@@ -349,39 +349,39 @@ bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* pa
     return errors == 0;
 }
 
-Symbol* Grammar::literal_symbol( const char* lexeme, int line )
+GrammarSymbol* Grammar::literal_symbol( const char* lexeme, int line )
 {
     SWEET_ASSERT( lexeme );
     SWEET_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_LITERAL, SYMBOL_TERMINAL );
 }
 
-Symbol* Grammar::regex_symbol( const char* lexeme, int line )
+GrammarSymbol* Grammar::regex_symbol( const char* lexeme, int line )
 {
     SWEET_ASSERT( lexeme );
     SWEET_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_REGULAR_EXPRESSION, SYMBOL_TERMINAL );
 }
 
-Symbol* Grammar::non_terminal_symbol( const char* lexeme, int line )
+GrammarSymbol* Grammar::non_terminal_symbol( const char* lexeme, int line )
 {
     SWEET_ASSERT( lexeme );
     SWEET_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_NULL, SYMBOL_NON_TERMINAL );
 }
 
-Symbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type )
+GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type )
 {
     SWEET_ASSERT( lexeme );
     SWEET_ASSERT( line >= 0 );
-    vector<unique_ptr<Symbol>>::const_iterator i = symbols_.begin();
+    vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
     {
         ++i;
     }    
     if ( i == symbols_.end() )
     {
-        unique_ptr<Symbol> symbol( new Symbol(lexeme) );
+        unique_ptr<GrammarSymbol> symbol( new GrammarSymbol(lexeme) );
         symbol->set_line( line );
         symbol->set_lexeme_type( lexeme_type );
         symbol->set_symbol_type( symbol_type );
@@ -389,14 +389,14 @@ Symbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lexeme_typ
         return symbols_.back().get();
     }
 
-    Symbol* symbol = i->get();
+    GrammarSymbol* symbol = i->get();
     SWEET_ASSERT( symbol );
     // SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
     // SWEET_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 
-GrammarProduction* Grammar::add_production( Symbol* symbol )
+GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
 {
     SWEET_ASSERT( symbol );
     if ( productions_.empty() )

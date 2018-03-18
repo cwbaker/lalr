@@ -11,7 +11,7 @@ for _, build in build:default_builds() do
             "GrammarItem.cpp",
             "GrammarProduction.cpp",
             "GrammarState.cpp",
-            "Symbol.cpp",
+            "GrammarSymbol.cpp",
             "Transition.cpp",
             'ParserAllocations.cpp'
         };

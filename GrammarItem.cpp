@@ -4,7 +4,7 @@
 //    
 
 #include "GrammarItem.hpp"
-#include "Symbol.hpp"
+#include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
 
@@ -93,7 +93,7 @@ bool GrammarItem::dot_at_end() const
 //  True if \e symbol could be one of the next symbols to be visited from
 //  this item otherwise false.
 */
-bool GrammarItem::next_node( const Symbol& symbol ) const
+bool GrammarItem::next_node( const GrammarSymbol& symbol ) const
 {
     return production_->symbol_by_position(position_) == &symbol;
 }
@@ -104,7 +104,7 @@ bool GrammarItem::next_node( const Symbol& symbol ) const
 // @return
 //  The lookahead set.
 */
-const std::set<const Symbol*>& GrammarItem::lookahead_symbols() const
+const std::set<const GrammarSymbol*>& GrammarItem::lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -137,7 +137,7 @@ bool GrammarItem::operator<( const GrammarItem& item ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int GrammarItem::add_lookahead_symbols( const std::set<const Symbol*>& lookahead_symbols ) const
+int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
