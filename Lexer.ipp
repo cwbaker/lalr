@@ -6,7 +6,7 @@
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
 #include "LexerStateMachine.hpp"
-#include "LexerErrorPolicy.hpp"
+#include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -45,11 +45,11 @@ Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler
 //  reached.
 //
 // @param error_policy
-//  The LexerErrorPolicy to use to report errors to or null to silently 
+//  The ErrorPolicy to use to report errors to or null to silently 
 //  swallow errors.
 */
 template <class Iterator, class Char, class Traits, class Allocator>
-Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine, const void* end_symbol, LexerErrorPolicy* error_policy )
+Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine, const void* end_symbol, ErrorPolicy* error_policy )
 : state_machine_( state_machine ),
   whitespace_state_machine_( whitespace_state_machine ),
   end_symbol_( end_symbol ),
@@ -316,7 +316,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 }
 
 /**
-// Report an error to the `LexerErrorPolicy` used by this `Lexer`.
+// Report an error to the `ErrorPolicy` used by this `Lexer`.
 //
 // @param line
 //  The line number to associate the error with (if any).
@@ -337,7 +337,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::fire_error( int line, int error, 
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lexer_error( line, error, format, args );
+        error_policy_->lalr_error( line, error, format, args );
         va_end( args );
     }    
 }

@@ -11,26 +11,11 @@
 namespace sweet
 {
 
-namespace error
-{
-
-class Error;
-
-}
-
 namespace lalr
 {
 
+class ErrorPolicy;
 class LexerStateMachine;
-class LexerErrorPolicy;
-
-}
-
-namespace lalr
-{
-
-class LexerErrorPolicy;
-class ParserErrorPolicy;
 class GrammarCompiler;
 class GrammarAction;
 class GrammarSymbol;
@@ -46,7 +31,7 @@ class Grammar;
 */
 class GrammarGenerator
 {
-    ParserErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
+    ErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
     std::string identifier_; ///< The identifier of the parser.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.
@@ -65,7 +50,7 @@ class GrammarGenerator
         const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
         const std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& states() const;
         const GrammarState* start_state() const;
-        int generate( Grammar& grammar, GrammarCompiler* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy );
+        int generate( Grammar& grammar, GrammarCompiler* parser_allocations, ErrorPolicy* error_policy );
                 
     private:
         void fire_error( int line, int error, const char* format, ... );

@@ -11,7 +11,6 @@
 #include "GrammarSymbol.hpp"   
 #include "GrammarAction.hpp"
 #include "GrammarCompiler.hpp"
-#include "ParserErrorPolicy.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
 #include "ParserSymbol.hpp"
@@ -19,6 +18,7 @@
 #include "ParserStateMachine.hpp"
 #include "LexerGenerator.hpp"
 #include "LexerAllocations.hpp"
+#include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -78,7 +78,7 @@ const GrammarState* GrammarGenerator::start_state() const
     return start_state_;
 }
 
-int GrammarGenerator::generate( Grammar& grammar, GrammarCompiler* parser_allocations, ParserErrorPolicy* error_policy, LexerErrorPolicy* /*lexer_error_policy*/ )
+int GrammarGenerator::generate( Grammar& grammar, GrammarCompiler* parser_allocations, ErrorPolicy* error_policy )
 {
     SWEET_ASSERT( parser_allocations );
 
@@ -137,7 +137,7 @@ void GrammarGenerator::fire_error( int line, int error, const char* format, ... 
     {
         va_list args;
         va_start( args, format );
-        error_policy_->parser_error( line, error, format, args );
+        error_policy_->lalr_error( line, error, format, args );
         va_end( args );
     }
 }
@@ -158,7 +158,7 @@ void GrammarGenerator::fire_printf( const char* format, ... ) const
         SWEET_ASSERT( format );
         va_list args;
         va_start( args, format );
-        error_policy_->parser_vprintf( format, args );
+        error_policy_->lalr_vprintf( format, args );
         va_end( args );
     }
 }

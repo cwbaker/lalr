@@ -4,6 +4,10 @@ buildfile 'lalrc/lalrc.build';
 for _, build in build:default_builds() do    
     local lalr = build:Library "lalr" {
         build:Cxx () {
+            "ErrorPolicy.cpp",
+        };
+
+        build:Cxx () {
             "GrammarAction.cpp",
             "GrammarGenerator.cpp",
             "Grammar.cpp",
@@ -18,7 +22,6 @@ for _, build in build:default_builds() do
 
         build:Cxx () {
             "ParserAction.cpp",
-            "ParserErrorPolicy.cpp",
             "ParserStateMachine.cpp",
             "ParserState.cpp",
             "ParserSymbol.cpp",
@@ -28,7 +31,6 @@ for _, build in build:default_builds() do
         build:Cxx () {
             "LexerAction.cpp",
             "LexerAllocations.cpp",
-            "LexerErrorPolicy.cpp",
             "LexerGenerator.cpp",
             "LexerState.cpp",
             "LexerStateMachine.cpp",

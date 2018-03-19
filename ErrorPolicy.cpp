@@ -1,22 +1,22 @@
 //
-// ParserErrorPolicy.cpp
+// ErrorPolicy.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "ParserErrorPolicy.hpp"
+#include "ErrorPolicy.hpp"
+#include <stdio.h>
 
-using namespace sweet;
 using namespace sweet::lalr;
 
 /**
 // Destructor.
 */
-ParserErrorPolicy::~ParserErrorPolicy()
+ErrorPolicy::~ErrorPolicy()
 {
 }
 
 /**
-// An %error has occured in a %ParserStateMachine.
+// An %error has occured in the *lalr* library.
 //
 // @param line
 //  The line number that the %error occured on.
@@ -30,13 +30,15 @@ ParserErrorPolicy::~ParserErrorPolicy()
 // @param ...
 //  Arguments as described by *format*.
 */
-void 
-ParserErrorPolicy::parser_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
+void ErrorPolicy::lalr_error( int line, int /*error*/, const char* format, va_list args )
 {
+    fprintf( stderr, "lalr (%d): ERROR: ", line );
+    vfprintf( stderr, format, args );
+    fprintf( stderr, "\n" );
 }
 
 /**
-// Debug output has been sent from a %ParserStateMachine.
+// Debug output has been sent from the *lalr* library.
 //
 // @param format
 //  The printf-style format string that describes the text to print.
@@ -44,7 +46,8 @@ ParserErrorPolicy::parser_error( int /*line*/, int /*error*/, const char* /*form
 // @param args
 //  Arguments as described by \e format.
 */
-void 
-ParserErrorPolicy::parser_vprintf( const char* /*format*/, va_list /*args*/ )
+void ErrorPolicy::lalr_vprintf( const char* format, va_list args )
 {
+    printf( "lalr: " );
+    vprintf( format, args );
 }

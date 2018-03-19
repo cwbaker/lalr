@@ -11,7 +11,6 @@
 #include "ParserTransition.hpp"
 #include "ParserAction.hpp"
 #include "ParserSymbol.hpp"
-#include "ParserErrorPolicy.hpp"
 #include "ParserStateMachine.hpp"
 #include "ErrorCode.hpp"
 #include "ParserNode.ipp"
@@ -19,6 +18,7 @@
 #include "AddParserActionHandler.ipp"
 #include "Lexer.ipp"
 #include "AddLexerActionHandler.ipp"
+#include "ErrorPolicy.hpp"
 #include "assert.hpp"
 #include <stdarg.h>
 #include <stdio.h>
@@ -61,11 +61,11 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::ParserActionHandler::Parser
 //  swallow lexical errors.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMachine* state_machine, ErrorPolicy* error_policy )
 : state_machine_( state_machine ),
   error_policy_( error_policy ),
   nodes_(),
-  lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, lexer_error_policy ),
+  lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, error_policy ),
   action_handlers_(),
   default_action_handler_( NULL ),
   debug_enabled_( false ),
@@ -326,7 +326,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int error,
     {
         va_list args;
         va_start( args, format );
-        error_policy_->parser_error( 0, error, format, args );
+        error_policy_->lalr_error( 0, error, format, args );
         va_end( args );
     }
 }
@@ -348,7 +348,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const cha
         SWEET_ASSERT( format );
         va_list args;
         va_start( args, format );
-        error_policy_->parser_vprintf( format, args );
+        error_policy_->lalr_vprintf( format, args );
         va_end( args );
     }
     else

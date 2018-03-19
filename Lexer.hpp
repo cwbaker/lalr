@@ -9,9 +9,9 @@ namespace sweet
 namespace lalr
 {
 
+class ErrorPolicy;
 class LexerAction;
 class LexerStateMachine;
-class LexerErrorPolicy;
 
 /**
 // A lexical analyzer.
@@ -31,7 +31,7 @@ class Lexer
     const LexerStateMachine* state_machine_; ///< The state machine for this lexer.
     const LexerStateMachine* whitespace_state_machine_; ///< The whitespace state machine for this lexer.
     const void* end_symbol_; ///< The value to return to indicate that the end of the input has been reached.
-    LexerErrorPolicy* error_policy_; ///< The error policy this lexer uses to report errors and debug information.
+    ErrorPolicy* error_policy_; ///< The error policy this lexer uses to report errors and debug information.
     std::vector<LexerActionHandler> action_handlers_; ///< The action handlers for this Lexer.
     Iterator position_; ///< The current position of this Lexer in its input sequence.
     Iterator end_; ///< One past the last position of the input sequence for this Lexer.
@@ -40,7 +40,7 @@ class Lexer
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
 
     public:
-        Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, LexerErrorPolicy* error_policy = nullptr );
+        Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );
         void set_action_handler( const char* identifier, LexerActionFunction function );
         const std::basic_string<Char, Traits, Allocator>& lexeme() const;
         const void* symbol() const;

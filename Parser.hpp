@@ -23,13 +23,13 @@ class Error;
 namespace lalr
 {
 
-class ParserErrorPolicy;
+class ErrorPolicy;
 class ParserAction;
 class ParserSymbol;
 class ParserTransition;
 class ParserState;
 class ParserStateMachine;
-class ParserErrorPolicy;
+class ErrorPolicy;
 
 /**
 // A %parser.
@@ -52,7 +52,7 @@ class Parser
         };
 
         const ParserStateMachine* state_machine_; ///< The data that defines the state machine used by this parser.
-        ParserErrorPolicy* error_policy_; ///< The error policy this parser uses to report errors and debug information.
+        ErrorPolicy* error_policy_; ///< The error policy this parser uses to report errors and debug information.
         std::vector<ParserNode> nodes_; ///< The stack of nodes that store symbols that are shifted and reduced during parsing.
         Lexer<Iterator, Char, Traits, Allocator> lexer_; ///< The lexical analyzer used during parsing.
         std::vector<ParserActionHandler> action_handlers_; ///< The action handlers for parser actions taken during reduction.
@@ -62,7 +62,7 @@ class Parser
         bool full_; ///< True if the parser processed all of its input otherwise false.
 
     public:
-        Parser( const ParserStateMachine* state_machine, ParserErrorPolicy* error_policy = NULL, LexerErrorPolicy* lexer_error_policy = NULL );
+        Parser( const ParserStateMachine* state_machine, ErrorPolicy* error_policy = nullptr );
 
         void reset();
         void parse( Iterator start, Iterator finish );

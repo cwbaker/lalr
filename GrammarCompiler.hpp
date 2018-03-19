@@ -11,8 +11,7 @@ namespace sweet
 namespace lalr
 {
 
-class ParserErrorPolicy;
-class LexerErrorPolicy;
+class ErrorPolicy;
 class Grammar;
 class GrammarGenerator;
 class ParserAction;
@@ -39,7 +38,7 @@ public:
     const LexerAllocations* lexer_allocations() const;
     const LexerAllocations* whitespace_lexer_allocations() const;
     const ParserStateMachine* parser_state_machine() const;
-    void compile( const char* begin, const char* end, ParserErrorPolicy* error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
+    void compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr );
 
 private:
     const char* add_string( const std::string& string );
@@ -50,8 +49,8 @@ private:
     void set_lexer_allocations( std::unique_ptr<LexerAllocations>& lexer_allocations );
     void set_whitespace_lexer_allocations( std::unique_ptr<LexerAllocations>& whitespace_lexer_allocations );
     void populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator );
-    void populate_lexer_state_machine( const Grammar& grammar, const GrammarGenerator& generator, LexerErrorPolicy* lexer_error_policy );
-    void populate_whitespace_lexer_state_machine( const Grammar& grammar, const GrammarGenerator& generator, LexerErrorPolicy* lexer_error_policy );
+    void populate_lexer_state_machine( const GrammarGenerator& generator, ErrorPolicy* error_policy );
+    void populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy );
 };
 
 }

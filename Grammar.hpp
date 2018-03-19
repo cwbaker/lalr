@@ -68,7 +68,7 @@ public:
     Grammar& regex( const char* regex, int line );
     Grammar& identifier( const char* identifier, int line );
     bool parse( const char* begin, const char* end );
-    bool generate( ParserStateMachine* parser_state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
+    // bool generate( ParserStateMachine* parser_state_machine, ParserErrorPolicy* parser_error_policy = nullptr, LexerErrorPolicy* lexer_error_policy = nullptr );
 
 private:
     GrammarSymbol* literal_symbol( const char* lexeme, int line );

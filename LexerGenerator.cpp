@@ -6,7 +6,6 @@
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "LexerToken.hpp"
-#include "LexerErrorPolicy.hpp"
 #include "LexerAllocations.hpp"
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
@@ -17,6 +16,7 @@
 #include "RegexNode.hpp"
 #include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
+#include "ErrorPolicy.hpp"
 #include "assert.hpp"
 #include <limits.h>
 
@@ -66,7 +66,7 @@ void LexerGenerator::fire_error( int line, int error, const char* format, ... ) 
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lexer_error( line, error, format, args );
+        error_policy_->lalr_error( line, error, format, args );
         va_end( args );
     }
 }
@@ -88,7 +88,7 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
         SWEET_ASSERT( format );
         va_list args;
         va_start( args, format );
-        error_policy_->lexer_vprintf( format, args );
+        error_policy_->lalr_vprintf( format, args );
         va_end( args );
     }
 }
@@ -130,7 +130,7 @@ const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAllocations* allocations, LexerErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAllocations* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -148,7 +148,7 @@ void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAlloc
     ranges_.clear();
 }
 
-void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerAllocations* allocations, LexerErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerAllocations* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();

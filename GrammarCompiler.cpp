@@ -18,6 +18,7 @@
 #include "ParserAction.hpp"
 #include "ParserTransition.hpp"
 #include "LexerAllocations.hpp"
+#include "ErrorPolicy.hpp"
 #include "assert.hpp"
 
 using std::set;
@@ -64,7 +65,7 @@ const ParserStateMachine* GrammarCompiler::parser_state_machine() const
     return parser_state_machine_.get();
 }
 
-void GrammarCompiler::compile( const char* begin, const char* end, ParserErrorPolicy* error_policy, LexerErrorPolicy* lexer_error_policy )
+void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
 {
     Grammar grammar;
     grammar.parse( begin, end );
@@ -82,12 +83,12 @@ void GrammarCompiler::compile( const char* begin, const char* end, ParserErrorPo
     }
 
     GrammarGenerator generator;
-    int errors = generator.generate(grammar, this, error_policy, lexer_error_policy );
+    int errors = generator.generate(grammar, this, error_policy );
     if ( errors == 0 )
     {
         populate_parser_state_machine( grammar, generator );
-        populate_lexer_state_machine( grammar, generator, lexer_error_policy );
-        populate_whitespace_lexer_state_machine( grammar, generator, lexer_error_policy );
+        populate_lexer_state_machine( generator, error_policy );
+        populate_whitespace_lexer_state_machine( grammar, error_policy );
     }
 }
 
@@ -159,7 +160,7 @@ void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<LexerAll
     }
 }
 
-void GrammarCompiler::populate_parser_state_machine( const Grammar& /*grammar*/, const GrammarGenerator& generator )
+void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator )
 {
     const vector<unique_ptr<GrammarAction>>& grammar_actions = generator.actions();
     int actions_size = grammar_actions.size();
@@ -241,13 +242,14 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& /*grammar*/,
         ++state_index;
     }
 
+    parser_state_machine_->identifier = add_string( grammar.identifier() );
     set_actions( actions, actions_size );
     set_symbols( symbols, symbols_size );
     set_transitions( transitions, transitions_size );
     set_states( states, states_size, start_state );
 }
 
-void GrammarCompiler::populate_lexer_state_machine( const Grammar& /*grammar*/, const GrammarGenerator& generator, LexerErrorPolicy* lexer_error_policy )
+void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& generator, ErrorPolicy* error_policy )
 {
     // Generate tokens for generating the lexical analyzer from each of 
     // the terminal symbols in the grammar.
@@ -269,12 +271,12 @@ void GrammarCompiler::populate_lexer_state_machine( const Grammar& /*grammar*/, 
 
     unique_ptr<LexerAllocations> lexer_allocations( new LexerAllocations );
     LexerGenerator lexer_generator;
-    lexer_generator.generate( tokens, lexer_allocations.get(), lexer_error_policy );
+    lexer_generator.generate( tokens, lexer_allocations.get(), error_policy );
     lexer_allocations_ = move( lexer_allocations );
     parser_state_machine_->lexer_state_machine = lexer_allocations_->state_machine();
 }
 
-void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, const GrammarGenerator& /*generator*/, LexerErrorPolicy* lexer_error_policy )
+void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy )
 {
     unique_ptr<LexerAllocations> whitespace_lexer_allocations;
     const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
@@ -282,7 +284,7 @@ void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& gr
     {
         whitespace_lexer_allocations.reset( new LexerAllocations );
         LexerGenerator lexer_generator;
-        lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), lexer_error_policy );        
+        lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), error_policy );        
         whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );
         parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_allocations_->state_machine();
     }

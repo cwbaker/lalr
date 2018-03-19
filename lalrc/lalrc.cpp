@@ -3,7 +3,6 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/lalr/Grammar.hpp>
 #include <sweet/lalr/GrammarCompiler.hpp>
 #include <sweet/lalr/ParserStateMachine.hpp>
 #include <sweet/lalr/ParserState.hpp>
@@ -16,6 +15,7 @@
 #include <sweet/lalr/LexerTransition.hpp>
 #include <sweet/lalr/LexerAction.hpp>
 #include <string>
+#include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -102,11 +102,9 @@ int main( int argc, char** argv )
             return EXIT_FAILURE;
         }
 
-        Grammar grammar;
-        grammar.parse( &grammar_source[0], &grammar_source[0] + grammar_source.size() );
-
-        ParserStateMachine state_machine;
-        grammar.generate( &state_machine, nullptr, nullptr );
+        GrammarCompiler compiler;
+        compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size() );
+        const ParserStateMachine* state_machine = compiler.parser_state_machine();
 
         file = fopen( output.c_str(), "wb" );
         if ( !file )
@@ -145,8 +143,8 @@ int main( int argc, char** argv )
 
         fprintf( file, "const ParserAction actions [] = \n" );
         fprintf( file, "{\n" );
-        const ParserAction* actions = state_machine.actions;
-        const ParserAction* actions_end = actions + state_machine.actions_size;
+        const ParserAction* actions = state_machine->actions;
+        const ParserAction* actions_end = actions + state_machine->actions_size;
         for ( const ParserAction* action = actions; action != actions_end; ++action )
         {
             fprintf( file, "    {%d, \"%s\"}%s\n", 
@@ -160,8 +158,8 @@ int main( int argc, char** argv )
 
         fprintf( file, "const ParserSymbol symbols [] = \n" );
         fprintf( file, "{\n" );
-        const ParserSymbol* symbols = state_machine.symbols;
-        const ParserSymbol* symbols_end = symbols + state_machine.symbols_size;
+        const ParserSymbol* symbols = state_machine->symbols;
+        const ParserSymbol* symbols_end = symbols + state_machine->symbols_size;
         for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
         {
             fprintf( file, "    {%d, \"%s\", \"%s\", (SymbolType) %d}%s\n", 
@@ -177,8 +175,8 @@ int main( int argc, char** argv )
 
         fprintf( file, "const ParserTransition transitions [] = \n" );
         fprintf( file, "{\n" );
-        const ParserTransition* transitions = state_machine.transitions;
-        const ParserTransition* transitions_end = transitions + state_machine.transitions_size;
+        const ParserTransition* transitions = state_machine->transitions;
+        const ParserTransition* transitions_end = transitions + state_machine->transitions_size;
         for ( const ParserTransition* transition = transitions; transition != transitions_end; ++transition )
         {
             if ( transition->reduced_symbol )
@@ -213,8 +211,8 @@ int main( int argc, char** argv )
 
         fprintf( file, "const ParserState states [] = \n" );
         fprintf( file, "{\n" );
-        const ParserState* states = state_machine.states;
-        const ParserState* states_end = states + state_machine.states_size;
+        const ParserState* states = state_machine->states;
+        const ParserState* states_end = states + state_machine->states_size;
         for ( const ParserState* state = states; state != states_end; ++state )
         {
             fprintf( file, "    {%d, %d, &transitions[%d]}%s\n",
@@ -227,26 +225,26 @@ int main( int argc, char** argv )
         fprintf( file, "};\n" );
         fprintf( file, "\n" );
 
-        generate_lexer_state_machine( file, state_machine.lexer_state_machine, "lexer" );
-        generate_lexer_state_machine( file, state_machine.whitespace_lexer_state_machine, "whitespace_lexer" );
+        generate_lexer_state_machine( file, state_machine->lexer_state_machine, "lexer" );
+        generate_lexer_state_machine( file, state_machine->whitespace_lexer_state_machine, "whitespace_lexer" );
 
         fprintf( file, "}\n" );
         fprintf( file, "\n" );
 
-        fprintf( file, "extern const ParserStateMachine %s_parser_state_machine = \n", grammar.identifier().c_str() );
+        fprintf( file, "extern const ParserStateMachine %s_parser_state_machine = \n", state_machine->identifier );
         fprintf( file, "{\n" );
-        fprintf( file, "    %d, // #actions\n", state_machine.actions_size );
-        fprintf( file, "    %d, // #symbols\n", state_machine.symbols_size );
-        fprintf( file, "    %d, // #transitions\n", state_machine.transitions_size );
-        fprintf( file, "    %d, // #states\n", state_machine.states_size );
+        fprintf( file, "    %d, // #actions\n", state_machine->actions_size );
+        fprintf( file, "    %d, // #symbols\n", state_machine->symbols_size );
+        fprintf( file, "    %d, // #transitions\n", state_machine->transitions_size );
+        fprintf( file, "    %d, // #states\n", state_machine->states_size );
         fprintf( file, "    actions,\n" );
         fprintf( file, "    symbols,\n" );
         fprintf( file, "    transitions,\n" );
         fprintf( file, "    states,\n" );
-        fprintf( file, "    &symbols[%d], // start symbol\n", state_machine.start_symbol->index );
-        fprintf( file, "    &symbols[%d], // end symbol\n", state_machine.end_symbol->index );
-        fprintf( file, "    &symbols[%d], // error symbol\n", state_machine.error_symbol->index );
-        fprintf( file, "    &states[%d], // start state\n", state_machine.start_state->index );
+        fprintf( file, "    &symbols[%d], // start symbol\n", state_machine->start_symbol->index );
+        fprintf( file, "    &symbols[%d], // end symbol\n", state_machine->end_symbol->index );
+        fprintf( file, "    &symbols[%d], // error symbol\n", state_machine->error_symbol->index );
+        fprintf( file, "    &states[%d], // start state\n", state_machine->start_state->index );
         fprintf( file, "    &lexer_state_machine, // lexer state machine\n" );
         fprintf( file, "    &whitespace_lexer_state_machine // whitespace lexer state machine\n" );
         fprintf( file, "};\n" );

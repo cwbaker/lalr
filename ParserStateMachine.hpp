@@ -26,6 +26,7 @@ class ParserState;
 class ParserStateMachine
 {
 public:
+    const char* identifier;
     int actions_size;
     int symbols_size;
     int transitions_size;
