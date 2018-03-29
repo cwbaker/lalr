@@ -23,22 +23,20 @@ for _, build in build:default_builds() do
         };
 
         build:Cxx () {
-            "ParserAction.cpp",
             "ParserStateMachine.cpp",
-            "ParserState.cpp",
-            "ParserSymbol.cpp",
-            "ParserTransition.cpp"
+            "ParserState.cpp"
         };
 
         build:Cxx () {
-            "LexerAction.cpp",
             "LexerAllocations.cpp",
             "LexerGenerator.cpp",
             "LexerState.cpp",
-            "LexerStateMachine.cpp",
+            "LexerAction.cpp",
             "LexerTransition.cpp",
             "LexerToken.cpp",
         };
+            "LexerStateMachine.cpp",
+            "LexerStateMachine.cpp",
         
         build:Cxx () {
             "RegexAction.cpp",
