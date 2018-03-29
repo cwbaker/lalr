@@ -99,4 +99,6 @@ class Parser
 
 }
 
+#include "Parser.ipp"
+
 #endif
