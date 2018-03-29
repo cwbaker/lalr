@@ -190,7 +190,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         symbol->type = source_symbol->symbol_type();
     }
 
-    const set<shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& grammar_states = generator.states();
+    const set<shared_ptr<GrammarState>, GrammarStateLess>& grammar_states = generator.states();
     int states_size = grammar_states.size();
     unique_ptr<ParserState[]> states( new ParserState [states_size] );
 

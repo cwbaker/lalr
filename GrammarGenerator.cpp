@@ -68,7 +68,7 @@ const std::vector<std::unique_ptr<GrammarSymbol>>& GrammarGenerator::symbols() c
     return symbols_;
 }
 
-const std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& GrammarGenerator::states() const
+const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& GrammarGenerator::states() const
 {
     return states_;
 }
@@ -642,7 +642,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
                 const std::shared_ptr<GrammarState>& state = *i;
                 SWEET_ASSERT( state );
@@ -675,7 +675,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
                 GrammarState* state = i->get();
                 SWEET_ASSERT( state );
@@ -695,7 +695,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
 void GrammarGenerator::generate_indices_for_states()
 {
     int index = 0;
-    for ( std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>::iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::iterator i = states_.begin(); i != states_.end(); ++i )
     {
         GrammarState* state = i->get();
         SWEET_ASSERT( state );
@@ -709,7 +709,7 @@ void GrammarGenerator::generate_indices_for_states()
 */
 void GrammarGenerator::generate_reduce_transitions()
 {
-    for ( std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         GrammarState* state = i->get();
         SWEET_ASSERT( state );
@@ -718,7 +718,7 @@ void GrammarGenerator::generate_reduce_transitions()
         {
             if ( item->dot_at_end() )
             {
-                const set<const GrammarSymbol*>& symbols = item->lookahead_symbols();
+                const set<const GrammarSymbol*, GrammarSymbolLess>& symbols = item->lookahead_symbols();
                 for ( set<const GrammarSymbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                 {
                     const GrammarSymbol* symbol = *j;
@@ -796,7 +796,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
 */
 void GrammarGenerator::generate_indices_for_transitions()
 {
-    for ( std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         GrammarState* state = i->get();
         SWEET_ASSERT( state );

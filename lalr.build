@@ -15,6 +15,7 @@ for _, build in build:default_builds() do
             "GrammarItem.cpp",
             "GrammarProduction.cpp",
             "GrammarState.cpp",
+            "GrammarStateLess.cpp",
             "GrammarSymbol.cpp",
             "GrammarTransition.cpp",
             'GrammarCompiler.cpp'

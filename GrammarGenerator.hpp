@@ -2,6 +2,7 @@
 #define SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
 #include "LexerToken.hpp"
+#include "GrammarStateLess.hpp"
 #include "shared_ptr_less.hpp"
 #include <memory>
 #include <set>
@@ -36,7 +37,7 @@ class GrammarGenerator
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the parser.
-    std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>> states_; ///< The states in the parser's state machine.
+    std::set<std::shared_ptr<GrammarState>, GrammarStateLess> states_; ///< The states in the parser's state machine.
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
@@ -48,7 +49,7 @@ class GrammarGenerator
         ~GrammarGenerator();
         const std::vector<std::unique_ptr<GrammarAction>>& actions() const;
         const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
-        const std::set<std::shared_ptr<GrammarState>, shared_ptr_less<GrammarState>>& states() const;
+        const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& states() const;
         const GrammarState* start_state() const;
         int generate( Grammar& grammar, GrammarCompiler* parser_allocations, ErrorPolicy* error_policy );
                 
