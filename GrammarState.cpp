@@ -128,14 +128,14 @@ int GrammarState::add_item( GrammarProduction* production, int position )
 }
 
 /**
-// Add the symbols in \e lookahead_symbols to the item in this state for 
-// \e production at \e next_nodes.
+// Add the symbols in *lookahead_symbols* to the item in this state for 
+// *production* at *position*.
 //
 // @param production
-//  The production of the item to add \e lookahead_symbols to.
+//  The production of the item to add *lookahead_symbols* to.
 //
 // @param position
-//  The position of the dot in the item to add \e lookahead_symbols to.
+//  The position of the dot in the item to add *lookahead_symbols* to.
 //
 // @param lookahead_symbols
 //  The lookahead symbols to add to the item in this state.
@@ -143,7 +143,7 @@ int GrammarState::add_item( GrammarProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*>& lookahead_symbols )
+int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols )
 {
     SWEET_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
@@ -222,7 +222,7 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSym
 //  The index of the action taken on the reduction or 
 //  `Action::INVALID_INDEX` if no action is taken.
 */
-void GrammarState::add_transition( const std::set<const GrammarSymbol*>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_transition( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
     SWEET_ASSERT( reduced_symbol );
     SWEET_ASSERT( reduced_length >= 0 );

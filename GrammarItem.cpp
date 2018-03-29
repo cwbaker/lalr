@@ -104,7 +104,7 @@ bool GrammarItem::next_node( const GrammarSymbol& symbol ) const
 // @return
 //  The lookahead set.
 */
-const std::set<const GrammarSymbol*>& GrammarItem::lookahead_symbols() const
+const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarItem::lookahead_symbols() const
 {
     return lookahead_symbols_;
 }
@@ -137,7 +137,7 @@ bool GrammarItem::operator<( const GrammarItem& item ) const
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*>& lookahead_symbols ) const
+int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );

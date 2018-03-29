@@ -157,7 +157,9 @@ int GrammarTransition::index() const
 */
 bool GrammarTransition::operator<( const GrammarTransition& transition ) const
 {
-    return symbol_ < transition.symbol_;
+    SWEET_ASSERT( symbol_->index() >= 0 );
+    SWEET_ASSERT( transition.symbol()->index() >= 0 );
+    return symbol_->index() < transition.symbol()->index();
 }
 
 /**

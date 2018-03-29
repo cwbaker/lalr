@@ -3,6 +3,7 @@
 
 #include "GrammarItem.hpp"
 #include "GrammarTransition.hpp"
+#include "GrammarSymbolLess.hpp"
 #include <memory>
 #include <set>
 
@@ -35,10 +36,10 @@ public:
     bool operator<( const GrammarState& state ) const;
 
     int add_item( GrammarProduction* production, int position );
-    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*>& lookahead_symbols );
+    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols );
     void add_transition( const GrammarSymbol* symbol, GrammarState* state );
     void add_transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
-    void add_transition( const std::set<const GrammarSymbol*>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
+    void add_transition( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action );
     void generate_indices_for_transitions();
     GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol );
     void set_processed( bool processed );

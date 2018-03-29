@@ -73,12 +73,12 @@ bool GrammarSymbol::nullable() const
     return nullable_;
 }
 
-const std::set<const GrammarSymbol*>& GrammarSymbol::first() const
+const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::first() const
 {
     return first_;
 }
 
-const std::set<const GrammarSymbol*>& GrammarSymbol::follow() const
+const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::follow() const
 {
     return follow_;
 }
@@ -401,7 +401,7 @@ int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*>& symbols )
+int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols )
 {
     size_t original_size = first_.size();
     first_.insert( symbols.begin(), symbols.end() );
@@ -432,7 +432,7 @@ int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*>& symbols )
+int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols )
 {
     size_t original_size = follow_.size();
     follow_.insert( symbols.begin(), symbols.end() );

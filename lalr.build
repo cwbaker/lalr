@@ -17,6 +17,7 @@ for _, build in build:default_builds() do
             "GrammarState.cpp",
             "GrammarStateLess.cpp",
             "GrammarSymbol.cpp",
+            "GrammarSymbolLess.cpp",
             "GrammarTransition.cpp",
             'GrammarCompiler.cpp'
         };

@@ -2,6 +2,7 @@
 #define SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
 #include "LexerToken.hpp"
+#include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
 #include "shared_ptr_less.hpp"
 #include <memory>
@@ -56,7 +57,7 @@ class GrammarGenerator
     private:
         void fire_error( int line, int error, const char* format, ... );
         void fire_printf( const char* format, ... ) const;
-        std::set<const GrammarSymbol*> lookahead( const GrammarItem& item ) const;
+        std::set<const GrammarSymbol*, GrammarSymbolLess> lookahead( const GrammarItem& item ) const;
         void closure( const std::shared_ptr<GrammarState>& state );
         std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol );
         int lookahead_closure( GrammarState* state ) const;

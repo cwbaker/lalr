@@ -103,9 +103,9 @@ int GrammarGenerator::generate( Grammar& grammar, GrammarCompiler* parser_alloca
     {        
         calculate_terminal_and_non_terminal_symbols();
         calculate_implicit_terminal_symbols();
+        calculate_symbol_indices();
         calculate_first();
         calculate_follow();
-        calculate_symbol_indices();
         calculate_precedence_of_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
     }
@@ -172,9 +172,9 @@ void GrammarGenerator::fire_printf( const char* format, ... ) const
 // @return
 //  The generated lookahead symbols.
 */
-std::set<const GrammarSymbol*> GrammarGenerator::lookahead( const GrammarItem& item ) const
+std::set<const GrammarSymbol*, GrammarSymbolLess> GrammarGenerator::lookahead( const GrammarItem& item ) const
 {
-    set<const GrammarSymbol*> lookahead_symbols;
+    set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols;
 
     const GrammarProduction* production = item.production();
     SWEET_ASSERT( production );
@@ -295,7 +295,7 @@ int GrammarGenerator::lookahead_closure( GrammarState* state ) const
         const GrammarSymbol* symbol = item->production()->symbol_by_position( item->position() );
         if ( symbol )
         {
-            set<const GrammarSymbol*> lookahead_symbols = lookahead( *item );        
+            set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols = lookahead( *item );
             const vector<GrammarProduction*>& productions = symbol->productions();
             for ( vector<GrammarProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
@@ -634,7 +634,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         states_.insert( start_state );
         start_state_ = start_state.get();
 
-        set<const GrammarSymbol*> lookahead_symbols;
+        set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols;
         lookahead_symbols.insert( (GrammarSymbol*) end_symbol );
         start_state->add_lookahead_symbols( start_symbol->productions().front(), 0, lookahead_symbols );
         
