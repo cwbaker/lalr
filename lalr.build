@@ -31,12 +31,9 @@ for _, build in build:default_builds() do
             "LexerAllocations.cpp",
             "LexerGenerator.cpp",
             "LexerState.cpp",
-            "LexerAction.cpp",
             "LexerTransition.cpp",
             "LexerToken.cpp",
         };
-            "LexerStateMachine.cpp",
-            "LexerStateMachine.cpp",
         
         build:Cxx () {
             "RegexAction.cpp",
