@@ -17,6 +17,7 @@ class LexerAction;
 class LexerTransition;
 class LexerState;
 class LexerStateMachine;
+class RegexGenerator;
 
 /**
 // The data that defines the state machine for a lexical analyzer.
@@ -33,11 +34,13 @@ public:
     RegexCompiler();
     ~RegexCompiler();
     const LexerStateMachine* state_machine() const;
-    void compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy );
+    void compile( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy = nullptr );
+    void compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy = nullptr );
     const char* add_string( const std::string& string );
     void set_actions( std::unique_ptr<LexerAction[]>& actions, int actions_size );
     void set_transitions( std::unique_ptr<LexerTransition[]>& transitions, int transitions_size );
     void set_states( std::unique_ptr<LexerState[]>& states, int states_size, const LexerState* start_state );
+    void populate_lexer_state_machine( const RegexGenerator& generator );
 };
 
 }

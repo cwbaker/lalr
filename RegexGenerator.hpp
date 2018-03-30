@@ -24,7 +24,6 @@ class ErrorPolicy;
 class RegexState;
 class RegexAction;
 class RegexSyntaxTree;
-class RegexCompiler;
 
 /**
 // @internal 
@@ -42,18 +41,20 @@ class RegexGenerator
     public:
         RegexGenerator();
         ~RegexGenerator();
+        const std::vector<std::unique_ptr<RegexAction>>& actions() const;
+        const std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>& states() const;
+        const RegexState* start_state() const;
         void fire_error( int line, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         const RegexAction* add_lexer_action( const std::string& identifier );
-        void generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy = nullptr );
-        void generate( const std::vector<RegexToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy = nullptr );
+        int generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy = nullptr );
+        int generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy = nullptr );
 
     private:
         std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );
         void generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>* states, const RegexState** start_state );
         void generate_indices_for_states();
         void generate_symbol_for_state( RegexState* state ) const;
-        void populate_allocations( RegexCompiler* allocations ) const;
         void clear();
         void insert( int begin, int end );
 };

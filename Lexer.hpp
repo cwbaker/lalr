@@ -1,7 +1,7 @@
 #ifndef SWEET_LALR_LEXER_HPP_INCLUDED
 #define SWEET_LALR_LEXER_HPP_INCLUDED
 
-#include <functional>
+#include <vector>
 
 namespace sweet
 {
@@ -62,5 +62,7 @@ class Lexer
 }
 
 }
+
+#include "Lexer.ipp"
 
 #endif

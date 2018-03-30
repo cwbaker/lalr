@@ -44,6 +44,21 @@ RegexGenerator::~RegexGenerator()
 {
 }
 
+const std::vector<std::unique_ptr<RegexAction>>& RegexGenerator::actions() const
+{
+    return actions_;
+}
+
+const std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>& RegexGenerator::states() const
+{
+    return states_;
+}
+
+const RegexState* RegexGenerator::start_state() const
+{
+    return start_state_;
+}
+
 /**
 // Fire an error from this generator.
 //
@@ -130,7 +145,7 @@ const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void RegexGenerator::generate( const std::vector<RegexToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
+int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -139,16 +154,11 @@ void RegexGenerator::generate( const std::vector<RegexToken>& tokens, RegexCompi
     ranges_.clear();
  
     generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
-    populate_allocations( allocations );
- 
     error_policy_ = nullptr;
-    actions_.clear();
-    states_.clear();
-    start_state_ = nullptr;
-    ranges_.clear();
+    return 0;
 }
 
-void RegexGenerator::generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy )
+int RegexGenerator::generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -158,13 +168,8 @@ void RegexGenerator::generate( const std::string& regular_expression, void* symb
 
     RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
     generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
-    populate_allocations( allocations );
-
     error_policy_ = nullptr;
-    actions_.clear();
-    states_.clear();
-    start_state_ = nullptr;
-    ranges_.clear();
+    return 0;
 }
 
 /**
@@ -373,69 +378,69 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
     state->set_symbol( token ? token->symbol() : NULL );
 }
 
-void RegexGenerator::populate_allocations( RegexCompiler* allocations ) const
-{
-    SWEET_ASSERT( allocations );
+// void RegexGenerator::populate_allocations( RegexCompiler* allocations ) const
+// {
+//     SWEET_ASSERT( allocations );
 
-    size_t transitions_size = 0;
-    for ( auto i = states_.begin(); i != states_.end(); ++i )
-    {
-        const RegexState* source_state = i->get();
-        SWEET_ASSERT( source_state );
-        transitions_size += source_state->get_transitions().size();
-    }
+//     size_t transitions_size = 0;
+//     for ( auto i = states_.begin(); i != states_.end(); ++i )
+//     {
+//         const RegexState* source_state = i->get();
+//         SWEET_ASSERT( source_state );
+//         transitions_size += source_state->get_transitions().size();
+//     }
 
-    unique_ptr<LexerAction[]> actions( new LexerAction [actions_.size()] );
-    unique_ptr<LexerTransition[]> transitions( new LexerTransition [transitions_size] );
-    unique_ptr<LexerState[]> states( new LexerState [states_.size()] );
+//     unique_ptr<LexerAction[]> actions( new LexerAction [actions_.size()] );
+//     unique_ptr<LexerTransition[]> transitions( new LexerTransition [transitions_size] );
+//     unique_ptr<LexerState[]> states( new LexerState [states_.size()] );
 
-    for ( size_t i = 0; i < actions_.size(); ++i )
-    {
-        const RegexAction* source_action = actions_[i].get();
-        SWEET_ASSERT( source_action );
-        LexerAction* action = &actions[i];
-        action->index = source_action->index();
-        action->identifier = allocations->add_string( source_action->identifier() );
-    }
+//     for ( size_t i = 0; i < actions_.size(); ++i )
+//     {
+//         const RegexAction* source_action = actions_[i].get();
+//         SWEET_ASSERT( source_action );
+//         LexerAction* action = &actions[i];
+//         action->index = source_action->index();
+//         action->identifier = allocations->add_string( source_action->identifier() );
+//     }
 
-    int state_index = 0;
-    int transition_index = 0;
-    const LexerState* start_state = nullptr;
-    for ( auto i = states_.begin(); i != states_.end(); ++i )
-    {
-        const RegexState* source_state = i->get();
-        SWEET_ASSERT( source_state );
-        LexerState* state = &states[state_index];
-        SWEET_ASSERT( state );
-        const set<RegexTransition>& source_transitions = source_state->get_transitions();
-        state->index = state_index;
-        state->length = source_transitions.size();
-        state->transitions = &transitions[transition_index];
-        state->symbol = source_state->get_symbol();
-        if ( source_state == start_state_ )
-        {
-            start_state = state;
-        }
-        for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
-        {
-            const RegexTransition* source_transition = &(*j);
-            SWEET_ASSERT( source_transition );
-            const RegexState* state_transitioned_to = source_transition->state();
-            const RegexAction* action = source_transition->action();
-            LexerTransition* transition = &transitions[transition_index];
-            transition->begin = source_transition->begin();
-            transition->end = source_transition->end();
-            transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
-            transition->action = action ? &actions[action->index()] : nullptr;
-            ++transition_index;
-        }
-        ++state_index;
-    }
+//     int state_index = 0;
+//     int transition_index = 0;
+//     const LexerState* start_state = nullptr;
+//     for ( auto i = states_.begin(); i != states_.end(); ++i )
+//     {
+//         const RegexState* source_state = i->get();
+//         SWEET_ASSERT( source_state );
+//         LexerState* state = &states[state_index];
+//         SWEET_ASSERT( state );
+//         const set<RegexTransition>& source_transitions = source_state->get_transitions();
+//         state->index = state_index;
+//         state->length = source_transitions.size();
+//         state->transitions = &transitions[transition_index];
+//         state->symbol = source_state->get_symbol();
+//         if ( source_state == start_state_ )
+//         {
+//             start_state = state;
+//         }
+//         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
+//         {
+//             const RegexTransition* source_transition = &(*j);
+//             SWEET_ASSERT( source_transition );
+//             const RegexState* state_transitioned_to = source_transition->state();
+//             const RegexAction* action = source_transition->action();
+//             LexerTransition* transition = &transitions[transition_index];
+//             transition->begin = source_transition->begin();
+//             transition->end = source_transition->end();
+//             transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
+//             transition->action = action ? &actions[action->index()] : nullptr;
+//             ++transition_index;
+//         }
+//         ++state_index;
+//     }
 
-    allocations->set_actions( actions, int(actions_.size()) );
-    allocations->set_transitions( transitions, transitions_size );
-    allocations->set_states( states, int(states_.size()), start_state );
-}
+//     allocations->set_actions( actions, int(actions_.size()) );
+//     allocations->set_transitions( transitions, transitions_size );
+//     allocations->set_states( states, int(states_.size()), start_state );
+// }
 
 /**
 // Clear the current distinct ranges maintained by this RegexGenerator.

@@ -4,10 +4,8 @@
 #include "ParserNode.hpp"
 #include "ParserUserData.hpp"
 #include "AddParserActionHandler.hpp"
-#include "Lexer.hpp"
 #include "AddLexerActionHandler.hpp"
-#include <memory>
-#include <functional>
+#include "Lexer.hpp"
 #include <vector>
 
 namespace sweet
