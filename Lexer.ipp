@@ -348,7 +348,7 @@ const LexerTransition* Lexer<Iterator, Char, Traits, Allocator>::find_transition
 {
     const LexerTransition* transition = state->transitions;
     const LexerTransition* transitions_end = state->transitions + state->length;
-    while ( transition != transitions_end && !transition->is_on_character(character) )
+    while ( transition != transitions_end && !(character >= transition->begin && character < transition->end) )
     {
         ++transition;
     }

@@ -23,10 +23,6 @@ for _, build in build:default_builds() do
         };
 
         build:Cxx () {
-            "LexerTransition.cpp",
-        };
-        
-        build:Cxx () {
             "RegexAction.cpp",
             "RegexCompiler.cpp",
             "RegexGenerator.cpp",
