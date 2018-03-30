@@ -28,15 +28,15 @@ class GrammarCompiler
     std::unique_ptr<ParserSymbol[]> symbols_; ///< The symbols in the grammar for this ParserStateMachine.
     std::unique_ptr<ParserTransition[]> transitions_; ///< The transitions in the state machine for this ParserStateMachine.
     std::unique_ptr<ParserState[]> states_; ///< The states in the state machine for this ParserStateMachine.
-    std::unique_ptr<RegexCompiler> lexer_allocations_; ///< Allocated lexer state machine.
-    std::unique_ptr<RegexCompiler> whitespace_lexer_allocations_; ///< Allocated whitespace lexer state machine.
+    std::unique_ptr<RegexCompiler> lexer_; ///< Allocated lexer state machine.
+    std::unique_ptr<RegexCompiler> whitespace_lexer_; ///< Allocated whitespace lexer state machine.
     std::unique_ptr<ParserStateMachine> parser_state_machine_; ///< Allocated parser state machine.
 
 public:
     GrammarCompiler();
     ~GrammarCompiler();
-    const RegexCompiler* lexer_allocations() const;
-    const RegexCompiler* whitespace_lexer_allocations() const;
+    const RegexCompiler* lexer() const;
+    const RegexCompiler* whitespace_lexer() const;
     const ParserStateMachine* parser_state_machine() const;
     void compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr );
 

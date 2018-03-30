@@ -37,12 +37,12 @@ GrammarCompiler::GrammarCompiler()
   symbols_(),
   transitions_(),
   states_(),
-  lexer_allocations_(),
-  whitespace_lexer_allocations_(),
+  lexer_(),
+  whitespace_lexer_(),
   parser_state_machine_()
 {
-    lexer_allocations_.reset( new RegexCompiler );
-    whitespace_lexer_allocations_.reset( new RegexCompiler );
+    lexer_.reset( new RegexCompiler );
+    whitespace_lexer_.reset( new RegexCompiler );
     parser_state_machine_.reset( new ParserStateMachine );
     memset( parser_state_machine_.get(), 0, sizeof(*parser_state_machine_) );
 }
@@ -51,14 +51,14 @@ GrammarCompiler::~GrammarCompiler()
 {
 }
 
-const RegexCompiler* GrammarCompiler::lexer_allocations() const
+const RegexCompiler* GrammarCompiler::lexer() const
 {
-    return lexer_allocations_.get();
+    return lexer_.get();
 }
 
-const RegexCompiler* GrammarCompiler::whitespace_lexer_allocations() const
+const RegexCompiler* GrammarCompiler::whitespace_lexer() const
 {
-    return whitespace_lexer_allocations_.get();
+    return whitespace_lexer_.get();
 }
 
 const ParserStateMachine* GrammarCompiler::parser_state_machine() const
@@ -137,8 +137,8 @@ void GrammarCompiler::set_lexer_allocations( std::unique_ptr<RegexCompiler>& lex
     SWEET_ASSERT( lexer_allocations.get() );
     if ( lexer_allocations )
     {
-        lexer_allocations_ = move( lexer_allocations );
-        parser_state_machine_->lexer_state_machine = lexer_allocations_->state_machine();
+        lexer_ = move( lexer_allocations );
+        parser_state_machine_->lexer_state_machine = lexer_->state_machine();
     }
 }
 
@@ -146,8 +146,8 @@ void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<RegexCom
 {
     if ( whitespace_lexer_allocations )
     {
-        whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );
-        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_allocations_->state_machine();
+        whitespace_lexer_ = move( whitespace_lexer_allocations );
+        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
     }
 }
 
@@ -263,8 +263,8 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
     unique_ptr<RegexCompiler> lexer_allocations( new RegexCompiler );
     RegexGenerator lexer_generator;
     lexer_generator.generate( tokens, lexer_allocations.get(), error_policy );
-    lexer_allocations_ = move( lexer_allocations );
-    parser_state_machine_->lexer_state_machine = lexer_allocations_->state_machine();
+    lexer_ = move( lexer_allocations );
+    parser_state_machine_->lexer_state_machine = lexer_->state_machine();
 }
 
 void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy )
@@ -276,7 +276,7 @@ void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& gr
         whitespace_lexer_allocations.reset( new RegexCompiler );
         RegexGenerator lexer_generator;
         lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), error_policy );        
-        whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );
-        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_allocations_->state_machine();
+        whitespace_lexer_ = move( whitespace_lexer_allocations );
+        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
     }
 }
