@@ -381,7 +381,7 @@ void GrammarGenerator::check_for_undefined_symbol_errors()
         {
             const GrammarSymbol* symbol = i->get();
             SWEET_ASSERT( symbol );
-            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() )
+            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && symbol->precedence() <= 0 )
             {
                 fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->identifier().c_str(), identifier_.c_str() );
             }

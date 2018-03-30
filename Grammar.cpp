@@ -295,7 +295,7 @@ Grammar& Grammar::identifier( const char* identifier, int line )
     SWEET_ASSERT( active_symbol_ || associativity_ != ASSOCIATE_NULL );
     if ( associativity_ != ASSOCIATE_NULL )
     {
-        GrammarSymbol* symbol = add_symbol( identifier, line, LEXEME_NULL, SYMBOL_TERMINAL );
+        GrammarSymbol* symbol = non_terminal_symbol( identifier, line );
         symbol->set_associativity( associativity_ );
         symbol->set_precedence( precedence_ );
     }
