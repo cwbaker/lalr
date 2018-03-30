@@ -70,17 +70,6 @@ void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* 
     Grammar grammar;
     grammar.parse( begin, end );
 
-    const vector<unique_ptr<GrammarSymbol>>& symbols = grammar.symbols();    
-    for ( auto i = symbols.begin(); i != symbols.end(); ++i )
-    {
-        GrammarSymbol* symbol = i->get();
-        SWEET_ASSERT( symbol );
-        if ( !symbol->productions().empty() )
-        {
-            symbol->set_lexeme_type( LEXEME_NULL );
-            symbol->set_symbol_type( SYMBOL_NON_TERMINAL );
-        }
-    }
 
     GrammarGenerator generator;
     int errors = generator.generate(grammar, this, error_policy );
