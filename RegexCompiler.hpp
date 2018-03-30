@@ -19,7 +19,7 @@ class LexerStateMachine;
 /**
 // The data that defines the state machine for a lexical analyzer.
 */
-class LexerAllocations
+class RegexCompiler
 {
     std::deque<std::string> strings_;
     std::unique_ptr<LexerAction[]> actions_;
@@ -28,8 +28,8 @@ class LexerAllocations
     std::unique_ptr<LexerStateMachine> state_machine_; 
 
 public:
-    LexerAllocations();
-    ~LexerAllocations();
+    RegexCompiler();
+    ~RegexCompiler();
     const LexerStateMachine* state_machine() const;
     const char* add_string( const std::string& string );
     void set_actions( std::unique_ptr<LexerAction[]>& actions, int actions_size );

@@ -17,7 +17,7 @@ class GrammarSymbol;
 class GrammarProduction;
 class GrammarAction;
 class LexerErrorPolicy;
-class LexerAllocations;
+class RegexCompiler;
 class ParserErrorPolicy;
 class GrammarCompiler;
 class ParserStateMachine;
@@ -39,8 +39,8 @@ class Grammar
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
     std::unique_ptr<GrammarCompiler> parser_allocations_;
-    std::unique_ptr<LexerAllocations> lexer_allocations_;
-    std::unique_ptr<LexerAllocations> whitespace_lexer_allocations_;
+    std::unique_ptr<RegexCompiler> lexer_allocations_;
+    std::unique_ptr<RegexCompiler> whitespace_lexer_allocations_;
 
 public:
     Grammar();

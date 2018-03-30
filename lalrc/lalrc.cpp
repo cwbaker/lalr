@@ -9,7 +9,7 @@
 #include <sweet/lalr/ParserTransition.hpp>
 #include <sweet/lalr/ParserSymbol.hpp>
 #include <sweet/lalr/ParserAction.hpp>
-#include <sweet/lalr/LexerAllocations.hpp>
+#include <sweet/lalr/RegexCompiler.hpp>
 #include <sweet/lalr/LexerStateMachine.hpp>
 #include <sweet/lalr/LexerState.hpp>
 #include <sweet/lalr/LexerTransition.hpp>

@@ -12,7 +12,7 @@
 #include "GrammarCompiler.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
-#include "LexerAllocations.hpp"
+#include "RegexCompiler.hpp"
 #include "LexerTokenType.hpp"
 #include "assert.hpp"
 

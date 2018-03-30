@@ -10,27 +10,28 @@ for _, build in build:default_builds() do
         build:Cxx () {
             "Grammar.cpp",
             "GrammarAction.cpp",
+            'GrammarCompiler.cpp',
             "GrammarGenerator.cpp",
-            "GrammarParser.cpp",
             "GrammarItem.cpp",
+            "GrammarParser.cpp",
             "GrammarProduction.cpp",
             "GrammarState.cpp",
             "GrammarStateLess.cpp",
             "GrammarSymbol.cpp",
             "GrammarSymbolLess.cpp",
-            "GrammarTransition.cpp",
-            'GrammarCompiler.cpp'
+            "GrammarTransition.cpp"
         };
 
         build:Cxx () {
-            "LexerAllocations.cpp",
-            "LexerGenerator.cpp",
             "LexerState.cpp",
             "LexerTransition.cpp",
-            "LexerToken.cpp",
         };
         
         build:Cxx () {
+            "RegexCompiler.cpp",
+            "LexerGenerator.cpp",
+            "LexerToken.cpp",
+
             "RegexAction.cpp",
             "RegexItem.cpp",
             "RegexState.cpp",

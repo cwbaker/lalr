@@ -17,7 +17,7 @@
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
 #include "ParserTransition.hpp"
-#include "LexerAllocations.hpp"
+#include "RegexCompiler.hpp"
 #include "ErrorPolicy.hpp"
 #include "assert.hpp"
 
@@ -40,8 +40,8 @@ GrammarCompiler::GrammarCompiler()
   whitespace_lexer_allocations_(),
   parser_state_machine_()
 {
-    lexer_allocations_.reset( new LexerAllocations );
-    whitespace_lexer_allocations_.reset( new LexerAllocations );
+    lexer_allocations_.reset( new RegexCompiler );
+    whitespace_lexer_allocations_.reset( new RegexCompiler );
     parser_state_machine_.reset( new ParserStateMachine );
     memset( parser_state_machine_.get(), 0, sizeof(*parser_state_machine_) );
 }
@@ -50,12 +50,12 @@ GrammarCompiler::~GrammarCompiler()
 {
 }
 
-const LexerAllocations* GrammarCompiler::lexer_allocations() const
+const RegexCompiler* GrammarCompiler::lexer_allocations() const
 {
     return lexer_allocations_.get();
 }
 
-const LexerAllocations* GrammarCompiler::whitespace_lexer_allocations() const
+const RegexCompiler* GrammarCompiler::whitespace_lexer_allocations() const
 {
     return whitespace_lexer_allocations_.get();
 }
@@ -141,7 +141,7 @@ void GrammarCompiler::set_states( std::unique_ptr<ParserState[]>& states, int st
     parser_state_machine_->start_state = start_state;
 }
 
-void GrammarCompiler::set_lexer_allocations( std::unique_ptr<LexerAllocations>& lexer_allocations )
+void GrammarCompiler::set_lexer_allocations( std::unique_ptr<RegexCompiler>& lexer_allocations )
 {
     SWEET_ASSERT( lexer_allocations.get() );
     if ( lexer_allocations )
@@ -151,7 +151,7 @@ void GrammarCompiler::set_lexer_allocations( std::unique_ptr<LexerAllocations>& 
     }
 }
 
-void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<LexerAllocations>& whitespace_lexer_allocations )
+void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<RegexCompiler>& whitespace_lexer_allocations )
 {
     if ( whitespace_lexer_allocations )
     {
@@ -269,7 +269,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
         }
     }
 
-    unique_ptr<LexerAllocations> lexer_allocations( new LexerAllocations );
+    unique_ptr<RegexCompiler> lexer_allocations( new RegexCompiler );
     LexerGenerator lexer_generator;
     lexer_generator.generate( tokens, lexer_allocations.get(), error_policy );
     lexer_allocations_ = move( lexer_allocations );
@@ -278,11 +278,11 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
 
 void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy )
 {
-    unique_ptr<LexerAllocations> whitespace_lexer_allocations;
+    unique_ptr<RegexCompiler> whitespace_lexer_allocations;
     const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
     if ( !whitespace_tokens.empty() )
     {
-        whitespace_lexer_allocations.reset( new LexerAllocations );
+        whitespace_lexer_allocations.reset( new RegexCompiler );
         LexerGenerator lexer_generator;
         lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), error_policy );        
         whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );

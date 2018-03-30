@@ -6,7 +6,7 @@
 #include "LexerGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "LexerToken.hpp"
-#include "LexerAllocations.hpp"
+#include "RegexCompiler.hpp"
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
 #include "LexerAction.hpp"
@@ -130,7 +130,7 @@ const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAllocations* allocations, ErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::vector<LexerToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -148,7 +148,7 @@ void LexerGenerator::generate( const std::vector<LexerToken>& tokens, LexerAlloc
     ranges_.clear();
 }
 
-void LexerGenerator::generate( const std::string& regular_expression, void* symbol, LexerAllocations* allocations, ErrorPolicy* error_policy )
+void LexerGenerator::generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -373,7 +373,7 @@ void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
     state->set_symbol( token ? token->symbol() : NULL );
 }
 
-void LexerGenerator::populate_allocations( LexerAllocations* allocations ) const
+void LexerGenerator::populate_allocations( RegexCompiler* allocations ) const
 {
     SWEET_ASSERT( allocations );
 
