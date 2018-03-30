@@ -78,10 +78,8 @@ const GrammarState* GrammarGenerator::start_state() const
     return start_state_;
 }
 
-int GrammarGenerator::generate( Grammar& grammar, GrammarCompiler* parser_allocations, ErrorPolicy* error_policy )
+int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
 {
-    SWEET_ASSERT( parser_allocations );
-
     error_policy_ = error_policy;
     identifier_ = grammar.identifier();
     actions_.swap( grammar.actions() );

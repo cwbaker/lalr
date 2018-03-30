@@ -1,6 +1,7 @@
 #ifndef SWEET_LALR_LEXERALLOCATIONS_HPP_INCLUDED
 #define SWEET_LALR_LEXERALLOCATIONS_HPP_INCLUDED
 
+#include "RegexToken.hpp"
 #include <memory>
 #include <string>
 #include <deque>
@@ -11,6 +12,7 @@ namespace sweet
 namespace lalr
 {
 
+class ErrorPolicy;
 class LexerAction;
 class LexerTransition;
 class LexerState;
@@ -31,6 +33,7 @@ public:
     RegexCompiler();
     ~RegexCompiler();
     const LexerStateMachine* state_machine() const;
+    void compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy );
     const char* add_string( const std::string& string );
     void set_actions( std::unique_ptr<LexerAction[]>& actions, int actions_size );
     void set_transitions( std::unique_ptr<LexerTransition[]>& transitions, int transitions_size );

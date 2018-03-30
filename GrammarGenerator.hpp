@@ -52,7 +52,7 @@ class GrammarGenerator
         const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
         const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& states() const;
         const GrammarState* start_state() const;
-        int generate( Grammar& grammar, GrammarCompiler* parser_allocations, ErrorPolicy* error_policy );
+        int generate( Grammar& grammar, ErrorPolicy* error_policy );
                 
     private:
         void fire_error( int line, int error, const char* format, ... );

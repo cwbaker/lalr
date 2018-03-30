@@ -1,5 +1,6 @@
 
 #include "RegexCompiler.hpp"
+#include "RegexGenerator.hpp"
 #include "LexerStateMachine.hpp"
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
@@ -25,6 +26,12 @@ RegexCompiler::~RegexCompiler()
 const LexerStateMachine* RegexCompiler::state_machine() const
 {
     return state_machine_.get();
+}
+
+void RegexCompiler::compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
+{
+    RegexGenerator generator;
+    generator.generate( tokens, this, error_policy );
 }
 
 const char* RegexCompiler::add_string( const std::string& string )

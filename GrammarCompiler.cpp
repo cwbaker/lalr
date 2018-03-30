@@ -74,7 +74,7 @@ void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* 
     parser.parse( begin, end, &grammar );
 
     GrammarGenerator generator;
-    int errors = generator.generate(grammar, this, error_policy );
+    int errors = generator.generate( grammar, error_policy );
     if ( errors == 0 )
     {
         populate_parser_state_machine( grammar, generator );
@@ -260,10 +260,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
         }
     }
 
-    unique_ptr<RegexCompiler> lexer_allocations( new RegexCompiler );
-    RegexGenerator lexer_generator;
-    lexer_generator.generate( tokens, lexer_allocations.get(), error_policy );
-    lexer_ = move( lexer_allocations );
+    lexer_->compile( tokens, error_policy );
     parser_state_machine_->lexer_state_machine = lexer_->state_machine();
 }
 
@@ -273,10 +270,7 @@ void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& gr
     const vector<RegexToken>& whitespace_tokens = grammar.whitespace_tokens();
     if ( !whitespace_tokens.empty() )
     {
-        whitespace_lexer_allocations.reset( new RegexCompiler );
-        RegexGenerator lexer_generator;
-        lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), error_policy );        
-        whitespace_lexer_ = move( whitespace_lexer_allocations );
+        whitespace_lexer_->compile( whitespace_tokens, error_policy );
         parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
     }
 }
