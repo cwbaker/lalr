@@ -403,8 +403,13 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( state_machine_ );
-    const ParserTransition* transition = state->find_transition_by_symbol( symbol );
-    return transition;
+    const ParserTransition* transition = state->transitions;
+    const ParserTransition* transitions_end = state->transitions + state->length;
+    while ( transition != transitions_end && transition->symbol != symbol )
+    {
+        ++transition;
+    }
+    return transition != transitions_end ? transition : nullptr;
 }
 
 /**
