@@ -49,7 +49,7 @@ const std::vector<std::unique_ptr<RegexAction>>& RegexGenerator::actions() const
     return actions_;
 }
 
-const std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>& RegexGenerator::states() const
+const std::set<std::unique_ptr<RegexState>, RegexStateLess>& RegexGenerator::states() const
 {
     return states_;
 }
@@ -222,7 +222,7 @@ std::unique_ptr<RegexState> RegexGenerator::goto_( const RegexState* state, int 
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>* states, const RegexState** start_state )
+void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
@@ -241,7 +241,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>::const_iterator i = states->begin(); i != states->end(); ++i )
+            for ( std::set<std::unique_ptr<RegexState>, RegexStateLess>::const_iterator i = states->begin(); i != states->end(); ++i )
             {
                 RegexState* state = i->get();
                 SWEET_ASSERT( state );

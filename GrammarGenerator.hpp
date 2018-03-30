@@ -4,7 +4,6 @@
 #include "RegexToken.hpp"
 #include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
-#include "shared_ptr_less.hpp"
 #include <memory>
 #include <set>
 #include <vector>

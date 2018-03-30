@@ -24,17 +24,18 @@ for _, build in build:default_builds() do
 
         build:Cxx () {
             "RegexAction.cpp",
+            "RegexCharacter.cpp",
             "RegexCompiler.cpp",
             "RegexGenerator.cpp",
             "RegexItem.cpp",
-            "RegexState.cpp",
-            "RegexToken.cpp",
-            "RegexTransition.cpp",
-            "RegexCharacter.cpp",
             "RegexNode.cpp",
             "RegexNodeLess.cpp",
             "RegexParser.cpp",
-            "RegexSyntaxTree.cpp"
+            "RegexState.cpp",
+            "RegexStateLess.cpp",
+            "RegexSyntaxTree.cpp",
+            "RegexToken.cpp",
+            "RegexTransition.cpp"
         };
     };
 end

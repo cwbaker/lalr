@@ -86,7 +86,7 @@ void RegexCompiler::set_states( std::unique_ptr<LexerState[]>& states, int state
 void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generator )
 {
     const vector<unique_ptr<RegexAction>>& source_actions = generator.actions();
-    const set<unique_ptr<RegexState>, unique_ptr_less<RegexState>>& source_states = generator.states();
+    const set<unique_ptr<RegexState>, RegexStateLess>& source_states = generator.states();
 
     size_t transitions_size = 0;
     for ( auto i = source_states.begin(); i != source_states.end(); ++i )
