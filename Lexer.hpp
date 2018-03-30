@@ -11,6 +11,8 @@ namespace lalr
 
 class ErrorPolicy;
 class LexerAction;
+class LexerTransition;
+class LexerState;
 class LexerStateMachine;
 
 /**
@@ -54,6 +56,7 @@ class Lexer
         const void* run();
         void error();
         void fire_error( int line, int error, const char* format, ... ) const;
+        const LexerTransition* find_transition_by_character( const LexerState* state, int character ) const;
 };
 
 }

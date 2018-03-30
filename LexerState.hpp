@@ -19,8 +19,6 @@ public:
     int length; ///< Number of transitions from this state.
     const LexerTransition* transitions; ///< Transitions from this state.
     const void* symbol; ///< The symbol that this state recognizes or null if this state doesn't recognize a symbol.
-
-    const LexerTransition* find_transition_by_character( int character ) const;
 };
 
 }

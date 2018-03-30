@@ -218,7 +218,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
         const LexerState* state = whitespace_state_machine_->start_state;
         SWEET_ASSERT( state );
         const LexerTransition* transition = nullptr;
-        while ( position_ != end_ && (transition = state->find_transition_by_character(*position_)) )
+        while ( position_ != end_ && (transition = find_transition_by_character(state, *position_)) )
         {
             state = transition->state;            
             if ( transition->action )
@@ -262,7 +262,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
     {
         symbol = state->symbol;
         const LexerTransition* transition = nullptr;
-        while ( position_ != end_ && (transition = state->find_transition_by_character(*position_)) )
+        while ( position_ != end_ && (transition = find_transition_by_character(state, *position_)) )
         {
             state = transition->state;
             symbol = state->symbol;
@@ -309,7 +309,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
     
     const LexerTransition* transition = NULL;
     const LexerState* state = state_machine_->start_state;
-    while ( position_ != end_ && !(transition = state->find_transition_by_character(*position_)) )
+    while ( position_ != end_ && !(transition = find_transition_by_character(state, *position_)) )
     {
         ++position_;
     }
@@ -340,6 +340,19 @@ void Lexer<Iterator, Char, Traits, Allocator>::fire_error( int line, int error, 
         error_policy_->lalr_error( line, error, format, args );
         va_end( args );
     }    
+}
+
+
+template <class Iterator, class Char, class Traits, class Allocator>
+const LexerTransition* Lexer<Iterator, Char, Traits, Allocator>::find_transition_by_character( const LexerState* state, int character ) const
+{
+    const LexerTransition* transition = state->transitions;
+    const LexerTransition* transitions_end = state->transitions + state->length;
+    while ( transition != transitions_end && !transition->is_on_character(character) )
+    {
+        ++transition;
+    }
+    return transition != transitions_end ? transition : nullptr;
 }
 
 }
