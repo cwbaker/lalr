@@ -28,13 +28,12 @@ for _, build in build:default_builds() do
         };
         
         build:Cxx () {
+            "RegexAction.cpp",
             "RegexCompiler.cpp",
             "RegexGenerator.cpp",
-            "RegexToken.cpp",
-
-            "RegexAction.cpp",
             "RegexItem.cpp",
             "RegexState.cpp",
+            "RegexToken.cpp",
             "RegexTransition.cpp",
             "RegexCharacter.cpp",
             "RegexNode.cpp",
