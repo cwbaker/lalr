@@ -287,11 +287,13 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     generate_cxx_lexer_state_machine( file, state_machine->lexer_state_machine, "lexer" );
     generate_cxx_lexer_state_machine( file, state_machine->whitespace_lexer_state_machine, "whitespace_lexer" );
 
+    fprintf( file, "\n" );
     fprintf( file, "}\n" );
     fprintf( file, "\n" );
 
     fprintf( file, "extern const ParserStateMachine %s_parser_state_machine = \n", state_machine->identifier );
     fprintf( file, "{\n" );
+    fprintf( file, "    \"%s\",\n", state_machine->identifier );
     fprintf( file, "    %d, // #actions\n", state_machine->actions_size );
     fprintf( file, "    %d, // #symbols\n", state_machine->symbols_size );
     fprintf( file, "    %d, // #transitions\n", state_machine->transitions_size );
@@ -307,7 +309,6 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     fprintf( file, "    &lexer_state_machine, // lexer state machine\n" );
     fprintf( file, "    &whitespace_lexer_state_machine // whitespace lexer state machine\n" );
     fprintf( file, "};\n" );
-    fprintf( file, "\n" );
 }
 
 void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* state_machine, const char* prefix )
@@ -388,5 +389,4 @@ void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* stat
     fprintf( file, "    %s_states, // states\n", prefix );
     fprintf( file, "    &%s_states[%d] // start state\n", prefix, state_machine->start_state->index );
     fprintf( file, "};\n" );
-    fprintf( file, "\n" );
 }
