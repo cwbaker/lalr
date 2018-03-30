@@ -5,7 +5,7 @@
 
 #include "RegexGenerator.hpp"
 #include "ErrorCode.hpp"
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include "RegexCompiler.hpp"
 #include "LexerState.hpp"
 #include "LexerTransition.hpp"
@@ -130,7 +130,7 @@ const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void RegexGenerator::generate( const std::vector<LexerToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
+void RegexGenerator::generate( const std::vector<RegexToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -156,7 +156,7 @@ void RegexGenerator::generate( const std::string& regular_expression, void* symb
     start_state_ = nullptr;
     ranges_.clear();
 
-    LexerToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
+    RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
     generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
     populate_allocations( allocations );
 
@@ -331,8 +331,8 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
     SWEET_ASSERT( state );
 
     int line = INT_MAX;
-    LexerTokenType type = TOKEN_NULL;
-    const LexerToken* token = NULL;
+    RegexTokenType type = TOKEN_NULL;
+    const RegexToken* token = NULL;
 
     const std::set<RegexItem>& items = state->get_items();
     for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )

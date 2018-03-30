@@ -30,7 +30,7 @@ for _, build in build:default_builds() do
         build:Cxx () {
             "RegexCompiler.cpp",
             "RegexGenerator.cpp",
-            "LexerToken.cpp",
+            "RegexToken.cpp",
 
             "RegexAction.cpp",
             "RegexItem.cpp",

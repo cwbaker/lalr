@@ -89,9 +89,9 @@ RegexNode::RegexNode( int index, int begin_character, int end_character )
 //  One past the last character in the interval for this node.
 //
 // @param token
-//  The LexerToken recognized at this node (assumed not null).
+//  The RegexToken recognized at this node (assumed not null).
 */
-RegexNode::RegexNode( int index, int begin_character, int end_character, const LexerToken* token )
+RegexNode::RegexNode( int index, int begin_character, int end_character, const RegexToken* token )
 : index_( index ),
   type_( LEXER_NODE_SYMBOL ),
   begin_character_( begin_character ),
@@ -223,12 +223,12 @@ int RegexNode::get_end_character() const
 }
 
 /**
-// Get the LexerToken that is recognized at this node.
+// Get the RegexToken that is recognized at this node.
 //
 // @return
 //  The token or null if this node doesn't recognize a token.
 */
-const LexerToken* RegexNode::get_token() const
+const RegexToken* RegexNode::get_token() const
 {
     return token_;
 }

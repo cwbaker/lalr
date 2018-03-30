@@ -4,7 +4,7 @@
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
 #include "Associativity.hpp"
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include <vector>
 
 namespace sweet
@@ -28,7 +28,7 @@ class Grammar
     std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
-    std::vector<LexerToken> whitespace_tokens_;
+    std::vector<RegexToken> whitespace_tokens_;
     bool active_whitespace_directive_;
     bool active_precedence_directive_;
     Associativity associativity_;
@@ -49,7 +49,7 @@ public:
     std::vector<std::unique_ptr<GrammarSymbol>>& symbols();
     std::vector<std::unique_ptr<GrammarProduction>>& productions();
     std::vector<std::unique_ptr<GrammarAction>>& actions();
-    const std::vector<LexerToken>& whitespace_tokens() const;
+    const std::vector<RegexToken>& whitespace_tokens() const;
     GrammarSymbol* start_symbol() const;
     GrammarSymbol* end_symbol() const;
     GrammarSymbol* error_symbol() const;

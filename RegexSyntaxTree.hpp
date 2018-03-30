@@ -4,7 +4,7 @@
 #include "RegexCharacter.hpp"
 #include "RegexNodeLess.hpp"
 #include "RegexNodeType.hpp"
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,8 +34,8 @@ class RegexSyntaxTree
     int errors_; ///< The number of errors that have occured.
 
     public:
-        RegexSyntaxTree( const LexerToken& token, RegexGenerator* lexer_generator );
-        RegexSyntaxTree( const std::vector<LexerToken>& tokens, RegexGenerator* lexer_generator );
+        RegexSyntaxTree( const RegexToken& token, RegexGenerator* lexer_generator );
+        RegexSyntaxTree( const std::vector<RegexToken>& tokens, RegexGenerator* lexer_generator );
 
         bool empty() const;
         int errors() const;
@@ -87,17 +87,17 @@ class RegexSyntaxTree
     private:
         std::shared_ptr<RegexNode> regex_node( RegexNodeType type );
         std::shared_ptr<RegexNode> regex_node( int begin, int end );
-        std::shared_ptr<RegexNode> regex_node( int begin, int end, const LexerToken* token );
+        std::shared_ptr<RegexNode> regex_node( int begin, int end, const RegexToken* token );
         std::shared_ptr<RegexNode> regex_node( const RegexAction* action );
 
         void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
         void print_nodes( const std::vector<std::shared_ptr<RegexNode> >& nodes, int level ) const;
 
         void calculate_symbols_for_characters_start_and_end();
-        void calculate_combined_parse_tree( const std::vector<LexerToken>& tokens );
+        void calculate_combined_parse_tree( const std::vector<RegexToken>& tokens );
         void calculate_nullable_first_last_and_follow();
-        void parse_regular_expression( const LexerToken& token );
-        void parse_literal( const LexerToken& token );
+        void parse_regular_expression( const RegexToken& token );
+        void parse_literal( const RegexToken& token );
 
         int escape( std::string::const_iterator start, std::string::const_iterator end, std::string::const_iterator* next ) const;
         void insert_characters( int begin, int end );

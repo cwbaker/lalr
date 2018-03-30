@@ -28,7 +28,7 @@ using namespace sweet::lalr;
 // @param symbol
 //  The symbol to return when the regular expression matches.
 */
-RegexSyntaxTree::RegexSyntaxTree( const LexerToken& token, RegexGenerator* lexer_generator )
+RegexSyntaxTree::RegexSyntaxTree( const RegexToken& token, RegexGenerator* lexer_generator )
 : lexer_generator_( lexer_generator ),
   bracket_expression_characters_(),
   index_( 0 ),
@@ -43,7 +43,7 @@ RegexSyntaxTree::RegexSyntaxTree( const LexerToken& token, RegexGenerator* lexer
 /**
 // Constructor.
 */
-RegexSyntaxTree::RegexSyntaxTree( const std::vector<LexerToken>& tokens, RegexGenerator* lexer_generator )
+RegexSyntaxTree::RegexSyntaxTree( const std::vector<RegexToken>& tokens, RegexGenerator* lexer_generator )
 : lexer_generator_( lexer_generator ),
   bracket_expression_characters_(),
   index_( 0 ),
@@ -542,7 +542,7 @@ std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( int begin, int end )
 // @return
 //  The RegexNode.
 */
-std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( int begin, int end, const LexerToken* token )
+std::shared_ptr<RegexNode> RegexSyntaxTree::regex_node( int begin, int end, const RegexToken* token )
 {
     std::shared_ptr<RegexNode> node( new RegexNode(index_, begin, end, token) );
     ++index_;
@@ -646,9 +646,9 @@ void RegexSyntaxTree::print_nodes( const vector<std::shared_ptr<RegexNode> >& no
 // @param symbols
 //  The Symbols to calculate the combined parse tree for.
 */
-void RegexSyntaxTree::calculate_combined_parse_tree(  const std::vector<LexerToken>& tokens )
+void RegexSyntaxTree::calculate_combined_parse_tree(  const std::vector<RegexToken>& tokens )
 {
-    for ( vector<LexerToken>::const_iterator token = tokens.begin(); token != tokens.end(); ++token )
+    for ( vector<RegexToken>::const_iterator token = tokens.begin(); token != tokens.end(); ++token )
     {
         switch ( token->type() )
         {
@@ -695,9 +695,9 @@ void RegexSyntaxTree::calculate_nullable_first_last_and_follow()
 // operator.
 //
 // @param token
-//  The LexerToken that defines the regular expression to parse.
+//  The RegexToken that defines the regular expression to parse.
 */
-void RegexSyntaxTree::parse_regular_expression( const LexerToken& token )
+void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
 {
     SWEET_ASSERT( token.type() == TOKEN_REGULAR_EXPRESSION );
     SWEET_ASSERT( !token.lexeme().empty() );
@@ -746,7 +746,7 @@ void RegexSyntaxTree::parse_regular_expression( const LexerToken& token )
 // @param matched_symbol
 //  The symbol that represents the token that the literal matches.
 */
-void RegexSyntaxTree::parse_literal( const LexerToken& token )
+void RegexSyntaxTree::parse_literal( const RegexToken& token )
 {
     SWEET_ASSERT( token.type() == TOKEN_LITERAL );
     SWEET_ASSERT( !token.lexeme().empty() );

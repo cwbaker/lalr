@@ -1,7 +1,7 @@
 #ifndef SWEET_LALR_LEXERGENERATOR_HPP_INCLUDED
 #define SWEET_LALR_LEXERGENERATOR_HPP_INCLUDED
 
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include "unique_ptr_less.hpp"
 #include <memory>
 #include <vector>
@@ -46,7 +46,7 @@ class RegexGenerator
         void fire_printf( const char* format, ... ) const;
         const RegexAction* add_lexer_action( const std::string& identifier );
         void generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy = nullptr );
-        void generate( const std::vector<LexerToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy = nullptr );
+        void generate( const std::vector<RegexToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy = nullptr );
 
     private:
         std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );

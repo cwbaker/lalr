@@ -13,7 +13,7 @@
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
 #include "RegexCompiler.hpp"
-#include "LexerTokenType.hpp"
+#include "RegexTokenType.hpp"
 #include "assert.hpp"
 
 using std::string;
@@ -70,7 +70,7 @@ std::vector<std::unique_ptr<GrammarAction>>& Grammar::actions()
     return actions_;
 }
 
-const std::vector<LexerToken>& Grammar::whitespace_tokens() const
+const std::vector<RegexToken>& Grammar::whitespace_tokens() const
 {
     return whitespace_tokens_;
 }
@@ -227,7 +227,7 @@ Grammar& Grammar::literal( const char* literal, int line )
     SWEET_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( LexerToken(TOKEN_LITERAL, 0, nullptr, literal) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, nullptr, literal) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {
@@ -261,7 +261,7 @@ Grammar& Grammar::regex( const char* regex, int line )
     SWEET_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( LexerToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {

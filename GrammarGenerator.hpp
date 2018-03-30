@@ -1,7 +1,7 @@
 #ifndef SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
 #define SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
 #include "shared_ptr_less.hpp"

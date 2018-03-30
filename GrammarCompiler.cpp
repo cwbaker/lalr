@@ -11,7 +11,7 @@
 #include "GrammarState.hpp"
 #include "GrammarTransition.hpp"
 #include "RegexGenerator.hpp"
-#include "LexerToken.hpp"
+#include "RegexToken.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
 #include "ParserState.hpp"
@@ -254,7 +254,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
     // Generate tokens for generating the lexical analyzer from each of 
     // the terminal symbols in the grammar.
     const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
-    vector<LexerToken> tokens;
+    vector<RegexToken> tokens;
     for ( size_t i = 0; i < grammar_symbols.size(); ++i )
     {
         const GrammarSymbol* grammar_symbol = grammar_symbols[i].get();
@@ -264,8 +264,8 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
             const ParserSymbol* symbol = &symbols_[i];
             SWEET_ASSERT( symbol );
             int line = grammar_symbol->line();
-            LexerTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( LexerToken(token_type, line, symbol, symbol->lexeme) );                
+            RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
+            tokens.push_back( RegexToken(token_type, line, symbol, symbol->lexeme) );                
         }
     }
 
@@ -279,7 +279,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
 void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy )
 {
     unique_ptr<RegexCompiler> whitespace_lexer_allocations;
-    const vector<LexerToken>& whitespace_tokens = grammar.whitespace_tokens();
+    const vector<RegexToken>& whitespace_tokens = grammar.whitespace_tokens();
     if ( !whitespace_tokens.empty() )
     {
         whitespace_lexer_allocations.reset( new RegexCompiler );
