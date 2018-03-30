@@ -10,7 +10,7 @@
 #include "GrammarAction.hpp"
 #include "GrammarState.hpp"
 #include "GrammarTransition.hpp"
-#include "LexerGenerator.hpp"
+#include "RegexGenerator.hpp"
 #include "LexerToken.hpp"
 #include "ParserStateMachine.hpp"
 #include "ParserSymbol.hpp"
@@ -270,7 +270,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
     }
 
     unique_ptr<RegexCompiler> lexer_allocations( new RegexCompiler );
-    LexerGenerator lexer_generator;
+    RegexGenerator lexer_generator;
     lexer_generator.generate( tokens, lexer_allocations.get(), error_policy );
     lexer_allocations_ = move( lexer_allocations );
     parser_state_machine_->lexer_state_machine = lexer_allocations_->state_machine();
@@ -283,7 +283,7 @@ void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& gr
     if ( !whitespace_tokens.empty() )
     {
         whitespace_lexer_allocations.reset( new RegexCompiler );
-        LexerGenerator lexer_generator;
+        RegexGenerator lexer_generator;
         lexer_generator.generate( whitespace_tokens, whitespace_lexer_allocations.get(), error_policy );        
         whitespace_lexer_allocations_ = move( whitespace_lexer_allocations );
         parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_allocations_->state_machine();

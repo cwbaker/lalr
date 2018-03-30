@@ -16,7 +16,7 @@
 #include "ParserSymbol.hpp"
 #include "ParserTransition.hpp"
 #include "ParserStateMachine.hpp"
-#include "LexerGenerator.hpp"
+#include "RegexGenerator.hpp"
 #include "RegexCompiler.hpp"
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"

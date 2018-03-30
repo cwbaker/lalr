@@ -16,7 +16,7 @@ namespace sweet
 namespace lalr
 {
 
-class LexerGenerator;
+class RegexGenerator;
 class RegexAction;
 class RegexNode;
 
@@ -27,15 +27,15 @@ class RegexNode;
 */
 class RegexSyntaxTree
 {
-    LexerGenerator* lexer_generator_; ///< The LexerGenerator to retrieve actions from and report errors and debug information to.
+    RegexGenerator* lexer_generator_; ///< The RegexGenerator to retrieve actions from and report errors and debug information to.
     std::set<RegexCharacter> bracket_expression_characters_; ///< The characters in the current bracket expression.
     int index_; ///< The current node index.
     std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
     public:
-        RegexSyntaxTree( const LexerToken& token, LexerGenerator* lexer_generator );
-        RegexSyntaxTree( const std::vector<LexerToken>& tokens, LexerGenerator* lexer_generator );
+        RegexSyntaxTree( const LexerToken& token, RegexGenerator* lexer_generator );
+        RegexSyntaxTree( const std::vector<LexerToken>& tokens, RegexGenerator* lexer_generator );
 
         bool empty() const;
         int errors() const;

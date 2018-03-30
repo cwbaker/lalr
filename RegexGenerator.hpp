@@ -31,7 +31,7 @@ class RegexCompiler;
 //
 // Generate a lexical analyzer.
 */
-class LexerGenerator
+class RegexGenerator
 {
     ErrorPolicy* error_policy_; ///< The error policy to report errors and debug information to or null to ignore errors and debug information.
     std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexical analyzer actions.
@@ -40,8 +40,8 @@ class LexerGenerator
     std::vector<std::pair<int, bool>> ranges_; ///< Ranges generated for the current transition while generating.
 
     public:
-        LexerGenerator();
-        ~LexerGenerator();
+        RegexGenerator();
+        ~RegexGenerator();
         void fire_error( int line, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         const RegexAction* add_lexer_action( const std::string& identifier );

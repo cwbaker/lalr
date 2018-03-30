@@ -1,9 +1,9 @@
 //
-// LexerGenerator.cpp
+// RegexGenerator.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include "LexerGenerator.hpp"
+#include "RegexGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "LexerToken.hpp"
 #include "RegexCompiler.hpp"
@@ -31,7 +31,7 @@ using namespace sweet::lalr;
 /**
 // Constructor.
 */
-LexerGenerator::LexerGenerator()
+RegexGenerator::RegexGenerator()
 : error_policy_( nullptr ),
   actions_(),
   states_(),
@@ -40,7 +40,7 @@ LexerGenerator::LexerGenerator()
 {
 }
 
-LexerGenerator::~LexerGenerator()
+RegexGenerator::~RegexGenerator()
 {
 }
 
@@ -60,7 +60,7 @@ LexerGenerator::~LexerGenerator()
 // @param ...
 //  Parameters as described by *format*.
 */
-void LexerGenerator::fire_error( int line, int error, const char* format, ... ) const
+void RegexGenerator::fire_error( int line, int error, const char* format, ... ) const
 {
     if ( error_policy_ )
     {
@@ -81,7 +81,7 @@ void LexerGenerator::fire_error( int line, int error, const char* format, ... ) 
 // @param ...
 //  Parameters as described by \e format.
 */
-void LexerGenerator::fire_printf( const char* format, ... ) const
+void RegexGenerator::fire_printf( const char* format, ... ) const
 {
     if ( error_policy_ )
     {
@@ -109,7 +109,7 @@ void LexerGenerator::fire_printf( const char* format, ... ) const
 //  The RegexAction whose identifier matches \e identifier or null if 
 //  \e identifier is empty.
 */
-const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifier )
+const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifier )
 {
     SWEET_ASSERT( !identifier.empty() );
     if ( !identifier.empty() )
@@ -130,7 +130,7 @@ const RegexAction* LexerGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-void LexerGenerator::generate( const std::vector<LexerToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
+void RegexGenerator::generate( const std::vector<LexerToken>& tokens, RegexCompiler* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -148,7 +148,7 @@ void LexerGenerator::generate( const std::vector<LexerToken>& tokens, RegexCompi
     ranges_.clear();
 }
 
-void LexerGenerator::generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy )
+void RegexGenerator::generate( const std::string& regular_expression, void* symbol, RegexCompiler* allocations, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
     actions_.clear();
@@ -183,7 +183,7 @@ void LexerGenerator::generate( const std::string& regular_expression, void* symb
 // @return
 //  The state generated when accepting [\e begin, \e end) from \e state.
 */
-std::unique_ptr<RegexState> LexerGenerator::goto_( const RegexState* state, int begin, int end )
+std::unique_ptr<RegexState> RegexGenerator::goto_( const RegexState* state, int begin, int end )
 {
     SWEET_ASSERT( state );
     SWEET_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
@@ -217,7 +217,7 @@ std::unique_ptr<RegexState> LexerGenerator::goto_( const RegexState* state, int 
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>* states, const RegexState** start_state )
+void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, unique_ptr_less<RegexState>>* states, const RegexState** start_state )
 {
     SWEET_ASSERT( states );
     SWEET_ASSERT( states->empty() );
@@ -307,7 +307,7 @@ void LexerGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
 /**
 // Generate indices for the generated states.
 */
-void LexerGenerator::generate_indices_for_states()
+void RegexGenerator::generate_indices_for_states()
 {
     int index = 0;
     
@@ -326,7 +326,7 @@ void LexerGenerator::generate_indices_for_states()
 // @param state
 //  The state to generate a matching symbol for.
 */
-void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
+void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 {
     SWEET_ASSERT( state );
 
@@ -373,7 +373,7 @@ void LexerGenerator::generate_symbol_for_state( RegexState* state ) const
     state->set_symbol( token ? token->symbol() : NULL );
 }
 
-void LexerGenerator::populate_allocations( RegexCompiler* allocations ) const
+void RegexGenerator::populate_allocations( RegexCompiler* allocations ) const
 {
     SWEET_ASSERT( allocations );
 
@@ -438,9 +438,9 @@ void LexerGenerator::populate_allocations( RegexCompiler* allocations ) const
 }
 
 /**
-// Clear the current distinct ranges maintained by this LexerGenerator.
+// Clear the current distinct ranges maintained by this RegexGenerator.
 */
-void LexerGenerator::clear()
+void RegexGenerator::clear()
 {
     ranges_.clear();
 }
@@ -448,7 +448,7 @@ void LexerGenerator::clear()
 
 /**
 // Insert the range [\e begin, \e end) into the current distinct ranges for 
-// this LexerGenerator.
+// this RegexGenerator.
 //
 // The ranges are stored as a vector of pair<int, bool>.  The first element of
 // the pair represents the character and the second element represents whether
@@ -466,7 +466,7 @@ void LexerGenerator::clear()
 // @param end
 //  The end character in the range of characters to insert.
 */
-void LexerGenerator::insert( int begin, int end )
+void RegexGenerator::insert( int begin, int end )
 {
     bool in = false;        
 

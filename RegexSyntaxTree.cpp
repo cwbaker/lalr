@@ -8,7 +8,7 @@
 #include "RegexNode.hpp"
 #include "RegexNodeLess.hpp"
 #include "RegexCharacter.hpp"
-#include "LexerGenerator.hpp"
+#include "RegexGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 
@@ -28,7 +28,7 @@ using namespace sweet::lalr;
 // @param symbol
 //  The symbol to return when the regular expression matches.
 */
-RegexSyntaxTree::RegexSyntaxTree( const LexerToken& token, LexerGenerator* lexer_generator )
+RegexSyntaxTree::RegexSyntaxTree( const LexerToken& token, RegexGenerator* lexer_generator )
 : lexer_generator_( lexer_generator ),
   bracket_expression_characters_(),
   index_( 0 ),
@@ -43,7 +43,7 @@ RegexSyntaxTree::RegexSyntaxTree( const LexerToken& token, LexerGenerator* lexer
 /**
 // Constructor.
 */
-RegexSyntaxTree::RegexSyntaxTree( const std::vector<LexerToken>& tokens, LexerGenerator* lexer_generator )
+RegexSyntaxTree::RegexSyntaxTree( const std::vector<LexerToken>& tokens, RegexGenerator* lexer_generator )
 : lexer_generator_( lexer_generator ),
   bracket_expression_characters_(),
   index_( 0 ),
