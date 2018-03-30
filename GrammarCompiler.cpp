@@ -5,6 +5,7 @@
 
 #include "GrammarCompiler.hpp"
 #include "Grammar.hpp"
+#include "GrammarParser.hpp"
 #include "GrammarGenerator.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarAction.hpp"
@@ -68,8 +69,9 @@ const ParserStateMachine* GrammarCompiler::parser_state_machine() const
 void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
 {
     Grammar grammar;
-    grammar.parse( begin, end );
 
+    GrammarParser parser;
+    parser.parse( begin, end, &grammar );
 
     GrammarGenerator generator;
     int errors = generator.generate(grammar, this, error_policy );

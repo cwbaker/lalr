@@ -318,37 +318,6 @@ Grammar& Grammar::identifier( const char* identifier, int line )
     return *this;
 }
 
-bool Grammar::parse( const char* begin, const char* end )
-{
-    SWEET_ASSERT( begin );
-    SWEET_ASSERT( end );
-    SWEET_ASSERT( begin <= end );
-    GrammarParser parser;
-    return parser.parse( begin, end, this );
-}
-
-// bool Grammar::generate( ParserStateMachine* state_machine, ParserErrorPolicy* error_policy )
-// {
-//     SWEET_ASSERT( state_machine );
-
-//     for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
-//     {
-//         GrammarSymbol* symbol = i->get();
-//         SWEET_ASSERT( symbol );
-//         if ( !symbol->productions().empty() )
-//         {
-//             symbol->set_lexeme_type( LEXEME_NULL );
-//             symbol->set_symbol_type( SYMBOL_NON_TERMINAL );
-//         }
-//     }
-
-//     GrammarGenerator generator;
-//     parser_allocations_.reset( new GrammarCompiler );
-//     int errors = generator.generate(*this, parser_allocations_.get(), error_policy );
-//     *state_machine = *parser_allocations_->parser_state_machine();
-//     return errors == 0;
-// }
-
 GrammarSymbol* Grammar::literal_symbol( const char* lexeme, int line )
 {
     SWEET_ASSERT( lexeme );
