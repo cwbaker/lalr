@@ -1,0 +1,25 @@
+
+local build = build:configure {
+    warning_level = 0;
+};
+
+build:all {
+    build:Executable "lalr_examples" {
+        libraries = {
+            "sweet/lalr/lalr"
+        };
+
+        build:Cxx () {
+            "lalr_examples.cpp",
+            "lalr_hello_world_example.cpp",
+            "lalr_json_example.cpp",
+            "lalr_calculator_example.cpp",
+            "lalr_xml_example.cpp"        
+        };
+
+        build:Cxx () {
+            'json.cpp',
+            'xml.cpp',
+        };
+    };
+};
