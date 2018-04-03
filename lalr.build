@@ -1,43 +1,5 @@
 
+buildfile 'lalr/lalr.build';
 buildfile 'lalrc/lalrc.build';
 buildfile 'lalr_examples/lalr_examples.build';
 buildfile 'lalr_test/lalr_test.build';
-
-for _, build in build:default_builds() do    
-    local lalr = build:Library "lalr" {
-        build:Cxx () {
-            "ErrorPolicy.cpp",
-        };
-
-        build:Cxx () {
-            "Grammar.cpp",
-            "GrammarAction.cpp",
-            'GrammarCompiler.cpp',
-            "GrammarGenerator.cpp",
-            "GrammarItem.cpp",
-            "GrammarParser.cpp",
-            "GrammarProduction.cpp",
-            "GrammarState.cpp",
-            "GrammarStateLess.cpp",
-            "GrammarSymbol.cpp",
-            "GrammarSymbolLess.cpp",
-            "GrammarTransition.cpp"
-        };
-
-        build:Cxx () {
-            "RegexAction.cpp",
-            "RegexCharacter.cpp",
-            "RegexCompiler.cpp",
-            "RegexGenerator.cpp",
-            "RegexItem.cpp",
-            "RegexNode.cpp",
-            "RegexNodeLess.cpp",
-            "RegexParser.cpp",
-            "RegexState.cpp",
-            "RegexStateLess.cpp",
-            "RegexSyntaxTree.cpp",
-            "RegexToken.cpp",
-            "RegexTransition.cpp"
-        };
-    };
-end

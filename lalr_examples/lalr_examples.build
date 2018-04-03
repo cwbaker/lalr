@@ -6,7 +6,7 @@ local build = build:configure {
 build:all {
     build:Executable "lalr_examples" {
         libraries = {
-            build:absolute( '../lalr' )
+            build:absolute( '../lalr/lalr' )
         };
 
         build:Cxx () {

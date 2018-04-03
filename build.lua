@@ -19,7 +19,7 @@ build:initialize {
     lib = build:root( ('%s/lib'):format(variant) );
     obj = build:root( ('%s/obj'):format(variant) );
     include_directories = {
-        build:root( '..' ),
+        build:root(),
     };
     library_directories = {
         build:root( ('%s/lib'):format(variant) )

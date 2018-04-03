@@ -4,7 +4,7 @@ if settings.unit_tests_enabled then
     build:all {
         build:Executable "lalr_test" {
             libraries = {
-                build:absolute( '../lalr' ),
+                build:absolute( '../lalr/lalr' ),
                 build:absolute( '../../unittest-cpp/UnitTest++/UnitTest++' )
             };
 
