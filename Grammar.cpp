@@ -139,7 +139,7 @@ Grammar& Grammar::whitespace()
 
 Grammar& Grammar::precedence()
 {
-    SWEET_ASSERT( active_symbol_ );
+    LALR_ASSERT( active_symbol_ );
     if ( active_symbol_ )
     {
         active_precedence_directive_ = true;
@@ -149,7 +149,7 @@ Grammar& Grammar::precedence()
 
 Grammar& Grammar::production( const char* identifier, int line )
 {
-    SWEET_ASSERT( identifier );
+    LALR_ASSERT( identifier );
     associativity_ = ASSOCIATE_NULL;
     active_whitespace_directive_ = false;
     active_precedence_directive_ = false;
@@ -160,7 +160,7 @@ Grammar& Grammar::production( const char* identifier, int line )
 
 Grammar& Grammar::end_production()
 {
-    SWEET_ASSERT( active_symbol_ );
+    LALR_ASSERT( active_symbol_ );
     associativity_ = ASSOCIATE_NULL;
     active_whitespace_directive_ = false;
     active_precedence_directive_ = false;
@@ -206,7 +206,7 @@ Grammar& Grammar::error()
 
 Grammar& Grammar::action( const char* identifier )
 {
-    SWEET_ASSERT( active_production_ );
+    LALR_ASSERT( active_production_ );
     if ( active_production_ )
     {
         active_production_->set_action( add_action(identifier) );
@@ -217,9 +217,9 @@ Grammar& Grammar::action( const char* identifier )
 
 Grammar& Grammar::literal( const char* literal, int line )
 {
-    SWEET_ASSERT( literal );
-    SWEET_ASSERT( line >= 0 );
-    SWEET_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
+    LALR_ASSERT( literal );
+    LALR_ASSERT( line >= 0 );
+    LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
         whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, nullptr, literal) );
@@ -251,9 +251,9 @@ Grammar& Grammar::literal( const char* literal, int line )
 
 Grammar& Grammar::regex( const char* regex, int line )
 {
-    SWEET_ASSERT( regex );
-    SWEET_ASSERT( line >= 0 );
-    SWEET_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
+    LALR_ASSERT( regex );
+    LALR_ASSERT( line >= 0 );
+    LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
         whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
@@ -285,9 +285,9 @@ Grammar& Grammar::regex( const char* regex, int line )
 
 Grammar& Grammar::identifier( const char* identifier, int line )
 {
-    SWEET_ASSERT( identifier );
-    SWEET_ASSERT( line >= 0 );
-    SWEET_ASSERT( active_symbol_ || associativity_ != ASSOCIATE_NULL );
+    LALR_ASSERT( identifier );
+    LALR_ASSERT( line >= 0 );
+    LALR_ASSERT( active_symbol_ || associativity_ != ASSOCIATE_NULL );
     if ( associativity_ != ASSOCIATE_NULL )
     {
         GrammarSymbol* symbol = non_terminal_symbol( identifier, line );
@@ -315,29 +315,29 @@ Grammar& Grammar::identifier( const char* identifier, int line )
 
 GrammarSymbol* Grammar::literal_symbol( const char* lexeme, int line )
 {
-    SWEET_ASSERT( lexeme );
-    SWEET_ASSERT( line >= 0 );
+    LALR_ASSERT( lexeme );
+    LALR_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_LITERAL, SYMBOL_TERMINAL );
 }
 
 GrammarSymbol* Grammar::regex_symbol( const char* lexeme, int line )
 {
-    SWEET_ASSERT( lexeme );
-    SWEET_ASSERT( line >= 0 );
+    LALR_ASSERT( lexeme );
+    LALR_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_REGULAR_EXPRESSION, SYMBOL_TERMINAL );
 }
 
 GrammarSymbol* Grammar::non_terminal_symbol( const char* lexeme, int line )
 {
-    SWEET_ASSERT( lexeme );
-    SWEET_ASSERT( line >= 0 );
+    LALR_ASSERT( lexeme );
+    LALR_ASSERT( line >= 0 );
     return add_symbol( lexeme, line, LEXEME_NULL, SYMBOL_NON_TERMINAL );
 }
 
 GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type )
 {
-    SWEET_ASSERT( lexeme );
-    SWEET_ASSERT( line >= 0 );
+    LALR_ASSERT( lexeme );
+    LALR_ASSERT( line >= 0 );
     vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
     while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
     {
@@ -354,18 +354,18 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
     }
 
     GrammarSymbol* symbol = i->get();
-    SWEET_ASSERT( symbol );
-    // SWEET_ASSERT( symbol->lexeme_type() == lexeme_type );
-    // SWEET_ASSERT( symbol->symbol_type() == symbol_type );
+    LALR_ASSERT( symbol );
+    // LALR_ASSERT( symbol->lexeme_type() == lexeme_type );
+    // LALR_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 
 GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
 {
-    SWEET_ASSERT( symbol );
+    LALR_ASSERT( symbol );
     if ( productions_.empty() )
     {
-        SWEET_ASSERT( start_symbol_ );
+        LALR_ASSERT( start_symbol_ );
         unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
@@ -380,7 +380,7 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
 
 GrammarAction* Grammar::add_action( const char* identifier )
 {
-    SWEET_ASSERT( identifier );
+    LALR_ASSERT( identifier );
     vector<unique_ptr<GrammarAction>>::const_iterator i = actions_.begin();
     while ( i != actions_.end() && (*i)->identifier() != identifier )
     {

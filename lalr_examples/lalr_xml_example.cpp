@@ -59,15 +59,15 @@ struct XmlUserData
 
 static void string_( const char** begin, const char* end, std::string* lexeme, const void** symbol )
 {
-    SWEET_ASSERT( begin && *begin );
-    SWEET_ASSERT( end );
-    SWEET_ASSERT( lexeme );
-    SWEET_ASSERT( lexeme->length() == 1 );
-    SWEET_ASSERT( symbol );
+    LALR_ASSERT( begin && *begin );
+    LALR_ASSERT( end );
+    LALR_ASSERT( lexeme );
+    LALR_ASSERT( lexeme->length() == 1 );
+    LALR_ASSERT( symbol );
 
     const char* position = *begin;
     int terminator = lexeme->at( 0 );
-    SWEET_ASSERT( terminator == '\'' || terminator == '"' );
+    LALR_ASSERT( terminator == '\'' || terminator == '"' );
     lexeme->clear();
     
     while ( *position != terminator && position < end )
@@ -127,16 +127,16 @@ static XmlUserData long_element( const ParserSymbol* symbol, const ParserNode<Xm
 
 static XmlUserData add_attribute( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    SWEET_ASSERT( start[0].user_data().element_ );
+    LALR_ASSERT( start[0].user_data().element_ );
     shared_ptr<Element> element = start[0].user_data().element_;
-    SWEET_ASSERT( start[1].user_data().attribute_ );
+    LALR_ASSERT( start[1].user_data().attribute_ );
     element->attributes_.push_back( start[1].user_data().attribute_ );
     return XmlUserData( element );
 }
 
 static XmlUserData create_attribute( const ParserSymbol* symbol, const ParserNode<XmlUserData, char>* start, const ParserNode<XmlUserData, char>* finish )
 {
-    SWEET_ASSERT( start[0].user_data().attribute_ );
+    LALR_ASSERT( start[0].user_data().attribute_ );
     shared_ptr<Element> element( new Element() );
     element->attributes_.push_back( start[0].user_data().attribute_ );
     return XmlUserData( element );
@@ -158,14 +158,14 @@ static void indent( int level )
 
 static void print( const Element* element, int level )
 {
-    SWEET_ASSERT( element );
+    LALR_ASSERT( element );
     indent( level );
     printf( "%s\n", element->name_.c_str() );
     
     for ( list<shared_ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
     {
         const Attribute* attribute = i->get();
-        SWEET_ASSERT( attribute );
+        LALR_ASSERT( attribute );
         indent( level + 1 );
         printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_.c_str() );
     }
@@ -173,7 +173,7 @@ static void print( const Element* element, int level )
     for ( list<shared_ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
     {
         const Element* element = i->get();
-        SWEET_ASSERT( element );
+        LALR_ASSERT( element );
         print( element, level + 1 );
     }
 }
@@ -206,7 +206,7 @@ void lalr_xml_example()
     ;
     
     parser.parse( input, input + strlen(input) );
-    SWEET_ASSERT( parser.accepted() );
-    SWEET_ASSERT( parser.full() );
+    LALR_ASSERT( parser.accepted() );
+    LALR_ASSERT( parser.full() );
     print( parser.user_data().element_.get(), 0 );
 }

@@ -24,7 +24,7 @@ using namespace lalr;
 */
 bool RegexNodeLess::operator()( const RegexNode* lhs, const RegexNode* rhs ) const
 {
-    SWEET_ASSERT( lhs );
-    SWEET_ASSERT( rhs );
+    LALR_ASSERT( lhs );
+    LALR_ASSERT( rhs );
     return *lhs < *rhs;
 }

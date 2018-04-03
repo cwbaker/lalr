@@ -17,7 +17,7 @@ template <class Iterator, class Char, class Traits, class Allocator>
 AddLexerActionHandler<Iterator, Char, Traits, Allocator>::AddLexerActionHandler( Lexer<Iterator, Char, Traits, Allocator>* lexer )
 : lexer_( lexer )
 {
-    SWEET_ASSERT( lexer_ );
+    LALR_ASSERT( lexer_ );
 }
 
 
@@ -38,8 +38,8 @@ template <class Iterator, class Char, class Traits, class Allocator>
 const AddLexerActionHandler<Iterator, Char, Traits, Allocator>& 
 AddLexerActionHandler<Iterator, Char, Traits, Allocator>::operator()( const char* identifier, LexerActionFunction function ) const
 {
-    SWEET_ASSERT( identifier );
-    SWEET_ASSERT( lexer_ );
+    LALR_ASSERT( identifier );
+    LALR_ASSERT( lexer_ );
     lexer_->set_action_handler( identifier, function );
     return *this;
 }

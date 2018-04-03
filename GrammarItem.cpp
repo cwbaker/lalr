@@ -35,8 +35,8 @@ GrammarItem::GrammarItem( GrammarProduction* production, int position )
   position_( position ),
   lookahead_symbols_()
 {
-    SWEET_ASSERT( production_ );
-    SWEET_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
+    LALR_ASSERT( production_ );
+    LALR_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
 }
 
 /**

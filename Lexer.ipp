@@ -27,7 +27,7 @@ Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler
 : action_( action ),
   function_( function )
 {
-    SWEET_ASSERT( action_ );
+    LALR_ASSERT( action_ );
 }
 
 /**
@@ -98,7 +98,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::set_action_handler( const char* identifier, LexerActionFunction function )
 {
-    SWEET_ASSERT( identifier );
+    LALR_ASSERT( identifier );
     
     typename std::vector<LexerActionHandler>::iterator action_handler = action_handlers_.begin();
     while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
@@ -194,7 +194,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::reset( Iterator start, Iterator f
 template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::advance()
 {
-    SWEET_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_ );
     lexeme_.clear();
     skip();
     full_ = position_ == end_;
@@ -208,12 +208,12 @@ void Lexer<Iterator, Char, Traits, Allocator>::advance()
 template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::skip()
 {    
-    SWEET_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_ );
 
     if ( whitespace_state_machine_ )
     {
         const LexerState* state = whitespace_state_machine_->start_state;
-        SWEET_ASSERT( state );
+        LALR_ASSERT( state );
         const LexerTransition* transition = nullptr;
         while ( position_ != end_ && (transition = find_transition_by_character(state, *position_)) )
         {
@@ -221,9 +221,9 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
             if ( transition->action )
             {
                 int index = transition->action->index;
-                SWEET_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
+                LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
                 const LexerActionFunction& function = action_handlers_[index].function_;
-                SWEET_ASSERT( function );
+                LALR_ASSERT( function );
                 const void* symbol = NULL;
                 function( &position_, end_, &lexeme_, &symbol );
             }
@@ -250,8 +250,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
 template <class Iterator, class Char, class Traits, class Allocator>
 const void* Lexer<Iterator, Char, Traits, Allocator>::run()
 {    
-    SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( state_machine_->start_state );
+    LALR_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_->start_state );
     
     const void* symbol = nullptr;
     const LexerState* state = state_machine_->start_state;
@@ -267,9 +267,9 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
             if ( transition->action )
             {
                 int index = transition->action->index;
-                SWEET_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
+                LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
                 const LexerActionFunction& function = action_handlers_[index].function_;
-                SWEET_ASSERT( function );
+                LALR_ASSERT( function );
                 function( &position_, end_, &lexeme_, &symbol );
             }
             else
@@ -298,9 +298,9 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
 template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::error()
 {   
-    SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( state_machine_->start_state );
-    SWEET_ASSERT( position_ != end_ );
+    LALR_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_->start_state );
+    LALR_ASSERT( position_ != end_ );
 
     fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     

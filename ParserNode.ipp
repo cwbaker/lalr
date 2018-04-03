@@ -30,7 +30,7 @@ ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* st
   lexeme_(),
   user_data_( user_data )
 {
-    SWEET_ASSERT( state );
+    LALR_ASSERT( state );
 }
 
 /**
@@ -56,7 +56,7 @@ ParserNode<UserData, Char, Traits, Allocator>::ParserNode( const ParserState* st
   lexeme_( lexeme ),
   user_data_()
 {
-    SWEET_ASSERT( state );
+    LALR_ASSERT( state );
 }
 
 /**

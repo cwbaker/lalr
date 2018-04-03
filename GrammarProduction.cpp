@@ -34,7 +34,7 @@ GrammarProduction::GrammarProduction( int index, GrammarSymbol* symbol, int line
   action_( action ),
   precedence_symbol_( NULL )
 {
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( symbol_ );
 }
 
 /**
@@ -56,7 +56,7 @@ int GrammarProduction::index() const
 */
 GrammarSymbol* GrammarProduction::symbol() const
 {
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( symbol_ );
     return symbol_;
 }
 
@@ -214,8 +214,8 @@ int GrammarProduction::precedence() const
 */
 void GrammarProduction::set_precedence_symbol( const GrammarSymbol* symbol )
 {
-    SWEET_ASSERT( symbol );
-    SWEET_ASSERT( !precedence_symbol_ );
+    LALR_ASSERT( symbol );
+    LALR_ASSERT( !precedence_symbol_ );
     precedence_symbol_ = symbol;
 }
 

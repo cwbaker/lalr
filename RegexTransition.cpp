@@ -33,8 +33,8 @@ RegexTransition::RegexTransition( int begin, int end, const RegexState* state, c
   state_( state ),
   action_( action )
 {
-    SWEET_ASSERT( begin_ < end_ );
-    SWEET_ASSERT( state_ );
+    LALR_ASSERT( begin_ < end_ );
+    LALR_ASSERT( state_ );
 }
 
 /**
@@ -91,7 +91,7 @@ const RegexAction* RegexTransition::action() const
 */
 const RegexState* RegexTransition::state() const
 {
-    SWEET_ASSERT( state_ );
+    LALR_ASSERT( state_ );
     return state_;
 }
 

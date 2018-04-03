@@ -22,7 +22,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
   lexeme_( lexeme ),
   user_datas_()
 {
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( symbol_ );
 }
 
 /**
@@ -40,7 +40,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
   lexeme_(),
   user_datas_()
 {
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( symbol_ );
     user_datas_.reserve( user_datas );
 }
 
@@ -63,10 +63,10 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
   lexeme_(),
   user_datas_()
 {
-    SWEET_ASSERT( start );
-    SWEET_ASSERT( finish );
-    SWEET_ASSERT( start <= finish );
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( start );
+    LALR_ASSERT( finish );
+    LALR_ASSERT( start <= finish );
+    LALR_ASSERT( symbol_ );
     
     for ( const ParserNode* node = start; node != finish; ++node )
     {
@@ -115,7 +115,7 @@ const std::basic_string<Char, Traits, Allocator>& ParserUserData<Char, Traits, A
 template <class Char, class Traits, class Allocator>
 void ParserUserData<Char, Traits, Allocator>::append_user_data( std::shared_ptr<ParserUserData> user_data )
 {
-    SWEET_ASSERT( std::find(user_datas_.begin(), user_datas_.end(), user_data) == user_datas_.end() );
+    LALR_ASSERT( std::find(user_datas_.begin(), user_datas_.end(), user_data) == user_datas_.end() );
     user_datas_.push_back( user_data );
 }
 

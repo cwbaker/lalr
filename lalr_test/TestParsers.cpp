@@ -20,8 +20,8 @@ SUITE( Parsers )
 {
     static const ParserSymbol* find_symbol_by_identifier( const ParserStateMachine* parser_state_machine, const char* identifier )
     {
-        SWEET_ASSERT( parser_state_machine );
-        SWEET_ASSERT( identifier );
+        LALR_ASSERT( parser_state_machine );
+        LALR_ASSERT( identifier );
         const ParserSymbol* symbol = parser_state_machine->symbols;
         const ParserSymbol* symbols_end = parser_state_machine->symbols + parser_state_machine->symbols_size;
         while ( symbol != symbols_end && strcmp(symbol->identifier, identifier) != 0 )
@@ -687,9 +687,9 @@ SUITE( Parsers )
         {
             static void string_lexer( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
-                SWEET_ASSERT( begin && *begin );
-                SWEET_ASSERT( end );
-                SWEET_ASSERT( lexeme );
+                LALR_ASSERT( begin && *begin );
+                LALR_ASSERT( end );
+                LALR_ASSERT( lexeme );
 
                 lexeme->clear();
 
@@ -702,7 +702,7 @@ SUITE( Parsers )
                 
                 if ( position != end )
                 {
-                    SWEET_ASSERT( *position == '\'' );
+                    LALR_ASSERT( *position == '\'' );
                     ++position;
                 }
                 
@@ -738,9 +738,9 @@ SUITE( Parsers )
         {
             static void line_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
-                SWEET_ASSERT( begin && *begin );
-                SWEET_ASSERT( end );
-                SWEET_ASSERT( lexeme );
+                LALR_ASSERT( begin && *begin );
+                LALR_ASSERT( end );
+                LALR_ASSERT( lexeme );
                 
                 lexeme->clear();
                 
@@ -787,8 +787,8 @@ SUITE( Parsers )
         {
             static void block_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
             {
-                SWEET_ASSERT( begin );
-                SWEET_ASSERT( lexeme );
+                LALR_ASSERT( begin );
+                LALR_ASSERT( lexeme );
 
                 lexeme->clear();
                                 
@@ -803,7 +803,7 @@ SUITE( Parsers )
 
                     if ( position != end )
                     {
-                        SWEET_ASSERT( *position == '*' );
+                        LALR_ASSERT( *position == '*' );
 
                         ++position;
                         if ( *position == '/' )
@@ -988,14 +988,14 @@ SUITE( Parsers )
         : prototype_symbol_( find_symbol_by_identifier(parser_state_machine, "prototype") ),
           value_symbol_( find_symbol_by_identifier(parser_state_machine, "value") )
         {
-            SWEET_ASSERT( prototype_symbol_ );
-            SWEET_ASSERT( value_symbol_ );
+            LALR_ASSERT( prototype_symbol_ );
+            LALR_ASSERT( value_symbol_ );
         }
 
         void prototype( const char** /*begin*/, const char* /*end*/, std::string* lexeme, const void** symbol ) const
         {
-            SWEET_ASSERT( lexeme );
-            SWEET_ASSERT( symbol );
+            LALR_ASSERT( lexeme );
+            LALR_ASSERT( symbol );
             *symbol = *lexeme == "prototype" ? prototype_symbol_ : value_symbol_;
         }
     };

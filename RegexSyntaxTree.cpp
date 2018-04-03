@@ -34,7 +34,7 @@ RegexSyntaxTree::RegexSyntaxTree( const RegexToken& token, RegexGenerator* lexer
   nodes_(),
   errors_( 0 )
 {
-    SWEET_ASSERT( lexer_generator_ );
+    LALR_ASSERT( lexer_generator_ );
     parse_regular_expression( token );
     calculate_nullable_first_last_and_follow();
 }  
@@ -49,7 +49,7 @@ RegexSyntaxTree::RegexSyntaxTree( const std::vector<RegexToken>& tokens, RegexGe
   nodes_(),
   errors_( 0 )
 {
-    SWEET_ASSERT( lexer_generator_ );
+    LALR_ASSERT( lexer_generator_ );
     calculate_combined_parse_tree( tokens );
     calculate_nullable_first_last_and_follow();
 }
@@ -78,8 +78,8 @@ int RegexSyntaxTree::errors() const
 */
 const std::shared_ptr<RegexNode>& RegexSyntaxTree::node() const
 {
-    SWEET_ASSERT( !nodes_.empty() );
-    SWEET_ASSERT( nodes_.front() );
+    LALR_ASSERT( !nodes_.empty() );
+    LALR_ASSERT( nodes_.front() );
     return nodes_.front();
 }
 
@@ -206,8 +206,8 @@ void RegexSyntaxTree::end_bracket_expression()
 */
 void RegexSyntaxTree::action_expression( const std::string& identifier )
 {
-    SWEET_ASSERT( !identifier.empty() );
-    SWEET_ASSERT( lexer_generator_ );
+    LALR_ASSERT( !identifier.empty() );
+    LALR_ASSERT( lexer_generator_ );
     std::shared_ptr<RegexNode> node = regex_node( lexer_generator_->add_lexer_action(identifier) );
     nodes_.push_back( node );
 }
@@ -236,9 +236,9 @@ void RegexSyntaxTree::dot()
 */
 void RegexSyntaxTree::item_range( int begin, int end )
 {
-    SWEET_ASSERT( begin >= BEGIN_CHARACTER && begin < END_CHARACTER );
-    SWEET_ASSERT( end >= BEGIN_CHARACTER && end < END_CHARACTER );
-    SWEET_ASSERT( begin <= end );
+    LALR_ASSERT( begin >= BEGIN_CHARACTER && begin < END_CHARACTER );
+    LALR_ASSERT( end >= BEGIN_CHARACTER && end < END_CHARACTER );
+    LALR_ASSERT( begin <= end );
     insert_characters( begin, end );
 }
 
@@ -247,7 +247,7 @@ void RegexSyntaxTree::item_range( int begin, int end )
 */
 void RegexSyntaxTree::item_character( int character )
 {
-    SWEET_ASSERT( character >= BEGIN_CHARACTER && character < END_CHARACTER );
+    LALR_ASSERT( character >= BEGIN_CHARACTER && character < END_CHARACTER );
     insert_characters( character, character + 1 );
 }
 
@@ -365,9 +365,9 @@ void RegexSyntaxTree::item_xdigit()
 */
 void RegexSyntaxTree::negative_item_range( int begin, int end )
 {
-    SWEET_ASSERT( begin >= BEGIN_CHARACTER && begin < END_CHARACTER );
-    SWEET_ASSERT( end >= BEGIN_CHARACTER && end < END_CHARACTER );
-    SWEET_ASSERT( begin <= end );
+    LALR_ASSERT( begin >= BEGIN_CHARACTER && begin < END_CHARACTER );
+    LALR_ASSERT( end >= BEGIN_CHARACTER && end < END_CHARACTER );
+    LALR_ASSERT( begin <= end );
     erase_characters( begin, end );
 }
 
@@ -376,7 +376,7 @@ void RegexSyntaxTree::negative_item_range( int begin, int end )
 */
 void RegexSyntaxTree::negative_item_character( int character )
 {
-    SWEET_ASSERT( character >= BEGIN_CHARACTER && character < END_CHARACTER );
+    LALR_ASSERT( character >= BEGIN_CHARACTER && character < END_CHARACTER );
     erase_characters( character, character + 1 );
 }
 
@@ -575,7 +575,7 @@ void RegexSyntaxTree::print_positions( const std::set<RegexNode*, RegexNodeLess>
     if ( i != positions.end() )
     {
         const RegexNode* node = *i;
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         printf( "%d", node->get_index() );
         ++i;
     }
@@ -583,7 +583,7 @@ void RegexSyntaxTree::print_positions( const std::set<RegexNode*, RegexNodeLess>
     while ( i != positions.end() )
     {
         const RegexNode* node = *i;
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         printf( ", %d", node->get_index() );
         ++i;
     }
@@ -615,7 +615,7 @@ void RegexSyntaxTree::print_nodes( const vector<std::shared_ptr<RegexNode> >& no
         };
 
         RegexNode* node = i->get();
-        SWEET_ASSERT( node != NULL );
+        LALR_ASSERT( node != NULL );
 
         for ( int i = 0; i < level; ++i )
         {
@@ -661,7 +661,7 @@ void RegexSyntaxTree::calculate_combined_parse_tree(  const std::vector<RegexTok
                 
             case TOKEN_NULL:
             default:
-                SWEET_ASSERT( false );
+                LALR_ASSERT( false );
                 break;
         }
     }
@@ -675,8 +675,8 @@ void RegexSyntaxTree::calculate_nullable_first_last_and_follow()
 {
     if ( !nodes_.empty() )
     {
-        SWEET_ASSERT( nodes_.size() == 1 );
-        SWEET_ASSERT( nodes_.back() );
+        LALR_ASSERT( nodes_.size() == 1 );
+        LALR_ASSERT( nodes_.back() );
 
         std::shared_ptr<RegexNode> node( nodes_.back() );
         node->calculate_nullable();
@@ -698,8 +698,8 @@ void RegexSyntaxTree::calculate_nullable_first_last_and_follow()
 */
 void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
 {
-    SWEET_ASSERT( token.type() == TOKEN_REGULAR_EXPRESSION );
-    SWEET_ASSERT( !token.lexeme().empty() );
+    LALR_ASSERT( token.type() == TOKEN_REGULAR_EXPRESSION );
+    LALR_ASSERT( !token.lexeme().empty() );
 
     // Create position iterators for the beginning and end of the sequence that
     // will be parsed.
@@ -709,7 +709,7 @@ void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
     if ( !successful )
     {
         ++errors_;
-        SWEET_ASSERT( lexer_generator_ );
+        LALR_ASSERT( lexer_generator_ );
         lexer_generator_->fire_error( token.line(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
         nodes_.clear();
     }
@@ -718,8 +718,8 @@ void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
         // Add the end character to the regular expression that has just been parsed 
         // and then combine that regular expression with any literals or regular 
         // expressions that have been previously parsed using an or expression.
-        SWEET_ASSERT( nodes_.size() == 1 || nodes_.size() == 2 );
-        SWEET_ASSERT( nodes_.back() );
+        LALR_ASSERT( nodes_.size() == 1 || nodes_.size() == 2 );
+        LALR_ASSERT( nodes_.back() );
         std::shared_ptr<RegexNode> node = regex_node( INVALID_BEGIN_CHARACTER, INVALID_END_CHARACTER, &token );
         nodes_.push_back( node );
         cat_expression();
@@ -747,9 +747,9 @@ void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
 */
 void RegexSyntaxTree::parse_literal( const RegexToken& token )
 {
-    SWEET_ASSERT( token.type() == TOKEN_LITERAL );
-    SWEET_ASSERT( !token.lexeme().empty() );
-    SWEET_ASSERT( token.symbol() );
+    LALR_ASSERT( token.type() == TOKEN_LITERAL );
+    LALR_ASSERT( !token.lexeme().empty() );
+    LALR_ASSERT( token.symbol() );
     
     // Combine all characters in \e literal using cat expressions.
     const std::string& literal = token.lexeme();
@@ -771,8 +771,8 @@ void RegexSyntaxTree::parse_literal( const RegexToken& token )
     // Add the end character to the literal that has just been parsed and then 
     // combine that literal with any literals or regular expressions that have 
     // been previously parsed using an or expression.
-    SWEET_ASSERT( nodes_.size() == 1 || nodes_.size() == 2 );
-    SWEET_ASSERT( nodes_.back().get() != NULL );
+    LALR_ASSERT( nodes_.size() == 1 || nodes_.size() == 2 );
+    LALR_ASSERT( nodes_.back().get() != NULL );
     node = regex_node( INVALID_BEGIN_CHARACTER, INVALID_END_CHARACTER, &token );
     nodes_.push_back( node );
     cat_expression();
@@ -831,7 +831,7 @@ int RegexSyntaxTree::escape( std::string::const_iterator start, std::string::con
                     
                 case 'x':
                 case 'X':
-                    SWEET_ASSERT( false );
+                    LALR_ASSERT( false );
                     break;
                     
                 case '0':
@@ -844,7 +844,7 @@ int RegexSyntaxTree::escape( std::string::const_iterator start, std::string::con
                 case '7':
                 case '8':
                 case '9':
-                    SWEET_ASSERT( false );
+                    LALR_ASSERT( false );
                     break;
                     
                 default:
@@ -854,7 +854,7 @@ int RegexSyntaxTree::escape( std::string::const_iterator start, std::string::con
         }
     }
 
-    SWEET_ASSERT( next );
+    LALR_ASSERT( next );
     *next = start;
     
     return character;
@@ -875,7 +875,7 @@ void RegexSyntaxTree::insert_characters( int begin, int end )
     std::pair<set<RegexCharacter>::iterator, bool> result = bracket_expression_characters_.insert( RegexCharacter(begin, end) );
     while ( !result.second )
     {
-        SWEET_ASSERT( result.first->end_character() >= begin || end >= result.first->begin_character() );
+        LALR_ASSERT( result.first->end_character() >= begin || end >= result.first->begin_character() );
         begin = std::min( begin, result.first->begin_character() );
         end = std::max( end, result.first->end_character() );
         bracket_expression_characters_.erase( result.first );
@@ -909,14 +909,14 @@ void RegexSyntaxTree::erase_characters( int begin, int end )
         if ( pre_begin < pre_end )
         {
             bool inserted = bracket_expression_characters_.insert( RegexCharacter(pre_begin, pre_end) ).second;
-            SWEET_ASSERT( inserted );
+            LALR_ASSERT( inserted );
             (void) inserted;
         }
         
         if ( post_begin < post_end )
         {
             bool inserted = bracket_expression_characters_.insert( RegexCharacter(post_begin, post_end) ).second;
-            SWEET_ASSERT( inserted );
+            LALR_ASSERT( inserted );
             (void) inserted;
         }
     }        
@@ -931,7 +931,7 @@ void RegexSyntaxTree::erase_characters( int begin, int end )
 */
 void RegexSyntaxTree::insert_characters( const char* characters )
 {
-    SWEET_ASSERT( characters );
+    LALR_ASSERT( characters );
     const char* character = characters;
     while ( *character != '\0' )
     {

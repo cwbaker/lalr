@@ -92,7 +92,7 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
     for ( auto i = source_states.begin(); i != source_states.end(); ++i )
     {
         const RegexState* source_state = i->get();
-        SWEET_ASSERT( source_state );
+        LALR_ASSERT( source_state );
         transitions_size += source_state->get_transitions().size();
     }
 
@@ -103,7 +103,7 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
     for ( size_t i = 0; i < source_actions.size(); ++i )
     {
         const RegexAction* source_action = source_actions[i].get();
-        SWEET_ASSERT( source_action );
+        LALR_ASSERT( source_action );
         LexerAction* action = &actions[i];
         action->index = source_action->index();
         action->identifier = add_string( source_action->identifier() );
@@ -115,9 +115,9 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
     for ( auto i = source_states.begin(); i != source_states.end(); ++i )
     {
         const RegexState* source_state = i->get();
-        SWEET_ASSERT( source_state );
+        LALR_ASSERT( source_state );
         LexerState* state = &states[state_index];
-        SWEET_ASSERT( state );
+        LALR_ASSERT( state );
         const set<RegexTransition>& source_transitions = source_state->get_transitions();
         state->index = state_index;
         state->length = source_transitions.size();
@@ -130,7 +130,7 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
         {
             const RegexTransition* source_transition = &(*j);
-            SWEET_ASSERT( source_transition );
+            LALR_ASSERT( source_transition );
             const RegexState* state_transitioned_to = source_transition->state();
             const RegexAction* action = source_transition->action();
             LexerTransition* transition = &transitions[transition_index];

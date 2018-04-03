@@ -27,9 +27,9 @@ GrammarParser::GrammarParser()
 
 bool GrammarParser::parse( const char* start, const char* finish, Grammar* grammar )
 {
-    SWEET_ASSERT( start );
-    SWEET_ASSERT( finish );
-    SWEET_ASSERT( grammar );
+    LALR_ASSERT( start );
+    LALR_ASSERT( finish );
+    LALR_ASSERT( grammar );
     grammar_ = grammar;
     position_ = start;
     end_ = finish;

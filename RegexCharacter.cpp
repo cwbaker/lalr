@@ -21,7 +21,7 @@ RegexCharacter::RegexCharacter( int begin_character, int end_character )
 : begin_character_( begin_character ),
   end_character_( end_character )
 {
-    SWEET_ASSERT( begin_character_ < end_character_ );
+    LALR_ASSERT( begin_character_ < end_character_ );
 }
 
 /**

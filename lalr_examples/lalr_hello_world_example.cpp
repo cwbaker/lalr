@@ -29,6 +29,6 @@ void lalr_hello_world_example()
     
     const char* input = "Hello World!";
     parser.parse( input, input + strlen(input) );
-    SWEET_ASSERT( parser.accepted() );
-    SWEET_ASSERT( parser.full() );
+    LALR_ASSERT( parser.accepted() );
+    LALR_ASSERT( parser.full() );
 }

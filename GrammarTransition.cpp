@@ -38,9 +38,9 @@ GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const Grammar
   type_( TRANSITION_REDUCE ),
   index_( INVALID_INDEX )
 {
-    SWEET_ASSERT( reduced_symbol_ );
-    SWEET_ASSERT( reduced_length_ >= 0 );
-    SWEET_ASSERT( precedence_ >= 0 );
+    LALR_ASSERT( reduced_symbol_ );
+    LALR_ASSERT( reduced_length_ >= 0 );
+    LALR_ASSERT( precedence_ >= 0 );
 }
 
 /**
@@ -62,8 +62,8 @@ GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, GrammarState*
   type_( TRANSITION_SHIFT ),
   index_( INVALID_INDEX )
 {
-    SWEET_ASSERT( symbol_ );
-    SWEET_ASSERT( state_ );
+    LALR_ASSERT( symbol_ );
+    LALR_ASSERT( state_ );
 }
 
 /**
@@ -130,7 +130,7 @@ bool GrammarTransition::taken_on_symbol( const GrammarSymbol* symbol ) const
 */
 const GrammarSymbol* GrammarTransition::symbol() const
 {
-    SWEET_ASSERT( symbol_ );
+    LALR_ASSERT( symbol_ );
     return symbol_;
 }
 
@@ -157,8 +157,8 @@ int GrammarTransition::index() const
 */
 bool GrammarTransition::operator<( const GrammarTransition& transition ) const
 {
-    SWEET_ASSERT( symbol_->index() >= 0 );
-    SWEET_ASSERT( transition.symbol()->index() >= 0 );
+    LALR_ASSERT( symbol_->index() >= 0 );
+    LALR_ASSERT( transition.symbol()->index() >= 0 );
     return symbol_->index() < transition.symbol()->index();
 }
 
@@ -182,12 +182,12 @@ void GrammarTransition::set_index( int index ) const
 */
 void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
 {
-    SWEET_ASSERT( type_ == TRANSITION_SHIFT );
-    SWEET_ASSERT( state_ );
-    SWEET_ASSERT( !reduced_symbol_ );
-    SWEET_ASSERT( length > 0 );
-    SWEET_ASSERT( precedence >= 0 );
-    SWEET_ASSERT( symbol );    
+    LALR_ASSERT( type_ == TRANSITION_SHIFT );
+    LALR_ASSERT( state_ );
+    LALR_ASSERT( !reduced_symbol_ );
+    LALR_ASSERT( length > 0 );
+    LALR_ASSERT( precedence >= 0 );
+    LALR_ASSERT( symbol );    
     type_ = TRANSITION_REDUCE;
     state_ = nullptr;
     reduced_symbol_ = symbol;
@@ -205,12 +205,12 @@ void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, i
 */
 void GrammarTransition::override_reduce_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
 {
-    SWEET_ASSERT( type_ == TRANSITION_REDUCE );
-    SWEET_ASSERT( reduced_symbol_ );
-    SWEET_ASSERT( symbol );
-    SWEET_ASSERT( length > 0 );
-    SWEET_ASSERT( precedence >= 0 );
-    SWEET_ASSERT( reduced_symbol_ != symbol );
+    LALR_ASSERT( type_ == TRANSITION_REDUCE );
+    LALR_ASSERT( reduced_symbol_ );
+    LALR_ASSERT( symbol );
+    LALR_ASSERT( length > 0 );
+    LALR_ASSERT( precedence >= 0 );
+    LALR_ASSERT( reduced_symbol_ != symbol );
     reduced_symbol_ = symbol;
     reduced_length_ = length;
     precedence_ = precedence;

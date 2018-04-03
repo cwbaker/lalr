@@ -21,8 +21,8 @@ GrammarAction::GrammarAction( int index, const std::string& identifier )
 : index_( index ),
   identifier_( identifier )
 {
-    SWEET_ASSERT( index_ >= 0 );
-    SWEET_ASSERT( !identifier_.empty() );
+    LALR_ASSERT( index_ >= 0 );
+    LALR_ASSERT( !identifier_.empty() );
 }
 
 int GrammarAction::index() const

@@ -69,7 +69,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
   accepted_( false ),
   full_( false )
 {
-    SWEET_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_ );
     
     action_handlers_.reserve( state_machine_->actions_size );
     const ParserAction* action = state_machine_->actions;
@@ -115,7 +115,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start, Iterator finish )
 {
-    SWEET_ASSERT( state_machine_ );
+    LALR_ASSERT( state_machine_ );
 
     reset();
     lexer_.reset( start, finish );    
@@ -223,8 +223,8 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::full() const
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data() const
 {
-    SWEET_ASSERT( accepted() );
-    SWEET_ASSERT( nodes_.size() == 1 );
+    LALR_ASSERT( accepted() );
+    LALR_ASSERT( nodes_.size() == 1 );
     return nodes_.front().user_data();
 }
 
@@ -292,7 +292,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_han
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, ParserActionFunction function )
 {
-    SWEET_ASSERT( identifier );
+    LALR_ASSERT( identifier );
     
     typename std::vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
     while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
@@ -342,7 +342,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const cha
 {
     if ( error_policy_ )
     {
-        SWEET_ASSERT( format );
+        LALR_ASSERT( format );
         va_list args;
         va_start( args, format );
         error_policy_->lalr_vprintf( format, args );
@@ -398,8 +398,8 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::is_debug_enabled() con
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::find_transition( const ParserSymbol* symbol, const ParserState* state ) const
 {
-    SWEET_ASSERT( state );
-    SWEET_ASSERT( state_machine_ );
+    LALR_ASSERT( state );
+    LALR_ASSERT( state_machine_ );
     const ParserTransition* transition = state->transitions;
     const ParserTransition* transitions_end = state->transitions + state->length;
     while ( transition != transitions_end && transition->symbol != symbol )
@@ -427,8 +427,8 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes )
 {
-    SWEET_ASSERT( transition );
-    SWEET_ASSERT( transition->reduced_length < int(nodes.size()) );
+    LALR_ASSERT( transition );
+    LALR_ASSERT( transition->reduced_length < int(nodes.size()) );
     typename std::vector<ParserNode>::reverse_iterator node = nodes.rbegin() + transition->reduced_length;
     return node != nodes.rend() ? node.base() : nodes_.begin();
 }
@@ -465,10 +465,10 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const ParserSymbol* reduced_symbol, const ParserNode* start, const ParserNode* finish ) const
 {
-    SWEET_ASSERT( start );
-    SWEET_ASSERT( finish );
-    SWEET_ASSERT( start <= finish );
-    SWEET_ASSERT( reduced_symbol );
+    LALR_ASSERT( start );
+    LALR_ASSERT( finish );
+    LALR_ASSERT( start <= finish );
+    LALR_ASSERT( reduced_symbol );
 
     if ( debug_enabled_ )
     {
@@ -514,15 +514,15 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const ParserTransition* transition, const ParserNode* start, const ParserNode* finish ) const
 {
-    SWEET_ASSERT( start );
-    SWEET_ASSERT( finish );
-    SWEET_ASSERT( start <= finish );
-    SWEET_ASSERT( transition );
+    LALR_ASSERT( start );
+    LALR_ASSERT( finish );
+    LALR_ASSERT( start <= finish );
+    LALR_ASSERT( transition );
 
     int action = transition->action;
     if ( action != ParserAction::INVALID_INDEX )
     {
-        SWEET_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
+        LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[action].function_ )
         {
             return action_handlers_[action].function_( transition->reduced_symbol, start, finish );
@@ -543,8 +543,8 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme )
 {
-    SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( transition );    
+    LALR_ASSERT( state_machine_ );
+    LALR_ASSERT( transition );    
     ParserNode node( transition->state, transition->symbol, lexeme );
     debug_shift( node );
     nodes_.push_back( node );
@@ -565,9 +565,9 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTra
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTransition* transition, bool* accepted, bool* /*rejected*/ )
 {
-    SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( transition );
-    SWEET_ASSERT( accepted );
+    LALR_ASSERT( state_machine_ );
+    LALR_ASSERT( transition );
+    LALR_ASSERT( accepted );
     
     const ParserSymbol* symbol = transition->reduced_symbol;
     if ( symbol != state_machine_->start_symbol )
@@ -580,13 +580,13 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         UserData user_data = handle( transition, start, finish );
         nodes_.erase( i, nodes_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
-        SWEET_ASSERT( transition );
+        LALR_ASSERT( transition );
         ParserNode node( transition->state, symbol, user_data );
         nodes_.push_back( node );
     }
     else
     {    
-        SWEET_ASSERT( nodes_.size() == 2 );
+        LALR_ASSERT( nodes_.size() == 2 );
         nodes_.erase( nodes_.begin() );
         *accepted = true;
     }              
@@ -608,10 +608,10 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted, bool* rejected )
 {
-    SWEET_ASSERT( state_machine_ );
-    SWEET_ASSERT( !nodes_.empty() );
-    SWEET_ASSERT( accepted );
-    SWEET_ASSERT( rejected );
+    LALR_ASSERT( state_machine_ );
+    LALR_ASSERT( !nodes_.empty() );
+    LALR_ASSERT( accepted );
+    LALR_ASSERT( rejected );
 
     bool handled = false;
     while ( !nodes_.empty() && !handled && !*accepted && !*rejected )
@@ -631,7 +631,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
                     break;
                     
                 default:
-                    SWEET_ASSERT( false );
+                    LALR_ASSERT( false );
                     fire_error( PARSER_ERROR_UNEXPECTED, "Unexpected transition type '%d'", transition->type );
                     *rejected = true;
                     break;

@@ -122,7 +122,7 @@ bool GrammarState::operator<( const GrammarState& state ) const
 */
 int GrammarState::add_item( GrammarProduction* production, int position )
 {
-    SWEET_ASSERT( production );
+    LALR_ASSERT( production );
     return items_.insert( GrammarItem(production, position) ).second ? 1 : 0;
 }
 
@@ -144,9 +144,9 @@ int GrammarState::add_item( GrammarProduction* production, int position )
 */
 int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols )
 {
-    SWEET_ASSERT( production );
+    LALR_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
-    SWEET_ASSERT( item != items_.end() );
+    LALR_ASSERT( item != items_.end() );
     return item->add_lookahead_symbols( lookahead_symbols );
 }
 
@@ -161,9 +161,9 @@ int GrammarState::add_lookahead_symbols( GrammarProduction* production, int posi
 */
 void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* state )
 {
-    SWEET_ASSERT( symbol );
-    SWEET_ASSERT( state );
-    SWEET_ASSERT( transitions_.find(GrammarTransition(symbol, state)) == transitions_.end() );
+    LALR_ASSERT( symbol );
+    LALR_ASSERT( state );
+    LALR_ASSERT( transitions_.find(GrammarTransition(symbol, state)) == transitions_.end() );
     transitions_.insert( GrammarTransition(symbol, state) );
 }
 
@@ -186,15 +186,15 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* st
 */
 void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
-    SWEET_ASSERT( symbol );
-    SWEET_ASSERT( reduced_symbol );
-    SWEET_ASSERT( reduced_length >= 0 );
-    SWEET_ASSERT( precedence >= 0 );
+    LALR_ASSERT( symbol );
+    LALR_ASSERT( reduced_symbol );
+    LALR_ASSERT( reduced_length >= 0 );
+    LALR_ASSERT( precedence >= 0 );
 
     std::set<GrammarTransition>::iterator transition = transitions_.find( GrammarTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
     if ( transition != transitions_.end() )
     {        
-        SWEET_ASSERT( transition->type() == TRANSITION_SHIFT );
+        LALR_ASSERT( transition->type() == TRANSITION_SHIFT );
         transition->override_shift_to_reduce( reduced_symbol, reduced_length, precedence, action );
     }
     else
@@ -223,13 +223,13 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSym
 */
 void GrammarState::add_transition( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
 {
-    SWEET_ASSERT( reduced_symbol );
-    SWEET_ASSERT( reduced_length >= 0 );
-    SWEET_ASSERT( precedence >= 0 );
+    LALR_ASSERT( reduced_symbol );
+    LALR_ASSERT( reduced_length >= 0 );
+    LALR_ASSERT( precedence >= 0 );
     for ( set<const GrammarSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
     {
         const GrammarSymbol* symbol = *i;
-        SWEET_ASSERT( symbol );
+        LALR_ASSERT( symbol );
         add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
     }
 }

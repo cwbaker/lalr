@@ -42,7 +42,7 @@ RegexNode::RegexNode( int index, RegexNodeType type )
   last_positions_(),
   follow_positions_()
 {
-    SWEET_ASSERT( type_ != LEXER_NODE_SYMBOL );
+    LALR_ASSERT( type_ != LEXER_NODE_SYMBOL );
 }
 
 /**
@@ -71,7 +71,7 @@ RegexNode::RegexNode( int index, int begin_character, int end_character )
   last_positions_(),
   follow_positions_()
 {
-    SWEET_ASSERT( begin_character_ < end_character_ );
+    LALR_ASSERT( begin_character_ < end_character_ );
 }
 
 /**
@@ -103,8 +103,8 @@ RegexNode::RegexNode( int index, int begin_character, int end_character, const R
   last_positions_(),
   follow_positions_()
 {
-    SWEET_ASSERT( begin_character_ < end_character_ );
-    SWEET_ASSERT( token_ );
+    LALR_ASSERT( begin_character_ < end_character_ );
+    LALR_ASSERT( token_ );
 }
 
 /**
@@ -129,7 +129,7 @@ RegexNode::RegexNode( int index, const RegexAction* action )
   last_positions_(),
   follow_positions_()
 {
-    SWEET_ASSERT( action_ );
+    LALR_ASSERT( action_ );
 }
 
 /**
@@ -191,7 +191,7 @@ const char* RegexNode::get_lexeme() const
             break;
 
         default:
-            SWEET_ASSERT( false );
+            LALR_ASSERT( false );
             break;
     }
 
@@ -260,8 +260,8 @@ const RegexAction* RegexNode::get_action() const
 */
 bool RegexNode::is_match( int begin, int end ) const
 {
-    SWEET_ASSERT( begin < end );
-    SWEET_ASSERT( end <= begin_character_ || begin >= end_character_ || begin >= begin_character_ && end <= end_character_ );
+    LALR_ASSERT( begin < end );
+    LALR_ASSERT( end <= begin_character_ || begin >= end_character_ || begin >= begin_character_ && end <= end_character_ );
     return begin >= begin_character_ && end <= end_character_;
 }
 
@@ -296,8 +296,8 @@ bool RegexNode::is_action() const
 */
 void RegexNode::add_node( const std::shared_ptr<RegexNode>& node )
 {
-    SWEET_ASSERT( node.get() );
-    SWEET_ASSERT( find(nodes_.begin(), nodes_.end(), node) == nodes_.end() );
+    LALR_ASSERT( node.get() );
+    LALR_ASSERT( find(nodes_.begin(), nodes_.end(), node) == nodes_.end() );
     nodes_.push_back( node );
 }
 
@@ -313,7 +313,7 @@ void RegexNode::add_node( const std::shared_ptr<RegexNode>& node )
 */
 RegexNode* RegexNode::get_node( int n ) const
 {
-    SWEET_ASSERT( n >= 0 && n < (int) nodes_.size() );
+    LALR_ASSERT( n >= 0 && n < (int) nodes_.size() );
     return nodes_[n].get();
 }
 
@@ -396,7 +396,7 @@ void RegexNode::calculate_nullable()
     for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         node->calculate_nullable();
     }
 
@@ -407,12 +407,12 @@ void RegexNode::calculate_nullable()
             break;
  
         case LEXER_NODE_CAT:
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             nullable_ = nodes_[0]->is_nullable() && nodes_[1]->is_nullable();
             break;
 
         case LEXER_NODE_OR:
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             nullable_ = nodes_[0]->is_nullable() || nodes_[1]->is_nullable();
             break;
 
@@ -422,7 +422,7 @@ void RegexNode::calculate_nullable()
             break;
 
         case LEXER_NODE_PLUS:
-            SWEET_ASSERT( nodes_.size() == 1 );
+            LALR_ASSERT( nodes_.size() == 1 );
             nullable_ = nodes_[0]->is_nullable();
             break;
 
@@ -435,7 +435,7 @@ void RegexNode::calculate_nullable()
             break;
 
         default:
-            SWEET_ASSERT( false );
+            LALR_ASSERT( false );
             nullable_ = false;
             break;
     }
@@ -449,7 +449,7 @@ void RegexNode::calculate_first_positions()
     for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         node->calculate_first_positions();
     }
 
@@ -460,7 +460,7 @@ void RegexNode::calculate_first_positions()
           
         case LEXER_NODE_CAT:
         {
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             first_positions_.insert( nodes_[0]->first_positions_.begin(), nodes_[0]->first_positions_.end() );
             if ( nodes_[0]->is_nullable() )
             {
@@ -470,7 +470,7 @@ void RegexNode::calculate_first_positions()
         }
 
         case LEXER_NODE_OR:
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             first_positions_.insert( nodes_[0]->first_positions_.begin(), nodes_[0]->first_positions_.end() );
             first_positions_.insert( nodes_[1]->first_positions_.begin(), nodes_[1]->first_positions_.end() );
             break;
@@ -478,7 +478,7 @@ void RegexNode::calculate_first_positions()
         case LEXER_NODE_STAR:
         case LEXER_NODE_PLUS:
         case LEXER_NODE_OPTIONAL:
-            SWEET_ASSERT( nodes_.size() == 1 );
+            LALR_ASSERT( nodes_.size() == 1 );
             first_positions_.insert( nodes_[0]->first_positions_.begin(), nodes_[0]->first_positions_.end() );
             break;
 
@@ -488,7 +488,7 @@ void RegexNode::calculate_first_positions()
             break;
 
         default:
-            SWEET_ASSERT( false );
+            LALR_ASSERT( false );
             break;
     }
 }
@@ -501,7 +501,7 @@ void RegexNode::calculate_last_positions()
     for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         node->calculate_last_positions();
     }
 
@@ -512,7 +512,7 @@ void RegexNode::calculate_last_positions()
              
         case LEXER_NODE_CAT:
         {
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             last_positions_.insert( nodes_[1]->last_positions_.begin(), nodes_[1]->last_positions_.end() );
             if ( nodes_[1]->is_nullable() )
             {
@@ -522,7 +522,7 @@ void RegexNode::calculate_last_positions()
         }
 
         case LEXER_NODE_OR:
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
             last_positions_.insert( nodes_[0]->last_positions_.begin(), nodes_[0]->last_positions_.end() );
             last_positions_.insert( nodes_[1]->last_positions_.begin(), nodes_[1]->last_positions_.end() );
             break;
@@ -530,7 +530,7 @@ void RegexNode::calculate_last_positions()
         case LEXER_NODE_STAR:
         case LEXER_NODE_PLUS:
         case LEXER_NODE_OPTIONAL:
-            SWEET_ASSERT( nodes_.size() == 1 );
+            LALR_ASSERT( nodes_.size() == 1 );
             last_positions_.insert( nodes_[0]->last_positions_.begin(), nodes_[0]->last_positions_.end() );
             break;
 
@@ -540,7 +540,7 @@ void RegexNode::calculate_last_positions()
             break;
 
         default:
-            SWEET_ASSERT( false );
+            LALR_ASSERT( false );
             break;
     }
 }
@@ -553,7 +553,7 @@ void RegexNode::calculate_follow_positions()
     for ( std::vector<std::shared_ptr<RegexNode> >::const_iterator i = nodes_.begin(); i != nodes_.end(); ++i )
     {
         RegexNode* node = i->get();
-        SWEET_ASSERT( node );
+        LALR_ASSERT( node );
         node->calculate_follow_positions();
     }
 
@@ -564,7 +564,7 @@ void RegexNode::calculate_follow_positions()
             
         case LEXER_NODE_CAT:
         {
-            SWEET_ASSERT( nodes_.size() == 2 );
+            LALR_ASSERT( nodes_.size() == 2 );
 
             const std::set<RegexNode*, RegexNodeLess>& last_positions = nodes_[0]->last_positions_;
             const std::set<RegexNode*, RegexNodeLess>& first_positions = nodes_[1]->first_positions_;
@@ -572,7 +572,7 @@ void RegexNode::calculate_follow_positions()
             for ( std::set<RegexNode*, RegexNodeLess>::const_iterator i = last_positions.begin(); i != last_positions.end(); ++i )
             {
                 RegexNode* node = *i;
-                SWEET_ASSERT( node );
+                LALR_ASSERT( node );
                 if ( node->get_type() == LEXER_NODE_SYMBOL || node->get_type() == LEXER_NODE_ACTION )
                 {
                     node->follow_positions_.insert( first_positions.begin(), first_positions.end() );
@@ -585,14 +585,14 @@ void RegexNode::calculate_follow_positions()
         case LEXER_NODE_STAR:
         case LEXER_NODE_PLUS:
         {
-            SWEET_ASSERT( nodes_.size() == 1 );
+            LALR_ASSERT( nodes_.size() == 1 );
             const std::set<RegexNode*, RegexNodeLess>& last_positions = last_positions_;
             const std::set<RegexNode*, RegexNodeLess>& first_positions = first_positions_;
 
             for ( std::set<RegexNode*, RegexNodeLess>::const_iterator i = last_positions.begin(); i != last_positions.end(); ++i )
             {
                 RegexNode* node = *i;
-                SWEET_ASSERT( node );
+                LALR_ASSERT( node );
                 if ( node->get_type() == LEXER_NODE_SYMBOL || node->get_type() == LEXER_NODE_ACTION )
                 {
                     node->follow_positions_.insert( first_positions.begin(), first_positions.end() );
@@ -609,7 +609,7 @@ void RegexNode::calculate_follow_positions()
             break;
 
         default:
-            SWEET_ASSERT( false );
+            LALR_ASSERT( false );
             break;
     }
 }

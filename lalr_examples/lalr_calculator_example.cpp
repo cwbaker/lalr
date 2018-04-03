@@ -72,7 +72,7 @@ void lalr_calculator_example()
     
     const char* input = "1 + 2 * (3 + 4) + 5";
     parser.parse( input, input + strlen(input) );
-    SWEET_ASSERT( parser.accepted() );
-    SWEET_ASSERT( parser.full() );
-    SWEET_ASSERT( parser.user_data() == 20 );
+    LALR_ASSERT( parser.accepted() );
+    LALR_ASSERT( parser.full() );
+    LALR_ASSERT( parser.user_data() == 20 );
 }

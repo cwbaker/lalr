@@ -19,13 +19,13 @@ RegexParser::RegexParser( RegexSyntaxTree* syntax_tree )
   lexeme_end_( nullptr ),
   successful_( false )
 {
-    SWEET_ASSERT( syntax_tree_ );
+    LALR_ASSERT( syntax_tree_ );
 }
 
 bool RegexParser::parse( const char* begin, const char* end )
 {
-    SWEET_ASSERT( begin );
-    SWEET_ASSERT( end );
+    LALR_ASSERT( begin );
+    LALR_ASSERT( end );
     position_ = begin;
     end_ = end;
     successful_ = true;

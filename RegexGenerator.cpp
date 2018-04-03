@@ -99,7 +99,7 @@ void RegexGenerator::fire_printf( const char* format, ... ) const
 {
     if ( error_policy_ )
     {
-        SWEET_ASSERT( format );
+        LALR_ASSERT( format );
         va_list args;
         va_start( args, format );
         error_policy_->lalr_vprintf( format, args );
@@ -125,7 +125,7 @@ void RegexGenerator::fire_printf( const char* format, ... ) const
 */
 const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifier )
 {
-    SWEET_ASSERT( !identifier.empty() );
+    LALR_ASSERT( !identifier.empty() );
     if ( !identifier.empty() )
     {    
         vector<std::unique_ptr<RegexAction> >::const_iterator i = actions_.begin();
@@ -189,9 +189,9 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
 */
 std::unique_ptr<RegexState> RegexGenerator::goto_( const RegexState* state, int begin, int end )
 {
-    SWEET_ASSERT( state );
-    SWEET_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
-    SWEET_ASSERT( begin <= end );
+    LALR_ASSERT( state );
+    LALR_ASSERT( begin != INVALID_BEGIN_CHARACTER && begin != INVALID_END_CHARACTER );
+    LALR_ASSERT( begin <= end );
 
     std::unique_ptr<RegexState> goto_state( new RegexState );
     const std::set<RegexItem>& items = state->get_items();
@@ -223,10 +223,10 @@ std::unique_ptr<RegexState> RegexGenerator::goto_( const RegexState* state, int 
 */
 void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state )
 {
-    SWEET_ASSERT( states );
-    SWEET_ASSERT( states->empty() );
-    SWEET_ASSERT( start_state );
-    SWEET_ASSERT( !*start_state );
+    LALR_ASSERT( states );
+    LALR_ASSERT( states->empty() );
+    LALR_ASSERT( start_state );
+    LALR_ASSERT( !*start_state );
 
     if ( !syntax_tree.empty() && syntax_tree.errors() == 0 )
     {
@@ -243,7 +243,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
             for ( std::set<std::unique_ptr<RegexState>, RegexStateLess>::const_iterator i = states->begin(); i != states->end(); ++i )
             {
                 RegexState* state = i->get();
-                SWEET_ASSERT( state );
+                LALR_ASSERT( state );
 
                 if ( !state->is_processed() )
                 {
@@ -259,7 +259,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                         for ( std::set<RegexNode*, RegexNodeLess>::const_iterator j = next_nodes.begin(); j != next_nodes.end(); ++j )
                         {
                             const RegexNode* next_node = *j;
-                            SWEET_ASSERT( next_node );
+                            LALR_ASSERT( next_node );
                             if ( !next_node->is_end() )
                             {
                                 insert( next_node->get_begin_character(), next_node->get_end_character() );
@@ -274,7 +274,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                     {               
                         int begin = (j + 0)->first;
                         int end = (j + 1)->first;
-                        SWEET_ASSERT( begin < end );
+                        LALR_ASSERT( begin < end );
                         
                         std::unique_ptr<RegexState> goto_state = goto_( state, begin, end );
                         if ( !goto_state->get_items().empty() )
@@ -297,7 +297,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                         if ( !j->second )
                         {
                             ++j;
-                            SWEET_ASSERT( j == ranges_.end() || j->second );
+                            LALR_ASSERT( j == ranges_.end() || j->second );
                         }
                     }
                 }
@@ -318,7 +318,7 @@ void RegexGenerator::generate_indices_for_states()
     for ( auto i = states_.begin(); i != states_.end(); ++i )
     {
         RegexState* state = i->get();
-        SWEET_ASSERT( state );
+        LALR_ASSERT( state );
         state->set_index( index );
         ++index;
     }
@@ -332,7 +332,7 @@ void RegexGenerator::generate_indices_for_states()
 */
 void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 {
-    SWEET_ASSERT( state );
+    LALR_ASSERT( state );
 
     int line = INT_MAX;
     RegexTokenType type = TOKEN_NULL;
@@ -345,7 +345,7 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
         while ( i != item->next_nodes().end() )
         {
             const RegexNode* node = *i;
-            SWEET_ASSERT( node );
+            LALR_ASSERT( node );
 
             if ( node->is_end() && node->get_token() )
             {
@@ -363,9 +363,9 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
                 }
                 else if ( node->get_token()->type() == type && node->get_token()->line() == line )
                 {
-                    SWEET_ASSERT( type != TOKEN_NULL );
-                    SWEET_ASSERT( line != INT_MAX );
-                    SWEET_ASSERT( token );
+                    LALR_ASSERT( type != TOKEN_NULL );
+                    LALR_ASSERT( line != INT_MAX );
+                    LALR_ASSERT( token );
                     fire_error( token->line(), LEXER_ERROR_SYMBOL_CONFLICT, "0x%08x and 0x%08x conflict but are both defined on the same line", token, node->get_token() );
                 }
             }
@@ -379,13 +379,13 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 
 // void RegexGenerator::populate_allocations( RegexCompiler* allocations ) const
 // {
-//     SWEET_ASSERT( allocations );
+//     LALR_ASSERT( allocations );
 
 //     size_t transitions_size = 0;
 //     for ( auto i = states_.begin(); i != states_.end(); ++i )
 //     {
 //         const RegexState* source_state = i->get();
-//         SWEET_ASSERT( source_state );
+//         LALR_ASSERT( source_state );
 //         transitions_size += source_state->get_transitions().size();
 //     }
 
@@ -396,7 +396,7 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 //     for ( size_t i = 0; i < actions_.size(); ++i )
 //     {
 //         const RegexAction* source_action = actions_[i].get();
-//         SWEET_ASSERT( source_action );
+//         LALR_ASSERT( source_action );
 //         LexerAction* action = &actions[i];
 //         action->index = source_action->index();
 //         action->identifier = allocations->add_string( source_action->identifier() );
@@ -408,9 +408,9 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 //     for ( auto i = states_.begin(); i != states_.end(); ++i )
 //     {
 //         const RegexState* source_state = i->get();
-//         SWEET_ASSERT( source_state );
+//         LALR_ASSERT( source_state );
 //         LexerState* state = &states[state_index];
-//         SWEET_ASSERT( state );
+//         LALR_ASSERT( state );
 //         const set<RegexTransition>& source_transitions = source_state->get_transitions();
 //         state->index = state_index;
 //         state->length = source_transitions.size();
@@ -423,7 +423,7 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
 //         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
 //         {
 //             const RegexTransition* source_transition = &(*j);
-//             SWEET_ASSERT( source_transition );
+//             LALR_ASSERT( source_transition );
 //             const RegexState* state_transitioned_to = source_transition->state();
 //             const RegexAction* action = source_transition->action();
 //             LexerTransition* transition = &transitions[transition_index];

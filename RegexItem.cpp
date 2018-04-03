@@ -75,8 +75,8 @@ std::set<RegexNode*, RegexNodeLess> RegexItem::next_nodes( int begin, int end ) 
     while ( i != next_nodes_.end() && (*i)->get_type() != LEXER_NODE_ACTION )
     {   
         const RegexNode* node = *i;
-        SWEET_ASSERT( node );            
-        SWEET_ASSERT( node->get_type() < LEXER_NODE_ACTION );
+        LALR_ASSERT( node );            
+        LALR_ASSERT( node->get_type() < LEXER_NODE_ACTION );
 
         if ( node->is_match(begin, end) )
         {
@@ -95,8 +95,8 @@ std::set<RegexNode*, RegexNodeLess> RegexItem::next_nodes( int begin, int end ) 
         while ( i != next_nodes_.end() )
         {
             const RegexNode* node = *i;
-            SWEET_ASSERT( node );            
-            SWEET_ASSERT( node->get_type() == LEXER_NODE_ACTION );
+            LALR_ASSERT( node );            
+            LALR_ASSERT( node->get_type() == LEXER_NODE_ACTION );
 
             if ( node->is_match(begin, end) )
             {
@@ -136,7 +136,7 @@ const RegexAction* RegexItem::find_action_by_interval( int begin, int end ) cons
     {
         while ( i != next_nodes_.end() && !(*i)->is_match(begin, end) )
         {
-            SWEET_ASSERT( (*i)->is_action() );
+            LALR_ASSERT( (*i)->is_action() );
             ++i;
         }
     }

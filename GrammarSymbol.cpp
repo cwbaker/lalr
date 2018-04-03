@@ -109,7 +109,7 @@ GrammarSymbol* GrammarSymbol::implicit_terminal() const
     if ( productions_.size() == 1 )
     {
         const GrammarProduction* production = productions_.front();
-        SWEET_ASSERT( production );
+        LALR_ASSERT( production );
         if ( production->length() == 1 && !production->action() )
         {
             GrammarSymbol* symbol = production->symbols().front();
@@ -135,37 +135,37 @@ void GrammarSymbol::set_identifier( const std::string& identifier )
 
 void GrammarSymbol::set_symbol_type( SymbolType symbol_type )
 {
-    SWEET_ASSERT( symbol_type >= SYMBOL_NULL && symbol_type < SYMBOL_TYPE_COUNT );
+    LALR_ASSERT( symbol_type >= SYMBOL_NULL && symbol_type < SYMBOL_TYPE_COUNT );
     symbol_type_ = symbol_type;
 }
 
 void GrammarSymbol::set_lexeme_type( LexemeType lexeme_type )
 {
-    SWEET_ASSERT( lexeme_type >= LEXEME_NULL && lexeme_type < LEXEME_TYPE_COUNT );
+    LALR_ASSERT( lexeme_type >= LEXEME_NULL && lexeme_type < LEXEME_TYPE_COUNT );
     lexeme_type_ = lexeme_type;
 }
 
 void GrammarSymbol::set_associativity( Associativity associativity )
 {
-    SWEET_ASSERT( associativity >= ASSOCIATE_NONE && associativity <= ASSOCIATE_RIGHT );
+    LALR_ASSERT( associativity >= ASSOCIATE_NONE && associativity <= ASSOCIATE_RIGHT );
     associativity_ = associativity;
 }
 
 void GrammarSymbol::set_precedence( int precedence )
 {
-    SWEET_ASSERT( precedence >= 0 );
+    LALR_ASSERT( precedence >= 0 );
     precedence_ = precedence;
 }
 
 void GrammarSymbol::set_line( int line )
 {
-    SWEET_ASSERT( line >= 0 );
+    LALR_ASSERT( line >= 0 );
     line_ = line;
 }
 
 void GrammarSymbol::set_index( int index )
 {
-    SWEET_ASSERT( index >= 0 );
+    LALR_ASSERT( index >= 0 );
     index_ = index;
 }
 
@@ -176,7 +176,7 @@ void GrammarSymbol::set_nullable( bool nullable )
 
 void GrammarSymbol::append_production( GrammarProduction* production )
 {
-    SWEET_ASSERT( production );
+    LALR_ASSERT( production );
     productions_.push_back( production );
 }
 
@@ -185,7 +185,7 @@ void GrammarSymbol::append_production( GrammarProduction* production )
 */
 void GrammarSymbol::calculate_identifier()
 {
-    SWEET_ASSERT( !lexeme_.empty() );
+    LALR_ASSERT( !lexeme_.empty() );
 
     static const char* CHARACTER_NAMES [] =
     {
@@ -336,7 +336,7 @@ void GrammarSymbol::calculate_identifier()
             }
 
             int character = *i;
-            SWEET_ASSERT( character >= 0 && character < 128 );
+            LALR_ASSERT( character >= 0 && character < 128 );
             identifier_.append( CHARACTER_NAMES[character] );
 
             ++i;
@@ -368,9 +368,9 @@ void GrammarSymbol::calculate_identifier()
 */
 void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_symbol )
 {
-    SWEET_ASSERT( symbol_type() == SYMBOL_TERMINAL );
-    SWEET_ASSERT( non_terminal_symbol );    
-    SWEET_ASSERT( non_terminal_symbol->symbol_type() == SYMBOL_NON_TERMINAL );        
+    LALR_ASSERT( symbol_type() == SYMBOL_TERMINAL );
+    LALR_ASSERT( non_terminal_symbol );    
+    LALR_ASSERT( non_terminal_symbol->symbol_type() == SYMBOL_NON_TERMINAL );        
     identifier_ = non_terminal_symbol->lexeme_;
     line_ = non_terminal_symbol->line_;
     precedence_ = non_terminal_symbol->precedence_;
@@ -388,7 +388,7 @@ void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_s
 */
 int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
 {
-    SWEET_ASSERT( symbol );
+    LALR_ASSERT( symbol );
     return first_.insert( symbol ).second ? 1 : 0;
 }
 
@@ -419,7 +419,7 @@ int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*, Gr
 */
 int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
 {
-    SWEET_ASSERT( symbol );
+    LALR_ASSERT( symbol );
     return follow_.insert( symbol ).second ? 1 : 0;
 }
 
@@ -454,14 +454,14 @@ int GrammarSymbol::calculate_first()
         for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
             const GrammarProduction* production = *i;
-            SWEET_ASSERT( production );  
+            LALR_ASSERT( production );  
                   
             const vector<GrammarSymbol*>& symbols = production->symbols();
             vector<GrammarSymbol*>::const_iterator j = symbols.begin(); 
             while ( j != symbols.end() && (*j)->nullable() )
             {
                 const GrammarSymbol* symbol = *j;
-                SWEET_ASSERT( symbol );
+                LALR_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
                 ++j;
             }
@@ -469,7 +469,7 @@ int GrammarSymbol::calculate_first()
             if ( j != symbols.end() )
             {
                 const GrammarSymbol* symbol = *j;
-                SWEET_ASSERT( symbol );
+                LALR_ASSERT( symbol );
                 added += add_symbols_to_first( symbol->first() );
             }
             else
@@ -498,7 +498,7 @@ int GrammarSymbol::calculate_follow()
     for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {
         const GrammarProduction* production = *i;
-        SWEET_ASSERT( production );
+        LALR_ASSERT( production );
                     
         const vector<GrammarSymbol*>& symbols = production->symbols();
         if ( !symbols.empty() )
@@ -511,7 +511,7 @@ int GrammarSymbol::calculate_follow()
             while ( j != symbols.rend() && symbol->nullable() )
             {
                 GrammarSymbol* previous_symbol = *j;
-                SWEET_ASSERT( previous_symbol );
+                LALR_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 added += previous_symbol->add_symbols_to_follow( follow() );
                 symbol = previous_symbol;
@@ -521,7 +521,7 @@ int GrammarSymbol::calculate_follow()
             while ( j != symbols.rend() )
             {
                 GrammarSymbol* previous_symbol = *j;
-                SWEET_ASSERT( previous_symbol );
+                LALR_ASSERT( previous_symbol );
                 added += previous_symbol->add_symbols_to_follow( symbol->first() );
                 ++j;
             }

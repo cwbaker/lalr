@@ -157,7 +157,7 @@ void RegexState::add_transition( int begin, int end, RegexState* state )
     }
 
     bool inserted = transitions_.insert( RegexTransition(begin, end, state, action) ).second;
-    SWEET_ASSERT( inserted );
+    LALR_ASSERT( inserted );
     (void) inserted;
 }
 
@@ -169,7 +169,7 @@ void RegexState::add_transition( int begin, int end, RegexState* state )
 */
 void RegexState::set_symbol( const void* symbol )
 {
-    SWEET_ASSERT( !symbol_ );
+    LALR_ASSERT( !symbol_ );
     symbol_ = symbol;
 }
 
