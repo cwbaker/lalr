@@ -1,14 +1,11 @@
-#ifndef SWEET_LALR_LEXERGENERATOR_HPP_INCLUDED
-#define SWEET_LALR_LEXERGENERATOR_HPP_INCLUDED
+#ifndef LALR_LEXERGENERATOR_HPP_INCLUDED
+#define LALR_LEXERGENERATOR_HPP_INCLUDED
 
 #include "RegexToken.hpp"
 #include "RegexStateLess.hpp"
 #include <memory>
 #include <vector>
 #include <set>
-
-namespace sweet
-{
 
 namespace error
 {
@@ -58,8 +55,6 @@ class RegexGenerator
         void clear();
         void insert( int begin, int end );
 };
-
-}
 
 }
 

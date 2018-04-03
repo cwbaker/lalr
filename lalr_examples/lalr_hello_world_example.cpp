@@ -1,12 +1,11 @@
 
-#include <sweet/lalr/GrammarCompiler.hpp>
-#include <sweet/lalr/Parser.ipp>
+#include <lalr/GrammarCompiler.hpp>
+#include <lalr/Parser.ipp>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symbol*/, const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/ )
 {

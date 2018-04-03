@@ -9,7 +9,7 @@
 #include "assert.hpp"
 
 using std::vector;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /*
 // Constructor.
@@ -148,40 +148,6 @@ const std::vector<GrammarSymbol*>& GrammarProduction::symbols() const
 int GrammarProduction::length() const
 {
     return int(symbols_.size());
-}
-
-/**
-// Get a description of this production.
-//
-// @return
-//  The description.
-*/
-std::string GrammarProduction::description() const
-{
-    std::string description;
-    description.reserve( 1024 );
-    describe( &description );
-    return description;
-}
-
-/**
-// Describe this production.
-//
-// @param description
-//  A variable to receive the description of this production.
-*/
-void GrammarProduction::describe( std::string* description ) const
-{
-    SWEET_ASSERT( description );
-    // symbol_->describe( description );
-    description->append( " <- " );
-    for ( vector<GrammarSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
-    {
-        const GrammarSymbol* symbol = *i;
-        SWEET_ASSERT( symbol );
-        // symbol->describe( description );
-        description->append( " " );        
-    }
 }
 
 /**

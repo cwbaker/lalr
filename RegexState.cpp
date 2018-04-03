@@ -9,8 +9,7 @@
 #include "assert.hpp"
 #include <stdio.h>
 
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 #if defined(BUILD_PLATFORM_MSVC)
 #define snprintf _snprintf

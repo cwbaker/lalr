@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_GRAMMARSYMBOL_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARSYMBOL_HPP_INCLUDED
+#ifndef LALR_GRAMMARSYMBOL_HPP_INCLUDED
+#define LALR_GRAMMARSYMBOL_HPP_INCLUDED
 
 #include "GrammarSymbolLess.hpp"
 #include "SymbolType.hpp"
@@ -9,9 +9,6 @@
 #include <vector>
 #include <set>
 
-namespace sweet
-{
-    
 namespace lalr
 {
 
@@ -68,8 +65,6 @@ public:
     int calculate_first();
     int calculate_follow();
 };
-
-}
 
 }
 

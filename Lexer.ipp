@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_LEXER_IPP_INCLUDED
-#define SWEET_LALR_LEXER_IPP_INCLUDED
+#ifndef LALR_LEXER_IPP_INCLUDED
+#define LALR_LEXER_IPP_INCLUDED
 
 #include "Lexer.hpp"
 #include "LexerAction.hpp"
@@ -9,9 +9,6 @@
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -353,8 +350,6 @@ const LexerTransition* Lexer<Iterator, Char, Traits, Allocator>::find_transition
         ++transition;
     }
     return transition != transitions_end ? transition : nullptr;
-}
-
 }
 
 }

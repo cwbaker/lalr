@@ -9,8 +9,7 @@
 #include "assert.hpp"
 
 using std::vector;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

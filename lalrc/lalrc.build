@@ -2,7 +2,7 @@
 build:all {
     build:Executable '${bin}/lalrc' {
         libraries = {
-            "sweet/lalr/lalr",
+            "lalr/lalr",
         };
         build:Cxx () {
             'lalrc.cpp'

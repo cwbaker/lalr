@@ -1,14 +1,11 @@
-#ifndef SWEET_LEXER_REGEXNODE_HPP_INCLUDED
-#define SWEET_LEXER_REGEXNODE_HPP_INCLUDED
+#ifndef LALR_REGEXNODE_HPP_INCLUDED
+#define LALR_REGEXNODE_HPP_INCLUDED
 
 #include "RegexNodeLess.hpp"
 #include "RegexNodeType.hpp"
 #include <memory>
 #include <set>
 #include <vector>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -107,8 +104,6 @@ class RegexNode : public std::enable_shared_from_this<RegexNode>
 
         void print( const std::set<RegexNode*>& dot_nodes ) const;
 };
-
-}
 
 }
 

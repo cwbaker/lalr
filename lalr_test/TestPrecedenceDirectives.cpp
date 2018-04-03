@@ -3,16 +3,15 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/lalr/ParserStateMachine.hpp>
-#include <sweet/lalr/GrammarCompiler.hpp>
-#include <sweet/lalr/ErrorPolicy.hpp>
-#include <sweet/lalr/ErrorCode.hpp>
+#include <lalr/ParserStateMachine.hpp>
+#include <lalr/GrammarCompiler.hpp>
+#include <lalr/ErrorPolicy.hpp>
+#include <lalr/ErrorCode.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <stdio.h>
 #include <string.h>
 
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 SUITE( PrecedenceDirectives )
 {

@@ -1,12 +1,11 @@
 
-#include <sweet/lalr/Parser.ipp>
+#include <lalr/Parser.ipp>
 #include <list>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 struct Attribute
 {
@@ -181,7 +180,7 @@ static void print( const Element* element, int level )
 
 void lalr_xml_example()
 {
-    extern sweet::lalr::ParserStateMachine xml_parser_state_machine;
+    extern lalr::ParserStateMachine xml_parser_state_machine;
     Parser<const char*, XmlUserData> parser( &xml_parser_state_machine );
     parser.lexer_action_handlers()
         ( "string", &string_ )

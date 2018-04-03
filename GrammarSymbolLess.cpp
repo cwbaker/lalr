@@ -7,7 +7,7 @@
 #include "GrammarSymbol.hpp"
 #include "assert.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 bool GrammarSymbolLess::operator()( const GrammarSymbol* lhs, const GrammarSymbol* rhs ) const
 {

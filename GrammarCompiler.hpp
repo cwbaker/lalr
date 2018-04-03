@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_GRAMMARCOMPILER_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARCOMPILER_HPP_INCLUDED
+#ifndef LALR_GRAMMARCOMPILER_HPP_INCLUDED
+#define LALR_GRAMMARCOMPILER_HPP_INCLUDED
 
 #include <deque>
 #include <string>
 #include <memory>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -52,8 +49,6 @@ private:
     void populate_lexer_state_machine( const GrammarGenerator& generator, ErrorPolicy* error_policy );
     void populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy );
 };
-
-}
 
 }
 

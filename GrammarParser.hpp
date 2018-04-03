@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_GRAMMARPARSER_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARPARSER_HPP_INCLUDED
+#ifndef LALR_GRAMMARPARSER_HPP_INCLUDED
+#define LALR_GRAMMARPARSER_HPP_INCLUDED
 
 #include <string>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -48,8 +45,6 @@ private:
     bool match( const char* lexeme );
     bool expect( const char* lexeme );
 };
-
-}
 
 }
 

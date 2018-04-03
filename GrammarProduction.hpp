@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_GRAMMARPRODUCTION_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARPRODUCTION_HPP_INCLUDED
+#ifndef LALR_GRAMMARPRODUCTION_HPP_INCLUDED
+#define LALR_GRAMMARPRODUCTION_HPP_INCLUDED
 
 #include <string>
 #include <vector>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -38,8 +35,6 @@ class GrammarProduction
         const GrammarSymbol* symbol_by_position( int position ) const;
         const std::vector<GrammarSymbol*>& symbols() const;
         int length() const;
-        std::string description() const;
-        void describe( std::string* description ) const;
         const GrammarAction* action() const;
         int action_index() const;
         const GrammarSymbol* precedence_symbol() const;
@@ -52,8 +47,6 @@ class GrammarProduction
 
         static const int INVALID_INDEX = -1;
 };
-
-}
 
 }
 

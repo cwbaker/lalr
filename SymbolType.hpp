@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_SYMBOLTYPE_HPP_INCLUDED
-#define SWEET_LALR_SYMBOLTYPE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_SYMBOLTYPE_HPP_INCLUDED
+#define LALR_SYMBOLTYPE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -20,8 +17,6 @@ enum SymbolType
     SYMBOL_END, ///< The end symbol.
     SYMBOL_TYPE_COUNT ///< The number of symbol types.
 };
-
-}
 
 }
 

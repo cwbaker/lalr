@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_REGEXACTION_HPP_INCLUDED
-#define SWEET_LALR_REGEXACTION_HPP_INCLUDED
+#ifndef LALR_REGEXACTION_HPP_INCLUDED
+#define LALR_REGEXACTION_HPP_INCLUDED
 
 #include <string>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -24,8 +21,6 @@ public:
 
     static const int INVALID_INDEX = -1;
 };
-
-}
 
 }
 

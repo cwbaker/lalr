@@ -1,11 +1,8 @@
-#ifndef SWEET_PARSER_ADDHANDLER_IPP_INCLUDED
-#define SWEET_PARSER_ADDHANDLER_IPP_INCLUDED
+#ifndef LALR_ADDHANDLER_IPP_INCLUDED
+#define LALR_ADDHANDLER_IPP_INCLUDED
 
 #include "AddParserActionHandler.hpp"
 #include "assert.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -64,8 +61,6 @@ AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator>::operator()(
     SWEET_ASSERT( parser_ );
     parser_->set_action_handler( identifier, function );
     return *this;
-}
-
 }
 
 }

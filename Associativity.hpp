@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_ASSOCIATIVITY_HPP_INCLUDED
-#define SWEET_LALR_ASSOCIATIVITY_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_ASSOCIATIVITY_HPP_INCLUDED
+#define LALR_ASSOCIATIVITY_HPP_INCLUDED
 
 namespace lalr
 {
@@ -19,8 +16,6 @@ enum Associativity
     ASSOCIATE_LEFT, ///< The symbol associates to the left.
     ASSOCIATE_RIGHT ///< The symbol associates to the right.
 };
-
-}
 
 }
 

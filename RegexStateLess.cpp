@@ -6,7 +6,7 @@
 #include "RegexStateLess.hpp"
 #include "RegexState.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 bool RegexStateLess::operator()( const std::unique_ptr<RegexState>& lhs, const std::unique_ptr<RegexState>& rhs ) const
 {

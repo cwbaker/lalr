@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_GRAMMARITEM_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARITEM_HPP_INCLUDED
+#ifndef LALR_GRAMMARITEM_HPP_INCLUDED
+#define LALR_GRAMMARITEM_HPP_INCLUDED
 
 #include "GrammarSymbolLess.hpp"
 #include <string>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -36,8 +33,6 @@ class GrammarItem
         bool operator<( const GrammarItem& item ) const;
         int add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const;
 };
-
-}
 
 }
 

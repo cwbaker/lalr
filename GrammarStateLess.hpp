@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_GRAMMARSTATELESS_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARSTATELESS_HPP_INCLUDED
+#ifndef LALR_GRAMMARSTATELESS_HPP_INCLUDED
+#define LALR_GRAMMARSTATELESS_HPP_INCLUDED
 
 #include <memory>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -19,8 +16,6 @@ class GrammarStateLess
 public:
     bool operator()( const std::shared_ptr<GrammarState>& lhs, const std::shared_ptr<GrammarState>& rhs ) const;
 };
-
-}
 
 }
 

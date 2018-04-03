@@ -8,8 +8,7 @@
 #include "assert.hpp"
 #include <string>
 
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

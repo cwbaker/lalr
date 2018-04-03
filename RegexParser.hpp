@@ -1,8 +1,5 @@
-#ifndef SWEET_LEXER_REGEXPARSER_HPP_INCLUDED
-#define SWEET_LEXER_REGEXPARSER_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_REGEXPARSER_HPP_INCLUDED
+#define LALR_REGEXPARSER_HPP_INCLUDED
 
 namespace lalr
 {
@@ -41,8 +38,6 @@ private:
     bool expect( const char* lexeme );
     int escape( const char* start, const char* finish ) const;
 };
-
-}
 
 }
 

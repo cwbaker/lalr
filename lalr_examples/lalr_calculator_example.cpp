@@ -1,13 +1,12 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <sweet/lalr/GrammarCompiler.hpp>
-#include <sweet/lalr/Parser.ipp>
+#include <lalr/GrammarCompiler.hpp>
+#include <lalr/Parser.ipp>
 #include <string.h>
 
 using namespace std;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 static int add( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
 {

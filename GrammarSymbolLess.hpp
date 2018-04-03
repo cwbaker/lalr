@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_GRAMMARSYMBOLLESS_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARSYMBOLLESS_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_GRAMMARSYMBOLLESS_HPP_INCLUDED
+#define LALR_GRAMMARSYMBOLLESS_HPP_INCLUDED
 
 namespace lalr
 {
@@ -17,8 +14,6 @@ class GrammarSymbolLess
 public:
     bool operator()( const GrammarSymbol* lhs, const GrammarSymbol* rhs ) const;
 };
-
-}
 
 }
 

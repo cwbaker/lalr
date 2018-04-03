@@ -3,8 +3,8 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#ifndef SWEET_LALR_PARSER_IPP_INCLUDED
-#define SWEET_LALR_PARSER_IPP_INCLUDED
+#ifndef LALR_PARSER_IPP_INCLUDED
+#define LALR_PARSER_IPP_INCLUDED
 
 #include "Parser.hpp"
 #include "ParserState.hpp"
@@ -22,9 +22,6 @@
 #include "assert.hpp"
 #include <stdarg.h>
 #include <stdio.h>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -651,8 +648,6 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
         fire_error( PARSER_ERROR_SYNTAX, "Syntax error" );
         *rejected = true;
     }
-}
-
 }
 
 }

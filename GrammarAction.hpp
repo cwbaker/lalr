@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_GRAMMARACTION_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARACTION_HPP_INCLUDED
+#ifndef LALR_GRAMMARACTION_HPP_INCLUDED
+#define LALR_GRAMMARACTION_HPP_INCLUDED
 
 #include <string>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -23,8 +20,6 @@ public:
     const std::string& identifier() const;
     static const int INVALID_INDEX = -1;
 };
-
-}
 
 }
 

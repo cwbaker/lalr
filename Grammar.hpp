@@ -1,14 +1,11 @@
-#ifndef SWEET_LALR_GRAMMAR_HPP_INCLUDED
-#define SWEET_LALR_GRAMMAR_HPP_INCLUDED
+#ifndef LALR_GRAMMAR_HPP_INCLUDED
+#define LALR_GRAMMAR_HPP_INCLUDED
 
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
 #include "Associativity.hpp"
 #include "RegexToken.hpp"
 #include <vector>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -76,8 +73,6 @@ private:
     GrammarProduction* add_production( GrammarSymbol* symbol );
     GrammarAction* add_action( const char* id );
 };
-
-}
 
 }
 

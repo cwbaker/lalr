@@ -1,8 +1,5 @@
-#ifndef SWEET_LEXER_REGEXNODETYPE_HPP_INCLUDED
-#define SWEET_LEXER_REGEXNODETYPE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_REGEXNODETYPE_HPP_INCLUDED
+#define LALR_REGEXNODETYPE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -26,8 +23,6 @@ enum RegexNodeType
     LEXER_NODE_ACTION,
     LEXER_NODE_COUNT
 };
-
-}
 
 }
 

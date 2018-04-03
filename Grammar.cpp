@@ -20,9 +20,7 @@ using std::string;
 using std::vector;
 using std::set;
 using std::unique_ptr;
-using namespace sweet;
-using namespace sweet::lalr;
-using namespace sweet::lalr;
+using namespace lalr;
 
 Grammar::Grammar()
 : identifier_(),
@@ -96,9 +94,8 @@ Grammar& Grammar::grammar( const std::string& identifier )
     return *this;
 }
 
-Grammar& Grammar::left( int line )
+Grammar& Grammar::left( int /*line*/ )
 {
-    SWEET_ASSERT( line >= 0 );
     associativity_ = ASSOCIATE_LEFT;
     ++precedence_;
     active_whitespace_directive_ = false;
@@ -108,9 +105,8 @@ Grammar& Grammar::left( int line )
     return *this;
 }
 
-Grammar& Grammar::right( int line )
+Grammar& Grammar::right( int /*line*/ )
 {
-    SWEET_ASSERT( line >= 0 );
     associativity_ = ASSOCIATE_RIGHT;
     ++precedence_;
     active_whitespace_directive_ = false;
@@ -120,9 +116,8 @@ Grammar& Grammar::right( int line )
     return *this;
 }
 
-Grammar& Grammar::none( int line )
+Grammar& Grammar::none( int /*line*/ )
 {
-    SWEET_ASSERT( line >= 0 );
     associativity_ = ASSOCIATE_NONE;
     ++precedence_;
     active_whitespace_directive_ = false;

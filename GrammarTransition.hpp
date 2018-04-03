@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_GRAMMARTRANSITION_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARTRANSITION_HPP_INCLUDED
+#ifndef LALR_GRAMMARTRANSITION_HPP_INCLUDED
+#define LALR_GRAMMARTRANSITION_HPP_INCLUDED
 
 #include "TransitionType.hpp"
 #include <string>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -50,8 +47,6 @@ class GrammarTransition
         void override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const;
         void override_reduce_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const;
 };
-
-}
 
 }
 

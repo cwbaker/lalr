@@ -1,13 +1,10 @@
-#ifndef SWEET_LALR_PARSERNODE_HPP_INCLUDED
-#define SWEET_LALR_PARSERNODE_HPP_INCLUDED
+#ifndef LALR_PARSERNODE_HPP_INCLUDED
+#define LALR_PARSERNODE_HPP_INCLUDED
 
 #include "ParserUserData.hpp"
 #include <memory>
 #include <string>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -36,8 +33,6 @@ class ParserNode
         const std::basic_string<Char, Traits, Allocator>& lexeme() const;
         const UserData& user_data() const;
 };
-
-}
 
 }
 

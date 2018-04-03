@@ -1,5 +1,5 @@
-#ifndef SWEET_LEXER_REGEXSYNTAXTREE_HPP_INCLUDED
-#define SWEET_LEXER_REGEXSYNTAXTREE_HPP_INCLUDED
+#ifndef LALR_REGEXSYNTAXTREE_HPP_INCLUDED
+#define LALR_REGEXSYNTAXTREE_HPP_INCLUDED
 
 #include "RegexCharacter.hpp"
 #include "RegexNodeLess.hpp"
@@ -9,9 +9,6 @@
 #include <string>
 #include <vector>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -105,8 +102,6 @@ class RegexSyntaxTree
         void insert_characters( const char* characters );
         void erase_characters( const char* characters );
 };
-
-}
 
 }
 

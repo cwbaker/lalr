@@ -16,8 +16,7 @@ using std::set;
 using std::pair;
 using std::string;
 using std::vector;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

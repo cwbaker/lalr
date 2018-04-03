@@ -13,7 +13,7 @@
 using std::set;
 using std::vector;
 using std::unique_ptr;
-using namespace sweet::lalr;
+using namespace lalr;
 
 RegexCompiler::RegexCompiler()
 : strings_(),

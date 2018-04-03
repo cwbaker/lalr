@@ -1,10 +1,7 @@
-#ifndef SWEET_LEXER_POSITIONITERATOR_HPP_INCLUDED
-#define SWEET_LEXER_POSITIONITERATOR_HPP_INCLUDED
+#ifndef LALR_POSITIONITERATOR_HPP_INCLUDED
+#define LALR_POSITIONITERATOR_HPP_INCLUDED
 
 #include <iterator>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -107,8 +104,6 @@ class PositionIterator
             return ended_ || iterator.ended_ ? ended_ == iterator.ended_ : position_ == iterator.position_;
         }
 };
-
-}
 
 }
 

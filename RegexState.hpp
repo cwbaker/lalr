@@ -1,13 +1,10 @@
-#ifndef SWEET_LALR_REGEXSTATE_HPP_INCLUDED
-#define SWEET_LALR_REGEXSTATE_HPP_INCLUDED
+#ifndef LALR_REGEXSTATE_HPP_INCLUDED
+#define LALR_REGEXSTATE_HPP_INCLUDED
 
 #include "RegexItem.hpp"
 #include "RegexTransition.hpp"
 #include <string>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -40,8 +37,6 @@ class RegexState
         void set_processed( bool processed );
         void set_index( int index );
 };
-
-}
 
 }
 

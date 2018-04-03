@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_LEXER_HPP_INCLUDED
-#define SWEET_LALR_LEXER_HPP_INCLUDED
+#ifndef LALR_LEXER_HPP_INCLUDED
+#define LALR_LEXER_HPP_INCLUDED
 
 #include <vector>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -58,8 +55,6 @@ class Lexer
         void fire_error( int line, int error, const char* format, ... ) const;
         const LexerTransition* find_transition_by_character( const LexerState* state, int character ) const;
 };
-
-}
 
 }
 

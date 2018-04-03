@@ -26,8 +26,7 @@ using std::set;
 using std::vector;
 using std::unique_ptr;
 using std::shared_ptr;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

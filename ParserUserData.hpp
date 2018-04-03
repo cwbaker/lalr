@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_PARSERUSERDATA_HPP_INCLUDED
-#define SWEET_LALR_PARSERUSERDATA_HPP_INCLUDED
+#ifndef LALR_PARSERUSERDATA_HPP_INCLUDED
+#define LALR_PARSERUSERDATA_HPP_INCLUDED
 
 #include <memory>
 #include <string>
 #include <vector>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -35,8 +32,6 @@ class ParserUserData
         void append_user_data( std::shared_ptr<ParserUserData> user_data );
         const std::vector<std::shared_ptr<ParserUserData<Char, Traits, Allocator> > >& user_datas() const;
 };
-
-}
 
 }
 

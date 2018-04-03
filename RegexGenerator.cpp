@@ -25,8 +25,7 @@ using std::pair;
 using std::vector;
 using std::make_pair;
 using std::unique_ptr;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

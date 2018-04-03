@@ -5,7 +5,7 @@
 
 #include "RegexAction.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

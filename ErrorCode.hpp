@@ -1,8 +1,5 @@
-#ifndef SWEET_PARSER_ERRORCODE_HPP_INCLUDED
-#define SWEET_PARSER_ERRORCODE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_ERRORCODE_HPP_INCLUDED
+#define LALR_ERRORCODE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -25,8 +22,6 @@ enum ErrorCode
     PARSER_ERROR_UNREFERENCED_SYMBOL, ///< A grammar symbol is defined but not referenced.
     PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE ///< The 'error' symbol has been used on the left hand side of a production.
 };
-
-}
 
 }
 

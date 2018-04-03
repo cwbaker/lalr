@@ -10,8 +10,7 @@
 #include <stdio.h>
 
 using std::set;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

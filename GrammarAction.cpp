@@ -6,7 +6,7 @@
 #include "GrammarAction.hpp"
 #include "assert.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

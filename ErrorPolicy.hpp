@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_ERRORPOLICY_HPP_INCLUDED
-#define SWEET_LALR_ERRORPOLICY_HPP_INCLUDED
+#ifndef LALR_ERRORPOLICY_HPP_INCLUDED
+#define LALR_ERRORPOLICY_HPP_INCLUDED
 
 #include <stdarg.h>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -20,8 +17,6 @@ class ErrorPolicy
         virtual void lalr_error( int line, int error, const char* format, va_list args );
         virtual void lalr_vprintf( const char* format, va_list args );
 };
-
-}
 
 }
 

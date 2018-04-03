@@ -3,17 +3,17 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/lalr/GrammarCompiler.hpp>
-#include <sweet/lalr/ParserStateMachine.hpp>
-#include <sweet/lalr/ParserState.hpp>
-#include <sweet/lalr/ParserTransition.hpp>
-#include <sweet/lalr/ParserSymbol.hpp>
-#include <sweet/lalr/ParserAction.hpp>
-#include <sweet/lalr/RegexCompiler.hpp>
-#include <sweet/lalr/LexerStateMachine.hpp>
-#include <sweet/lalr/LexerState.hpp>
-#include <sweet/lalr/LexerTransition.hpp>
-#include <sweet/lalr/LexerAction.hpp>
+#include <lalr/GrammarCompiler.hpp>
+#include <lalr/ParserStateMachine.hpp>
+#include <lalr/ParserState.hpp>
+#include <lalr/ParserTransition.hpp>
+#include <lalr/ParserSymbol.hpp>
+#include <lalr/ParserAction.hpp>
+#include <lalr/RegexCompiler.hpp>
+#include <lalr/LexerStateMachine.hpp>
+#include <lalr/LexerState.hpp>
+#include <lalr/LexerTransition.hpp>
+#include <lalr/LexerAction.hpp>
 #include <string>
 #include <vector>
 #include <stdlib.h>
@@ -23,7 +23,7 @@
 
 using std::string;
 using std::vector;
-using namespace sweet::lalr;
+using namespace lalr;
 
 static void print_cxx_parser_state_machine( const ParserStateMachine* state_machine, FILE* file );
 static void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine, FILE* file );
@@ -173,17 +173,17 @@ void print_cxx_parser_state_machine( const ParserStateMachine* state_machine, FI
 void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine, FILE* file )
 {
     fprintf( file, "\n" );
-    fprintf( file, "#include <sweet/lalr/ParserStateMachine.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/ParserState.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/ParserTransition.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/ParserSymbol.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/ParserAction.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/LexerStateMachine.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/LexerState.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/LexerTransition.hpp>\n" );
-    fprintf( file, "#include <sweet/lalr/LexerAction.hpp>\n" );
+    fprintf( file, "#include <lalr/ParserStateMachine.hpp>\n" );
+    fprintf( file, "#include <lalr/ParserState.hpp>\n" );
+    fprintf( file, "#include <lalr/ParserTransition.hpp>\n" );
+    fprintf( file, "#include <lalr/ParserSymbol.hpp>\n" );
+    fprintf( file, "#include <lalr/ParserAction.hpp>\n" );
+    fprintf( file, "#include <lalr/LexerStateMachine.hpp>\n" );
+    fprintf( file, "#include <lalr/LexerState.hpp>\n" );
+    fprintf( file, "#include <lalr/LexerTransition.hpp>\n" );
+    fprintf( file, "#include <lalr/LexerAction.hpp>\n" );
     fprintf( file, "\n" );
-    fprintf( file, "using namespace sweet::lalr;\n" );
+    fprintf( file, "using namespace lalr;\n" );
     fprintf( file, "\n" );
     fprintf( file, "namespace\n" );
     fprintf( file, "{\n" );

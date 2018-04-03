@@ -1,13 +1,10 @@
-#ifndef SWEET_LALR_LEXERALLOCATIONS_HPP_INCLUDED
-#define SWEET_LALR_LEXERALLOCATIONS_HPP_INCLUDED
+#ifndef LALR_LEXERALLOCATIONS_HPP_INCLUDED
+#define LALR_LEXERALLOCATIONS_HPP_INCLUDED
 
 #include "RegexToken.hpp"
 #include <memory>
 #include <string>
 #include <deque>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -42,8 +39,6 @@ public:
     void set_states( std::unique_ptr<LexerState[]>& states, int states_size, const LexerState* start_state );
     void populate_lexer_state_machine( const RegexGenerator& generator );
 };
-
-}
 
 }
 

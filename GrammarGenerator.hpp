@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARGENERATOR_HPP_INCLUDED
+#ifndef LALR_GRAMMARGENERATOR_HPP_INCLUDED
+#define LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
 #include "RegexToken.hpp"
 #include "GrammarSymbolLess.hpp"
@@ -8,9 +8,6 @@
 #include <set>
 #include <vector>
 #include <string>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -78,8 +75,6 @@ class GrammarGenerator
         void generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production );
         void generate_indices_for_transitions();
 };
-
-}
 
 }
 

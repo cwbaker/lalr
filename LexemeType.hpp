@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_LEXEMETYPE_HPP_INCLUDED
-#define SWEET_LALR_LEXEMETYPE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_LEXEMETYPE_HPP_INCLUDED
+#define LALR_LEXEMETYPE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -14,8 +11,6 @@ enum LexemeType
     LEXEME_REGULAR_EXPRESSION, ///< Regular expression.
     LEXEME_TYPE_COUNT ///< The number of lexeme types.
 };
-
-}
 
 }
 

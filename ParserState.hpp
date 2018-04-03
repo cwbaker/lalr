@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_PARSERSTATE_HPP_INCLUDED
-#define SWEET_LALR_PARSERSTATE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_PARSERSTATE_HPP_INCLUDED
+#define LALR_PARSERSTATE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -20,8 +17,6 @@ public:
     int length; ///< The number of transitions in this state.
     const ParserTransition* transitions; ///< The available transitions from this state.
 };
-
-}
 
 }
 

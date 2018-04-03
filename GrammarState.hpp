@@ -1,14 +1,11 @@
-#ifndef SWEET_LALR_GRAMMARSTATE_HPP_INCLUDED
-#define SWEET_LALR_GRAMMARSTATE_HPP_INCLUDED
+#ifndef LALR_GRAMMARSTATE_HPP_INCLUDED
+#define LALR_GRAMMARSTATE_HPP_INCLUDED
 
 #include "GrammarItem.hpp"
 #include "GrammarTransition.hpp"
 #include "GrammarSymbolLess.hpp"
 #include <memory>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -47,8 +44,6 @@ public:
 
     static const int INVALID_INDEX = -1;
 };
-
-}
 
 }
 

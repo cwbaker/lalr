@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_LEXERACTION_HPP_INCLUDED
-#define SWEET_LALR_LEXERACTION_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_LEXERACTION_HPP_INCLUDED
+#define LALR_LEXERACTION_HPP_INCLUDED
 
 namespace lalr
 {
@@ -17,8 +14,6 @@ public:
     int index; ///< The index of this action.
     const char* identifier; ///< The identifier of this action.
 };
-
-}
 
 }
 

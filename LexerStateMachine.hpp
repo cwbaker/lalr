@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_LEXERSTATEMACHINE_HPP_INCLUDED
-#define SWEET_LALR_LEXERSTATEMACHINE_HPP_INCLUDED
+#ifndef LALR_LEXERSTATEMACHINE_HPP_INCLUDED
+#define LALR_LEXERSTATEMACHINE_HPP_INCLUDED
 
 #include <memory>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -28,8 +25,6 @@ public:
     const LexerState* states;
     const LexerState* start_state;
 };
-
-}
 
 }
 

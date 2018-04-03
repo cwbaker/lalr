@@ -2,14 +2,12 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <sweet/lalr/Parser.ipp>
-#include <sweet/lalr/PositionIterator.hpp>
+#include <lalr/Parser.ipp>
+#include <lalr/PositionIterator.hpp>
 #include <string.h>
 
 using namespace std;
-using namespace sweet;
-using namespace sweet::lalr;
-using namespace sweet::lalr;
+using namespace lalr;
 
 struct Attribute
 {
@@ -176,7 +174,7 @@ static void print( const Element* element, int level )
 
 void lalr_json_example()
 {
-    extern const sweet::lalr::ParserStateMachine json_parser_state_machine;
+    extern const lalr::ParserStateMachine json_parser_state_machine;
     Parser<PositionIterator<const char*>, JsonUserData> parser( &json_parser_state_machine );
     parser.lexer_action_handlers()
         ( "string", &string_ )

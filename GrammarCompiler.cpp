@@ -28,8 +28,7 @@ using std::copy;
 using std::back_inserter;
 using std::unique_ptr;
 using std::shared_ptr;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 GrammarCompiler::GrammarCompiler()
 : strings_(),

@@ -11,7 +11,7 @@
 #include <string>
 
 using std::string;
-using namespace sweet::lalr;
+using namespace lalr;
 
 GrammarParser::GrammarParser()
 : grammar_( nullptr ),

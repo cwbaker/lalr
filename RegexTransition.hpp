@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_REGEXTRANSITION_HPP_INCLUDED
-#define SWEET_LALR_REGEXTRANSITION_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_REGEXTRANSITION_HPP_INCLUDED
+#define LALR_REGEXTRANSITION_HPP_INCLUDED
 
 namespace lalr
 {
@@ -29,8 +26,6 @@ class RegexTransition
         const RegexAction* action() const;
         bool operator<( const RegexTransition& transition ) const;
 };
-
-}
 
 }
 

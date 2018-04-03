@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_REGEXCHARACTER_HPP_INCLUDED
-#define SWEET_LALR_REGEXCHARACTER_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_REGEXCHARACTER_HPP_INCLUDED
+#define LALR_REGEXCHARACTER_HPP_INCLUDED
 
 namespace lalr
 {
@@ -23,8 +20,6 @@ class RegexCharacter
         int end_character() const;
         bool operator<( const RegexCharacter& regex_character ) const;
 };
-
-}
 
 }
 

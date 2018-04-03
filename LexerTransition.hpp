@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_LEXERTRANSITION_HPP_INCLUDED
-#define SWEET_LALR_LEXERTRANSITION_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_LEXERTRANSITION_HPP_INCLUDED
+#define LALR_LEXERTRANSITION_HPP_INCLUDED
 
 namespace lalr
 {
@@ -21,8 +18,6 @@ public:
     const LexerState* state; ///< The state that is transitioned to.
     const LexerAction* action; ///< The action that is taken on the transition or null if no action is taken.
 };
-
-}
 
 }
 

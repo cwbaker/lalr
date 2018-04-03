@@ -1,5 +1,5 @@
-#ifndef SWEET_LALR_PARSER_HPP_INCLUDED
-#define SWEET_LALR_PARSER_HPP_INCLUDED
+#ifndef LALR_PARSER_HPP_INCLUDED
+#define LALR_PARSER_HPP_INCLUDED
 
 #include "ParserNode.hpp"
 #include "ParserUserData.hpp"
@@ -7,9 +7,6 @@
 #include "AddLexerActionHandler.hpp"
 #include "Lexer.hpp"
 #include <vector>
-
-namespace sweet
-{
 
 namespace error
 {
@@ -92,8 +89,6 @@ class Parser
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
         void error( bool* accepted, bool* rejected );
 };
-
-}
 
 }
 

@@ -1,10 +1,7 @@
-#ifndef SWEET_LEXER_ADDLEXERACTIONHANDLER_HPP_INCLUDED
-#define SWEET_LEXER_ADDLEXERACTIONHANDLER_HPP_INCLUDED
+#ifndef LALR_ADDLEXERACTIONHANDLER_HPP_INCLUDED
+#define LALR_ADDLEXERACTIONHANDLER_HPP_INCLUDED
 
 #include <functional>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -25,8 +22,6 @@ class AddLexerActionHandler
         AddLexerActionHandler( Lexer<Iterator, Char, Traits, Allocator>* lexer );
         const AddLexerActionHandler& operator()( const char* identifier, LexerActionFunction function ) const;
 };
-
-}
 
 }
 

@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_PARSERTRANSITION_HPP_INCLUDED
-#define SWEET_LALR_PARSERTRANSITION_HPP_INCLUDED
+#ifndef LALR_PARSERTRANSITION_HPP_INCLUDED
+#define LALR_PARSERTRANSITION_HPP_INCLUDED
 
 #include "TransitionType.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -27,8 +24,6 @@ public:
     TransitionType type; ///< The type of transition that this is.
     int index; ///< The index of this transition.
 };
-
-}
 
 }
 

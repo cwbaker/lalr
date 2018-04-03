@@ -9,7 +9,7 @@
 #include "assert.hpp"
 #include <stdio.h>
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

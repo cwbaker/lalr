@@ -1,15 +1,15 @@
 
-#include <sweet/lalr/ParserStateMachine.hpp>
-#include <sweet/lalr/ParserState.hpp>
-#include <sweet/lalr/ParserTransition.hpp>
-#include <sweet/lalr/ParserSymbol.hpp>
-#include <sweet/lalr/ParserAction.hpp>
-#include <sweet/lalr/LexerStateMachine.hpp>
-#include <sweet/lalr/LexerState.hpp>
-#include <sweet/lalr/LexerTransition.hpp>
-#include <sweet/lalr/LexerAction.hpp>
+#include <lalr/ParserStateMachine.hpp>
+#include <lalr/ParserState.hpp>
+#include <lalr/ParserTransition.hpp>
+#include <lalr/ParserSymbol.hpp>
+#include <lalr/ParserAction.hpp>
+#include <lalr/LexerStateMachine.hpp>
+#include <lalr/LexerState.hpp>
+#include <lalr/LexerTransition.hpp>
+#include <lalr/LexerAction.hpp>
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 namespace
 {

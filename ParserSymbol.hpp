@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_PARSERSYMBOL_HPP_INCLUDED
-#define SWEET_LALR_PARSERSYMBOL_HPP_INCLUDED
+#ifndef LALR_PARSERSYMBOL_HPP_INCLUDED
+#define LALR_PARSERSYMBOL_HPP_INCLUDED
 
 #include "SymbolType.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -20,8 +17,6 @@ public:
     const char* lexeme; ///< The lexeme of this symbol or null if this symbol is non-terminal.
     SymbolType type; ///< The type of this symbol.
 };
-
-}
 
 }
 

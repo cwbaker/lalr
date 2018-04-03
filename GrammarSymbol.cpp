@@ -10,7 +10,7 @@
 using std::set;
 using std::vector;
 using std::shared_ptr;
-using namespace sweet::lalr;
+using namespace lalr;
 
 GrammarSymbol::GrammarSymbol( const std::string& lexeme )
 : lexeme_( lexeme ),

@@ -4,13 +4,13 @@
 //
 
 #include <UnitTest++/UnitTest++.h>
-#include <sweet/lalr/RegexCompiler.hpp>
-#include <sweet/lalr/Lexer.ipp>
-#include <sweet/lalr/PositionIterator.hpp>
+#include <lalr/RegexCompiler.hpp>
+#include <lalr/Lexer.ipp>
+#include <lalr/PositionIterator.hpp>
 #include <string.h>
 
 using std::string;
-using namespace sweet::lalr;
+using namespace lalr;
 
 SUITE( RegularExpressions )
 {

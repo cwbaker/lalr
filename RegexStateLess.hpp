@@ -1,10 +1,7 @@
-#ifndef SWEET_LALR_REGEXSTATELESS_HPP_INCLUDED
-#define SWEET_LALR_REGEXSTATELESS_HPP_INCLUDED
+#ifndef LALR_REGEXSTATELESS_HPP_INCLUDED
+#define LALR_REGEXSTATELESS_HPP_INCLUDED
 
 #include <memory>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -19,8 +16,6 @@ class RegexStateLess
 public:
     bool operator()( const std::unique_ptr<RegexState>& lhs, const std::unique_ptr<RegexState>& rhs ) const;
 };
-
-}
 
 }
 

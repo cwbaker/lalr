@@ -5,7 +5,7 @@
 
 #include "RegexToken.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 RegexToken::RegexToken( RegexTokenType type, int line, const void* symbol, const std::string& lexeme )
 : type_( type ),

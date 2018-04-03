@@ -1,10 +1,7 @@
-#ifndef SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
-#define SWEET_PARSER_ADDHANDLER_HPP_INCLUDED
+#ifndef LALR_ADDHANDLER_HPP_INCLUDED
+#define LALR_ADDHANDLER_HPP_INCLUDED
 
 #include <functional>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -27,8 +24,6 @@ class AddParserActionHandler
         const AddParserActionHandler& default_action( ParserActionFunction function ) const;
         const AddParserActionHandler& operator()( const char* identifier, ParserActionFunction function ) const;
 };
-
-}
 
 }
 

@@ -13,13 +13,12 @@
 using std::find;
 using std::vector;
 using std::set;
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
-const int sweet::lalr::BEGIN_CHARACTER = 0;
-const int sweet::lalr::END_CHARACTER = INT_MAX;
-const int sweet::lalr::INVALID_BEGIN_CHARACTER = -2;
-const int sweet::lalr::INVALID_END_CHARACTER = -1;
+const int lalr::BEGIN_CHARACTER = 0;
+const int lalr::END_CHARACTER = INT_MAX;
+const int lalr::INVALID_BEGIN_CHARACTER = -2;
+const int lalr::INVALID_END_CHARACTER = -1;
 
 /**
 // Constructor.

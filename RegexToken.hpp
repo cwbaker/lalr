@@ -1,11 +1,8 @@
-#ifndef SWEET_LALR_LEXERTOKEN_HPP_INCLUDED
-#define SWEET_LALR_LEXERTOKEN_HPP_INCLUDED
+#ifndef LALR_LEXERTOKEN_HPP_INCLUDED
+#define LALR_LEXERTOKEN_HPP_INCLUDED
 
 #include "RegexTokenType.hpp"
 #include <string>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -27,8 +24,6 @@ class RegexToken
         const void* symbol() const;
         const std::string& lexeme() const;
 };
-
-}
 
 }
 

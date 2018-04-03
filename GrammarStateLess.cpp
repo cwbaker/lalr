@@ -6,7 +6,7 @@
 #include "GrammarStateLess.hpp"
 #include "GrammarState.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 bool GrammarStateLess::operator()( const std::shared_ptr<GrammarState>& lhs, const std::shared_ptr<GrammarState>& rhs ) const
 {

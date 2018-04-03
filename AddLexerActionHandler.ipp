@@ -1,11 +1,8 @@
-#ifndef SWEET_LEXER_ADDLEXERACTIONHANDLER_IPP_INCLUDED
-#define SWEET_LEXER_ADDLEXERACTIONHANDLER_IPP_INCLUDED
+#ifndef LALR_ADDLEXERACTIONHANDLER_IPP_INCLUDED
+#define LALR_ADDLEXERACTIONHANDLER_IPP_INCLUDED
 
 #include "AddLexerActionHandler.hpp"
 #include "assert.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -45,8 +42,6 @@ AddLexerActionHandler<Iterator, Char, Traits, Allocator>::operator()( const char
     SWEET_ASSERT( lexer_ );
     lexer_->set_action_handler( identifier, function );
     return *this;
-}
-
 }
 
 }

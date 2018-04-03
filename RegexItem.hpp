@@ -1,12 +1,9 @@
-#ifndef SWEET_LALR_REGEXITEM_HPP_INCLUDED
-#define SWEET_LALR_REGEXITEM_HPP_INCLUDED
+#ifndef LALR_REGEXITEM_HPP_INCLUDED
+#define LALR_REGEXITEM_HPP_INCLUDED
 
 #include "RegexNodeLess.hpp"
 #include <string>
 #include <set>
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -30,8 +27,6 @@ public:
     const RegexAction* find_action_by_interval( int begin, int end ) const;
     bool operator<( const RegexItem& item ) const;
 };
-
-}
 
 }
 

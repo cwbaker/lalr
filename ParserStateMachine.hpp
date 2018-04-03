@@ -1,8 +1,5 @@
-#ifndef SWEET_LALR_PARSERSTATEMACHINE_HPP_INCLUDED
-#define SWEET_LALR_PARSERSTATEMACHINE_HPP_INCLUDED
-
-namespace sweet
-{
+#ifndef LALR_PARSERSTATEMACHINE_HPP_INCLUDED
+#define LALR_PARSERSTATEMACHINE_HPP_INCLUDED
 
 namespace lalr
 {
@@ -42,8 +39,6 @@ public:
     const LexerStateMachine* lexer_state_machine; ///< The state machine used by the lexer to match tokens
     const LexerStateMachine* whitespace_lexer_state_machine; ///< The state machine used by the lexer to skip whitespace
 };
-
-}
 
 }
 

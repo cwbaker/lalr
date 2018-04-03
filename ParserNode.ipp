@@ -1,16 +1,8 @@
-//
-// ParserNode.ipp
-// Copyright (c) Charles Baker. All rights reserved.
-//
-
-#ifndef SWEET_LALR_PARSERNODE_IPP_INCLUDED
-#define SWEET_LALR_PARSERNODE_IPP_INCLUDED
+#ifndef LALR_PARSERNODE_IPP_INCLUDED
+#define LALR_PARSERNODE_IPP_INCLUDED
 
 #include "ParserNode.hpp"
 #include "assert.hpp"
-
-namespace sweet
-{
 
 namespace lalr
 {
@@ -126,8 +118,6 @@ template <class UserData, class Char, class Traits, class Allocator>
 const UserData& ParserNode<UserData, Char, Traits, Allocator>::user_data() const
 {
     return user_data_;
-}
-
 }
 
 }

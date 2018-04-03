@@ -7,8 +7,7 @@
 #include "RegexNode.hpp"
 #include "assert.hpp"
 
-using namespace sweet;
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Compare two RegexNodes.

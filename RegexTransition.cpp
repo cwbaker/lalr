@@ -8,7 +8,7 @@
 #include "RegexState.hpp"
 #include "assert.hpp"
 
-using namespace sweet::lalr;
+using namespace lalr;
 
 /**
 // Constructor.

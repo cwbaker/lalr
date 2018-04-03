@@ -3,20 +3,18 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
-#include <sweet/lalr/Parser.ipp>
-#include <sweet/lalr/ParserStateMachine.hpp>
-#include <sweet/lalr/ErrorCode.hpp>
-#include <sweet/lalr/GrammarCompiler.hpp>
-#include <sweet/lalr/ErrorPolicy.hpp>
+#include <lalr/Parser.ipp>
+#include <lalr/ParserStateMachine.hpp>
+#include <lalr/ErrorCode.hpp>
+#include <lalr/GrammarCompiler.hpp>
+#include <lalr/ErrorPolicy.hpp>
 #include <functional>
 #include <UnitTest++/UnitTest++.h>
 #include <string.h>
 
 using std::bind;
 using namespace std::placeholders;
-using namespace sweet;
-using namespace sweet::lalr;
-using namespace sweet::lalr;
+using namespace lalr;
 
 SUITE( Parsers )
 {
