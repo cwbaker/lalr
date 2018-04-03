@@ -1,11 +1,11 @@
 # lalr
 
-*lalr* is a modern LALR(1) parser and parser generator.
+*lalr* is a modern LALR(1) parser and parser generator for C++.
 
-Features:
+## Features
 
-- LALR(1) parser generation from a BNF grammar DSL in C++.
-- Separate generation step is optional.
+- LALR(1) parser generation from a BNF grammar.
+- Separate grammar compilation step is optional.
 - Lexer actions for escape character conversion.
 - Lexer actions for feedback from the parser to the lexer.
 - Bind parser and lexer actions to `std::tr1::function` objects.
