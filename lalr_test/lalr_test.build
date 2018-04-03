@@ -4,8 +4,8 @@ if settings.unit_tests_enabled then
     build:all {
         build:Executable "lalr_test" {
             libraries = {
-                "lalr/lalr",
-                'unittest-cpp/UnitTest++/UnitTest++'
+                'src/lalr/lalr',
+                'src/unittest-cpp/UnitTest++/UnitTest++'
             };
 
             build:Cxx () {
