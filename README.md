@@ -100,12 +100,12 @@ void parser_calculator_example()
 
 Use *lalr* in your own project by adding the *lalr* source to your build scripts or IDE project files and compiling as C++.
 
-*lalr* is built for development using [Sweet Build](https:/www.github.com/cwbaker/sweet_build) and a C++ compiler (XCode, Visual C++, or GCC depending on operating system).
+*lalr* is built for development using [Sweet Build](https://www.github.com/cwbaker/sweet_build#sweet-build) and a C++ compiler (XCode, Visual C++, or GCC depending on operating system).
 
 **macOS**
 
 - Install Xcode
-- Install [Sweet Build](https:/www.github.com/cwbaker/sweet_build)
+- Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr/src`
 - `build variant=release`
@@ -114,7 +114,7 @@ Use *lalr* in your own project by adding the *lalr* source to your build scripts
 **Windows**:
 
 - Install Visual Studio 2017
-- Install [Sweet Build](https:/www.github.com/cwbaker/sweet_build)
+- Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr\src`
 - `build variant=release`
