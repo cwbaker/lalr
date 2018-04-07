@@ -19,10 +19,11 @@ build:initialize {
     lib = build:root( ('%s/lib'):format(variant) );
     obj = build:root( ('%s/obj'):format(variant) );
     include_directories = {
-        build:root( 'lalr' ),
+        build:root( 'lalr' );
+        build:root( 'unittest-cpp' );
     };
     library_directories = {
-        build:root( ('%s/lib'):format(variant) )
+        build:root( ('%s/lib'):format(variant) );
     };
     visual_studio = {
         sln = build:root( 'lalr.sln' );
@@ -35,7 +36,8 @@ build:initialize {
 build:default_targets {
     'lalr/lalrc',
     'lalr/lalr_examples',
-    'lalr/lalr_tests'
+    'lalr/lalr_test'
 };
 
 buildfile 'lalr/lalr.build';
+buildfile 'unittest-cpp/unittest-cpp.build';

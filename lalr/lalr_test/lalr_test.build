@@ -1,19 +1,16 @@
 
-local settings = build:current_settings();
-if settings.unit_tests_enabled then 
-    build:all {
-        build:Executable "lalr_test" {
-            libraries = {
-                build:absolute( '../lalr/lalr' ),
-                build:absolute( '../../unittest-cpp/UnitTest++/UnitTest++' )
-            };
+build:all {
+    build:Executable 'lalr_test' {
+        libraries = {
+            build:absolute( '../lalr/lalr' ),
+            build:absolute( '../../unittest-cpp/UnitTest++/UnitTest++' )
+        };
 
-            build:Cxx () {
-                "main.cpp",
-                "TestParsers.cpp",
-                "TestPrecedenceDirectives.cpp",
-                "TestRegularExpressions.cpp"
-            };
+        build:Cxx () {
+            'main.cpp',
+            'TestParsers.cpp',
+            'TestPrecedenceDirectives.cpp',
+            'TestRegularExpressions.cpp'
         };
     };
-end
+};
