@@ -19,7 +19,7 @@ build:initialize {
     lib = build:root( ('%s/lib'):format(variant) );
     obj = build:root( ('%s/obj'):format(variant) );
     include_directories = {
-        build:root(),
+        build:root( 'lalr' ),
     };
     library_directories = {
         build:root( ('%s/lib'):format(variant) )
@@ -33,8 +33,9 @@ build:initialize {
 };
 
 build:default_targets {
-    'lalrc',
-    'lalr_examples'
+    'lalr/lalrc',
+    'lalr/lalr_examples',
+    'lalr/lalr_tests'
 };
 
-buildfile 'lalr.build';
+buildfile 'lalr/lalr.build';
