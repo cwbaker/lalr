@@ -76,9 +76,9 @@ int main( int argc, char** argv )
     if ( help || input.empty() )
     {
         printf( "lalrc [options] [-o|--output OUTPUT] INPUT\n" );
-        printf( "-h|--help Display this help message\n" );
-        printf( "-v|--version Display version\n" );
-        printf( "-o|--output Output file\n" );
+        printf( "-h|--help     Display this help message\n" );
+        printf( "-v|--version  Display version\n" );
+        printf( "-o|--output   Output file\n" );
         printf( "\n" );
     }
 
