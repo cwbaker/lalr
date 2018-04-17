@@ -1,5 +1,7 @@
 # lalr
 
+Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and parser for C++.
+
 ## Features
 
 - Generate LALR(1) parsers in C++ from BNF grammars.
