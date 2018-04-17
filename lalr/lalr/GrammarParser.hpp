@@ -40,9 +40,13 @@ private:
     bool match_literal();
     bool match_regex();
     bool match_identifier();
+    bool match_whitespace_and_comments();
     bool match_whitespace();
+    bool match_line_comment();
+    bool match_block_comment();
     bool match_end();
     bool match( const char* lexeme );
+    bool match_without_skipping_whitespace( const char* lexeme );
     bool expect( const char* lexeme );
 };
 

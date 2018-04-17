@@ -234,7 +234,7 @@ bool GrammarParser::match_error()
 
 bool GrammarParser::match_literal()
 {
-    match_whitespace();
+    match_whitespace_and_comments();
     if ( match("'") )
     {
         bool escaped = false;
@@ -254,7 +254,7 @@ bool GrammarParser::match_literal()
 
 bool GrammarParser::match_regex()
 {
-    match_whitespace();
+    match_whitespace_and_comments();
     if ( match("\"") )
     {
         bool escaped = false;
@@ -274,7 +274,7 @@ bool GrammarParser::match_regex()
 
 bool GrammarParser::match_identifier()
 {
-    match_whitespace();
+    match_whitespace_and_comments();
     const char* position = position_;
     if ( position != end_ && (isalnum(*position) || *position == '_') )
     {
@@ -290,33 +290,107 @@ bool GrammarParser::match_identifier()
     return false;
 }
 
+bool GrammarParser::match_whitespace_and_comments()
+{
+    while ( match_whitespace() || match_line_comment() || match_block_comment() )
+    {
+    }
+    return true;
+}
+
 bool GrammarParser::match_whitespace()
 {
-    bool newline = false;
     const char* position = position_;
-    while ( position != end_ && isspace(*position) )
+    if ( position != end_ && isspace(*position) )
     {
-        if ( !newline && (*position == '\n' || *position == '\r') )
+        bool newline = false;
+        while ( position != end_ && isspace(*position) )
         {
-            newline = true;
-            ++line_;
+            if ( !newline && (*position == '\n' || *position == '\r') )
+            {
+                newline = true;
+                ++line_;
+            }
+            ++position;
+            newline = false;
         }
-        ++position;
-        newline = false;
+        position_ = position;
+        return true;        
     }
-    position_ = position;
-    return true;
+    return false;
+}
+
+bool GrammarParser::match_line_comment()
+{
+    if ( match_without_skipping_whitespace("//") )
+    {
+        bool done = false;
+        const char* position = position_;
+        while ( position != end_ && !done )
+        {
+            done = *position == '\n' || *position == '\r';
+            ++position;
+        }
+        if ( position != end_ )
+        {
+            if ( *position == '\n' )
+            {
+                ++position;
+                if ( position != end_ && *position == '\r' )
+                {
+                    ++position;
+                }
+            }
+            else if ( *position == '\r' )
+            {
+                ++position;
+                if ( position != end_ && *position == '\n' )
+                {
+                    ++position;
+                }
+            }
+        }
+        position_ = position;
+        return true;
+    }
+    return false;
+}
+
+bool GrammarParser::match_block_comment()
+{
+    if ( match_without_skipping_whitespace("/*") )
+    {
+        bool done = false;
+        const char* position = position_;
+        while ( position != end_ && !done )
+        {
+            if ( *position == '*' )
+            {
+                ++position;
+                done = position != end_ && *position == '/';
+            }
+            ++position;
+        }
+        position_ = position;
+        return true;        
+    }
+    return false;
 }
 
 bool GrammarParser::match_end()
 {
-    match_whitespace();
+    match_whitespace_and_comments();
     return position_ == end_;
 }
 
-bool GrammarParser::match( const char* lexeme )
+bool GrammarParser::match( const char* keyword )
 {
-    match_whitespace();
+    match_whitespace_and_comments();
+    return match_without_skipping_whitespace( keyword );
+}
+
+bool GrammarParser::match_without_skipping_whitespace( const char* lexeme )
+{
     const char* position = position_;
     while ( position != end_ && *lexeme != 0 && *position == *lexeme )
     {
