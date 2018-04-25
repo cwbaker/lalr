@@ -525,11 +525,11 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
         LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[action].function_( transition->reduced_symbol, start, finish );
+            return action_handlers_[action].function_( start, finish );
         }
     }
 
-    return default_action_handler_ ? default_action_handler_( transition->reduced_symbol, start, finish ) : UserData();
+    return default_action_handler_ ? default_action_handler_( start, finish ) : UserData();
 }
 
 /**
