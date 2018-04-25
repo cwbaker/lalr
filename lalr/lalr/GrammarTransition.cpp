@@ -185,7 +185,7 @@ void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, i
     LALR_ASSERT( type_ == TRANSITION_SHIFT );
     LALR_ASSERT( state_ );
     LALR_ASSERT( !reduced_symbol_ );
-    LALR_ASSERT( length > 0 );
+    LALR_ASSERT( length >= 0 );
     LALR_ASSERT( precedence >= 0 );
     LALR_ASSERT( symbol );    
     type_ = TRANSITION_REDUCE;
