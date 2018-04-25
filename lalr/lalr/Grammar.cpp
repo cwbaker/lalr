@@ -206,9 +206,13 @@ Grammar& Grammar::error()
 
 Grammar& Grammar::action( const char* identifier )
 {
-    LALR_ASSERT( active_production_ );
-    if ( active_production_ )
+    LALR_ASSERT( active_symbol_ );
+    if ( active_symbol_ )
     {
+        if ( !active_production_ )
+        {
+            active_production_ = add_production( active_symbol_ );
+        }
         active_production_->set_action( add_action(identifier) );
         active_production_ = nullptr;
     }
