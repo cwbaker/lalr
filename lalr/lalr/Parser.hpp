@@ -33,7 +33,7 @@ template <class Iterator, class UserData = std::shared_ptr<ParserUserData<typena
 class Parser
 {
     public:
-        typedef ParserNode<UserData, Char, Traits, Allocator> ParserNode;
+        typedef lalr::ParserNode<UserData, Char, Traits, Allocator> ParserNode;
         typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
         typedef std::function<void ( Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const ParserSymbol** symbol)> LexerActionFunction;
         typedef std::function<UserData (const lalr::ParserNode<UserData, Char, Traits, Allocator>* start, const lalr::ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
