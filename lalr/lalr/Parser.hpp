@@ -76,7 +76,7 @@ class Parser
         void fire_error( int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         
-        void set_debug_enabled( bool debug_shift_enabled );
+        void set_debug_enabled( bool debug_enabled );
         bool is_debug_enabled() const;
         
     private:
