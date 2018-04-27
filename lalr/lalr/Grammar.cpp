@@ -339,7 +339,7 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
     LALR_ASSERT( lexeme );
     LALR_ASSERT( line >= 0 );
     vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin();
-    while ( i != symbols_.end() && (*i)->lexeme() != lexeme )
+    while ( i != symbols_.end() && !(*i)->matches(lexeme, symbol_type) )
     {
         ++i;
     }    
@@ -356,7 +356,7 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
     GrammarSymbol* symbol = i->get();
     LALR_ASSERT( symbol );
     // LALR_ASSERT( symbol->lexeme_type() == lexeme_type );
-    // LALR_ASSERT( symbol->symbol_type() == symbol_type );
+    LALR_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
 

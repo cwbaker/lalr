@@ -45,6 +45,7 @@ public:
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& follow() const;
     const std::vector<GrammarProduction*>& productions() const;
     GrammarSymbol* implicit_terminal() const;
+    bool matches( const std::string& lexeme, SymbolType symbol_type ) const;
 
     void set_lexeme( const std::string& lexeme );
     void set_identifier( const std::string& identifier );

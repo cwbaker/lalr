@@ -123,6 +123,11 @@ GrammarSymbol* GrammarSymbol::implicit_terminal() const
 }
 
 
+bool GrammarSymbol::matches( const std::string& lexeme, SymbolType symbol_type ) const
+{
+    return lexeme_ == lexeme && symbol_type_ == symbol_type;
+}
+
 void GrammarSymbol::set_lexeme( const std::string& lexeme )
 {
     lexeme_ = lexeme;
