@@ -1,10 +1,8 @@
 
 build:all {
-    build:Executable 'lalr_test' {
-        libraries = {
-            build:absolute( '../lalr/lalr' ),
-            build:absolute( '../../unittest-cpp/UnitTest++/UnitTest++' )
-        };
+    build:Executable '${bin}/lalr_test' {
+        '${lib}/lalr_${architecture}';
+        '${lib}/UnitTest++_${architecture}';
 
         build:Cxx () {
             'main.cpp',

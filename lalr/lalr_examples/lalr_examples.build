@@ -4,10 +4,8 @@ local build = build:configure {
 };
 
 build:all {
-    build:Executable "lalr_examples" {
-        libraries = {
-            build:absolute( '../lalr/lalr' )
-        };
+    build:Executable '${bin}/lalr_examples' {
+        '${lib}/lalr_${architecture}';
 
         build:Cxx () {
             "lalr_examples.cpp",

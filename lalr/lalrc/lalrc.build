@@ -1,9 +1,7 @@
 
 build:all {
     build:Executable '${bin}/lalrc' {
-        libraries = {
-            build:absolute( '../lalr/lalr' )
-        };
+        '${lib}/lalr_${architecture}';
         build:Cxx () {
             'lalrc.cpp'
         };
