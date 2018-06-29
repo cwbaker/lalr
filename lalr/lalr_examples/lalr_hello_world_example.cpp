@@ -7,7 +7,7 @@
 using namespace std;
 using namespace lalr;
 
-static shared_ptr<ParserUserData<char> > hello_world( const ParserSymbol* /*symbol*/, const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/ )
+static shared_ptr<ParserUserData<char> > hello_world( const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/ )
 {
     printf( "Hello World!\n" );
     return shared_ptr<ParserUserData<char> >();
