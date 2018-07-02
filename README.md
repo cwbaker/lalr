@@ -103,7 +103,7 @@ Build Lalr using [Sweet Build](https://www.github.com/cwbaker/sweet_build#sweet-
 - Install Xcode
 - Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
-- `cd lalr/src`
+- `cd lalr`
 - `build variant=release`
 - `./release/bin/lalr_examples`
 
@@ -112,7 +112,7 @@ Build Lalr using [Sweet Build](https://www.github.com/cwbaker/sweet_build#sweet-
 - Install Visual Studio 2017
 - Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
-- `cd lalr\src`
+- `cd lalr`
 - `build variant=release`
 - `.\release\bin\lalr_examples.exe`
 
