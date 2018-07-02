@@ -78,8 +78,10 @@ int main( int argc, char** argv )
         printf( "lalrc [options] [-o|--output OUTPUT] INPUT\n" );
         printf( "-h|--help     Display this help message\n" );
         printf( "-v|--version  Display version\n" );
+        printf( "-p|--print    Print parser state machine\n" );
         printf( "-o|--output   Output file\n" );
         printf( "\n" );
+        return help ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if ( !input.empty() )
@@ -144,6 +146,8 @@ int main( int argc, char** argv )
         }
         file = nullptr;
     }
+
+    return EXIT_SUCCESS;
 }
 
 void print_cxx_parser_state_machine( const ParserStateMachine* state_machine, FILE* file )
@@ -206,12 +210,12 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     const ParserAction* actions_end = actions + state_machine->actions_size;
     for ( const ParserAction* action = actions; action != actions_end; ++action )
     {
-        fprintf( file, "    {%d, \"%s\"}%s\n", 
+        fprintf( file, "    {%d, \"%s\"},\n", 
             action->index, 
-            action->identifier,
-            action + 1 != actions_end ? "," : ""
+            action->identifier
         );
     }
+    fprintf( file, "    {-1, nullptr}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -221,14 +225,14 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     const ParserSymbol* symbols_end = symbols + state_machine->symbols_size;
     for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
     {
-        fprintf( file, "    {%d, \"%s\", \"%s\", (SymbolType) %d}%s\n", 
+        fprintf( file, "    {%d, \"%s\", \"%s\", (SymbolType) %d},\n", 
             symbol->index, 
             symbol->identifier, 
             symbol->lexeme,
-            symbol->type,
-            symbol + 1 != symbols_end ? "," : ""
+            symbol->type
         );
     }
+    fprintf( file, "    {-1, nullptr, nullptr, (SymbolType) 0}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -240,31 +244,30 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     {
         if ( transition->reduced_symbol )
         {
-            fprintf( file, "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, (TransitionType) %d, %d}%s\n",
+            fprintf( file, "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, (TransitionType) %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->reduced_symbol->index,
                 transition->reduced_length,
                 transition->precedence,
                 transition->action,
                 transition->type,
-                transition->index,
-                transition + 1 != transitions_end ? "," : ""
+                transition->index
             );
         }
         else
         {
-            fprintf( file, "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, (TransitionType) %d, %d}%s\n",
+            fprintf( file, "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, (TransitionType) %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->state ? transition->state->index : -1,
                 transition->reduced_length,
                 transition->precedence,
                 transition->action,
                 transition->type,
-                transition->index,
-                transition + 1 != transitions_end ? "," : ""
+                transition->index
             );
         }
     }
+    fprintf( file, "    {nullptr, nullptr, nullptr, 0, 0, 0, (TransitionType) 0, -1}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -274,13 +277,13 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine,
     const ParserState* states_end = states + state_machine->states_size;
     for ( const ParserState* state = states; state != states_end; ++state )
     {
-        fprintf( file, "    {%d, %d, &transitions[%d]}%s\n",
+        fprintf( file, "    {%d, %d, &transitions[%d]},\n",
             state->index,
             state->length,
-            state->transitions->index,
-            state + 1 != states_end ? "," : "" 
+            state->transitions->index 
         );
     }
+    fprintf( file, "    {-1, 0, nullptr}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -319,12 +322,12 @@ void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* stat
     const LexerAction* actions_end = actions + state_machine->actions_size;
     for ( const LexerAction* action = actions; action != actions_end; ++action )
     {
-        fprintf( file, "    {%d, \"%s\"}%s\n", 
+        fprintf( file, "    {%d, \"%s\"},\n", 
             action->index, 
-            action->identifier,
-            action + 1 != actions_end ? "," : ""
+            action->identifier
         );
     }
+    fprintf( file, "    {-1, nullptr}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -342,14 +345,14 @@ void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* stat
         );
         if ( transition->action )
         {
-            fprintf( file, "&%s_actions[%d]}", prefix, transition->action->index );
+            fprintf( file, "&%s_actions[%d]},\n", prefix, transition->action->index );
         }
         else
         {
-            fprintf( file, "nullptr}" );
+            fprintf( file, "nullptr},\n" );
         }
-        fprintf( file, "%s\n", transition + 1 != transitions_end ? "," : "" );
     }
+    fprintf( file, "    {-1, -1, nullptr, nullptr}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -368,14 +371,14 @@ void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* stat
         const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( state->symbol );
         if ( symbol )
         {
-            fprintf( file, "&symbols[%d]}", symbol->index );
+            fprintf( file, "&symbols[%d]},\n", symbol->index );
         }
         else
         {
-            fprintf( file, "nullptr}" );
+            fprintf( file, "nullptr},\n" );
         }
-        fprintf( file, "%s\n", state + 1 != states_end ? "," : "" );
     }
+    fprintf( file, "    {-1, 0, nullptr, nullptr}\n" );
     fprintf( file, "};\n" );
     fprintf( file, "\n" );
 
@@ -389,4 +392,5 @@ void generate_cxx_lexer_state_machine( FILE* file, const LexerStateMachine* stat
     fprintf( file, "    %s_states, // states\n", prefix );
     fprintf( file, "    &%s_states[%d] // start state\n", prefix, state_machine->start_state->index );
     fprintf( file, "};\n" );
+    fprintf( file, "\n" );
 }
