@@ -14,6 +14,7 @@ Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and
 ## Example
 
 ~~~c++
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <lalr/GrammarCompiler.hpp>
@@ -23,32 +24,32 @@ Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and
 using namespace std;
 using namespace lalr;
 
-static int add( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int add( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return start[0].user_data() + start[2].user_data();
 }
 
-static int subtract( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int subtract( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return start[0].user_data() - start[2].user_data();
 }
 
-static int multiply( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int multiply( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return start[0].user_data() * start[2].user_data();
 }
 
-static int divide( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int divide( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return start[0].user_data() / start[2].user_data();
 }
 
-static int compound( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int compound( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return start[1].user_data();
 }
 
-static int integer( const ParserSymbol* symbol, const ParserNode<int>* start, const ParserNode<int>* finish )
+static int integer( const ParserNode<int>* start, const ParserNode<int>* finish )
 {
     return ::atoi( start[0].lexeme().c_str() );
 }
