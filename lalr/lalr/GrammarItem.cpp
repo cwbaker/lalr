@@ -140,5 +140,5 @@ int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*, Gra
 {
     size_t original_size = lookahead_symbols_.size();
     lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
-    return lookahead_symbols_.size() - original_size;
+    return int(lookahead_symbols_.size() - original_size);
 }

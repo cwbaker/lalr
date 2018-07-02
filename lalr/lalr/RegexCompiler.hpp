@@ -2,6 +2,7 @@
 #define LALR_LEXERALLOCATIONS_HPP_INCLUDED
 
 #include "RegexToken.hpp"
+#include <vector>
 #include <memory>
 #include <string>
 #include <deque>

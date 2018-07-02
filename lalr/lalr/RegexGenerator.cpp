@@ -135,7 +135,7 @@ const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifi
         }
         if ( i == actions_.end() )
         {
-            unique_ptr<RegexAction> action( new RegexAction(actions_.size(), identifier) );
+            unique_ptr<RegexAction> action( new RegexAction(int(actions_.size()), identifier) );
             actions_.push_back( move(action) );
             i = actions_.end() - 1;
         }

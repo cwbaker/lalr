@@ -11,6 +11,7 @@
 #include "RegexGenerator.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
+#include <algorithm>
 
 using std::set;
 using std::pair;

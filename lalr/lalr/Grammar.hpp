@@ -6,6 +6,7 @@
 #include "Associativity.hpp"
 #include "RegexToken.hpp"
 #include <vector>
+#include <memory>
 
 namespace lalr
 {

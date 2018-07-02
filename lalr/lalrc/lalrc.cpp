@@ -102,7 +102,7 @@ int main( int argc, char** argv )
         int size = stat.st_size;
         vector<char> grammar_source;
         grammar_source.resize( size );
-        int read = fread( &grammar_source[0], sizeof(uint8_t), size, file );
+        int read = int( fread(&grammar_source[0], sizeof(uint8_t), size, file) );
         fclose( file );
         file = nullptr;
         if ( read != size )

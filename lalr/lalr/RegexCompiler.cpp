@@ -120,7 +120,7 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
         LALR_ASSERT( state );
         const set<RegexTransition>& source_transitions = source_state->get_transitions();
         state->index = state_index;
-        state->length = source_transitions.size();
+        state->length = int(source_transitions.size());
         state->transitions = &transitions[transition_index];
         state->symbol = source_state->get_symbol();
         if ( source_state == generator.start_state() )
@@ -144,6 +144,6 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
     }
 
     set_actions( actions, int(source_actions.size()) );
-    set_transitions( transitions, transitions_size );
+    set_transitions( transitions, int(transitions_size) );
     set_states( states, int(source_states.size()), start_state );
 }

@@ -153,7 +153,7 @@ void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<RegexCom
 void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator )
 {
     const vector<unique_ptr<GrammarAction>>& grammar_actions = generator.actions();
-    int actions_size = grammar_actions.size();
+    int actions_size = int(grammar_actions.size());
     unique_ptr<ParserAction[]> actions( new ParserAction [actions_size] );
     for ( int i = 0; i < actions_size; ++i )
     {
@@ -166,7 +166,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     }
 
     const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
-    int symbols_size = grammar_symbols.size();
+    int symbols_size = int(grammar_symbols.size());
     unique_ptr<ParserSymbol[]> symbols( new ParserSymbol [symbols_size] );
     for ( int i = 0; i < symbols_size; ++i )
     {
@@ -181,7 +181,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     }
 
     const set<shared_ptr<GrammarState>, GrammarStateLess>& grammar_states = generator.states();
-    int states_size = grammar_states.size();
+    int states_size = int(grammar_states.size());
     unique_ptr<ParserState[]> states( new ParserState [states_size] );
 
     int transitions_size = 0;
@@ -189,7 +189,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     {
         const GrammarState* grammar_state = i->get();
         LALR_ASSERT( grammar_state );
-        transitions_size += grammar_state->transitions().size();
+        transitions_size += int(grammar_state->transitions().size());
     }
     unique_ptr<ParserTransition[]> transitions( new ParserTransition [transitions_size] );
 
@@ -204,7 +204,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         LALR_ASSERT( state );
         const set<GrammarTransition>& source_transitions = grammar_state->transitions();
         state->index = state_index;
-        state->length = source_transitions.size();
+        state->length = int(source_transitions.size());
         state->transitions = &transitions[transition_index];
         if ( grammar_state == generator.start_state() )
         {

@@ -6,6 +6,7 @@
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
+#include <memory>
 
 using std::set;
 using std::vector;
@@ -410,7 +411,7 @@ int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*, Gr
 {
     size_t original_size = first_.size();
     first_.insert( symbols.begin(), symbols.end() );
-    return first_.size() - original_size;
+    return int(first_.size() - original_size);
 }
 
 /**
@@ -441,7 +442,7 @@ int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*, G
 {
     size_t original_size = follow_.size();
     follow_.insert( symbols.begin(), symbols.end() );
-    return follow_.size() - original_size;
+    return int(follow_.size() - original_size);
 }
 
 /**
