@@ -1,7 +1,14 @@
 
+local paths = {
+    package.path;
+    build:root( 'lalr/?.lua' );
+    build:root( 'lalr/?/init.lua' );
+};
+package.path = table.concat( paths, ';' );
+
 require 'build';
 require 'build.cc';
-require 'build.parser';
+require 'build.lalr';
 require 'build.visual_studio';
 require 'build.xcode';
 require 'build.macos';
@@ -30,6 +37,13 @@ build:initialize {
     };
     xcode = {
         xcodeproj = build:root( 'lalr.xcodeproj' );
+    };
+    lalr = {
+        lalrc = build:switch {
+            build:operating_system();
+            macos = build:root( ('%s/bin/lalrc'):format(variant) );
+            windows = build:root( ('%s/bin/lalrc.exe'):format(variant) );
+        };
     };
 };
 
