@@ -2,9 +2,7 @@
 local Lalrc = build:TargetPrototype( "Lalrc" );
 
 function Lalrc.create( build, settings, identifier )
-    local settings = build:current_settings();
-    local identifier = build:interpolate( identifier, settings );
-    local target = build:File( identifier, Lalrc );
+    local target = build:File( identifier, Lalrc, settings );
     target:add_ordering_dependency( build:Directory(build:branch(target)) );
     target:add_implicit_dependency( build:file(settings.lalr.lalrc) );
     target.settings = settings;
