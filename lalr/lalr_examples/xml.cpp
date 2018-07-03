@@ -34,7 +34,8 @@ const ParserAction actions [] =
     {4, "long_element"},
     {5, "add_attribute"},
     {6, "create_attribute"},
-    {7, "attribute"}
+    {7, "attribute"},
+    {-1, nullptr}
 };
 
 const ParserSymbol symbols [] = 
@@ -56,7 +57,8 @@ const ParserSymbol symbols [] =
     {14, "attribute", "attribute", (SymbolType) 2},
     {15, "eq_terminal", "=", (SymbolType) 1},
     {16, "name", "[A-Za-z_:][A-Za-z0-9_:\.-]*", (SymbolType) 1},
-    {17, "value", "[\"']:string:", (SymbolType) 1}
+    {17, "value", "[\"']:string:", (SymbolType) 1},
+    {-1, nullptr, nullptr, (SymbolType) 0}
 };
 
 const ParserTransition transitions [] = 
@@ -119,7 +121,8 @@ const ParserTransition transitions [] =
     {&symbols[4], nullptr, &symbols[14], 3, 0, 7, (TransitionType) 1, 55},
     {&symbols[10], nullptr, &symbols[14], 3, 0, 7, (TransitionType) 1, 56},
     {&symbols[12], nullptr, &symbols[14], 3, 0, 7, (TransitionType) 1, 57},
-    {&symbols[16], nullptr, &symbols[14], 3, 0, 7, (TransitionType) 1, 58}
+    {&symbols[16], nullptr, &symbols[14], 3, 0, 7, (TransitionType) 1, 58},
+    {nullptr, nullptr, nullptr, 0, 0, 0, (TransitionType) 0, -1}
 };
 
 const ParserState states [] = 
@@ -146,12 +149,14 @@ const ParserState states [] =
     {19, 4, &transitions[49]},
     {20, 1, &transitions[53]},
     {21, 1, &transitions[54]},
-    {22, 4, &transitions[55]}
+    {22, 4, &transitions[55]},
+    {-1, 0, nullptr}
 };
 
 const LexerAction lexer_actions [] = 
 {
-    {0, "string"}
+    {0, "string"},
+    {-1, nullptr}
 };
 
 const LexerTransition lexer_transitions [] = 
@@ -185,7 +190,8 @@ const LexerTransition lexer_transitions [] =
     {65, 91, &lexer_states[19], nullptr},
     {95, 96, &lexer_states[19], nullptr},
     {97, 123, &lexer_states[19], nullptr},
-    {0, 2147483647, &lexer_states[21], &lexer_actions[0]}
+    {0, 2147483647, &lexer_states[21], &lexer_actions[0]},
+    {-1, -1, nullptr, nullptr}
 };
 
 const LexerState lexer_states [] = 
@@ -211,7 +217,8 @@ const LexerState lexer_states [] =
     {18, 0, &lexer_transitions[24], &symbols[15]},
     {19, 5, &lexer_transitions[24], &symbols[16]},
     {20, 1, &lexer_transitions[29], nullptr},
-    {21, 0, &lexer_transitions[30], &symbols[17]}
+    {21, 0, &lexer_transitions[30], &symbols[17]},
+    {-1, 0, nullptr, nullptr}
 };
 
 const LexerStateMachine lexer_state_machine = 
@@ -224,20 +231,24 @@ const LexerStateMachine lexer_state_machine =
     lexer_states, // states
     &lexer_states[0] // start state
 };
+
 const LexerAction whitespace_lexer_actions [] = 
 {
+    {-1, nullptr}
 };
 
 const LexerTransition whitespace_lexer_transitions [] = 
 {
     {9, 11, &whitespace_lexer_states[0], nullptr},
     {13, 14, &whitespace_lexer_states[0], nullptr},
-    {32, 33, &whitespace_lexer_states[0], nullptr}
+    {32, 33, &whitespace_lexer_states[0], nullptr},
+    {-1, -1, nullptr, nullptr}
 };
 
 const LexerState whitespace_lexer_states [] = 
 {
-    {0, 3, &whitespace_lexer_transitions[0], nullptr}
+    {0, 3, &whitespace_lexer_transitions[0], nullptr},
+    {-1, 0, nullptr, nullptr}
 };
 
 const LexerStateMachine whitespace_lexer_state_machine = 
@@ -251,9 +262,7 @@ const LexerStateMachine whitespace_lexer_state_machine =
     &whitespace_lexer_states[0] // start state
 };
 
-}
-
-extern const ParserStateMachine xml_parser_state_machine = 
+const ParserStateMachine parser_state_machine = 
 {
     "xml",
     8, // #actions
@@ -271,3 +280,8 @@ extern const ParserStateMachine xml_parser_state_machine =
     &lexer_state_machine, // lexer state machine
     &whitespace_lexer_state_machine // whitespace lexer state machine
 };
+
+}
+
+const ParserStateMachine* xml_parser_state_machine = &parser_state_machine;
+

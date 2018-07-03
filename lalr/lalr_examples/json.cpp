@@ -33,7 +33,8 @@ const ParserAction actions [] =
     {3, "create_element"},
     {4, "content"},
     {5, "attribute"},
-    {6, "value"}
+    {6, "value"},
+    {-1, nullptr}
 };
 
 const ParserSymbol symbols [] = 
@@ -56,7 +57,8 @@ const ParserSymbol symbols [] =
     {15, "false_terminal", "false", (SymbolType) 1},
     {16, "string", "[\"']:string:", (SymbolType) 1},
     {17, "integer", "(\+|\-)?[0-9]+", (SymbolType) 1},
-    {18, "real", "(\+|\-)?[0-9]+(\.[0-9]+)?((e|E)(\+|\-)?[0-9]+)?", (SymbolType) 1}
+    {18, "real", "(\+|\-)?[0-9]+(\.[0-9]+)?((e|E)(\+|\-)?[0-9]+)?", (SymbolType) 1},
+    {-1, nullptr, nullptr, (SymbolType) 0}
 };
 
 const ParserTransition transitions [] = 
@@ -113,7 +115,8 @@ const ParserTransition transitions [] =
     {&symbols[6], nullptr, &symbols[12], 1, 0, 6, (TransitionType) 1, 49},
     {&symbols[9], nullptr, &symbols[12], 1, 0, 6, (TransitionType) 1, 50},
     {&symbols[6], nullptr, &symbols[12], 1, 0, 6, (TransitionType) 1, 51},
-    {&symbols[9], nullptr, &symbols[12], 1, 0, 6, (TransitionType) 1, 52}
+    {&symbols[9], nullptr, &symbols[12], 1, 0, 6, (TransitionType) 1, 52},
+    {nullptr, nullptr, nullptr, 0, 0, 0, (TransitionType) 0, -1}
 };
 
 const ParserState states [] = 
@@ -141,12 +144,14 @@ const ParserState states [] =
     {20, 2, &transitions[45]},
     {21, 2, &transitions[47]},
     {22, 2, &transitions[49]},
-    {23, 2, &transitions[51]}
+    {23, 2, &transitions[51]},
+    {-1, 0, nullptr}
 };
 
 const LexerAction lexer_actions [] = 
 {
-    {0, "string"}
+    {0, "string"},
+    {-1, nullptr}
 };
 
 const LexerTransition lexer_transitions [] = 
@@ -193,7 +198,8 @@ const LexerTransition lexer_transitions [] =
     {45, 46, &lexer_states[31], nullptr},
     {48, 58, &lexer_states[32], nullptr},
     {48, 58, &lexer_states[32], nullptr},
-    {48, 58, &lexer_states[32], nullptr}
+    {48, 58, &lexer_states[32], nullptr},
+    {-1, -1, nullptr, nullptr}
 };
 
 const LexerState lexer_states [] = 
@@ -230,7 +236,8 @@ const LexerState lexer_states [] =
     {29, 3, &lexer_transitions[35], &symbols[18]},
     {30, 3, &lexer_transitions[38], nullptr},
     {31, 1, &lexer_transitions[41], nullptr},
-    {32, 1, &lexer_transitions[42], &symbols[18]}
+    {32, 1, &lexer_transitions[42], &symbols[18]},
+    {-1, 0, nullptr, nullptr}
 };
 
 const LexerStateMachine lexer_state_machine = 
@@ -243,20 +250,24 @@ const LexerStateMachine lexer_state_machine =
     lexer_states, // states
     &lexer_states[0] // start state
 };
+
 const LexerAction whitespace_lexer_actions [] = 
 {
+    {-1, nullptr}
 };
 
 const LexerTransition whitespace_lexer_transitions [] = 
 {
     {9, 11, &whitespace_lexer_states[0], nullptr},
     {13, 14, &whitespace_lexer_states[0], nullptr},
-    {32, 33, &whitespace_lexer_states[0], nullptr}
+    {32, 33, &whitespace_lexer_states[0], nullptr},
+    {-1, -1, nullptr, nullptr}
 };
 
 const LexerState whitespace_lexer_states [] = 
 {
-    {0, 3, &whitespace_lexer_transitions[0], nullptr}
+    {0, 3, &whitespace_lexer_transitions[0], nullptr},
+    {-1, 0, nullptr, nullptr}
 };
 
 const LexerStateMachine whitespace_lexer_state_machine = 
@@ -270,9 +281,7 @@ const LexerStateMachine whitespace_lexer_state_machine =
     &whitespace_lexer_states[0] // start state
 };
 
-}
-
-extern const ParserStateMachine json_parser_state_machine = 
+const ParserStateMachine parser_state_machine = 
 {
     "json",
     7, // #actions
@@ -290,3 +299,8 @@ extern const ParserStateMachine json_parser_state_machine =
     &lexer_state_machine, // lexer state machine
     &whitespace_lexer_state_machine // whitespace lexer state machine
 };
+
+}
+
+const ParserStateMachine* json_parser_state_machine = &parser_state_machine;
+
