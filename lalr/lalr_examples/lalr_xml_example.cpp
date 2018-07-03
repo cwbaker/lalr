@@ -180,8 +180,8 @@ static void print( const Element* element, int level )
 
 void lalr_xml_example()
 {
-    extern lalr::ParserStateMachine xml_parser_state_machine;
-    Parser<const char*, XmlUserData> parser( &xml_parser_state_machine );
+    extern lalr::ParserStateMachine* xml_parser_state_machine;
+    Parser<const char*, XmlUserData> parser( xml_parser_state_machine );
     parser.lexer_action_handlers()
         ( "string", &string_ )
     ;
