@@ -161,8 +161,8 @@ Include `<lalr/Parser.hpp>`.  Lalr's parser and lexer source code are header onl
 **2. Create `Parser`**
 
 ~~~c++
-extern lalr::ParserStateMachine xml_parser_state_machine;
-Parser<const char*, XmlUserData> parser( &xml_parser_state_machine );
+extern lalr::ParserStateMachine* xml_parser_state_machine;
+Parser<const char*, XmlUserData> parser( xml_parser_state_machine );
 ~~~
 
 Reference a parse table as an `extern` variable for offline generated parse tables.  See [lalr_calculator_example.cpp](#lalr_calculator_example.cpp) for an example of compiling a grammar to parse tables at runtime.
