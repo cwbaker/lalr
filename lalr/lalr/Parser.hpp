@@ -72,6 +72,7 @@ class Parser
         AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
         void set_default_action_handler( ParserActionFunction function );
         void set_action_handler( const char* identifier, ParserActionFunction function );
+        void set_lexer_action_handler( const char* identifier, LexerActionFunction function );
 
         void fire_error( int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;

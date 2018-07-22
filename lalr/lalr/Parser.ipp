@@ -307,6 +307,23 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
 }
 
 /**
+// Set the lexer action handler for \e identifier to \e function.
+//
+// @param identifier
+//  The identifier of the action handler to set the function for.
+//
+// @param function
+//  The function to set the action handler to or null to set the action 
+//  handler to have no function.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::set_lexer_action_handler( const char* identifier, LexerActionFunction function )
+{
+    LALR_ASSERT( identifier );
+    lexer_.set_action_handler( identifier, function );
+}
+
+/**
 // Fire an %error event.
 //
 // @param line
