@@ -737,6 +737,12 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
+
+        parser.set_lexer_action_handler( "string", nullptr );
+        parser.set_lexer_action_handler( "string", &StringLexer::string_lexer );
+        parser.parse( input, input + strlen(input) );
+        CHECK( parser.accepted() );
+        CHECK( parser.full() );
     }
         
     TEST( LineCommentInWhitespaceDirective )
