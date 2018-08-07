@@ -96,12 +96,12 @@ void lalr_calculator_example()
 
 ## Installation
 
-Build Lalr using [Sweet Build](https://www.github.com/cwbaker/sweet_build#sweet-build) and a C++ compiler (XCode, Visual C++, or GCC depending on operating system).
+Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ compiler (XCode, Visual C++, or GCC depending on operating system).
 
 **macOS**
 
 - Install Xcode
-- Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
+- Install [Forge](https://github.com/cwbaker/forge#forge)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr`
 - `build variant=release`
@@ -110,7 +110,7 @@ Build Lalr using [Sweet Build](https://www.github.com/cwbaker/sweet_build#sweet-
 **Windows**:
 
 - Install Visual Studio 2017
-- Install [Sweet Build](https://github.com/cwbaker/sweet_build#sweet-build)
+- Install [Forge](https://github.com/cwbaker/forge#forge)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr`
 - `build variant=release`
