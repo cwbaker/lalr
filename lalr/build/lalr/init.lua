@@ -1,2 +1,0 @@
-
-require 'build.lalr.Lalrc';
