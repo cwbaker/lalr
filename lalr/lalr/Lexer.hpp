@@ -2,6 +2,7 @@
 #define LALR_LEXER_HPP_INCLUDED
 
 #include <vector>
+#include <functional>
 
 namespace lalr
 {
@@ -34,7 +35,7 @@ class Lexer
     std::vector<LexerActionHandler> action_handlers_; ///< The action handlers for this Lexer.
     Iterator position_; ///< The current position of this Lexer in its input sequence.
     Iterator end_; ///< One past the last position of the input sequence for this Lexer.
-    std::basic_string<Char, Traits, Allocator> lexeme_;          ///< The most recently matched lexeme.
+    std::basic_string<Char, Traits, Allocator> lexeme_; ///< The most recently matched lexeme.
     const void* symbol_; ///< The most recently matched symbol or null if no symbol has been matched.
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
 
