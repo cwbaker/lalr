@@ -104,7 +104,8 @@ Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ c
 - Install [Forge](https://github.com/cwbaker/forge#forge)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr`
-- `build variant=release`
+- `git submodule update --init`
+- `forge variant=release`
 - `./release/bin/lalr_examples`
 
 **Windows**:
@@ -113,7 +114,8 @@ Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ c
 - Install [Forge](https://github.com/cwbaker/forge#forge)
 - `git clone git@github.com:cwbaker/lalr.git lalr`
 - `cd lalr`
-- `build variant=release`
+- `git submodule update --init`
+- `forge variant=release`
 - `.\release\bin\lalr_examples.exe`
 
 ## Usage
