@@ -1,5 +1,0 @@
-
-buildfile 'lalr/lalr.build';
-buildfile 'lalrc/lalrc.build';
-buildfile 'lalr_examples/lalr_examples.build';
-buildfile 'lalr_test/lalr_test.build';
