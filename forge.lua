@@ -53,5 +53,5 @@ forge:default_targets {
     'lalr/lalr_test'
 };
 
-buildfile 'lalr/lalr.build';
-buildfile 'unittest-cpp/unittest-cpp.build';
+buildfile 'lalr/lalr.forge';
+buildfile 'unittest-cpp/unittest-cpp.forge';
