@@ -1,11 +1,11 @@
 
-local build = build:configure {
+local forge = forge:configure {
     warning_level = 0;
 };
 
-local lalr_examples = build:Executable '${bin}/lalr_examples' {
+local lalr_examples = forge:Executable '${bin}/lalr_examples' {
     '${lib}/lalr_${architecture}';
-    build:Cxx () {
+    forge:Cxx () {
         "lalr_examples.cpp",
         "lalr_hello_world_example.cpp",
         "lalr_json_example.cpp",
@@ -17,10 +17,10 @@ local lalr_examples = build:Executable '${bin}/lalr_examples' {
 -- If the Lalrc target prototype has been defined then use it to rebuild
 -- the example parse tables from grammars.  Otherwise just use the source
 -- files directly.
-if build.Lalrc then 
+if forge.Lalrc then 
     lalr_examples {
-        build:Cxx () {
-            build:map( build.Lalrc, '%1.cpp', '^(.*)%.g$', {
+        forge:Cxx () {
+            forge:map( forge.Lalrc, '%1.cpp', '^(.*)%.g$', {
                 'json.g',
                 'xml.g',
             } );
@@ -28,13 +28,13 @@ if build.Lalrc then
     };
 else
     lalr_examples {
-        build:Cxx () {
+        forge:Cxx () {
             'json.cpp',
             'xml.cpp',
         };
     };
 end
 
-build:all {
+forge:all {
     lalr_examples;
 };

@@ -1,16 +1,16 @@
 
-local Lalrc = build:TargetPrototype( "Lalrc" );
+local Lalrc = forge:TargetPrototype( 'Lalrc' );
 
-function Lalrc.create( build, settings, identifier )
-    local target = build:File( identifier, Lalrc, settings );
-    target:add_ordering_dependency( build:Directory(build:branch(target)) );
-    target:add_implicit_dependency( build:file(settings.lalr.lalrc) );
+function Lalrc.create( forge, settings, identifier )
+    local target = forge:File( identifier, Lalrc, settings );
+    target:add_ordering_dependency( forge:Directory(forge:branch(target)) );
+    target:add_implicit_dependency( forge:file(settings.lalr.lalrc) );
     target.settings = settings;
     return target;
 end
 
-function Lalrc.build( build, target )
+function Lalrc.build( forge, target )
     local lalrc = target.settings.lalr.lalrc;
-    build:system( lalrc, ('lalrc -o "%s" "%s"'):format(target, target:dependency()) );
-    target:add_implicit_dependency( build:file(lalrc) );
+    forge:system( lalrc, ('lalrc -o "%s" "%s"'):format(target, target:dependency()) );
+    target:add_implicit_dependency( forge:file(lalrc) );
 end

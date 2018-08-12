@@ -1,10 +1,10 @@
 
-build:all {
-    build:Executable '${bin}/lalr_test' {
+forge:all {
+    forge:Executable '${bin}/lalr_test' {
         '${lib}/lalr_${architecture}';
         '${lib}/UnitTest++_${architecture}';
 
-        build:Cxx () {
+        forge:Cxx () {
             'main.cpp',
             'TestParsers.cpp',
             'TestPrecedenceDirectives.cpp',

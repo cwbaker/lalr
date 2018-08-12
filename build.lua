@@ -1,8 +1,8 @@
 
 local paths = {
     package.path;
-    build:root( 'lalr/?.lua' );
-    build:root( 'lalr/?/init.lua' );
+    forge:root( 'lalr/?.lua' );
+    forge:root( 'lalr/?/init.lua' );
 };
 package.path = table.concat( paths, ';' );
 
@@ -14,40 +14,40 @@ require 'forge.xcode';
 require 'forge.macos';
 require 'forge.windows';
 
-platform = platform or build:operating_system();
+platform = platform or forge:operating_system();
 variant = variant or 'debug';
 version = version or ('%s %s %s'):format(os.date('%Y.%m.%d %H:%M:%S'), platform, variant );
 goal = goal or "";
 jobs = jobs or 4;
 
-build:initialize {
+forge:initialize {
     variants = { 'debug', 'release', 'shipping' };
-    bin = build:root( ('%s/bin'):format(variant) );
-    lib = build:root( ('%s/lib'):format(variant) );
-    obj = build:root( ('%s/obj'):format(variant) );
+    bin = forge:root( ('%s/bin'):format(variant) );
+    lib = forge:root( ('%s/lib'):format(variant) );
+    obj = forge:root( ('%s/obj'):format(variant) );
     include_directories = {
-        build:root( 'lalr' );
-        build:root( 'unittest-cpp' );
+        forge:root( 'lalr' );
+        forge:root( 'unittest-cpp' );
     };
     library_directories = {
-        build:root( ('%s/lib'):format(variant) );
+        forge:root( ('%s/lib'):format(variant) );
     };
     visual_studio = {
-        sln = build:root( 'lalr.sln' );
+        sln = forge:root( 'lalr.sln' );
     };
     xcode = {
-        xcodeproj = build:root( 'lalr.xcodeproj' );
+        xcodeproj = forge:root( 'lalr.xcodeproj' );
     };
     lalr = {
-        lalrc = build:switch {
-            build:operating_system();
-            macos = build:root( ('%s/bin/lalrc'):format(variant) );
-            windows = build:root( ('%s/bin/lalrc.exe'):format(variant) );
+        lalrc = forge:switch {
+            forge:operating_system();
+            macos = forge:root( ('%s/bin/lalrc'):format(variant) );
+            windows = forge:root( ('%s/bin/lalrc.exe'):format(variant) );
         };
     };
 };
 
-build:default_targets {
+forge:default_targets {
     'lalr/lalrc',
     'lalr/lalr_examples',
     'lalr/lalr_test'

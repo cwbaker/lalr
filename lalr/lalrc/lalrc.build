@@ -1,8 +1,8 @@
 
-build:all {
-    build:Executable '${bin}/lalrc' {
+forge:all {
+    forge:Executable '${bin}/lalrc' {
         '${lib}/lalr_${architecture}';
-        build:Cxx () {
+        forge:Cxx () {
             'lalrc.cpp'
         };
     };

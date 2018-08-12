@@ -1,11 +1,11 @@
 
-for _, build in build:default_builds() do    
-    local lalr = build:Library '${lib}/lalr_${architecture}' {
-        build:Cxx () {
+for _, forge in forge:default_builds() do    
+    local lalr = forge:Library '${lib}/lalr_${architecture}' {
+        forge:Cxx () {
             'ErrorPolicy.cpp',
         };
 
-        build:Cxx () {
+        forge:Cxx () {
             'Grammar.cpp',
             'GrammarAction.cpp',
             'GrammarCompiler.cpp',
@@ -20,7 +20,7 @@ for _, build in build:default_builds() do
             'GrammarTransition.cpp'
         };
 
-        build:Cxx () {
+        forge:Cxx () {
             'RegexAction.cpp',
             'RegexCharacter.cpp',
             'RegexCompiler.cpp',
