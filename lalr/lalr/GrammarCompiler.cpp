@@ -21,6 +21,7 @@
 #include "RegexCompiler.hpp"
 #include "ErrorPolicy.hpp"
 #include "assert.hpp"
+#include <iterator>
 
 using std::set;
 using std::vector;
