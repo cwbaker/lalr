@@ -4,7 +4,7 @@ forge:all {
         '${lib}/lalr_${architecture}';
         '${lib}/UnitTest++_${architecture}';
 
-        forge:Cxx () {
+        forge:Cxx '${obj}/%1' {
             'main.cpp',
             'TestParsers.cpp',
             'TestPrecedenceDirectives.cpp',

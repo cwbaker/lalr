@@ -2,7 +2,7 @@
 forge:all {
     forge:Executable '${bin}/lalrc' {
         '${lib}/lalr_${architecture}';
-        forge:Cxx () {
+        forge:Cxx '${obj}/%1' {
             'lalrc.cpp'
         };
     };
