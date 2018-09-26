@@ -39,11 +39,7 @@ forge:initialize {
         xcodeproj = forge:root( 'lalr.xcodeproj' );
     };
     lalr = {
-        lalrc = forge:switch {
-            forge:operating_system();
-            macos = forge:root( ('%s/bin/lalrc'):format(variant) );
-            windows = forge:root( ('%s/bin/lalrc.exe'):format(variant) );
-        };
+        lalrc = '${bin}/lalrc';
     };
 };
 
