@@ -261,7 +261,7 @@ const RegexAction* RegexNode::get_action() const
 bool RegexNode::is_match( int begin, int end ) const
 {
     LALR_ASSERT( begin < end );
-    LALR_ASSERT( end <= begin_character_ || begin >= end_character_ || begin >= begin_character_ && end <= end_character_ );
+    LALR_ASSERT( end <= begin_character_ || begin >= end_character_ || (begin >= begin_character_ && end <= end_character_) );
     return begin >= begin_character_ && end <= end_character_;
 }
 
