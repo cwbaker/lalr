@@ -9,6 +9,7 @@
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
+#include <string.h>
 
 namespace lalr
 {

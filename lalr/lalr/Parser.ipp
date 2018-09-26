@@ -22,6 +22,7 @@
 #include "assert.hpp"
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 
 namespace lalr
 {

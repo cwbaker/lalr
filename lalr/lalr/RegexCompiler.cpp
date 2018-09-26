@@ -9,6 +9,7 @@
 #include "LexerTransition.hpp"
 #include "LexerAction.hpp"
 #include "assert.hpp"
+#include <string.h>
 
 using std::set;
 using std::vector;

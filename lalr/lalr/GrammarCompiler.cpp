@@ -22,6 +22,7 @@
 #include "ErrorPolicy.hpp"
 #include "assert.hpp"
 #include <iterator>
+#include <string.h>
 
 using std::set;
 using std::vector;
