@@ -59,7 +59,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
 //  user data.
 */
 template <class Char, class Traits, class Allocator>
-ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const ParserNode* start, const ParserNode* finish )
+ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const TemplatedParserNode* start, const TemplatedParserNode* finish )
 : symbol_( symbol ),
   lexeme_(),
   user_datas_()
@@ -69,7 +69,7 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
     LALR_ASSERT( start <= finish );
     LALR_ASSERT( symbol_ );
     
-    for ( const ParserNode* node = start; node != finish; ++node )
+    for ( const TemplatedParserNode* node = start; node != finish; ++node )
     {
         if ( node->user_data() )
         {
