@@ -3,6 +3,7 @@
 
 #include "ParserUserData.hpp"
 #include "assert.hpp"
+#include <algorithm>
 
 namespace lalr
 {
