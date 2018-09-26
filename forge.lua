@@ -11,6 +11,7 @@ require 'forge.cc';
 require 'forge.lalr';
 require 'forge.visual_studio';
 require 'forge.xcode';
+require 'forge.linux';
 require 'forge.macos';
 require 'forge.windows';
 
