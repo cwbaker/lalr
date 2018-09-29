@@ -7,7 +7,6 @@ local paths = {
 package.path = table.concat( paths, ';' );
 
 require 'forge';
-require 'forge.cc';
 require 'forge.lalr';
 require 'forge.visual_studio';
 require 'forge.xcode';
