@@ -3,6 +3,8 @@
 // Copyright (c) Charles Baker. All rights reserved.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <lalr/GrammarCompiler.hpp>
 #include <lalr/ParserStateMachine.hpp>
 #include <lalr/ParserState.hpp>
