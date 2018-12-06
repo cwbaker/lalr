@@ -1,5 +1,5 @@
 
-for _, forge in forge:default_builds() do    
+for _, forge in forge:builds('cc.*') do    
     forge:StaticLibrary '${lib}/lalr_${architecture}' {
         forge:Cxx '${obj}/%1' {
             'ErrorPolicy.cpp',

@@ -1,9 +1,11 @@
 
-forge:all {
-    forge:Executable '${bin}/lalrc' {
-        '${lib}/lalr_${architecture}';
-        forge:Cxx '${obj}/%1' {
-            'lalrc.cpp'
+for _, forge in forge:builds('cc.*') do    
+    forge:all {
+        forge:Executable '${bin}/lalrc' {
+            '${lib}/lalr_${architecture}';
+            forge:Cxx '${obj}/%1' {
+                'lalrc.cpp'
+            };
         };
     };
-};
+end

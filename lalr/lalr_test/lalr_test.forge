@@ -1,14 +1,16 @@
 
-forge:all {
-    forge:Executable '${bin}/lalr_test' {
-        '${lib}/lalr_${architecture}';
-        '${lib}/UnitTest++_${architecture}';
+for _, forge in forge:builds('cc.*') do
+    forge:all {
+        forge:Executable '${bin}/lalr_test' {
+            '${lib}/lalr_${architecture}';
+            '${lib}/UnitTest++_${architecture}';
 
-        forge:Cxx '${obj}/%1' {
-            'main.cpp',
-            'TestParsers.cpp',
-            'TestPrecedenceDirectives.cpp',
-            'TestRegularExpressions.cpp'
+            forge:Cxx '${obj}/%1' {
+                'main.cpp',
+                'TestParsers.cpp',
+                'TestPrecedenceDirectives.cpp',
+                'TestRegularExpressions.cpp'
+            };
         };
     };
-};
+end
