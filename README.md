@@ -98,7 +98,17 @@ void lalr_calculator_example()
 
 Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ compiler (XCode, Visual C++, or GCC depending on operating system).
 
-**macOS**
+**Linux:**
+
+- Install GCC
+- Install [Forge](https://github.com/cwbaker/forge#forge)
+- `git clone git@github.com:cwbaker/lalr.git lalr`
+- `cd lalr`
+- `git submodule update --init`
+- `forge variant=release`
+- `./release/bin/lalr_examples`
+
+**macOS:**
 
 - Install Xcode
 - Install [Forge](https://github.com/cwbaker/forge#forge)
@@ -108,7 +118,7 @@ Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ c
 - `forge variant=release`
 - `./release/bin/lalr_examples`
 
-**Windows**:
+**Windows:**
 
 - Install Visual Studio 2017
 - Install [Forge](https://github.com/cwbaker/forge#forge)
