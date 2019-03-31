@@ -4,9 +4,7 @@ os:
   - osx
   - windows
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget https://github.com/cwbaker/forge/releases/download/v0.0.2-rc.2/forge-linux-v0.0.2-rc.2.tar.gz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget https://github.com/cwbaker/forge/releases/download/v0.0.2-rc.2/forge-macos-v0.0.2-rc.2.tar.gz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then wget https://github.com/cwbaker/forge/releases/download/v0.0.2-rc.2/forge-windows-v0.0.2-rc.2.tar.gz; fi
+  - wget https://github.com/cwbaker/forge/releases/download/v0.0.2-rc.4/forge-${TRAVIS_OS_NAME}-v0.0.2-rc.4.tar.gz
   - tar -xvf forge-*.tar.gz
 script:
   - forge/bin/forge variant=release
