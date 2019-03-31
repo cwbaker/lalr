@@ -10,5 +10,4 @@ install:
   - tar -xvf forge-*.tar.gz
 script:
   - forge/bin/forge variant=release
-test:
   - release/bin/lalr_examples && release/bin/lalr_test
