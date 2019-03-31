@@ -1,0 +1,14 @@
+language: cpp
+os:
+  - linux
+  - osx
+  - windows
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget /cwbaker/forge/releases/download/v0.0.2-rc.2/forge-linux-v0.0.2-rc.2.tar.gz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget /cwbaker/forge/releases/download/v0.0.2-rc.2/forge-macos-v0.0.2-rc.2.tar.gz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then wget /cwbaker/forge/releases/download/v0.0.2-rc.2/forge-windows-v0.0.2-rc.2.tar.gz; fi
+  - tar -xvf forge-*.tar.gz
+script:
+  - forge/bin/forge variant=release
+test:
+  - release/bin/lalr_examples && release/bin/lalr_test
