@@ -16,7 +16,7 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 class AddParserActionHandler
 {
-    typedef std::function<UserData (const lalr::ParserNode<UserData, Char, Traits, Allocator>* start, const lalr::ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
+    typedef std::function<UserData (const UserData* start, const std::basic_string<Char, Traits, Allocator>* lexemes, size_t length)> ParserActionFunction;
 
     Parser<Iterator, UserData, Char, Traits, Allocator>* parser_; ///< The Parser to add handlers to.
 

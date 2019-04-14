@@ -36,7 +36,7 @@ class Parser
         typedef lalr::ParserNode<UserData, Char, Traits, Allocator> ParserNode;
         typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
         typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
-        typedef std::function<UserData (const lalr::ParserNode<UserData, Char, Traits, Allocator>* start, const lalr::ParserNode<UserData, Char, Traits, Allocator>* finish)> ParserActionFunction;
+        typedef std::function<UserData (const UserData* start, const std::basic_string<Char, Traits, Allocator>* lexemes, size_t length)> ParserActionFunction;
 
     private:
         struct ParserActionHandler
@@ -49,6 +49,8 @@ class Parser
         const ParserStateMachine* state_machine_; ///< The data that defines the state machine used by this parser.
         ErrorPolicy* error_policy_; ///< The error policy this parser uses to report errors and debug information.
         std::vector<ParserNode> nodes_; ///< The stack of nodes that store symbols that are shifted and reduced during parsing.
+        std::vector<std::basic_string<Char, Traits, Allocator>> lexemes_; ///< The stack of lexemes matching nodes on the stack.
+        std::vector<UserData> user_datas_; ///< User data stack matching the stack of nodes.
         Lexer<Iterator, Char, Traits, Allocator> lexer_; ///< The lexical analyzer used during parsing.
         std::vector<ParserActionHandler> action_handlers_; ///< The action handlers for parser actions taken during reduction.
         ParserActionFunction default_action_handler_; ///< The default action handler for reductions that don't specify any action.
@@ -84,8 +86,8 @@ class Parser
         const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;
         typename std::vector<ParserNode>::iterator find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes );
         void debug_shift( const ParserNode& node ) const;
-        void debug_reduce( const ParserSymbol* reduced_symbol, const ParserNode* start, const ParserNode* finish ) const;
-        UserData handle( const ParserTransition* transition, const ParserNode* start, const ParserNode* finish ) const;
+        void debug_reduce( const ParserSymbol* reduced_symbol, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
+        UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
         void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme );
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
         void error( bool* accepted, bool* rejected );
