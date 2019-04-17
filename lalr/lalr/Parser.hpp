@@ -36,7 +36,7 @@ class Parser
         typedef lalr::ParserNode<UserData, Char, Traits, Allocator> ParserNode;
         typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
         typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
-        typedef std::function<UserData (const UserData* start, const std::basic_string<Char, Traits, Allocator>* lexemes, size_t length)> ParserActionFunction;
+        typedef std::function<UserData (const UserData* data, const ParserNode* nodes, size_t length)> ParserActionFunction;
 
     private:
         struct ParserActionHandler
@@ -49,8 +49,7 @@ class Parser
         const ParserStateMachine* state_machine_; ///< The data that defines the state machine used by this parser.
         ErrorPolicy* error_policy_; ///< The error policy this parser uses to report errors and debug information.
         std::vector<ParserNode> nodes_; ///< The stack of nodes that store symbols that are shifted and reduced during parsing.
-        std::vector<std::basic_string<Char, Traits, Allocator>> lexemes_; ///< The stack of lexemes matching nodes on the stack.
-        std::vector<UserData> user_datas_; ///< User data stack matching the stack of nodes.
+        std::vector<UserData> user_data_; ///< User data stack matching the stack of nodes.
         Lexer<Iterator, Char, Traits, Allocator> lexer_; ///< The lexical analyzer used during parsing.
         std::vector<ParserActionHandler> action_handlers_; ///< The action handlers for parser actions taken during reduction.
         ParserActionFunction default_action_handler_; ///< The default action handler for reductions that don't specify any action.

@@ -63,8 +63,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 : state_machine_( state_machine ),
   error_policy_( error_policy ),
   nodes_(),
-  lexemes_(),
-  user_datas_(),
+  user_data_(),
   lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, error_policy ),
   action_handlers_(),
   default_action_handler_( NULL ),
@@ -84,11 +83,9 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     }
 
     nodes_.reserve( 64 );       
-    lexemes_.reserve( 64 );       
-    user_datas_.reserve( 64 );       
+    user_data_.reserve( 64 );       
     nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
-    lexemes_.push_back( std::basic_string<Char, Traits, Allocator>() );
-    user_datas_.push_back( UserData() );
+    user_data_.push_back( UserData() );
 }
 
 /**
@@ -100,11 +97,9 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
     accepted_ = false;
     full_ = false;
     nodes_.clear();
-    lexemes_.clear();
-    user_datas_.clear();
+    user_data_.clear();
     nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
-    lexemes_.push_back( std::basic_string<Char, Traits, Allocator>() );
-    user_datas_.push_back( UserData() );
+    user_data_.push_back( UserData() );
 }
 
 /**
@@ -236,8 +231,8 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
 {
     LALR_ASSERT( accepted() );
     LALR_ASSERT( nodes_.size() == 1 );
-    LALR_ASSERT( user_datas_.size() == 1 );
-    return user_datas_.front();
+    LALR_ASSERT( user_data_.size() == 1 );
+    return user_data_.front();
 }
 
 /**
@@ -543,9 +538,9 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const
 {
     LALR_ASSERT( start >= 0 && size_t(start) <= nodes_.size() );
-    LALR_ASSERT( start >= 0 && size_t(start) <= user_datas_.size() );
+    LALR_ASSERT( start >= 0 && size_t(start) <= user_data_.size() );
     LALR_ASSERT( finish >= 0 && size_t(finish) <= nodes_.size() );
-    LALR_ASSERT( finish >= 0 && size_t(finish) <= user_datas_.size() );
+    LALR_ASSERT( finish >= 0 && size_t(finish) <= user_data_.size() );
     LALR_ASSERT( start <= finish );
     LALR_ASSERT( transition );
 
@@ -555,11 +550,11 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
         LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[action].function_( &user_datas_[start], &lexemes_[start], finish - start );
+            return action_handlers_[action].function_( &user_data_[start], &nodes_[start], finish - start );
         }
     }
 
-    return default_action_handler_ ? default_action_handler_( &user_datas_[start], &lexemes_[start], finish - start ) : UserData();
+    return default_action_handler_ ? default_action_handler_( &user_data_[start], &nodes_[start], finish - start ) : UserData();
 }
 
 /**
@@ -578,8 +573,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTra
     ParserNode node( transition->state, transition->symbol, lexeme );
     debug_shift( node );
     nodes_.push_back( node );
-    lexemes_.push_back( lexeme );
-    user_datas_.push_back( UserData() );
+    user_data_.push_back( UserData() );
 }
 
 /**
@@ -611,23 +605,19 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         debug_reduce( transition->reduced_symbol, start, finish );
         UserData user_data = handle( transition, start, finish );
         nodes_.erase( nodes_.begin() + start, nodes_.end() );
-        lexemes_.erase( lexemes_.begin() + start, lexemes_.end() );
-        user_datas_.erase( user_datas_.begin() + start, user_datas_.end() );
+        user_data_.erase( user_data_.begin() + start, user_data_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         LALR_ASSERT( transition );
         ParserNode node( transition->state, symbol, user_data );
         nodes_.push_back( node );
-        lexemes_.push_back( std::basic_string<Char, Traits, Allocator>() );
-        user_datas_.push_back( user_data );
+        user_data_.push_back( user_data );
     }
     else
     {    
         LALR_ASSERT( nodes_.size() == 2 );
-        LALR_ASSERT( lexemes_.size() == 2 );
-        LALR_ASSERT( user_datas_.size() == 2 );
+        LALR_ASSERT( user_data_.size() == 2 );
         nodes_.erase( nodes_.begin() );
-        lexemes_.erase( lexemes_.begin() );
-        user_datas_.erase( user_datas_.begin() );
+        user_data_.erase( user_data_.begin() );
         *accepted = true;
     }              
 }
@@ -650,7 +640,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
 {
     LALR_ASSERT( state_machine_ );
     LALR_ASSERT( !nodes_.empty() );
-    LALR_ASSERT( !user_datas_.empty() );
+    LALR_ASSERT( !user_data_.empty() );
     LALR_ASSERT( accepted );
     LALR_ASSERT( rejected );
 
@@ -681,8 +671,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
         else
         {
             nodes_.pop_back();
-            lexemes_.pop_back();
-            user_datas_.pop_back();
+            user_data_.pop_back();
         }
     }
     
