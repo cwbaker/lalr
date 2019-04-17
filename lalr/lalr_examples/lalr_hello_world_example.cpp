@@ -18,7 +18,7 @@ void lalr_hello_world_example()
     compiler.compile( hello_world_grammar, hello_world_grammar + strlen(hello_world_grammar) );
     Parser<const char*> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "hello_world", [] (const ParserNode<>* /*start*/, const ParserNode<>* /*finish*/) 
+        ( "hello_world", [] (const shared_ptr<ParserUserData<char>>* data, const ParserNode<>* nodes, size_t length)
             {
                 printf( "Hello World!\n" );
                 return shared_ptr<ParserUserData<char>>();

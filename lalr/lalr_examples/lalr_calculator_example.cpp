@@ -32,40 +32,41 @@ void lalr_calculator_example()
     compiler.compile( calculator_grammar, calculator_grammar + strlen(calculator_grammar) );
     Parser<const char*, int> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "add", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "add", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return start[0].user_data() + start[2].user_data();
+                return data[0] + data[2];
             } 
         )
-        ( "subtract", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "subtract", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return start[0].user_data() - start[2].user_data();
+                return data[0] - data[2];
             }
         )
-        ( "multiply", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "multiply", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return start[0].user_data() * start[2].user_data();
+                return data[0] * data[2];
             } 
         )
-        ( "divide", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "divide", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return start[0].user_data() / start[2].user_data();
+                return data[0] / data[2];
             } 
         )
-        ( "compound", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "compound", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return start[1].user_data();
+                return data[1];
             }
         )
-        ( "integer", [] ( const ParserNode<int>* start, const ParserNode<int>* finish )
+        ( "integer", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
             {
-                return ::atoi( start[0].lexeme().c_str() );
+                return ::atoi( nodes[0].lexeme().c_str() );
             } 
         )
     ;
 
     const char* input = "1 + 2 * (3 + 4) + 5";
     parser.parse( input, input + strlen(input) );
+    printf( "1 + 2 * (3 + 4) + 5 = %d", parser.user_data() );
     LALR_ASSERT( parser.accepted() );
     LALR_ASSERT( parser.full() );
     LALR_ASSERT( parser.user_data() == 20 );
