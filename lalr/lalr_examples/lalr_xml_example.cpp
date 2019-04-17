@@ -79,7 +79,7 @@ static void string_( const char** begin, const char* end, std::string* lexeme, c
     *begin = position < end ? position + 1 : position;
 }
 
-static XmlUserData document( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData document( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     const XmlUserData* end = start + length;
     while ( start != end && !start[0].element_ )
@@ -89,28 +89,28 @@ static XmlUserData document( const XmlUserData* start, const ParserNode<XmlUserD
     return start != end ? start[0] : XmlUserData();
 }
 
-static XmlUserData add_element( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData add_element( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element = start[0].element_;
     element->elements_.push_back( start[1].element_ );
     return XmlUserData( element );
 }
 
-static XmlUserData create_element( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData create_element( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element( new Element() );
     element->elements_.push_back( start[0].element_ );
     return XmlUserData( element );
 }
 
-static XmlUserData short_element( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData short_element( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element = start[2].element_;
     element->name_ = nodes[1].lexeme();
     return XmlUserData( element );
 }
 
-static XmlUserData long_element( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData long_element( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element = start[2].element_;
     if ( !element )
@@ -126,7 +126,7 @@ static XmlUserData long_element( const XmlUserData* start, const ParserNode<XmlU
     return XmlUserData( element );
 }
 
-static XmlUserData add_attribute( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData add_attribute( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     LALR_ASSERT( start[0].element_ );
     shared_ptr<Element> element = start[0].element_;
@@ -135,7 +135,7 @@ static XmlUserData add_attribute( const XmlUserData* start, const ParserNode<Xml
     return XmlUserData( element );
 }
 
-static XmlUserData create_attribute( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData create_attribute( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     LALR_ASSERT( start[0].attribute_ );
     shared_ptr<Element> element( new Element() );
@@ -143,7 +143,7 @@ static XmlUserData create_attribute( const XmlUserData* start, const ParserNode<
     return XmlUserData( element );
 }
 
-static XmlUserData attribute( const XmlUserData* start, const ParserNode<XmlUserData, char>* nodes, size_t length )
+static XmlUserData attribute( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Attribute> attribute( new Attribute(nodes[0].lexeme(), nodes[2].lexeme()) );
     return XmlUserData( attribute );

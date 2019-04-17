@@ -32,32 +32,32 @@ void lalr_calculator_example()
     compiler.compile( calculator_grammar, calculator_grammar + strlen(calculator_grammar) );
     Parser<const char*, int> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "add", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "add", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return data[0] + data[2];
             } 
         )
-        ( "subtract", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "subtract", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return data[0] - data[2];
             }
         )
-        ( "multiply", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "multiply", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return data[0] * data[2];
             } 
         )
-        ( "divide", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "divide", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return data[0] / data[2];
             } 
         )
-        ( "compound", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "compound", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return data[1];
             }
         )
-        ( "integer", [] ( const int* data, const ParserNode<int>* nodes, size_t length )
+        ( "integer", [] ( const int* data, const ParserNode<>* nodes, size_t length )
             {
                 return ::atoi( nodes[0].lexeme().c_str() );
             } 

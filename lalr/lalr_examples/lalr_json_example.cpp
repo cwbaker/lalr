@@ -84,37 +84,37 @@ static void string_( PositionIterator<const char*>* begin, PositionIterator<cons
     *begin = position;
 }
 
-static JsonUserData document( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData document( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     return start[1];
 }
 
-static JsonUserData element( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element = start[3].element_;
     element->name_ = nodes[0].lexeme();
     return JsonUserData( element );
 }
 
-static JsonUserData attribute( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData attribute( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {   
     shared_ptr<Attribute> attribute = start[2].attribute_;
     attribute->name_ = nodes[0].lexeme();
     return JsonUserData( attribute );
 }
 
-static JsonUserData value( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData value( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Attribute> attribute( new Attribute(nodes[0].lexeme()) );
     return JsonUserData( attribute );
 }
 
-static JsonUserData content( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData content( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     return start[0];
 }
 
-static JsonUserData add_to_element( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData add_to_element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element = start[0].element_;   
     if ( start[2].attribute_ )
@@ -128,7 +128,7 @@ static JsonUserData add_to_element( const JsonUserData* start, const ParserNode<
     return JsonUserData( element );    
 }
 
-static JsonUserData create_element( const JsonUserData* start, const ParserNode<JsonUserData, char>* nodes, size_t length )
+static JsonUserData create_element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
     shared_ptr<Element> element( new Element() );
     if ( start[0].attribute_ )
