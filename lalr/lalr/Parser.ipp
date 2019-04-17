@@ -84,7 +84,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 
     nodes_.reserve( 64 );       
     user_data_.reserve( 64 );       
-    nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, NULL) );
     user_data_.push_back( UserData() );
 }
 
@@ -98,7 +98,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
     full_ = false;
     nodes_.clear();
     user_data_.clear();
-    nodes_.push_back( ParserNode(state_machine_->start_state, NULL, UserData()) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, NULL) );
     user_data_.push_back( UserData() );
 }
 
@@ -449,7 +449,7 @@ const ParserTransition* Parser<Iterator, UserData, Char, Traits, Allocator>::fin
 //  if no Node to reduce to could be found.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-typename std::vector<ParserNode<UserData, Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes )
+typename std::vector<ParserNode<Char, Traits, Allocator> >::iterator Parser<Iterator, UserData, Char, Traits, Allocator>::find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes )
 {
     LALR_ASSERT( transition );
     LALR_ASSERT( transition->reduced_length < int(nodes.size()) );
@@ -608,7 +608,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         user_data_.erase( user_data_.begin() + start, user_data_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         LALR_ASSERT( transition );
-        ParserNode node( transition->state, symbol, user_data );
+        ParserNode node( transition->state, symbol );
         nodes_.push_back( node );
         user_data_.push_back( user_data );
     }
