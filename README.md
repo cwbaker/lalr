@@ -16,7 +16,6 @@ Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and
 ## Example
 
 ~~~c++
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <lalr/GrammarCompiler.hpp>
@@ -25,36 +24,6 @@ Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and
 
 using namespace std;
 using namespace lalr;
-
-static int add( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return start[0].user_data() + start[2].user_data();
-}
-
-static int subtract( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return start[0].user_data() - start[2].user_data();
-}
-
-static int multiply( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return start[0].user_data() * start[2].user_data();
-}
-
-static int divide( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return start[0].user_data() / start[2].user_data();
-}
-
-static int compound( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return start[1].user_data();
-}
-
-static int integer( const ParserNode<int>* start, const ParserNode<int>* finish )
-{
-    return ::atoi( start[0].lexeme().c_str() );
-}
 
 void lalr_calculator_example()
 {
@@ -80,16 +49,41 @@ void lalr_calculator_example()
     compiler.compile( calculator_grammar, calculator_grammar + strlen(calculator_grammar) );
     Parser<const char*, int> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "add", &add )
-        ( "subtract", &subtract )
-        ( "multiply", &multiply )
-        ( "divide", &divide )
-        ( "compound", &compound )
-        ( "integer", &integer )
+        ( "add", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return data[0] + data[2];
+            } 
+        )
+        ( "subtract", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return data[0] - data[2];
+            }
+        )
+        ( "multiply", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return data[0] * data[2];
+            } 
+        )
+        ( "divide", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return data[0] / data[2];
+            } 
+        )
+        ( "compound", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return data[1];
+            }
+        )
+        ( "integer", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                return ::atoi( nodes[0].lexeme().c_str() );
+            } 
+        )
     ;
-    
+
     const char* input = "1 + 2 * (3 + 4) + 5";
     parser.parse( input, input + strlen(input) );
+    printf( "1 + 2 * (3 + 4) + 5 = %d", parser.user_data() );
     LALR_ASSERT( parser.accepted() );
     LALR_ASSERT( parser.full() );
     LALR_ASSERT( parser.user_data() == 20 );
