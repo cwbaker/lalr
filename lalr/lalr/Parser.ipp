@@ -236,18 +236,6 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
 }
 
 /**
-// Get the position that this %Parser is up to.
-//
-// @return
-//  The iterator at the position that this %Parser is up to.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-const Iterator& Parser<Iterator, UserData, Char, Traits, Allocator>::position() const
-{
-    return lexer_.position();
-}
-
-/**
 // Add action handlers to this %Parser.
 //
 // @return
