@@ -56,6 +56,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
   position_(),
   end_(),
   lexeme_(),
+  line_( 0 ),
   symbol_( NULL ),
   full_( false )
 {
@@ -126,6 +127,18 @@ const std::basic_string<Char, Traits, Allocator>& Lexer<Iterator, Char, Traits, 
 }
 
 /**
+// Get the line number at the start of the most recently matched lexeme.
+//
+// @return
+//  The line number.
+*/
+template <class Iterator, class Char, class Traits, class Allocator>
+int Lexer<Iterator, Char, Traits, Allocator>::line() const
+{
+    return line_;
+}
+
+/**
 // Get the most recently scanned symbol.
 //
 // @return
@@ -146,7 +159,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::symbol() const
 template <class Iterator, class Char, class Traits, class Allocator>
 const Iterator& Lexer<Iterator, Char, Traits, Allocator>::position() const
 {
-    return position_;
+    return position_.position();
 }
 
 /**
@@ -175,7 +188,8 @@ template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::reset( Iterator start, Iterator finish )
 {
     lexeme_.clear();
-    position_ = start;
+    line_ = 0;
+    position_ = PositionIterator<Iterator>( start, finish );
     end_ = finish;
     symbol_ = NULL;
     full_ = false;
@@ -196,10 +210,11 @@ template <class Iterator, class Char, class Traits, class Allocator>
 void Lexer<Iterator, Char, Traits, Allocator>::advance()
 {
     LALR_ASSERT( state_machine_ );
-    lexeme_.clear();
     skip();
-    full_ = position_ == end_;
-    symbol_ = position_ != end_ ? run() : end_symbol_;
+    lexeme_.clear();
+    line_ = position_.line();
+    full_ = position_.ended();
+    symbol_ = !position_.ended() ? run() : end_symbol_;
 }
 
 /**
@@ -216,7 +231,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
         const LexerState* state = whitespace_state_machine_->start_state;
         LALR_ASSERT( state );
         const LexerTransition* transition = nullptr;
-        while ( position_ != end_ && (transition = find_transition_by_character(state, *position_)) )
+        while ( !position_.ended() && (transition = find_transition_by_character(state, *position_)) )
         {
             state = transition->state;            
             if ( transition->action )
@@ -226,7 +241,10 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
                 const LexerActionFunction& function = action_handlers_[index].function_;
                 LALR_ASSERT( function );
                 const void* symbol = NULL;
-                function( &position_, end_, &lexeme_, &symbol );
+                int lines = 0;
+                Iterator position = position_.position();
+                function( position, end_, &lexeme_, &symbol, &position, &lines );
+                position_.skip( position, lines );
             }
             else
             {
@@ -260,7 +278,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
     {
         symbol = state->symbol;
         const LexerTransition* transition = nullptr;
-        while ( position_ != end_ && (transition = find_transition_by_character(state, *position_)) )
+        while ( !position_.ended() && (transition = find_transition_by_character(state, *position_)) )
         {
             state = transition->state;
             symbol = state->symbol;
@@ -271,7 +289,10 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
                 LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
                 const LexerActionFunction& function = action_handlers_[index].function_;
                 LALR_ASSERT( function );
-                function( &position_, end_, &lexeme_, &symbol );
+                int lines = 0;
+                Iterator position = position_.position();
+                function( position_.position(), end_, &lexeme_, &symbol, &position, &lines );
+                position_.skip( position, lines );
             }
             else
             {
@@ -280,7 +301,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
             }
         }
         
-        if ( position_ != end_ && !symbol && lexeme_.empty() )
+        if ( !position_.ended() && !symbol && lexeme_.empty() )
         {
             error();
         }
@@ -301,13 +322,13 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 {   
     LALR_ASSERT( state_machine_ );
     LALR_ASSERT( state_machine_->start_state );
-    LALR_ASSERT( position_ != end_ );
+    LALR_ASSERT( !position_.ended() );
 
     fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
     const LexerTransition* transition = NULL;
     const LexerState* state = state_machine_->start_state;
-    while ( position_ != end_ && !(transition = find_transition_by_character(state, *position_)) )
+    while ( !position_.ended() && !(transition = find_transition_by_character(state, *position_)) )
     {
         ++position_;
     }

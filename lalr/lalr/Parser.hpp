@@ -35,7 +35,7 @@ class Parser
     public:
         typedef lalr::ParserNode<Char, Traits, Allocator> ParserNode;
         typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
-        typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
+        typedef std::function<void (Iterator begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol, Iterator* position, int* lines)> LexerActionFunction;
         typedef std::function<UserData (const UserData* data, const ParserNode* nodes, size_t length)> ParserActionFunction;
 
     private:
@@ -62,8 +62,8 @@ class Parser
 
         void reset();
         void parse( Iterator start, Iterator finish );
-        bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme );
-        bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme );
+        bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
+        bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
         bool accepted() const;
         bool full() const;
         const UserData& user_data() const;
@@ -86,7 +86,7 @@ class Parser
         void debug_shift( const ParserNode& node ) const;
         void debug_reduce( const ParserSymbol* reduced_symbol, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
         UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
-        void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme );
+        void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
         void error( bool* accepted, bool* rejected );
 };

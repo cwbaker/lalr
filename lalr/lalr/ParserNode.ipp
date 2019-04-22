@@ -23,7 +23,8 @@ template <class Char, class Traits, class Allocator>
 ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol )
 : state_( state ),
   symbol_( symbol ),
-  lexeme_()
+  lexeme_(),
+  line_( 0 )
 {
     LALR_ASSERT( state );
 }
@@ -42,14 +43,19 @@ ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const
 //
 // @param lexeme
 //  The lexeme at this node.
+//
+// @param line
+//  The line number at the start of the lexeme (assumed >= 0).
 */
 template <class Char, class Traits, class Allocator>
-ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
+ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line )
 : state_( state ),
   symbol_( symbol ),
-  lexeme_( lexeme )
+  lexeme_( lexeme ),
+  line_( line )
 {
     LALR_ASSERT( state );
+    LALR_ASSERT( line >= 0 );
 }
 
 /**
@@ -86,6 +92,18 @@ template <class Char, class Traits, class Allocator>
 const std::basic_string<Char, Traits, Allocator>& ParserNode<Char, Traits, Allocator>::lexeme() const
 {
     return lexeme_;
+}
+
+/**
+// Get the line number at the start of this node's lexeme.
+//
+// @return
+//  The line number.
+*/
+template <class Char, class Traits, class Allocator>
+int ParserNode<Char, Traits, Allocator>::line() const
+{
+    return line_;
 }
 
 }

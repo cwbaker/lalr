@@ -1,6 +1,7 @@
 #ifndef LALR_POSITIONITERATOR_HPP_INCLUDED
 #define LALR_POSITIONITERATOR_HPP_INCLUDED
 
+#include "assert.hpp"
 #include <iterator>
 
 namespace lalr
@@ -41,8 +42,7 @@ class PositionIterator
           ended_( begin == end ),
           line_( 1 )
         {
-        }
-        
+        }        
         
         PositionIterator( const PositionIterator& iterator )
         : position_( iterator.position_ ),
@@ -51,8 +51,7 @@ class PositionIterator
           line_( iterator.line_ )
         {
         }
-        
-        
+                
         PositionIterator& operator=( const PositionIterator& iterator )
         {
             if ( this != &iterator )
@@ -65,8 +64,7 @@ class PositionIterator
             
             return *this;
         }
-        
-        
+                
         PositionIterator& operator++()
         {
             int character = *position_;
@@ -79,29 +77,48 @@ class PositionIterator
             ended_ = position_ == end_;
             return *this;
         }
-        
-        
+                
         value_type operator*() const
         {
             return *position_;
         }
-        
-        
+
+        bool ended() const
+        {
+            return ended_;
+        }
+
+        const Iterator& position() const
+        {
+            return position_;
+        }
+
+        const Iterator& end() const
+        {
+            return end_;
+        }
+
         int line() const
         {
             return line_;
         }
-        
-        
+                
         bool operator!=( const PositionIterator& iterator ) const
         {
             return ended_ || iterator.ended_ ? ended_ != iterator.ended_ : position_ != iterator.position_;
         }
-        
-        
+                
         bool operator==( const PositionIterator& iterator ) const
         {
             return ended_ || iterator.ended_ ? ended_ == iterator.ended_ : position_ == iterator.position_;
+        }
+
+        void skip( Iterator position, int lines )
+        {
+            LALR_ASSERT( lines >= 0 );
+            position_ = position;
+            ended_ = position_ == end_;
+            line_ += lines;
         }
 };
 

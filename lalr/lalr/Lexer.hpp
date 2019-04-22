@@ -1,6 +1,7 @@
 #ifndef LALR_LEXER_HPP_INCLUDED
 #define LALR_LEXER_HPP_INCLUDED
 
+#include "PositionIterator.hpp"
 #include <vector>
 #include <functional>
 
@@ -19,7 +20,7 @@ class LexerStateMachine;
 template <class Iterator, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class Lexer
 {
-    typedef std::function<void (Iterator* begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
+    typedef std::function<void (Iterator begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol, Iterator* position, int* lines)> LexerActionFunction;
 
     struct LexerActionHandler
     {
@@ -33,9 +34,10 @@ class Lexer
     const void* end_symbol_; ///< The value to return to indicate that the end of the input has been reached.
     ErrorPolicy* error_policy_; ///< The error policy this lexer uses to report errors and debug information.
     std::vector<LexerActionHandler> action_handlers_; ///< The action handlers for this Lexer.
-    Iterator position_; ///< The current position of this Lexer in its input sequence.
+    PositionIterator<Iterator> position_; ///< The current position of this Lexer in its input sequence.
     Iterator end_; ///< One past the last position of the input sequence for this Lexer.
     std::basic_string<Char, Traits, Allocator> lexeme_; ///< The most recently matched lexeme.
+    int line_; ///< The line number at the start of the most recently matched lexeme.
     const void* symbol_; ///< The most recently matched symbol or null if no symbol has been matched.
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
 
@@ -43,6 +45,7 @@ class Lexer
         Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );
         void set_action_handler( const char* identifier, LexerActionFunction function );
         const std::basic_string<Char, Traits, Allocator>& lexeme() const;
+        int line() const;
         const void* symbol() const;
         const Iterator& position() const;
         bool full() const;

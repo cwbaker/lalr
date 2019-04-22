@@ -127,7 +127,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start,
     lexer_.reset( start, finish );    
     lexer_.advance();
     const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
-    while ( parse(symbol, lexer_.lexeme()) )
+    while ( parse(symbol, lexer_.lexeme(), lexer_.line()) )
     {
         lexer_.advance();
         symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
@@ -146,13 +146,16 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start,
 // @param lexeme
 //  The lexeme of the next token from the lexical analyzer.
 //
+// @param line
+//  The line number at the start of the next token.
+//
 // @return
 //  True until parsing is complete or an error occurs.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line )
 {
-    return parse( reinterpret_cast<const ParserSymbol*>(symbol), lexeme );
+    return parse( reinterpret_cast<const ParserSymbol*>(symbol), lexeme, line );
 }
 
 /**
@@ -164,11 +167,14 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const void* sym
 // @param lexeme
 //  The lexeme of the next token from the lexical analyzer.
 //
+// @param line
+//  The line number at the start of the next token.
+//
 // @return
 //  True until parsing is complete or an error occurs.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line )
 {
     bool accepted = false;
     bool rejected = false;
@@ -182,7 +188,7 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
     
     if ( transition && transition->type == TRANSITION_SHIFT )
     {
-        shift( transition, lexeme );
+        shift( transition, lexeme, line );
     }
     else
     {
@@ -552,13 +558,21 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
 //  The shift transition that specifies the state that will be transitioned
 //  into after the shift and the productions that were potentially started
 //  at this point.
+//
+// @param lexeme
+//  The lexeme of the token that is being shifted onto the stack.
+//
+// @param line
+//  The line number at the start of the token that is being shifted onto the 
+//  stack (assumed >= 0).
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line )
 {
     LALR_ASSERT( state_machine_ );
-    LALR_ASSERT( transition );    
-    ParserNode node( transition->state, transition->symbol, lexeme );
+    LALR_ASSERT( transition );
+    LALR_ASSERT( line >= 0 );
+    ParserNode node( transition->state, transition->symbol, lexeme, line );
     debug_shift( node );
     nodes_.push_back( node );
     user_data_.push_back( UserData() );
@@ -641,7 +655,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
             switch ( transition->type )
             {
                 case TRANSITION_SHIFT:
-                    shift( transition, std::basic_string<Char, Traits, Allocator>() );
+                    shift( transition, std::basic_string<Char, Traits, Allocator>(), 0 );
                     handled = true;
                     break;
 

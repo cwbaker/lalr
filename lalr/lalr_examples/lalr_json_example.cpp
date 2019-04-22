@@ -59,29 +59,31 @@ struct JsonUserData
     }    
 };
 
-static void string_( PositionIterator<const char*>* begin, PositionIterator<const char*> end, std::string* lexeme, const void** /*symbol*/ )
+static void string_( PositionIterator<const char*> begin, PositionIterator<const char*> end, std::string* lexeme, const void** /*symbol*/, PositionIterator<const char*>* position, int* lines )
 {
-    LALR_ASSERT( begin );
     LALR_ASSERT( lexeme );
     LALR_ASSERT( lexeme->length() == 1 );
+    LALR_ASSERT( position );
+    LALR_ASSERT( lines );
 
-    PositionIterator<const char*> position = *begin;
+    PositionIterator<const char*> i = begin;
     int terminator = lexeme->at( 0 );
     LALR_ASSERT( terminator == '\'' || terminator == '"' );
     lexeme->clear();
     
-    while ( *position != terminator && position != end )
+    while ( *i != terminator && i != end )
     {
-        *lexeme += *position;
-        ++position;
+        *lexeme += *i;
+        ++i;
     }
 
-    if ( position != end )
+    if ( i != end )
     {
-        ++position;
+        ++i;
     }
 
-    *begin = position;
+    *position = i;
+    *lines = 0;
 }
 
 static JsonUserData document( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
