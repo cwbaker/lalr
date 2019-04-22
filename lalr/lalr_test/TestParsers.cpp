@@ -692,28 +692,32 @@ SUITE( Parsers )
     {
         struct StringLexer
         {
-            static void string_lexer( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
+            static void string_lexer( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
             {
-                LALR_ASSERT( begin && *begin );
+                LALR_ASSERT( begin );
                 LALR_ASSERT( end );
+                LALR_ASSERT( begin <= end );
                 LALR_ASSERT( lexeme );
+                LALR_ASSERT( position );
+                LALR_ASSERT( lines );
 
                 lexeme->clear();
 
-                const char* position = *begin;
-                while ( position != end && *position != '\'' )
+                const char* i = begin;
+                while ( i != end && *i != '\'' )
                 {
-                    *lexeme += *position;
-                    ++position;
+                    *lexeme += *i;
+                    ++i;
                 }
                 
-                if ( position != end )
+                if ( i != end )
                 {
-                    LALR_ASSERT( *position == '\'' );
-                    ++position;
+                    LALR_ASSERT( *i == '\'' );
+                    ++i;
                 }
                 
-                *begin = position;
+                *position = i;
+                *lines = 0;
             }
         };
     
@@ -749,21 +753,25 @@ SUITE( Parsers )
     {
         struct LineComment
         {
-            static void line_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
+            static void line_comment( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
             {
-                LALR_ASSERT( begin && *begin );
+                LALR_ASSERT( begin );
                 LALR_ASSERT( end );
+                LALR_ASSERT( begin <= end );
                 LALR_ASSERT( lexeme );
+                LALR_ASSERT( position );
+                LALR_ASSERT( lines );
                 
                 lexeme->clear();
                 
-                const char* position = *begin;
-                while ( position != end && *position != '\n' && *position != '\r' )
+                const char* i = begin;
+                while ( i != end && *i != '\n' && *i != '\r' )
                 {
-                    ++position;
+                    ++i;
                 }
                 
-                *begin = position;
+                *position = i;
+                *lines = 1;
             }
         };
     
@@ -798,36 +806,41 @@ SUITE( Parsers )
     {
         struct BlockComment
         {
-            static void block_comment( const char** begin, const char* end, std::string* lexeme, const void** /*symbol*/ )
+            static void block_comment( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
             {
                 LALR_ASSERT( begin );
+                LALR_ASSERT( end );
+                LALR_ASSERT( begin <= end );
                 LALR_ASSERT( lexeme );
+                LALR_ASSERT( position );
+                LALR_ASSERT( lines );
 
                 lexeme->clear();
                                 
                 bool done = false;
-                const char* position = *begin;
-                while ( position != end && !done )
+                const char* i = begin;
+                while ( i != end && !done )
                 {
-                    while ( position != end && *position != '*' )
+                    while ( i != end && *i != '*' )
                     {
-                        ++position;
+                        ++i;
                     }
 
-                    if ( position != end )
+                    if ( i != end )
                     {
-                        LALR_ASSERT( *position == '*' );
+                        LALR_ASSERT( *i == '*' );
 
-                        ++position;
-                        if ( *position == '/' )
+                        ++i;
+                        if ( *i == '/' )
                         {
-                            ++position;
+                            ++i;
                             done = true;
                         }
                     }        
                 }
                 
-                *begin = position;
+                *position = i;
+                *lines = 0;
             }
         };
     
@@ -1005,7 +1018,7 @@ SUITE( Parsers )
             LALR_ASSERT( value_symbol_ );
         }
 
-        void prototype( const char** /*begin*/, const char* /*end*/, std::string* lexeme, const void** symbol ) const
+        void prototype( const char* /*begin*/, const char* /*end*/, std::string* lexeme, const void** symbol, const char** /*position*/, int* /*lines*/ ) const
         {
             LALR_ASSERT( lexeme );
             LALR_ASSERT( symbol );
@@ -1036,7 +1049,7 @@ SUITE( Parsers )
             Parser<const char*> parser( compiler.parser_state_machine() );
             LexerConflictResolutionActionHandler action_handler( compiler.parser_state_machine() );
             parser.lexer_action_handlers()
-                ( "prototype", bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4) )
+                ( "prototype", bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4, _5, _6) )
             ;
 
             const char* input = "prototype { prototype { value value } value value }";
