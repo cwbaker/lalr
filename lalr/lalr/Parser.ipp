@@ -464,7 +464,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
     {
         const ParserSymbol* symbol = node.symbol();
         const std::string& lexeme = node.lexeme();
-        fire_printf( "SHIFT: (%s %s)\n", symbol ? symbol->identifier : "", lexeme.c_str() );
+        int line = node.line();
+        fire_printf( "SHIFT: (%s %s %d)\n", symbol ? symbol->identifier : "", lexeme.c_str(), line );
     }
 }
 
@@ -496,7 +497,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
         {
             const ParserSymbol* symbol = node->symbol();
             const std::string& lexeme = node->lexeme();
-            fire_printf( "(%s %s)", symbol ? symbol->identifier : "", lexeme.c_str() );
+            int line = node->line();
+            fire_printf( "(%s %s %d)", symbol ? symbol->identifier : "", lexeme.c_str(), line );
             ++node;
         }
         
@@ -504,7 +506,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
         {
             const ParserSymbol* symbol = node->symbol();
             const std::string& lexeme = node->lexeme();
-            fire_printf( " (%s %s)", symbol ? symbol->identifier : "", lexeme.c_str() );
+            int line = node->line();
+            fire_printf( " (%s %s %d)", symbol ? symbol->identifier : "", lexeme.c_str(), line );
             ++node;
         }
         
