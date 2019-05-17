@@ -41,7 +41,7 @@ Grammar::Grammar()
 {
     start_symbol_ = add_symbol( ".start", 0, LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = add_symbol( ".end", 0, LEXEME_NULL, SYMBOL_END );
-    error_symbol_ = add_symbol( ".error", 0, LEXEME_NULL, SYMBOL_NULL );
+    error_symbol_ = add_symbol( "error", 0, LEXEME_NULL, SYMBOL_NULL );
 }
 
 Grammar::~Grammar()

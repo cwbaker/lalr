@@ -1128,7 +1128,6 @@ SUITE( Parsers )
         }
     }
     
-    /*
     TEST( ErrorSymbolOnLeftHandSideError )
     {
         const char* grammar = 
@@ -1140,11 +1139,11 @@ SUITE( Parsers )
             "}"
         ;
         
+        GrammarCompiler compiler;
         CheckParserErrorPolicy error_policy( PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE );
-        ParserStateMachine parser_state_machine( grammar, grammar + strlen(grammar), &error_policy );
+        compiler.compile( grammar, grammar + strlen(grammar), &error_policy );
         CHECK( error_policy.errors == 1 );             
     }
-    */
         
     TEST( ErrorProcessing )
     {
