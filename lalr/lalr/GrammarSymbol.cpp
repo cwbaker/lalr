@@ -97,8 +97,8 @@ const std::vector<GrammarProduction*>& GrammarSymbol::productions() const
 //
 // There is an implicit terminal for this symbol only if this symbol has a
 // single, action-less production with a single symbol on its right-hand side.
-// In that situation that this symbol is simply an alias for the single 
-// terminal symbol on the right-hand side.
+// In that situation this symbol is an alias for the single terminal symbol on
+// the right-hand side.
 //
 // @return
 //  The implict terminal for this symbol or null if this symbol doesn't have
@@ -360,15 +360,24 @@ void GrammarSymbol::calculate_identifier()
 }
 
 /**
-// Replace this symbol's identifier, line, precedence, and associativity 
-// with those from *non_terminal_symbol*.  This is done as an optimization
-// to remove redundant reductions for implicit terminal symbols.  See 
+// Replace this symbol's identifier, precedence, and associativity with those
+// from *non_terminal_symbol*.  This is done as an optimization to remove 
+// redundant reductions for implicit terminal symbols.  See 
 // `Grammar::calculate_implicit_terminal_symbols()`.
+//
+// This symbol's line is preserved as it is the line that the terminal was 
+// defined on and is important for distinguishing priority of symbols matched
+// by regular expressions.  Consider the following grammar snippet and the 
+// conflict between matching an integer or a real:
+//
+//  value: integer [value] | real [value];
+//  real: "(\+|\-)?[0-9]+(\.[0-9]+)?((e|E)(\+|\-)?[0-9]+)?";
+//  integer: "(\+|\-)?[0-9]+";
 //
 // This symbol is assumed to be of type `SYMBOL_TERMINAL`.
 //
 // @param non_terminal_symbol
-//  The non terminal symbol to replace the identifier, line, precedence, and
+//  The non terminal symbol to replace the identifier, precedence, and 
 //  associativity for this symbol with (assumed not null and of type 
 //  `SYMBOL_NON_TERMINAL`).
 */
@@ -378,7 +387,6 @@ void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_s
     LALR_ASSERT( non_terminal_symbol );    
     LALR_ASSERT( non_terminal_symbol->symbol_type() == SYMBOL_NON_TERMINAL );        
     identifier_ = non_terminal_symbol->lexeme_;
-    line_ = non_terminal_symbol->line_;
     precedence_ = non_terminal_symbol->precedence_;
     associativity_ = non_terminal_symbol->associativity_;
 }
