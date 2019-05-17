@@ -359,7 +359,6 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
 
     GrammarSymbol* symbol = i->get();
     LALR_ASSERT( symbol );
-    // LALR_ASSERT( symbol->lexeme_type() == lexeme_type );
     LALR_ASSERT( symbol->symbol_type() == symbol_type );
     return symbol;
 }
