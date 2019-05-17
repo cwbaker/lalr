@@ -366,7 +366,7 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
                     LALR_ASSERT( type != TOKEN_NULL );
                     LALR_ASSERT( line != INT_MAX );
                     LALR_ASSERT( token );
-                    fire_error( token->line(), LEXER_ERROR_SYMBOL_CONFLICT, "0x%08x and 0x%08x conflict but are both defined on the same line", token, node->get_token() );
+                    fire_error( token->line(), LEXER_ERROR_SYMBOL_CONFLICT, "'%s' and '%s' conflict but are both defined on line %d", token->lexeme().c_str(), node->get_token()->lexeme().c_str(), token->line() );
                 }
             }
             
