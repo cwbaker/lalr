@@ -34,7 +34,7 @@ SUITE( Parsers )
     class IgnoreParserErrorPolicy : public ErrorPolicy
     {
         public:
-            void parser_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
+            void lalr_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
             {
             }
     };
