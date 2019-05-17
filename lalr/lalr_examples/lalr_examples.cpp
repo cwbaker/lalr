@@ -6,6 +6,9 @@ int main()
            
     extern void lalr_calculator_example();
     lalr_calculator_example();
+
+    extern void lalr_error_handling_calculator_example();
+    lalr_error_handling_calculator_example();
  
     extern void lalr_xml_example();
     lalr_xml_example();
