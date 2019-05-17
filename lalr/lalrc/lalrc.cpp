@@ -16,6 +16,7 @@
 #include <lalr/LexerState.hpp>
 #include <lalr/LexerTransition.hpp>
 #include <lalr/LexerAction.hpp>
+#include <lalr/ErrorPolicy.hpp>
 #include <string>
 #include <vector>
 #include <stdlib.h>
@@ -117,7 +118,8 @@ int main( int argc, char** argv )
         }
 
         GrammarCompiler compiler;
-        compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size() );
+        ErrorPolicy error_policy;
+        compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
         const ParserStateMachine* state_machine = compiler.parser_state_machine();
 
         if ( !output.empty() )
