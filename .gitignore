@@ -7,6 +7,7 @@
 /sweet_parser.xcodeproj
 /sweet/sweet_parser.sln
 /*.sln
+/.vscode/
 debug
 release
 shipping
