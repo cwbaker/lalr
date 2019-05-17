@@ -402,7 +402,7 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
             LALR_ASSERT( symbol );
             
             int references = 0;            
-            if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol != error_symbol_ )
+            if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol->lexeme() != error_symbol_->lexeme() )
             {
                 for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
@@ -434,10 +434,14 @@ void GrammarGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     LALR_ASSERT( error_symbol_ );
 
-    const vector<GrammarProduction*>& productions = error_symbol_->productions();
-    if ( !productions.empty() )
+    for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
     {
-        fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
+        GrammarSymbol* symbol = i->get();
+        LALR_ASSERT( symbol );
+        if ( !symbol->productions().empty() && symbol->lexeme() == error_symbol_->lexeme() )
+        {
+            fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
+        }
     }
 }
 
