@@ -119,9 +119,13 @@ int main( int argc, char** argv )
 
         GrammarCompiler compiler;
         ErrorPolicy error_policy;
-        compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
-        const ParserStateMachine* state_machine = compiler.parser_state_machine();
+        int errors = compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
+        if ( errors != 0 )            
+        {
+            return EXIT_FAILURE;
+        }
 
+        const ParserStateMachine* state_machine = compiler.parser_state_machine();
         if ( !output.empty() )
         {
             file = fopen( output.c_str(), "wb" );
