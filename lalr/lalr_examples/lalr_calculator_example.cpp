@@ -66,7 +66,7 @@ void lalr_calculator_example()
 
     const char* input = "1 + 2 * (3 + 4) + 5";
     parser.parse( input, input + strlen(input) );
-    printf( "1 + 2 * (3 + 4) + 5 = %d", parser.user_data() );
+    printf( "1 + 2 * (3 + 4) + 5 = %d\n", parser.user_data() );
     LALR_ASSERT( parser.accepted() );
     LALR_ASSERT( parser.full() );
     LALR_ASSERT( parser.user_data() == 20 );
