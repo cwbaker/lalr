@@ -381,70 +381,6 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
     state->set_symbol( token ? token->symbol() : NULL );
 }
 
-// void RegexGenerator::populate_allocations( RegexCompiler* allocations ) const
-// {
-//     LALR_ASSERT( allocations );
-
-//     size_t transitions_size = 0;
-//     for ( auto i = states_.begin(); i != states_.end(); ++i )
-//     {
-//         const RegexState* source_state = i->get();
-//         LALR_ASSERT( source_state );
-//         transitions_size += source_state->get_transitions().size();
-//     }
-
-//     unique_ptr<LexerAction[]> actions( new LexerAction [actions_.size()] );
-//     unique_ptr<LexerTransition[]> transitions( new LexerTransition [transitions_size] );
-//     unique_ptr<LexerState[]> states( new LexerState [states_.size()] );
-
-//     for ( size_t i = 0; i < actions_.size(); ++i )
-//     {
-//         const RegexAction* source_action = actions_[i].get();
-//         LALR_ASSERT( source_action );
-//         LexerAction* action = &actions[i];
-//         action->index = source_action->index();
-//         action->identifier = allocations->add_string( source_action->identifier() );
-//     }
-
-//     int state_index = 0;
-//     int transition_index = 0;
-//     const LexerState* start_state = nullptr;
-//     for ( auto i = states_.begin(); i != states_.end(); ++i )
-//     {
-//         const RegexState* source_state = i->get();
-//         LALR_ASSERT( source_state );
-//         LexerState* state = &states[state_index];
-//         LALR_ASSERT( state );
-//         const set<RegexTransition>& source_transitions = source_state->get_transitions();
-//         state->index = state_index;
-//         state->length = source_transitions.size();
-//         state->transitions = &transitions[transition_index];
-//         state->symbol = source_state->get_symbol();
-//         if ( source_state == start_state_ )
-//         {
-//             start_state = state;
-//         }
-//         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
-//         {
-//             const RegexTransition* source_transition = &(*j);
-//             LALR_ASSERT( source_transition );
-//             const RegexState* state_transitioned_to = source_transition->state();
-//             const RegexAction* action = source_transition->action();
-//             LexerTransition* transition = &transitions[transition_index];
-//             transition->begin = source_transition->begin();
-//             transition->end = source_transition->end();
-//             transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
-//             transition->action = action ? &actions[action->index()] : nullptr;
-//             ++transition_index;
-//         }
-//         ++state_index;
-//     }
-
-//     allocations->set_actions( actions, int(actions_.size()) );
-//     allocations->set_transitions( transitions, transitions_size );
-//     allocations->set_states( states, int(states_.size()), start_state );
-// }
-
 /**
 // Clear the current distinct ranges maintained by this RegexGenerator.
 */
@@ -452,7 +388,6 @@ void RegexGenerator::clear()
 {
     ranges_.clear();
 }
-
 
 /**
 // Insert the range [\e begin, \e end) into the current distinct ranges for 
