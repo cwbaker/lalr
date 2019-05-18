@@ -1250,4 +1250,25 @@ SUITE( Parsers )
         compiler.compile( unterminated_block_comment_grammar, unterminated_block_comment_grammar + strlen(unterminated_block_comment_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
     }
+
+    TEST( TestIntegersErrorHandlingExample )
+    {
+        const char* integers_grammar = 
+            "integers { \n"
+                "%none error; \n"
+                "%none integer; \n"
+                "statements: statements statement | statement | %precedence integer; \n"
+                "statement:  \n"
+                    "integer ';' [result] |  \n"
+                    "error ';' [unexpected_error] \n"
+                "; \n"
+                "integer: \"[0-9]+\"; \n"
+            "} \n"
+        ;
+        PrintParserErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        compiler.compile( integers_grammar, integers_grammar + strlen(integers_grammar), &error_policy );
+        CHECK( error_policy.errors == 0 );
+        CHECK( compiler.parser_state_machine() );
+    }
 }
