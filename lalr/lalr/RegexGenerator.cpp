@@ -144,19 +144,6 @@ const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifi
     return nullptr;
 }
 
-int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
-{
-    error_policy_ = error_policy;
-    actions_.clear();
-    states_.clear();
-    start_state_ = nullptr;
-    ranges_.clear();
- 
-    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
-    error_policy_ = nullptr;
-    return 0;
-}
-
 int RegexGenerator::generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy )
 {
     error_policy_ = error_policy;
@@ -167,6 +154,19 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
 
     RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
     generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
+    error_policy_ = nullptr;
+    return 0;
+}
+
+int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
+{
+    error_policy_ = error_policy;
+    actions_.clear();
+    states_.clear();
+    start_state_ = nullptr;
+    ranges_.clear();
+ 
+    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
     error_policy_ = nullptr;
     return 0;
 }
@@ -230,7 +230,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
 
     if ( !syntax_tree.empty() && syntax_tree.errors() == 0 )
     {
-        std::unique_ptr<RegexState> state( new RegexState() );    
+        std::unique_ptr<RegexState> state( new RegexState() );
         state->add_item( syntax_tree.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         *start_state = state.get();
