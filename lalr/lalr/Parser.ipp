@@ -241,6 +241,19 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
     return user_data_.front();
 }
 
+
+/**
+// Get the Lexer that is being used by this Parser.
+//
+// @return
+//  The Lexer used by this Parser.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+const Lexer<Iterator, Char, Traits, Allocator>& Parser<Iterator, UserData, Char, Traits, Allocator>::lexer() const
+{
+    return lexer_;
+}
+
 /**
 // Add action handlers to this %Parser.
 //

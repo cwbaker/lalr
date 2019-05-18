@@ -67,6 +67,7 @@ class Parser
         bool accepted() const;
         bool full() const;
         const UserData& user_data() const;
+        const Lexer<Iterator, Char, Traits, Allocator>& lexer() const;
 
         AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator> parser_action_handlers();
         AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
