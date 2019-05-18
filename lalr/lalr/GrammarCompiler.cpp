@@ -67,7 +67,7 @@ const ParserStateMachine* GrammarCompiler::parser_state_machine() const
     return parser_state_machine_.get();
 }
 
-void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
+int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
 {
     Grammar grammar;
 
@@ -82,6 +82,7 @@ void GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* 
         populate_lexer_state_machine( generator, error_policy );
         populate_whitespace_lexer_state_machine( grammar, error_policy );
     }
+    return errors;
 }
 
 const char* GrammarCompiler::add_string( const std::string& string )
