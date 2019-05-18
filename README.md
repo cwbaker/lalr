@@ -154,9 +154,11 @@ Compile grammars into parser tables at run-time using a `GrammarCompiler` object
 
 Run-time compilation takes time and memory but avoids any extra build steps.
 
+Report errors and debugging information that occur during parser generation and parsing by overloading the `ErrorPolicy::lalr_error()` and `ErrorPolicy::lalr_vprintf()` respectively.  Clients of the library should implement these functions to provide their own error and debug output.  The default implementations print errors and output to `stderr` and `stdout` respectively.
+
 ### Parsing
 
-Parsing with Lalr is best illustrated by example.  See [lalr_xml_example.cpp](#lalr_xml_example.cpp) for the following snippets in a fully working context:
+Parsing with Lalr is best illustrated by example.  See [lalr_xml_example.cpp](lalr/lalr_examples/lalr_xml_example.cpp) for the following snippets in a fully working context:
 
 **1. Include `<lalr/Parser.hpp>`**
 
@@ -340,11 +342,32 @@ This can be used to deal with situations in which the behaviour of the lexical a
 
 Lexical analyzer actions are attached in regular expressions using an identifier delimited by colons "`:`".  Any identifier specified between "`:`" characters in a regular expression is added as an action that is called when the lexical analyzer reaches a state that has the action as its next position.
 
-### Errors and Debugging
+### Error Handling
 
-Errors that occur during parser generation and parsing are reported through the `ErrorPolicy` class.  Clients of the library should implement these interfaces to handle and report errors and debug output.  The default implementations print errors and output to `stderr` and `stdout` respectively.
+Errors are handled by productions with special `error` symbol.  When a syntax error occurs the pops symbols from its stack until it finds a state from which it can accept the `error` symbol.  The `error` symbol is then shifted onto the stack and parsing continues.
 
-Syntax errors during parsing are handled by backtracking until the `error` symbol can be accepted, accepting that symbol, and then continuing the parse.  If there is no `error` symbol specified in the grammar or the parser backtracks all the way back to the start of the input then parsing fails.
+Parsing fails if there are no productions containing the `error` symbol or all of the symbols are popped from the stack without being able to accept the `error` symbol.
+
+Attach action handlers to error productions to report diagnostics and mark portions of the parse tree as having errors.  Parsing can continue and detect more errors but, most likely, the result of the parse will not be correct.
+
+Aside from its special use in resolving errors the `error` symbol behaves as a terminal.  The `error` symbol may be involved in shift/reduce conflicts resolved, as with shift/reduce conflicts on other terminals, by specifying the associativity and precedence of the `error` symbol and production that are in conflict.
+
+Typical usage is to add an error production to a high level, repeated grammar element that has trailing terminal that acts as a separator.  For example statements separated by semi-colons as found in many programming languages and the following example:
+
+~~~
+integers {
+    %none error;
+    %none integer;
+    statements: statements statement | statement | %precedence integer;
+    statement: 
+        integer ';' [result] | 
+        error ';' [unexpected_error]
+    ;
+    integer: "[0-9]+";
+}
+~~~
+
+See [error_handling_calculator.g](lalr/lalr_examples/error_handling_calculator.g) and [lalr_error_handling_calculator.cpp](lalr/lalr_examples/lalr_error_handling_calculator_example.cpp) for the calculator example expanded to handle multiple semi-colon separated calculations with error handling for unexpected errors and unknown operators.
 
 ### Thread Safety
 
