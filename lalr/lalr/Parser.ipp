@@ -84,7 +84,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 
     nodes_.reserve( 64 );       
     user_data_.reserve( 64 );       
-    nodes_.push_back( ParserNode(state_machine_->start_state, NULL) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0) );
     user_data_.push_back( UserData() );
 }
 
@@ -98,7 +98,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
     full_ = false;
     nodes_.clear();
     user_data_.clear();
-    nodes_.push_back( ParserNode(state_machine_->start_state, NULL) );
+    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0) );
     user_data_.push_back( UserData() );
 }
 
@@ -192,7 +192,7 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
     }
     else
     {
-        error( &accepted, &rejected );
+        error( &accepted, &rejected, line );
     }
     
     accepted_ = accepted;
@@ -621,12 +621,13 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         std::ptrdiff_t finish = nodes_.end() - nodes_.begin();
 
         debug_reduce( transition->reduced_symbol, start, finish );
+        int line = i != nodes_.end() ? nodes_[start].line() : 0;
         UserData user_data = handle( transition, start, finish );
         nodes_.erase( nodes_.begin() + start, nodes_.end() );
         user_data_.erase( user_data_.begin() + start, user_data_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         LALR_ASSERT( transition );
-        ParserNode node( transition->state, symbol );
+        ParserNode node( transition->state, symbol, line );
         nodes_.push_back( node );
         user_data_.push_back( user_data );
     }
@@ -654,7 +655,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
 //  A variable to receive whether or not this Parser has rejected its input.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted, bool* rejected )
+void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted, bool* rejected, int line )
 {
     LALR_ASSERT( state_machine_ );
     LALR_ASSERT( !nodes_.empty() );
@@ -671,7 +672,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
             switch ( transition->type )
             {
                 case TRANSITION_SHIFT:
-                    shift( transition, std::basic_string<Char, Traits, Allocator>(), 0 );
+                    shift( transition, std::basic_string<Char, Traits, Allocator>(), line );
                     handled = true;
                     break;
 

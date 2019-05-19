@@ -89,7 +89,7 @@ class Parser
         UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
         void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
-        void error( bool* accepted, bool* rejected );
+        void error( bool* accepted, bool* rejected, int line );
 };
 
 }

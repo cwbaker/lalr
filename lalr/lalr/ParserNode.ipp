@@ -13,20 +13,24 @@ namespace lalr
 // @param state
 //  The %ParserState at this node.
 //
-// @param started_productions
-//  The productions that were started at this node.
+// @param state
+//  The ParserState of the parser at this node.
 //
 // @param symbol
 //  The Symbol at this node.
+//
+// @param line
+//  The line number of the symbol at this node.
 */
 template <class Char, class Traits, class Allocator>
-ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol )
+ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, int line )
 : state_( state ),
   symbol_( symbol ),
   lexeme_(),
-  line_( 0 )
+  line_( line )
 {
     LALR_ASSERT( state );
+    LALR_ASSERT( line >= 0 );
 }
 
 /**
