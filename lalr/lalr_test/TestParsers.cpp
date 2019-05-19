@@ -1251,18 +1251,18 @@ SUITE( Parsers )
         CHECK( error_policy.errors == 0 );
     }
 
-    TEST( TestIntegersErrorHandlingExample )
+    TEST( IntegersErrorHandlingExample )
     {
         const char* integers_grammar = 
             "integers { \n"
-                "%none error; \n"
-                "%none integer; \n"
-                "statements: statements statement | statement | %precedence integer; \n"
-                "statement:  \n"
-                    "integer ';' [result] |  \n"
-                    "error ';' [unexpected_error] \n"
-                "; \n"
-                "integer: \"[0-9]+\"; \n"
+            "   %none error; \n"
+            "   %none integer; \n"
+            "   statements: statements statement | statement | %precedence integer; \n"
+            "   statement:  \n"
+            "       integer ';' [result] |  \n"
+            "       error ';' [unexpected_error] \n"
+            "   ; \n"
+            "   integer: \"[0-9]+\"; \n"
             "} \n"
         ;
         PrintParserErrorPolicy error_policy;
@@ -1270,5 +1270,58 @@ SUITE( Parsers )
         compiler.compile( integers_grammar, integers_grammar + strlen(integers_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
         CHECK( compiler.parser_state_machine() );
+    }
+
+    TEST( LineNumbering )
+    {
+        const char* line_numbering_grammar = 
+            "line_numbering { \n"
+            "   %whitespace \"[ \\t\\n\\r]*\";"
+            "   %none error; \n"
+            "   %none integer; \n"
+            "   statements: statements statement | statement | %precedence integer; \n"
+            "   statement:  \n"
+            "       integer ';' [result] |  \n"
+            "       error ';' [unexpected_error] \n"
+            "   ; \n"
+            "   integer: \"[0-9]+\"; \n"
+            "} \n"
+        ;
+
+        PrintParserErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        compiler.compile( line_numbering_grammar, line_numbering_grammar + strlen(line_numbering_grammar), &error_policy );
+        CHECK( error_policy.errors == 0 );
+        CHECK( compiler.parser_state_machine() );
+
+        Parser<const char*, int> parser( compiler.parser_state_machine() );
+        parser.parser_action_handlers()
+            ( "result", [] ( const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
+                {
+                    int value = ::atoi( nodes[0].lexeme().c_str() );
+                    CHECK( value == nodes[0].line() );
+                    return value;
+                }
+            )
+        ;
+
+        const char* input =  "1;\n2;\n3;\n";
+        parser.parse( input, input + strlen(input) );
+        CHECK( parser.accepted() );
+        CHECK( parser.full() );        
+
+        parser.parser_action_handlers()
+            ( "unexpected_error", [] ( const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
+                {
+                    CHECK( nodes[0].line() == 3 );
+                    return 0;
+                }
+            )
+        ;
+
+        input =  "1;\n2;\na;\n4;\n";
+        parser.parse( input, input + strlen(input) );
+        CHECK( parser.accepted() );
+        CHECK( parser.full() );        
     }
 }
