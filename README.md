@@ -344,15 +344,15 @@ Lexical analyzer actions are attached in regular expressions using an identifier
 
 ### Error Handling
 
-Errors are handled by productions with special `error` symbol.  When a syntax error occurs the pops symbols from its stack until it finds a state from which it can accept the `error` symbol.  The `error` symbol is then shifted onto the stack and parsing continues.
+Errors are handled by adding productions containing the `error` symbol.  When a syntax error occurs the parser pops symbols from its stack until it finds a state from which it can accept the `error` symbol.  The `error` symbol is then shifted onto the stack and parsing continues.
 
 Parsing fails if there are no productions containing the `error` symbol or all of the symbols are popped from the stack without being able to accept the `error` symbol.
 
 Attach action handlers to error productions to report diagnostics and mark portions of the parse tree as having errors.  Parsing can continue and detect more errors but, most likely, the result of the parse will not be correct.
 
-Aside from its special use in resolving errors the `error` symbol behaves as a terminal.  The `error` symbol may be involved in shift/reduce conflicts resolved, as with shift/reduce conflicts on other terminals, by specifying the associativity and precedence of the `error` symbol and production that are in conflict.
+Aside from its special use in resolving errors the `error` symbol behaves as a terminal.  The `error` symbol may be involved in shift/reduce conflicts that are resolved, as with shift/reduce conflicts on other terminals, by specifying the relative associativity and precedence of the `error` symbol and production that are in conflict to resolve by shifting or reducing as required.
 
-Typical usage is to add an error production to a high level, repeated grammar element that has trailing terminal that acts as a separator.  For example statements separated by semi-colons as found in many programming languages and the following example:
+Typical usage is to add an error production for a high level, repeated symbol that has trailing terminal acting as a separator.  For example statements separated by semi-colons as found in many programming languages as illustrated in the following example:
 
 ~~~
 integers {
