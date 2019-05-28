@@ -248,7 +248,8 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
     // the terminal symbols in the grammar.
     const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
     vector<RegexToken> tokens;
-    for ( size_t i = 0; i < grammar_symbols.size(); ++i )
+    int column = 1;
+    for ( size_t i = 0; i < grammar_symbols.size(); ++i, ++column )
     {
         const GrammarSymbol* grammar_symbol = grammar_symbols[i].get();
         LALR_ASSERT( grammar_symbol );
@@ -258,7 +259,7 @@ void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& gene
             LALR_ASSERT( symbol );
             int line = grammar_symbol->line();
             RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( RegexToken(token_type, line, symbol, symbol->lexeme) );                
+            tokens.push_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
         }
     }
 

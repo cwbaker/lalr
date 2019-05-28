@@ -41,7 +41,7 @@ class RegexGenerator
         const std::vector<std::unique_ptr<RegexAction>>& actions() const;
         const std::set<std::unique_ptr<RegexState>, RegexStateLess>& states() const;
         const RegexState* start_state() const;
-        void fire_error( int line, int error, const char* format, ... ) const;
+        void fire_error( int line, int column, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         const RegexAction* add_lexer_action( const std::string& identifier );
         int generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy = nullptr );

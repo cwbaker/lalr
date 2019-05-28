@@ -226,7 +226,7 @@ Grammar& Grammar::literal( const char* literal, int line )
     LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, nullptr, literal) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, 0, nullptr, literal) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {
@@ -260,7 +260,7 @@ Grammar& Grammar::regex( const char* regex, int line )
     LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, nullptr, regex) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, 0, nullptr, regex) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {
@@ -369,13 +369,13 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
     if ( productions_.empty() )
     {
         LALR_ASSERT( start_symbol_ );
-        unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, NULL) );
+        unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
         productions_.push_back( move(production) );
     }
 
-    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, -1, nullptr) );
+    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, -1, -1, nullptr) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
     return productions_.back().get();

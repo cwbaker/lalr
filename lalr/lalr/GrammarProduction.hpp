@@ -20,16 +20,18 @@ class GrammarProduction
     int index_; ///< The index of this GrammarProduction.
     GrammarSymbol* symbol_; ///< The symbol on the left hand side of this GrammarProduction.
     int line_; ///< The line in the grammar that this GrammarProduction was defined on.
+    int column_; ///< The column in the grammar that this GrammarProduction was defined on.
     const GrammarAction* action_; ///< The action taken when this GrammarProduction is reduced or null if there is no action.
     std::vector<GrammarSymbol*> symbols_; ///< The symbols on the right hand side of this production.
     const GrammarSymbol* precedence_symbol_; /// The symbol that defines precedence for this production or null to use the right most terminal.
 
     public:
-        GrammarProduction( int index, GrammarSymbol* symbol, int line, const GrammarAction* action );
+        GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action );
 
         int index() const;
         GrammarSymbol* symbol() const;
         int line() const;
+        int column() const;
         int count_references_to_symbol( const GrammarSymbol* symbol ) const;
         const GrammarSymbol* find_rightmost_terminal_symbol() const;
         const GrammarSymbol* symbol_by_position( int position ) const;

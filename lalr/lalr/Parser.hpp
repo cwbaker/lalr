@@ -62,8 +62,8 @@ class Parser
 
         void reset();
         void parse( Iterator start, Iterator finish );
-        bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
-        bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
+        bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
+        bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
         bool accepted() const;
         bool full() const;
         const UserData& user_data() const;
@@ -75,7 +75,7 @@ class Parser
         void set_action_handler( const char* identifier, ParserActionFunction function );
         void set_lexer_action_handler( const char* identifier, LexerActionFunction function );
 
-        void fire_error( int error, const char* format, ... ) const;
+        void fire_error(int line, int column, int error, const char* format, ... ) const;
         void fire_printf( const char* format, ... ) const;
         
         void set_debug_enabled( bool debug_enabled );
@@ -87,9 +87,9 @@ class Parser
         void debug_shift( const ParserNode& node ) const;
         void debug_reduce( const ParserSymbol* reduced_symbol, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
         UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
-        void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
+        void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
         void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
-        void error( bool* accepted, bool* rejected, int line );
+        void error( bool* accepted, bool* rejected, int line, int column );
 };
 
 }

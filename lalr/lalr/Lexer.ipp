@@ -57,6 +57,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
   end_(),
   lexeme_(),
   line_( 0 ),
+  column_ ( 1 ),
   symbol_( NULL ),
   full_( false )
 {
@@ -139,6 +140,18 @@ int Lexer<Iterator, Char, Traits, Allocator>::line() const
 }
 
 /**
+// Get the column number at the start of the most recently matched lexeme.
+//
+// @return
+//  The column number.
+*/
+template <class Iterator, class Char, class Traits, class Allocator>
+int Lexer<Iterator, Char, Traits, Allocator>::column() const
+{
+    return column_;
+}
+
+/**
 // Get the most recently scanned symbol.
 //
 // @return
@@ -189,6 +202,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::reset( Iterator start, Iterator f
 {
     lexeme_.clear();
     line_ = 0;
+    column_ = 0;
     position_ = PositionIterator<Iterator>( start, finish );
     end_ = finish;
     symbol_ = NULL;
@@ -213,6 +227,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::advance()
     skip();
     lexeme_.clear();
     line_ = position_.line();
+    column_ = position_.column();
     full_ = position_.ended();
     symbol_ = !position_.ended() ? run() : end_symbol_;
 }
@@ -324,7 +339,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
     LALR_ASSERT( state_machine_->start_state );
     LALR_ASSERT( !position_.ended() );
 
-    fire_error( 0, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
+    fire_error( line_, column_, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
     const LexerTransition* transition = NULL;
     const LexerState* state = state_machine_->start_state;
@@ -340,6 +355,9 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 // @param line
 //  The line number to associate the error with (if any).
 //
+// @param column
+//  The column number to associate the error with (if any).
+//
 // @param error
 //  The error code of the error.
 //
@@ -350,13 +368,13 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 //  Arguments as described by *format*.
 */
 template <class Iterator, class Char, class Traits, class Allocator>
-void Lexer<Iterator, Char, Traits, Allocator>::fire_error( int line, int error, const char* format, ... ) const
+void Lexer<Iterator, Char, Traits, Allocator>::fire_error( int line, int column, int error, const char* format, ... ) const
 {
     if ( error_policy_ )
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, error, format, args );
+        error_policy_->lalr_error( line, column, error, format, args );
         va_end( args );
     }    
 }
