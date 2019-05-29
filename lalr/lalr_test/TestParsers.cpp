@@ -34,7 +34,7 @@ SUITE( Parsers )
     class IgnoreParserErrorPolicy : public ErrorPolicy
     {
         public:
-            void lalr_error( int /*line*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
+            void lalr_error( int /*line*/, int /*column*/, int /*error*/, const char* /*format*/, va_list /*args*/ )
             {
             }
     };
@@ -53,11 +53,11 @@ SUITE( Parsers )
             vprintf( format, args );
         }
     
-        void lalr_error( int line, int /*error*/, const char* format, va_list args )
+        void lalr_error( int line, int column, int /*error*/, const char* format, va_list args )
         {
             char message [1024];
             vsnprintf( message, sizeof(message), format, args );
-            printf( "(%d): error: %s.\n", line, message );
+            printf( "(%d:%d): error: %s.\n", line, column, message );
             ++errors;
         }
     };
@@ -73,7 +73,7 @@ SUITE( Parsers )
         {
         }
 
-        void lalr_error( int /*line*/, int error, const char* /*format*/, va_list /*args*/ )
+        void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
         {
             (void) error;
             ++errors;
@@ -92,7 +92,7 @@ SUITE( Parsers )
         {
         }
 
-        void lalr_error( int /*line*/, int error, const char* /*format*/, va_list /*args*/ )
+        void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
         {
             (void) error;
             ++errors;

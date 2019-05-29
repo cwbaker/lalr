@@ -21,14 +21,16 @@ class ParserNode
     const ParserSymbol* symbol_; ///< The symbol at this node.
     std::basic_string<Char, Traits, Allocator> lexeme_; ///< The lexeme at this node (empty if this node's symbol is non-terminal).
     int line_; ///< The line number at the start of the lexeme at this node.
+    int column_; ///< The column number at the start of the lexeme at this node.
 
     public:
-        ParserNode( const ParserState* state, const ParserSymbol* symbol, int line );
-        ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line );
+        ParserNode( const ParserState* state, const ParserSymbol* symbol, int line, int column );
+        ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
         const ParserState* state() const;
         const ParserSymbol* symbol() const;
         const std::basic_string<Char, Traits, Allocator>& lexeme() const;
         int line() const;
+        int column() const;
 };
 
 }

@@ -38,6 +38,7 @@ class Lexer
     Iterator end_; ///< One past the last position of the input sequence for this Lexer.
     std::basic_string<Char, Traits, Allocator> lexeme_; ///< The most recently matched lexeme.
     int line_; ///< The line number at the start of the most recently matched lexeme.
+    int column_; ///< The column number at the start of the most recently matched lexeme.
     const void* symbol_; ///< The most recently matched symbol or null if no symbol has been matched.
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
 
@@ -46,6 +47,7 @@ class Lexer
         void set_action_handler( const char* identifier, LexerActionFunction function );
         const std::basic_string<Char, Traits, Allocator>& lexeme() const;
         int line() const;
+        int column() const;
         const void* symbol() const;
         const Iterator& position() const;
         bool full() const;
@@ -56,7 +58,7 @@ class Lexer
         void skip();
         const void* run();
         void error();
-        void fire_error( int line, int error, const char* format, ... ) const;
+        void fire_error( int line, int column, int error, const char* format, ... ) const;
         const LexerTransition* find_transition_by_character( const LexerState* state, int character ) const;
 };
 

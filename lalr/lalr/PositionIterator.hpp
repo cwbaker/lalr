@@ -26,13 +26,15 @@ class PositionIterator
         Iterator end_; ///< One past the last position of the input sequence for this iterator.
         bool ended_; ///< True if this iterator has reached its end.
         int line_; ///< The current line number of this iterator.
+        int column_; ///< The current column number of this iterator.
     
     public:
         PositionIterator()
         : position_(),
           end_(),
           ended_( true ),
-          line_( 1 )
+          line_( 1 ),
+          column_( 1 )
         {
         }
     
@@ -40,7 +42,8 @@ class PositionIterator
         : position_( begin ),
           end_( end ),
           ended_( begin == end ),
-          line_( 1 )
+          line_( 1 ),
+          column_( 1 )
         {
         }        
         
@@ -48,7 +51,8 @@ class PositionIterator
         : position_( iterator.position_ ),
           end_( iterator.end_ ),
           ended_( iterator.ended_ ),
-          line_( iterator.line_ )
+          line_( iterator.line_ ),
+          column_(iterator.column_)
         {
         }
                 
@@ -60,6 +64,7 @@ class PositionIterator
                 end_ = iterator.end_;
                 ended_ = iterator.ended_;
                 line_ = iterator.line_;
+                column_ = iterator.column_;
             }
             
             return *this;
@@ -69,9 +74,11 @@ class PositionIterator
         {
             int character = *position_;
             ++position_;
+            ++column_;
             if ( character == '\n' || (character == '\r' && (position_ == end_ || *position_ != '\n')) )
             {
                 ++line_;
+                column_ = 1;
             }
             
             ended_ = position_ == end_;
@@ -102,6 +109,11 @@ class PositionIterator
         {
             return line_;
         }
+
+        int column() const
+        {
+            return column_;
+        }
                 
         bool operator!=( const PositionIterator& iterator ) const
         {
@@ -119,6 +131,7 @@ class PositionIterator
             position_ = position;
             ended_ = position_ == end_;
             line_ += lines;
+            column_ = 1;
         }
 };
 

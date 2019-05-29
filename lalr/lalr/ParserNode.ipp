@@ -21,16 +21,21 @@ namespace lalr
 //
 // @param line
 //  The line number of the symbol at this node.
+//
+// @param column
+//  The column number of the symbol at this node.
 */
 template <class Char, class Traits, class Allocator>
-ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, int line )
+ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, int line, int column )
 : state_( state ),
   symbol_( symbol ),
   lexeme_(),
-  line_( line )
+  line_( line ),
+  column_( column )
 {
     LALR_ASSERT( state );
     LALR_ASSERT( line >= 0 );
+    LALR_ASSERT( column >= 1 );
 }
 
 /**
@@ -50,16 +55,21 @@ ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const
 //
 // @param line
 //  The line number at the start of the lexeme (assumed >= 0).
+//
+// @param column
+//  The column number at the start of the lexeme (assumed >= 1).
 */
 template <class Char, class Traits, class Allocator>
-ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line )
+ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
 : state_( state ),
   symbol_( symbol ),
   lexeme_( lexeme ),
-  line_( line )
+  line_( line ),
+  column_( column )
 {
     LALR_ASSERT( state );
     LALR_ASSERT( line >= 0 );
+    LALR_ASSERT( column >= 1 );
 }
 
 /**
@@ -108,6 +118,18 @@ template <class Char, class Traits, class Allocator>
 int ParserNode<Char, Traits, Allocator>::line() const
 {
     return line_;
+}
+
+/**
+// Get the column number at the start of this node's lexeme.
+//
+// @return
+//  The column number.
+*/
+template <class Char, class Traits, class Allocator>
+int ParserNode<Char, Traits, Allocator>::column() const
+{
+    return column_;
 }
 
 }

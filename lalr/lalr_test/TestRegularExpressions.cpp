@@ -1006,8 +1006,8 @@ SUITE( RegularExpressions )
         void* lt = (void*) 0x1;
         void* lt_question_xml = (void*) 0x2;
         std::vector<RegexToken> tokens;
-        tokens.push_back( RegexToken(TOKEN_LITERAL, 0, lt, "<") );
-        tokens.push_back( RegexToken(TOKEN_LITERAL, 0, lt_question_xml, "<?xml") );
+        tokens.push_back( RegexToken(TOKEN_LITERAL, 0, 1, lt, "<") );
+        tokens.push_back( RegexToken(TOKEN_LITERAL, 0, 1, lt_question_xml, "<?xml") );
         RegexCompiler compiler;
         compiler.compile( tokens );
         Lexer<const char*> lexer( compiler.state_machine() );

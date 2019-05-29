@@ -711,7 +711,7 @@ void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
     {
         ++errors_;
         LALR_ASSERT( lexer_generator_ );
-        lexer_generator_->fire_error( token.line(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
+        lexer_generator_->fire_error( token.line(), token.column(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
         nodes_.clear();
     }
     else

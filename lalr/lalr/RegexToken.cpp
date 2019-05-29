@@ -10,9 +10,10 @@ using std::find;
 using std::vector;
 using namespace lalr;
 
-RegexToken::RegexToken( RegexTokenType type, int line, const void* symbol, const std::string& lexeme )
+RegexToken::RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme )
 : type_( type ),
   line_( line ),
+  column_( column ),
   symbol_( symbol ),
   lexeme_( lexeme ),
   conflicted_with_()
@@ -27,6 +28,11 @@ RegexTokenType RegexToken::type() const
 int RegexToken::line() const
 {
     return line_;
+}
+
+int RegexToken::column() const
+{
+    return column_;
 }
 
 const void* RegexToken::symbol() const

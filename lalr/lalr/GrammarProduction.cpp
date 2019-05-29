@@ -27,10 +27,11 @@ using namespace lalr;
 //  The action taken when the production is reduced or null if the production
 //  has no action.
 */
-GrammarProduction::GrammarProduction( int index, GrammarSymbol* symbol, int line, const GrammarAction* action )
+GrammarProduction::GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action )
 : index_( index ),
   symbol_( symbol ),
   line_( line ),
+  column_( column ),
   action_( action ),
   precedence_symbol_( NULL )
 {
@@ -69,6 +70,17 @@ GrammarSymbol* GrammarProduction::symbol() const
 int GrammarProduction::line() const
 {
     return line_;
+}
+
+/**
+// Get the column in the grammar that this production is defined on.
+//
+// @return
+//  The column.
+*/
+int GrammarProduction::column() const
+{
+    return column_;
 }
 
 /**

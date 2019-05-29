@@ -26,7 +26,7 @@ SUITE( PrecedenceDirectives )
             {
             }
 
-            void lalr_error( int /*line*/, int error, const char* format, va_list args )
+            void lalr_error( int /*line*/, int /*column*/, int error, const char* format, va_list args )
             {
                 ++errors_;
                 char message [1024];

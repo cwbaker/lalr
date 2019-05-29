@@ -118,6 +118,9 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
 // @param line
 //  The line that the error occured on.
 //
+// @param column
+//  The column that the error occured on.
+//
 // @param error
 //  The error code.
 //
@@ -127,14 +130,14 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
 // @param ...
 //  Arguments described by *format*.
 */
-void GrammarGenerator::fire_error( int line, int error, const char* format, ... )
+void GrammarGenerator::fire_error( int line, int column, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, error, format, args );
+        error_policy_->lalr_error( line, column, error, format, args );
         va_end( args );
     }
 }
@@ -374,13 +377,14 @@ void GrammarGenerator::check_for_undefined_symbol_errors()
 {
     if ( errors_ == 0 )
     {
-        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        int column = 1;
+        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i, ++column )
         {
             const GrammarSymbol* symbol = i->get();
             LALR_ASSERT( symbol );
             if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && symbol->precedence() <= 0 )
             {
-                fire_error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->identifier().c_str(), identifier_.c_str() );
+                fire_error( 1, column, PARSER_ERROR_UNDEFINED_SYMBOL, "Undefined symbol '%s' in grammar '%s'", symbol->identifier().c_str(), identifier_.c_str() );
             }
         }
     }
@@ -396,7 +400,8 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
 {
     if ( errors_ == 0 )
     {
-        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+        int column = 1;
+        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i, ++column )
         {
             const GrammarSymbol* symbol = i->get();
             LALR_ASSERT( symbol );
@@ -416,7 +421,7 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
 
                 if ( references == 0 )
                 {
-                    fire_error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
+                    fire_error( 1, column, PARSER_ERROR_UNREFERENCED_SYMBOL, "Unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
                 }
             }
         }
@@ -434,13 +439,14 @@ void GrammarGenerator::check_for_error_symbol_on_left_hand_side_errors()
 {
     LALR_ASSERT( error_symbol_ );
 
-    for ( auto i = symbols_.begin(); i != symbols_.end(); ++i )
+    int column = 1;
+    for ( auto i = symbols_.begin(); i != symbols_.end(); ++i, ++column )
     {
         GrammarSymbol* symbol = i->get();
         LALR_ASSERT( symbol );
         if ( !symbol->productions().empty() && symbol->lexeme() == error_symbol_->lexeme() )
         {
-            fire_error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
+            fire_error( 1, column, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "The 'error' symbol appears on the left hand side of a production" );
         }
     }
 }
@@ -762,7 +768,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             {
                 if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
                 {
-                    fire_error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Shift/reduce conflict on '%s' for '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str() );
+                    fire_error( production->line(), production->column(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Shift/reduce conflict on '%s' for '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str() );
                 }
                 else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
                 {
@@ -776,7 +782,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             {
                 if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
                 {
-                    fire_error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str() );
+                    fire_error( production->line(), production->column(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "Reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str() );
                 }
                 else if ( production->precedence() > transition->precedence() )
                 {

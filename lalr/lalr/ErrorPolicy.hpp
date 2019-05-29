@@ -14,7 +14,7 @@ class ErrorPolicy
 {
 public:
     virtual ~ErrorPolicy();
-    virtual void lalr_error( int line, int error, const char* format, va_list args );
+    virtual void lalr_error( int line, int column, int error, const char* format, va_list args );
     virtual void lalr_vprintf( const char* format, va_list args );
 };
 

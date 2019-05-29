@@ -64,6 +64,9 @@ const RegexState* RegexGenerator::start_state() const
 // @param line
 //  The line number that the error occured on.
 //
+// @param column
+//  The column number that the error occured on.
+//
 // @param error
 //  The error code that indicates the error that occured.
 // 
@@ -74,13 +77,13 @@ const RegexState* RegexGenerator::start_state() const
 // @param ...
 //  Parameters as described by *format*.
 */
-void RegexGenerator::fire_error( int line, int error, const char* format, ... ) const
+void RegexGenerator::fire_error( int line, int column, int error, const char* format, ... ) const
 {
     if ( error_policy_ )
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, error, format, args );
+        error_policy_->lalr_error( line, column, error, format, args );
         va_end( args );
     }
 }
@@ -152,7 +155,7 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
     start_state_ = nullptr;
     ranges_.clear();
 
-    RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, symbol, regular_expression );
+    RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, 0, symbol, regular_expression );
     generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
     error_policy_ = nullptr;
     return 0;
@@ -368,7 +371,7 @@ void RegexGenerator::generate_symbol_for_state( RegexState* state ) const
                     LALR_ASSERT( token );
                     if ( !token->conflicted_with(node->get_token()) )
                     {
-                        fire_error( token->line(), LEXER_ERROR_SYMBOL_CONFLICT, "'%s' and '%s' conflict but are both defined on line %d", token->lexeme().c_str(), node->get_token()->lexeme().c_str(), token->line() );                        
+                        fire_error( token->line(), token->column(), LEXER_ERROR_SYMBOL_CONFLICT, "'%s' and '%s' conflict but are both defined on line %d", token->lexeme().c_str(), node->get_token()->lexeme().c_str(), token->line() );                        
                         token->add_conflicted_with( node->get_token() );
                     }
                 }
