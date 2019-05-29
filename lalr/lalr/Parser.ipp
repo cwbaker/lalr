@@ -557,8 +557,8 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
     LALR_ASSERT( start <= finish );
     LALR_ASSERT( transition );
 
-    const UserData* user_data = start < ptrdiff_t(user_data_.size()) ? &user_data_[start] : nullptr;
-    const ParserNode* nodes = start < ptrdiff_t(nodes_.size()) ? &nodes_[start] : nullptr;
+    const UserData* user_data = size_t(start) < user_data_.size() ? &user_data_[start] : nullptr;
+    const ParserNode* nodes = size_t(start) < nodes_.size() ? &nodes_[start] : nullptr;
     size_t length = finish - start;
 
     int action = transition->action;
