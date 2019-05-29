@@ -479,7 +479,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
         const std::string& lexeme = node.lexeme();
         int line = node.line();
         int column = node.column();
-        fire_printf( "SHIFT: (%s %s %d)\n", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
+        fire_printf( "SHIFT: (%s %s %d:%d)\n", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
     }
 }
 
@@ -513,7 +513,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
             const std::string& lexeme = node->lexeme();
             int line = node->line();
             int column = node->column();
-            fire_printf( "(%s %s %d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
+            fire_printf( "(%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
             ++node;
         }
         
@@ -523,7 +523,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
             const std::string& lexeme = node->lexeme();
             int line = node->line();
             int column = node->column();
-            fire_printf( " (%s %s %d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
+            fire_printf( " (%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
             ++node;
         }
         
@@ -701,7 +701,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     
     if ( nodes_.empty() )
     {
-        fire_error(line, column, PARSER_ERROR_SYNTAX, "Syntax error" );
+        fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error" );
         *rejected = true;
     }
 }
