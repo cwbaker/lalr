@@ -557,17 +557,26 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
     LALR_ASSERT( start <= finish );
     LALR_ASSERT( transition );
 
+    const UserData* user_data = start < ptrdiff_t(user_data_.size()) ? &user_data_[start] : nullptr;
+    const ParserNode* nodes = start < ptrdiff_t(nodes_.size()) ? &nodes_[start] : nullptr;
+    size_t length = finish - start;
+
     int action = transition->action;
     if ( action != ParserAction::INVALID_INDEX )
     {
         LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[action].function_( &user_data_[start], &nodes_[start], finish - start );
+            return action_handlers_[action].function_( user_data, nodes, length );
         }
     }
 
-    return default_action_handler_ ? default_action_handler_( &user_data_[start], &nodes_[start], finish - start ) : UserData();
+    if ( default_action_handler_ )
+    {
+        return default_action_handler_( user_data, nodes, length );
+    }
+
+    return UserData();
 }
 
 /**
