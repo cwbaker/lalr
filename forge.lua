@@ -1,8 +1,8 @@
 
 local paths = {
     package.path;
-    forge:root( 'lalr/?.lua' );
-    forge:root( 'lalr/?/init.lua' );
+    root( 'lalr/?.lua' );
+    root( 'lalr/?/init.lua' );
 };
 package.path = table.concat( paths, ';' );
 
@@ -10,27 +10,27 @@ variant = variant or 'debug';
 
 local forge = require 'forge.cc' {    
     identifier = 'cc_${platform}_${architecture}';
-    platform = forge:operating_system();
-    bin = forge:root( ('%s/bin'):format(variant) );
-    lib = forge:root( ('%s/lib'):format(variant) );
-    obj = forge:root( ('%s/obj'):format(variant) );
+    platform = operating_system();
+    bin = root( ('%s/bin'):format(variant) );
+    lib = root( ('%s/lib'):format(variant) );
+    obj = root( ('%s/obj'):format(variant) );
     include_directories = {
-        forge:root( 'lalr' );
-        forge:root( 'unittest-cpp' );
+        root( 'lalr' );
+        root( 'unittest-cpp' );
     };
     library_directories = {
-        forge:root( ('%s/lib'):format(variant) );
+        root( ('%s/lib'):format(variant) );
     };
     defines = {
-        ('BUILD_PLATFORM_%s'):format( forge:upper(platform) );
-        ('BUILD_VARIANT_%s'):format( forge:upper(variant) );
+        ('BUILD_PLATFORM_%s'):format( upper(platform) );
+        ('BUILD_VARIANT_%s'):format( upper(variant) );
         ('BUILD_VERSION="\\"%s\\""'):format( version );
     };
     visual_studio = {
-        sln = forge:root( 'lalr.sln' );
+        sln = root( 'lalr.sln' );
     };
     xcode = {
-        xcodeproj = forge:root( 'lalr.xcodeproj' );
+        xcodeproj = root( 'lalr.xcodeproj' );
     };
 
     architecture = 'x86_64';

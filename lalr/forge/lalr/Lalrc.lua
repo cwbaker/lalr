@@ -12,7 +12,7 @@ end
 function Lalrc.build( forge, target )
     local lalrc = target:dependency(1);
     local filename = target:filename();
-    printf( forge:leaf(filename) );
+    printf( leaf(filename) );
     forge:system( lalrc, ('lalrc -o "%s" "%s"'):format(filename, target:dependency(2)) );
 end
 
