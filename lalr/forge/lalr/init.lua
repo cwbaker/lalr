@@ -1,17 +1,17 @@
 
 local lalr = {};
 
-function lalr.configure( forge, lalr_settings )
+function lalr.configure( toolset, lalr_settings )
 	return {
 		lalrc = lalr_settings.lalrc or '${bin}/lalrc';
 	};
 end
 
-function lalr.initialize( forge )
-	if forge:configure(lalr, 'lalr') then
+function lalr.initialize( toolset )
+	if toolset:configure(lalr, 'lalr') then
 		local Lalrc = require 'forge.lalr.Lalrc';
-		forge.Lalrc = forge:PatternElement( Lalrc );
-		return forge;
+		toolset.Lalrc = forge:PatternElement( Lalrc );
+		return toolset;
 	end
 end
 

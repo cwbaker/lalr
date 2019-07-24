@@ -1,11 +1,11 @@
 
-for _, forge in forge:builds('cc.*') do    
-    forge:StaticLibrary '${lib}/lalr_${architecture}' {
-        forge:Cxx '${obj}/%1' {
+for _, toolset in toolsets('cc.*') do    
+    toolset:StaticLibrary '${lib}/lalr_${architecture}' {
+        toolset:Cxx '${obj}/%1' {
             'ErrorPolicy.cpp',
         };
 
-        forge:Cxx '${obj}/%1' {
+        toolset:Cxx '${obj}/%1' {
             'Grammar.cpp',
             'GrammarAction.cpp',
             'GrammarCompiler.cpp',
@@ -20,7 +20,7 @@ for _, forge in forge:builds('cc.*') do
             'GrammarTransition.cpp'
         };
 
-        forge:Cxx '${obj}/%1' {
+        toolset:Cxx '${obj}/%1' {
             'RegexAction.cpp',
             'RegexCharacter.cpp',
             'RegexCompiler.cpp',

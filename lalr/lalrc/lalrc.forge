@@ -1,9 +1,9 @@
 
-for _, forge in forge:builds('cc.*') do    
-    forge:all {
-        forge:Executable '${bin}/lalrc' {
+for _, toolset in toolsets('cc.*') do    
+    toolset:all {
+        toolset:Executable '${bin}/lalrc' {
             '${lib}/lalr_${architecture}';
-            forge:Cxx '${obj}/%1' {
+            toolset:Cxx '${obj}/%1' {
                 'lalrc.cpp'
             };
         };
