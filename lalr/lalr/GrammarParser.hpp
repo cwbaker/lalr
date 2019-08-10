@@ -6,21 +6,23 @@
 namespace lalr
 {
 
+class ErrorPolicy;
 class Grammar;
 class ParserStateMachine;
 
 class GrammarParser
 {
+    ErrorPolicy* error_policy_;
     Grammar* grammar_;
     const char* position_;
     const char* end_;
     int line_;
     std::string lexeme_;
-    bool successful_;
+    int errors_; ///< The number of errors that occured during parsing and generation.
 
 public:
     GrammarParser();
-    bool parse( const char* start, const char* finish, Grammar* grammar );
+    int parse( const char* start, const char* finish, ErrorPolicy* error_policy, Grammar* grammar );
 
 private:
     bool match_grammar();
@@ -48,6 +50,8 @@ private:
     bool match( const char* lexeme );
     bool match_without_skipping_whitespace( const char* lexeme );
     bool expect( const char* lexeme );
+    void error( int line, int column, int error, const char* format, ... );
+    static bool is_newline( int character );
 };
 
 }

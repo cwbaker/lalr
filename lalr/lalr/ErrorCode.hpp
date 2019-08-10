@@ -10,6 +10,8 @@ namespace lalr
 enum ErrorCode
 {
     PARSER_ERROR_NONE, ///< No %error.
+    LALR_ERROR_SYNTAX, ///< Syntax %error occured while parsing input.
+    LALR_ERROR_UNTERMINATED_LITERAL, ///< Unterminated literal in an lalr grammar.
     LEXER_ERROR_SYNTAX, ///< Syntax %error occured while parsing some input.
     LEXER_ERROR_SYMBOL_CONFLICT, ///< A lexer state matches more than one symbol.
     LEXER_ERROR_LEXICAL_ERROR, ///< A lexical error occured while scanning an input sequence.

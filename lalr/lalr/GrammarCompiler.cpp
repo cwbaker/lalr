@@ -72,15 +72,17 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
     Grammar grammar;
 
     GrammarParser parser;
-    parser.parse( begin, end, &grammar );
-
-    GrammarGenerator generator;
-    int errors = generator.generate( grammar, error_policy );
+    int errors = parser.parse( begin, end, error_policy, &grammar );
     if ( errors == 0 )
     {
-        populate_parser_state_machine( grammar, generator );
-        populate_lexer_state_machine( generator, error_policy );
-        populate_whitespace_lexer_state_machine( grammar, error_policy );
+        GrammarGenerator generator;
+        errors = generator.generate( grammar, error_policy );
+        if ( errors == 0 )
+        {
+            populate_parser_state_machine( grammar, generator );
+            populate_lexer_state_machine( generator, error_policy );
+            populate_whitespace_lexer_state_machine( grammar, error_policy );
+        }
     }
     return errors;
 }

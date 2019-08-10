@@ -7,6 +7,7 @@
 #include "Grammar.hpp"
 #include "Parser.ipp"
 #include "ParserStateMachine.hpp"
+#include "ErrorPolicy.hpp"
 #include "assert.hpp"
 #include <string>
 
@@ -14,28 +15,34 @@ using std::string;
 using namespace lalr;
 
 GrammarParser::GrammarParser()
-: grammar_( nullptr ),
+: error_policy_( nullptr ),
+  grammar_( nullptr ),
   position_( nullptr ),
   end_( nullptr ),
   line_( 1 ),
   lexeme_(),
-  successful_( false )
+  errors_( 0 )
 {
     const size_t lexeme_reserve = 256;
     lexeme_.reserve( lexeme_reserve );
 }
 
-bool GrammarParser::parse( const char* start, const char* finish, Grammar* grammar )
+int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* error_policy, Grammar* grammar )
 {
     LALR_ASSERT( start );
     LALR_ASSERT( finish );
     LALR_ASSERT( grammar );
+    error_policy_ = error_policy;
     grammar_ = grammar;
     position_ = start;
     end_ = finish;
     line_ = 1;
-    successful_ = true;
-    return match_grammar() && successful_;
+    errors_ = 0;
+    if ( !match_grammar() )
+    {
+        error( 1, 0, LALR_ERROR_SYNTAX, "parsing grammar failed" );
+    }
+    return errors_;
 }
 
 bool GrammarParser::match_grammar()
@@ -216,15 +223,20 @@ bool GrammarParser::match_literal()
     {
         bool escaped = false;
         const char* position = position_;
-        while ( position != end_ && (*position != '\'' || escaped) )
+        while ( position != end_ && (*position != '\'' || escaped) && !is_newline(*position) )
         {
             escaped = *position == '\\';
             ++position;
         }
-        lexeme_.assign( position_, position );
-        position_ = position;
-        expect( "'" );
-        return true;
+        if ( position == end_ || !is_newline(*position) )
+        {
+            lexeme_.assign( position_, position );
+            position_ = position;
+            expect( "'" );
+            return true;
+        }
+        error( line_, 0, LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        return false;
     }
     return false;
 }
@@ -389,6 +401,24 @@ bool GrammarParser::expect( const char* lexeme )
         return true;
     }
     position_ = end_;
-    successful_ = false;
+    error( line_, 0, LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
     return false;
+}
+
+void GrammarParser::error( int line, int column, int error, const char* format, ... )
+{
+    LALR_ASSERT( format );
+    ++errors_;
+    if ( error_policy_ )
+    {
+        va_list args;
+        va_start( args, format );
+        error_policy_->lalr_error( line, column, error, format, args );
+        va_end( args );
+    }
+}
+
+bool GrammarParser::is_newline( int character )
+{
+    return character == '\n' || character == '\r';
 }
