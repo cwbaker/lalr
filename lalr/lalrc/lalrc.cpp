@@ -19,6 +19,7 @@
 #include <lalr/ErrorPolicy.hpp>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,6 +28,7 @@
 
 using std::string;
 using std::vector;
+using std::count;
 using namespace lalr;
 
 static FILE* file_ = nullptr;
@@ -38,6 +40,7 @@ static void write( const char* format, ... );
 static void print_cxx_parser_state_machine( const ParserStateMachine* state_machine );
 static void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine );
 static void generate_cxx_lexer_state_machine( const LexerStateMachine* lexer_state_machine, const char* prefix );
+static string sanitize( const char* input );
 
 int main( int argc, char** argv )
 {
@@ -275,7 +278,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
         write( "    {%d, \"%s\", \"%s\", (SymbolType) %d},\n", 
             symbol->index, 
             symbol->identifier, 
-            symbol->lexeme,
+            sanitize(symbol->lexeme).c_str(),
             symbol->type
         );
     }
@@ -446,4 +449,23 @@ void generate_cxx_lexer_state_machine( const LexerStateMachine* state_machine, c
         write( "};\n" );
         write( "\n" );
     }
+}
+
+string sanitize( const char* input )
+{
+    size_t length = strlen( input );
+    size_t backslashes = count( input, input + length, '\\' );
+
+    string output;
+    output.reserve( length + backslashes );
+    for ( const char* i = input; i != input + length; ++i )
+    {
+        char character = *i;
+        if (character == '\\' || character == '"')
+        {
+            output.push_back('\\');
+        }
+        output.push_back(character);
+    }
+    return output;
 }
