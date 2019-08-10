@@ -70,29 +70,6 @@ bool GrammarParser::match_statement()
 
 bool GrammarParser::match_associativity_statement()
 {
-    if ( match("%left") )
-    {
-        grammar_->left( line_ );
-        match_symbols();
-        expect( ";" );
-        return true;
-    }
-    else if ( match("%right") )
-    {
-        grammar_->right( line_ );
-        match_symbols();
-        expect( ";" );
-        return true;
-    }
-    else if ( match("%none") )
-    {
-        grammar_->none( line_ );
-        match_symbols();
-        expect( ";" );
-        return true;
-    }
-    return false;
-
     if ( match_associativity() )
     {
         match_symbols();
