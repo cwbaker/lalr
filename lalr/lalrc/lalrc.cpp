@@ -32,6 +32,7 @@ using std::count;
 using namespace lalr;
 
 static FILE* file_ = nullptr;
+static int errors_ = 0;
 
 static void error( const char* format, ... );
 static void open( const char* filename );
@@ -147,11 +148,12 @@ int main( int argc, char** argv )
         close();
     }
 
-    return EXIT_SUCCESS;
+    return errors_ == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static void error( const char* format, ... )
 {
+    ++errors_;
     va_list args;
     va_start( args, format );
     vfprintf( stderr, format, args );
