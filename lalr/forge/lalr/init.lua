@@ -1,5 +1,5 @@
 
-local lalr = {};
+local lalr = forge:ToolsetPrototype( 'lalr' );
 
 function lalr.configure( toolset, lalr_settings )
 	return {
@@ -8,11 +8,8 @@ function lalr.configure( toolset, lalr_settings )
 end
 
 function lalr.initialize( toolset )
-	if toolset:configure(lalr, 'lalr') then
-		local Lalrc = require 'forge.lalr.Lalrc';
-		toolset.Lalrc = forge:PatternElement( Lalrc );
-		return toolset;
-	end
+	toolset.Lalrc = require( 'forge.lalr.Lalrc' );
+	return true;
 end
 
 return lalr;

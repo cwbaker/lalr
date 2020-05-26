@@ -8,7 +8,7 @@ package.path = table.concat( paths, ';' );
 
 variant = variant or 'debug';
 
-local forge = require 'forge.cc' {    
+local cc = require 'forge.cc' {    
     identifier = 'cc_${platform}_${architecture}';
     platform = operating_system();
     bin = root( ('%s/bin'):format(variant) );
@@ -56,18 +56,18 @@ local forge = require 'forge.cc' {
 
 -- Bump the C++ standard to c++14 when building on Windows as that is the 
 -- closest standard supported by Microsoft Visual C++.
-local settings = forge.settings;
+local settings = cc.settings;
 if settings.platform == 'windows' then
     settings.standard = 'c++14';
 end
 
 local lalr = require 'forge.lalr';
-lalr.initialize( forge );
+cc:install( lalr );
 
 buildfile 'lalr/lalr.forge';
 buildfile 'unittest-cpp/unittest-cpp.forge';
 
-forge:all {
+cc:all {
     'lalr/lalrc/all',
     'lalr/lalr_examples/all',
     'lalr/lalr_test/all'

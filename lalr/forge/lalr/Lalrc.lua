@@ -1,12 +1,9 @@
 
-local Lalrc = forge:TargetPrototype( 'Lalrc' );
+local Lalrc = forge:PatternPrototype( 'Lalrc' );
 
-function Lalrc.create( toolset, identifier )
-    local target = toolset:File( identifier, Lalrc );
+function Lalrc.created( toolset, target )
     local lalrc = toolset:interpolate( toolset.settings.lalr.lalrc );
     target:add_dependency( toolset:Target(lalrc) );
-    target:set_cleanable( false );
-    return target;
 end
 
 function Lalrc.build( toolset, target )
