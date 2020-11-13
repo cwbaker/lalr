@@ -1,6 +1,6 @@
 # lalr
 
-[![Build Status](https://travis-ci.com/cwbaker/lalr.svg?branch=master)](https://travis-ci.com/cwbaker/lalr)
+![Build](https://github.com/cwbaker/lalr/workflows/Build/badge.svg)
 
 Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and parser for C++.
 
