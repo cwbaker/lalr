@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Install Forge
+      run: |
+        OS=$(echo ${RUNNER_OS} |tr '[:upper:]' '[:lower:]')
+        curl -L https://github.com/cwbaker/forge/releases/download/v0.0.6/forge-${OS}-v0.0.6.tar.gz > forge.tar.gz          
+        tar -xvf forge.tar.gz
+      shell: bash
+    - name: Build
+      run: |
+        forge/bin/forge variant=release
+      shell: bash
+    - name: Test
+      run: |
+        release/bin/lalr_examples
+        release/bin/lalr_test
+      shell: bash
