@@ -1,5 +1,5 @@
 
-local Lalrc = forge:PatternPrototype( 'Lalrc' );
+local Lalrc = PatternPrototype( 'Lalrc' );
 
 function Lalrc.created( toolset, target )
     local lalrc = toolset:interpolate( toolset.settings.lalr.lalrc );
