@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [ubuntu-latest]
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -22,10 +22,11 @@ jobs:
         OS=$(echo ${RUNNER_OS} |tr '[:upper:]' '[:lower:]')
         curl -L https://github.com/cwbaker/forge/releases/download/v0.0.6/forge-${OS}-v0.0.6.tar.gz > forge.tar.gz          
         tar -xvf forge.tar.gz
+        mv forge shipping
       shell: bash
     - name: Build
       run: |
-        forge/bin/forge variant=release
+        shipping/bin/forge variant=release
       shell: bash
     - name: Test
       run: |
