@@ -1,5 +1,5 @@
 
-local lalr = forge:ToolsetPrototype( 'lalr' );
+local lalr = ToolsetPrototype( 'lalr' );
 
 function lalr.configure( toolset, lalr_settings )
 	return {
