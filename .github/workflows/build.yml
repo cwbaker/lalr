@@ -20,7 +20,7 @@ jobs:
     - name: Install Forge
       run: |
         OS=$(echo ${RUNNER_OS} |tr '[:upper:]' '[:lower:]')
-        curl -L https://github.com/cwbaker/forge/releases/download/v0.2.18/forge-${OS}-v0.2.18.tar.gz > forge.tar.gz          
+        curl -L https://github.com/cwbaker/forge/releases/download/v0.5.22/forge-${OS}-v0.5.22.tar.gz > forge.tar.gz          
         tar -xvf forge.tar.gz
       shell: bash
     - name: Build
