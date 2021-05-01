@@ -96,33 +96,39 @@ Build Lalr using [Forge](https://www.github.com/cwbaker/forge#forge) and a C++ c
 
 **Linux:**
 
-- Install GCC
-- Install [Forge](https://github.com/cwbaker/forge#forge)
-- `git clone git@github.com:cwbaker/lalr.git lalr`
-- `cd lalr`
-- `git submodule update --init`
-- `forge variant=release`
-- `./release/bin/lalr_examples`
+From a Bash shell with GCC and [Forge](https://github.com/cwbaker/forge#forge) installed and available in the path:
+
+~~~sh
+git clone git@github.com:cwbaker/lalr.git lalr
+cd lalr
+git submodule update --init
+forge variant=release
+./release/bin/lalr_examples
+~~~
 
 **macOS:**
 
-- Install Xcode
-- Install [Forge](https://github.com/cwbaker/forge#forge)
-- `git clone git@github.com:cwbaker/lalr.git lalr`
-- `cd lalr`
-- `git submodule update --init`
-- `forge variant=release`
-- `./release/bin/lalr_examples`
+From a Bash shell with XCode and [Forge](https://github.com/cwbaker/forge#forge) installed and available in the path:
+
+~~~bash
+git clone git@github.com:cwbaker/lalr.git lalr
+cd lalr
+git submodule update --init
+forge variant=release
+./release/bin/lalr_examples
+~~~
 
 **Windows:**
 
-- Install Visual Studio 2017
-- Install [Forge](https://github.com/cwbaker/forge#forge)
-- `git clone git@github.com:cwbaker/lalr.git lalr`
-- `cd lalr`
-- `git submodule update --init`
-- `forge variant=release`
-- `.\release\bin\lalr_examples.exe`
+From a Visual C++ x64 Native Tools command prompt with [Forge](https://github.com/cwbaker/forge#forge) installed and available in the path:
+
+~~~cmd
+git clone git@github.com:cwbaker/lalr.git lalr
+cd lalr
+git submodule update --init
+forge variant=release
+.\release\bin\lalr_examples.exe
+~~~
 
 ## Usage
 
