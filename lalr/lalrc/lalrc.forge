@@ -2,7 +2,7 @@
 for _, toolset in toolsets('cc.*') do    
     toolset:all {
         toolset:Executable '${bin}/lalrc' {
-            '${lib}/lalr_${architecture}';
+            '${lib}/lalr_${platform}_${architecture}';
             toolset:Cxx '${obj}/%1' {
                 'lalrc.cpp'
             };

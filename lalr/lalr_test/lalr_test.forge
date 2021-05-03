@@ -2,8 +2,8 @@
 for _, toolset in toolsets('cc.*') do
     toolset:all {
         toolset:Executable '${bin}/lalr_test' {
-            '${lib}/lalr_${architecture}';
-            '${lib}/UnitTest++_${architecture}';
+            '${lib}/lalr_${platform}_${architecture}';
+            '${lib}/UnitTest++_${platform}_${architecture}';
 
             toolset:Cxx '${obj}/%1' {
                 'main.cpp',

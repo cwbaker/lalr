@@ -1,6 +1,6 @@
 
 for _, toolset in toolsets('cc.*') do    
-    toolset:StaticLibrary '${lib}/lalr_${architecture}' {
+    toolset:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
         toolset:Cxx '${obj}/%1' {
             'ErrorPolicy.cpp',
         };
