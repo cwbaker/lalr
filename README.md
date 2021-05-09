@@ -324,6 +324,8 @@ The precedence of a production defaults to that of its right-most terminal but c
 
 ### Shift/Reduce Conflicts
 
+Shift/reduce conflicts arise when the parser is unable to decide between shifting another token onto the stack or reducing the top of the stack that matches the right hand side of a production.
+
 Shift/reduce conflicts are resolved by examining the associativity and precedence of the symbol that is to be shifted and reduced on and the production that is to be reduced. Shift/reduce conflicts are resolved in the following way:
 
 - If either the symbol or the production lack precedence information then the conflict is not resolved, an error is reported, and the grammar fails to generate a parser.
@@ -335,6 +337,8 @@ Shift/reduce conflicts are resolved by examining the associativity and precedenc
 - Otherwise the symbol must have higher precedence than the production or the symbol has the same precedence as the production and associates to the left and the conflict is resolved in favour of the shift.
 
 ### Reduce/Reduce Conflicts
+
+Reduce/reduce conflicts arise when the parser is unable to decide which production to reduce on when the top of the stack matches the right hand side of a more than one production.
 
 Reduce/reduce conflicts are resolved by examining the precedence of the two conflicting productions. Reduce/reduce conflicts are resolved in the following way:
 
