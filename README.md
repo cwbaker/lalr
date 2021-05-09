@@ -304,15 +304,23 @@ The naming provides a convenient way to give terminals, especially complex ones,
 
 For example the production `integer: "[0-9]+"` introduces the named terminal `integer` in place of the regular expression `[0-9]+`.
     
-### Associativity and Precedence
+### Precedence and Associativity
 
-Precedence/associativity directives consist of a directive (`%left`, `%right`, and `%none`), one or more terminals, and a terminating semi-colon `;`.  
+Precedence determines which order to evaluate operations in an expression.  For example multiplication usually has a higher precedence than addition so that `1 + 2 * 3` is evaluated as `1 + (2 * 3)` and not `(1 + 2) * 3`.
 
-The associativity of the listed terminals is set to left, right, or none as expected.  Precedence is assigned by the order of associativity directives with directives on later lines having higher precedence.
+Associativity determines which order to evaluate multiple operations with the same precedence in an expression by grouping the operations from the left, right, or not at all.
 
-The precedence of a production defaults to that of its right-most terminal but can be explicitly set to the precedence of a different terminal using the `%precedence` directive.
+Left-associative operators group operations from the left.  For example `10 - 6 + 3` is evaluated as `(10 - 6) + 3` and not `10 - (6 + 3)` because addition and subtraction have the same precedence and are left-associative.
 
-The precedence directive appears after the right-hand side of a production before any attached action and is followed by the terminal whose precedence and associativity the production is to inherit.
+Right-associative operators group operations from the right.  For example `a = b = 5` is evaluated as `a = (b = 5)` and both `a` and `b` are set to 5 rather than `a` being set to the value of `b` and `b` set to 5.
+
+Non-associative operators prevent operations from being chained at all.  For example `a < b < c` is not usually a valid expression and comparison operators like `<` evaluate to a different type from their operands are non-associative.
+
+Precedence and associativity are controlled by precedence/associativity directives listed in the grammar.  A precedence/associativity directive consists of a directive (`%left`, `%right`, and `%none`), one or more terminals, and a terminating semi-colon `;`.  
+
+The precedence of an operator is assigned by the order of directives with directives on later lines having higher precedence.  Associativity of the listed terminals is set to left, right, or none to match `%left`, `%right`, or `%none`.
+
+The precedence of a production defaults to that of its right-most terminal but can be explicitly set to the precedence of a different terminal using the `%precedence` directive.  The precedence directive appears after the right-hand side of a production before any attached action and is followed by the terminal whose precedence and associativity the production is to inherit.
 
 ### Shift/Reduce Conflicts
 
