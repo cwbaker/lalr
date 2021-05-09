@@ -375,7 +375,7 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
         productions_.push_back( move(production) );
     }
 
-    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, -1, -1, nullptr) );
+    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, symbol->line(), -1, nullptr) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
     return productions_.back().get();
