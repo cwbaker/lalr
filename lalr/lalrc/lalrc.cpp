@@ -239,10 +239,10 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     write( "#include <lalr/LexerTransition.hpp>\n" );
     write( "#include <lalr/LexerAction.hpp>\n" );
     write( "\n" );
-    write( "using namespace lalr;\n" );
-    write( "\n" );
     write( "namespace\n" );
     write( "{\n" );
+    write( "\n" );
+    write( "using namespace lalr;\n" );
     write( "\n" );
     write( "extern const LexerAction lexer_actions [];\n" );
     write( "extern const LexerTransition lexer_transitions [];\n" );
@@ -365,7 +365,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     write( "}\n" );
     write( "\n" );
 
-    write( "const ParserStateMachine* %s_parser_state_machine = &parser_state_machine;\n", state_machine->identifier );
+    write( "const lalr::ParserStateMachine* %s_parser_state_machine = &parser_state_machine;\n", state_machine->identifier );
     write( "\n" );
 }
 
