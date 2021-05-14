@@ -5,7 +5,7 @@ for _, toolset in toolsets('cc.*') do
     };
 
     local lalr_examples = toolset:Executable '${bin}/lalr_examples' {
-        '${lib}/lalr_${architecture}';
+        '${lib}/lalr_${platform}_${architecture}';
         toolset:Cxx '${obj}/%1' {
             "lalr_examples.cpp",
             "lalr_error_handling_calculator_example.cpp",
