@@ -20,39 +20,15 @@ using std::vector;
 using namespace lalr;
 
 /**
-// Constructor.
-//
-// @param regular_expression
-//  The single regular expression to parse.
-//
-// @param symbol
-//  The symbol to return when the regular expression matches.
+// Default constructor.
 */
-RegexSyntaxTree::RegexSyntaxTree( const RegexToken& token, RegexGenerator* lexer_generator )
-: lexer_generator_( lexer_generator ),
+RegexSyntaxTree::RegexSyntaxTree()
+: generator_( nullptr ),
   bracket_expression_characters_(),
   index_( 0 ),
   nodes_(),
   errors_( 0 )
 {
-    LALR_ASSERT( lexer_generator_ );
-    parse_regular_expression( token );
-    calculate_nullable_first_last_and_follow();
-}  
-
-/**
-// Constructor.
-*/
-RegexSyntaxTree::RegexSyntaxTree( const std::vector<RegexToken>& tokens, RegexGenerator* lexer_generator )
-: lexer_generator_( lexer_generator ),
-  bracket_expression_characters_(),
-  index_( 0 ),
-  nodes_(),
-  errors_( 0 )
-{
-    LALR_ASSERT( lexer_generator_ );
-    calculate_combined_parse_tree( tokens );
-    calculate_nullable_first_last_and_follow();
 }
 
 bool RegexSyntaxTree::empty() const
@@ -91,6 +67,54 @@ void RegexSyntaxTree::print() const
 {
     print_nodes( nodes_, 0 );
     printf( "\n\n" );
+}
+
+/**
+// Reset this syntax tree to its default state.
+*/
+void RegexSyntaxTree::reset()
+{
+    generator_ = nullptr;
+    bracket_expression_characters_.clear();
+    index_ = 0;
+    nodes_.clear();
+    errors_ = 0;
+}
+
+/**
+// Parse *token* into this syntax tree.
+//
+// @param regular_expression
+//  The single regular expression to parse.
+//
+// @param generator
+//  The RegexGenerator to retrieve actions from and report errors to.
+*/
+void RegexSyntaxTree::reset( const RegexToken& token, RegexGenerator* generator )
+{
+    LALR_ASSERT( generator );
+    reset();
+    generator_ = generator;
+    parse_regular_expression( token );
+    calculate_nullable_first_last_and_follow();
+}
+
+/**
+// Parse *tokens* into this syntax tree.
+//
+// @param regular_expression
+//  The single regular expression to parse.
+//
+// @param generator
+//  The RegexGenerator to retrieve actions from and report errors to.
+*/
+void RegexSyntaxTree::reset( const std::vector<RegexToken>& tokens, RegexGenerator* generator )
+{
+    LALR_ASSERT( generator );
+    reset();
+    generator_ = generator;
+    calculate_combined_parse_tree( tokens );
+    calculate_nullable_first_last_and_follow();
 }
 
 /**
@@ -208,8 +232,8 @@ void RegexSyntaxTree::end_bracket_expression()
 void RegexSyntaxTree::action_expression( const std::string& identifier )
 {
     LALR_ASSERT( !identifier.empty() );
-    LALR_ASSERT( lexer_generator_ );
-    std::shared_ptr<RegexNode> node = regex_node( lexer_generator_->add_lexer_action(identifier) );
+    LALR_ASSERT( generator_ );
+    std::shared_ptr<RegexNode> node = regex_node( generator_->add_lexer_action(identifier) );
     nodes_.push_back( node );
 }
 
@@ -710,8 +734,8 @@ void RegexSyntaxTree::parse_regular_expression( const RegexToken& token )
     if ( !successful )
     {
         ++errors_;
-        LALR_ASSERT( lexer_generator_ );
-        lexer_generator_->fire_error( token.line(), token.column(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
+        LALR_ASSERT( generator_ );
+        generator_->fire_error( token.line(), token.column(), LEXER_ERROR_SYNTAX, "Syntax error in regular expression '%s'", token.lexeme().c_str() );
         nodes_.clear();
     }
     else

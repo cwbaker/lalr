@@ -32,15 +32,18 @@ using namespace lalr;
 */
 RegexGenerator::RegexGenerator()
 : error_policy_( nullptr ),
+  syntax_tree_( nullptr ),
   actions_(),
   states_(),
   start_state_( nullptr ),
   ranges_()
 {
+    syntax_tree_ = new RegexSyntaxTree;
 }
 
 RegexGenerator::~RegexGenerator()
 {
+    delete syntax_tree_;
 }
 
 const std::vector<std::unique_ptr<RegexAction>>& RegexGenerator::actions() const
@@ -156,7 +159,8 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
     ranges_.clear();
 
     RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, 0, symbol, regular_expression );
-    generate_states( RegexSyntaxTree(token, this), &states_, &start_state_ );
+    syntax_tree_->reset( token, this );
+    generate_states( *syntax_tree_, &states_, &start_state_ );
     error_policy_ = nullptr;
     return 0;
 }
@@ -169,7 +173,8 @@ int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy
     start_state_ = nullptr;
     ranges_.clear();
  
-    generate_states( RegexSyntaxTree(tokens, this), &states_, &start_state_ );
+    syntax_tree_->reset( tokens, this );
+    generate_states( *syntax_tree_, &states_, &start_state_ );
     error_policy_ = nullptr;
     return 0;
 }

@@ -30,6 +30,7 @@ class RegexSyntaxTree;
 class RegexGenerator
 {
     ErrorPolicy* error_policy_; ///< The error policy to report errors and debug information to or null to ignore errors and debug information.
+    RegexSyntaxTree* syntax_tree_; ///< The syntax tree generated from parsing regular expression(s).
     std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexical analyzer actions.
     std::set<std::unique_ptr<RegexState>, RegexStateLess> states_; ///< The states generated for the lexical analyzer.
     const RegexState* start_state_; ///< The starting state for the lexical analyzer.

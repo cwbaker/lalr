@@ -24,20 +24,23 @@ class RegexNode;
 */
 class RegexSyntaxTree
 {
-    RegexGenerator* lexer_generator_; ///< The RegexGenerator to retrieve actions from and report errors and debug information to.
+    RegexGenerator* generator_; ///< The RegexGenerator to retrieve actions from and report errors and debug information to.
     std::set<RegexCharacter> bracket_expression_characters_; ///< The characters in the current bracket expression.
     int index_; ///< The current node index.
     std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
     public:
-        RegexSyntaxTree( const RegexToken& token, RegexGenerator* lexer_generator );
-        RegexSyntaxTree( const std::vector<RegexToken>& tokens, RegexGenerator* lexer_generator );
+        RegexSyntaxTree();
 
         bool empty() const;
         int errors() const;
         const std::shared_ptr<RegexNode>& node() const;
         void print() const;
+
+        void reset();
+        void reset( const RegexToken& token, RegexGenerator* generator );
+        void reset( const std::vector<RegexToken>& tokens, RegexGenerator* generator );
 
         void cat_expression();
         void or_expression();
