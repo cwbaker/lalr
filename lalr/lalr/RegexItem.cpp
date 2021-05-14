@@ -45,7 +45,7 @@ const std::set<RegexNode*, RegexNodeLess>& RegexItem::next_nodes() const
 // transitioned on from this item.
 //
 // These nodes then become the core of a new item for the state that 
-// the lexical analyzer is in after accepted [\e begin, \e end) from the
+// the lexical analyzer is in after accepting [\e begin, \e end) from the
 // state that this item is part of.
 //
 // Action nodes are special in that they are only able to be transitioned on
