@@ -259,7 +259,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
 
                     // Create the distinct ranges of characters that can be 
                     // transitioned on from the current state.
-                    clear();                
+                    clear();
                     const std::set<RegexItem>& items = state->get_items();
                     for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
                     {
@@ -321,8 +321,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
 */
 void RegexGenerator::generate_indices_for_states()
 {
-    int index = 0;
-    
+    int index = 0;    
     for ( auto i = states_.begin(); i != states_.end(); ++i )
     {
         RegexState* state = i->get();
