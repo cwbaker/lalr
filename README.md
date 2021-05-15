@@ -338,7 +338,7 @@ Shift/reduce conflicts are resolved by examining the associativity and precedenc
 
 ### Reduce/Reduce Conflicts
 
-Reduce/reduce conflicts arise when the parser is unable to decide which production to reduce on when the top of the stack matches the right hand side of a more than one production.
+Reduce/reduce conflicts arise when the parser is unable to decide which production to reduce on when the top of the stack matches the right hand side of more than one production.
 
 Reduce/reduce conflicts are resolved by examining the precedence of the two conflicting productions. Reduce/reduce conflicts are resolved in the following way:
 
