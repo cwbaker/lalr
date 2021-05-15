@@ -17,13 +17,12 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 class AddParserActionHandler
 {
     typedef std::function<UserData (const UserData* data, const ParserNode<Char, Traits, Allocator>* nodes, size_t length)> ParserActionFunction;
-
     Parser<Iterator, UserData, Char, Traits, Allocator>* parser_; ///< The Parser to add handlers to.
 
-    public:
-        AddParserActionHandler( Parser<Iterator, UserData, Char, Traits, Allocator>* parser );
-        const AddParserActionHandler& default_action( ParserActionFunction function ) const;
-        const AddParserActionHandler& operator()( const char* identifier, ParserActionFunction function ) const;
+public:
+    AddParserActionHandler( Parser<Iterator, UserData, Char, Traits, Allocator>* parser );
+    const AddParserActionHandler& default_action( ParserActionFunction function ) const;
+    const AddParserActionHandler& operator()( const char* identifier, ParserActionFunction function ) const;
 };
 
 }

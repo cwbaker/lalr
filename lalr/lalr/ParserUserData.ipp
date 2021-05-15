@@ -19,9 +19,9 @@ namespace lalr
 */
 template <class Char, class Traits, class Allocator>
 ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme )
-: symbol_( symbol ),
-  lexeme_( lexeme ),
-  user_datas_()
+: symbol_( symbol )
+, lexeme_( lexeme )
+, user_datas_()
 {
     LALR_ASSERT( symbol_ );
 }
@@ -37,9 +37,9 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
 */
 template <class Char, class Traits, class Allocator>
 ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, size_t user_datas )
-: symbol_( symbol ),
-  lexeme_(),
-  user_datas_()
+: symbol_( symbol )
+, lexeme_()
+, user_datas_()
 {
     LALR_ASSERT( symbol_ );
     user_datas_.reserve( user_datas );
@@ -60,9 +60,9 @@ ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* sym
 */
 template <class Char, class Traits, class Allocator>
 ParserUserData<Char, Traits, Allocator>::ParserUserData( const ParserSymbol* symbol, const TemplatedParserNode* start, const TemplatedParserNode* finish )
-: symbol_( symbol ),
-  lexeme_(),
-  user_datas_()
+: symbol_( symbol )
+, lexeme_()
+, user_datas_()
 {
     LALR_ASSERT( start );
     LALR_ASSERT( finish );

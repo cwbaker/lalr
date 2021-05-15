@@ -25,8 +25,8 @@ namespace lalr
 */
 template <class Iterator, class Char, class Traits, class Allocator>
 Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler( const LexerAction* action, LexerActionFunction function )
-: action_( action ),
-  function_( function )
+: action_( action )
+, function_( function )
 {
     LALR_ASSERT( action_ );
 }
@@ -48,18 +48,18 @@ Lexer<Iterator, Char, Traits, Allocator>::LexerActionHandler::LexerActionHandler
 */
 template <class Iterator, class Char, class Traits, class Allocator>
 Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine, const void* end_symbol, ErrorPolicy* error_policy )
-: state_machine_( state_machine ),
-  whitespace_state_machine_( whitespace_state_machine ),
-  end_symbol_( end_symbol ),
-  error_policy_( error_policy ),
-  action_handlers_(),
-  position_(),
-  end_(),
-  lexeme_(),
-  line_( 0 ),
-  column_ ( 1 ),
-  symbol_( NULL ),
-  full_( false )
+: state_machine_( state_machine )
+, whitespace_state_machine_( whitespace_state_machine )
+, end_symbol_( end_symbol )
+, error_policy_( error_policy )
+, action_handlers_()
+, position_()
+, end_()
+, lexeme_()
+, line_( 0 )
+, column_ ( 1 )
+, symbol_( nullptr )
+, full_( false )
 {
     if ( state_machine_ )
     {
@@ -205,7 +205,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::reset( Iterator start, Iterator f
     column_ = 0;
     position_ = PositionIterator<Iterator>( start, finish );
     end_ = finish;
-    symbol_ = NULL;
+    symbol_ = nullptr;
     full_ = false;
 }
 
@@ -255,7 +255,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
                 LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
                 const LexerActionFunction& function = action_handlers_[index].function_;
                 LALR_ASSERT( function );
-                const void* symbol = NULL;
+                const void* symbol = nullptr;
                 int lines = 0;
                 Iterator position = position_.position();
                 function( position, end_, &lexeme_, &symbol, &position, &lines );
@@ -322,7 +322,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
         }
     }
     
-    return state ? symbol : NULL;
+    return state ? symbol : nullptr;
 }
 
 /**
@@ -341,7 +341,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::error()
 
     fire_error( line_, column_, LEXER_ERROR_LEXICAL_ERROR, "Lexical error on character '%c' (%d)", int(*position_), int(*position_) );
     
-    const LexerTransition* transition = NULL;
+    const LexerTransition* transition = nullptr;
     const LexerState* state = state_machine_->start_state;
     while ( !position_.ended() && !(transition = find_transition_by_character(state, *position_)) )
     {

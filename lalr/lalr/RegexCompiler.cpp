@@ -17,11 +17,11 @@ using std::unique_ptr;
 using namespace lalr;
 
 RegexCompiler::RegexCompiler()
-: strings_(),
-  actions_(),
-  transitions_(),
-  states_(),
-  state_machine_() 
+: strings_()
+, actions_()
+, transitions_()
+, states_()
+, state_machine_() 
 {
     state_machine_.reset( new LexerStateMachine );
     memset( state_machine_.get(), 0, sizeof(*state_machine_) );

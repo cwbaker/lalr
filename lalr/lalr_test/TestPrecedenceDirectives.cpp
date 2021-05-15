@@ -21,8 +21,8 @@ SUITE( PrecedenceDirectives )
         int errors_;
         
         EventSink( int expected_error )
-        : expected_error_( expected_error ),
-          errors_( 0 )
+        : expected_error_( expected_error )
+        , errors_( 0 )
         {
         }
 

@@ -15,9 +15,9 @@ using namespace lalr;
 // Constructor.
 */
 GrammarItem::GrammarItem()
-: production_(),
-  position_( 0 ),
-  lookahead_symbols_()
+: production_()
+, position_( 0 )
+, lookahead_symbols_()
 {
 }
 
@@ -31,9 +31,9 @@ GrammarItem::GrammarItem()
 //  The position of the dot in this item.
 */
 GrammarItem::GrammarItem( GrammarProduction* production, int position )
-: production_( production ),
-  position_( position ),
-  lookahead_symbols_()
+: production_( production )
+, position_( position )
+, lookahead_symbols_()
 {
     LALR_ASSERT( production_ );
     LALR_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );

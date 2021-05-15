@@ -36,25 +36,25 @@ class RegexGenerator
     const RegexState* start_state_; ///< The starting state for the lexical analyzer.
     std::vector<std::pair<int, bool>> ranges_; ///< Ranges generated for the current transition while generating.
 
-    public:
-        RegexGenerator();
-        ~RegexGenerator();
-        const std::vector<std::unique_ptr<RegexAction>>& actions() const;
-        const std::set<std::unique_ptr<RegexState>, RegexStateLess>& states() const;
-        const RegexState* start_state() const;
-        void fire_error( int line, int column, int error, const char* format, ... ) const;
-        void fire_printf( const char* format, ... ) const;
-        const RegexAction* add_lexer_action( const std::string& identifier );
-        int generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy = nullptr );
-        int generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy = nullptr );
+public:
+    RegexGenerator();
+    ~RegexGenerator();
+    const std::vector<std::unique_ptr<RegexAction>>& actions() const;
+    const std::set<std::unique_ptr<RegexState>, RegexStateLess>& states() const;
+    const RegexState* start_state() const;
+    void fire_error( int line, int column, int error, const char* format, ... ) const;
+    void fire_printf( const char* format, ... ) const;
+    const RegexAction* add_lexer_action( const std::string& identifier );
+    int generate( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy = nullptr );
+    int generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy = nullptr );
 
-    private:
-        std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );
-        void generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state );
-        void generate_indices_for_states();
-        void generate_symbol_for_state( RegexState* state ) const;
-        void clear();
-        void insert( int begin, int end );
+private:
+    std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );
+    void generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state );
+    void generate_indices_for_states();
+    void generate_symbol_for_state( RegexState* state ) const;
+    void clear();
+    void insert( int begin, int end );
 };
 
 }

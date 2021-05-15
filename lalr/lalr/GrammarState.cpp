@@ -16,10 +16,10 @@ using namespace lalr;
 // Constructor.
 */
 GrammarState::GrammarState()
-: items_(),
-  transitions_(),
-  processed_( false ),
-  index_( INVALID_INDEX )
+: items_()
+, transitions_()
+, processed_( false )
+, index_( INVALID_INDEX )
 {
 }
 

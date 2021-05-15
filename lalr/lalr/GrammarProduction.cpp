@@ -28,12 +28,12 @@ using namespace lalr;
 //  has no action.
 */
 GrammarProduction::GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action )
-: index_( index ),
-  symbol_( symbol ),
-  line_( line ),
-  column_( column ),
-  action_( action ),
-  precedence_symbol_( NULL )
+: index_( index )
+, symbol_( symbol )
+, line_( line )
+, column_( column )
+, action_( action )
+, precedence_symbol_( nullptr )
 {
     LALR_ASSERT( symbol_ );
 }
@@ -122,7 +122,7 @@ const GrammarSymbol* GrammarProduction::find_rightmost_terminal_symbol() const
     {
         ++i;
     }
-    return i != symbols_.rend() ? *i : NULL;
+    return i != symbols_.rend() ? *i : nullptr;
 }
 
 /**
@@ -137,7 +137,7 @@ const GrammarSymbol* GrammarProduction::find_rightmost_terminal_symbol() const
 */
 const GrammarSymbol* GrammarProduction::symbol_by_position( int position ) const
 {
-    return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : NULL;
+    return position >= 0 && position < int(symbols_.size()) ? symbols_[position] : nullptr;
 }
 
 /**

@@ -33,14 +33,14 @@ using std::shared_ptr;
 using namespace lalr;
 
 GrammarCompiler::GrammarCompiler()
-: strings_(),
-  actions_(),
-  symbols_(),
-  transitions_(),
-  states_(),
-  lexer_(),
-  whitespace_lexer_(),
-  parser_state_machine_()
+: strings_()
+, actions_()
+, symbols_()
+, transitions_()
+, states_()
+, lexer_()
+, whitespace_lexer_()
+, parser_state_machine_()
 {
     lexer_.reset( new RegexCompiler );
     whitespace_lexer_.reset( new RegexCompiler );

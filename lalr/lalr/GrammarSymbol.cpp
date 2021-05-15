@@ -14,18 +14,18 @@ using std::shared_ptr;
 using namespace lalr;
 
 GrammarSymbol::GrammarSymbol( const std::string& lexeme )
-: lexeme_( lexeme ),
-  identifier_(),
-  symbol_type_( SYMBOL_NULL ),
-  lexeme_type_( LEXEME_NULL ),
-  associativity_( ASSOCIATE_NONE ),
-  precedence_( 0 ),
-  line_( 0 ),
-  index_( -1 ),
-  nullable_( false ),
-  first_(),
-  follow_(),
-  productions_()
+: lexeme_( lexeme )
+, identifier_()
+, symbol_type_( SYMBOL_NULL )
+, lexeme_type_( LEXEME_NULL )
+, associativity_( ASSOCIATE_NONE )
+, precedence_( 0 )
+, line_( 0 )
+, index_( -1 )
+, nullable_( false )
+, first_()
+, follow_()
+, productions_()
 {
 }
 

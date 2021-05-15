@@ -39,17 +39,17 @@ using namespace lalr;
 //  swallow errors.
 */
 GrammarGenerator::GrammarGenerator()
-: error_policy_( nullptr ),
-  identifier_(),
-  actions_(),
-  productions_(),
-  symbols_(),
-  states_(),
-  start_symbol_( nullptr ),
-  end_symbol_( nullptr ),
-  error_symbol_( nullptr ),
-  start_state_( nullptr ),
-  errors_( 0 )
+: error_policy_( nullptr )
+, identifier_()
+, actions_()
+, productions_()
+, symbols_()
+, states_()
+, start_symbol_( nullptr )
+, end_symbol_( nullptr )
+, error_symbol_( nullptr )
+, start_state_( nullptr )
+, errors_( 0 )
 {
 }
 

@@ -12,12 +12,12 @@
 using namespace lalr;
 
 RegexParser::RegexParser( RegexSyntaxTree* syntax_tree )
-: syntax_tree_( syntax_tree ),
-  position_( nullptr ),
-  end_( nullptr ),
-  lexeme_begin_( nullptr ),
-  lexeme_end_( nullptr ),
-  successful_( false )
+: syntax_tree_( syntax_tree )
+, position_( nullptr )
+, end_( nullptr )
+, lexeme_begin_( nullptr )
+, lexeme_end_( nullptr )
+, successful_( false )
 {
     LALR_ASSERT( syntax_tree_ );
 }

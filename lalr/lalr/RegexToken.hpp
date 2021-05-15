@@ -19,16 +19,16 @@ class RegexToken
     const void* symbol_; ///< The symbol to return when this token is matched in input.
     std::string lexeme_; ///< The literal or regular expression pattern to match for this token.
     mutable std::vector<const RegexToken*> conflicted_with_; ///< The RegexTokens that this RegexToken has conflicted with.
-    
-    public:
-        RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme );
-        RegexTokenType type() const;
-        int line() const;
-        int column() const;
-        const void* symbol() const;
-        const std::string& lexeme() const;
-        bool conflicted_with( const RegexToken* token ) const;
-        void add_conflicted_with( const RegexToken* token ) const;
+
+public:
+    RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme );
+    RegexTokenType type() const;
+    int line() const;
+    int column() const;
+    const void* symbol() const;
+    const std::string& lexeme() const;
+    bool conflicted_with( const RegexToken* token ) const;
+    void add_conflicted_with( const RegexToken* token ) const;
 };
 
 }

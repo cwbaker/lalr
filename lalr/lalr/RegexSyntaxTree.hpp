@@ -30,80 +30,80 @@ class RegexSyntaxTree
     std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
-    public:
-        RegexSyntaxTree();
+public:
+    RegexSyntaxTree();
 
-        bool empty() const;
-        int errors() const;
-        const std::shared_ptr<RegexNode>& node() const;
-        void print() const;
+    bool empty() const;
+    int errors() const;
+    const std::shared_ptr<RegexNode>& node() const;
+    void print() const;
 
-        void reset();
-        void reset( const RegexToken& token, RegexGenerator* generator );
-        void reset( const std::vector<RegexToken>& tokens, RegexGenerator* generator );
+    void reset();
+    void reset( const RegexToken& token, RegexGenerator* generator );
+    void reset( const std::vector<RegexToken>& tokens, RegexGenerator* generator );
 
-        void cat_expression();
-        void or_expression();
-        void star_expression();
-        void plus_expression();
-        void optional_expression();
-        void begin_bracket_expression();
-        void begin_negative_bracket_expression();
-        void end_bracket_expression();
-        void action_expression( const std::string& identifier );
-        void character( int character );
-        void dot();
-        void item_range( int begin, int end );
-        void item_character( int character );
-        void item_alnum();
-        void item_word();
-        void item_alpha();
-        void item_blank();
-        void item_cntrl();
-        void item_digit();
-        void item_graph();
-        void item_lower();
-        void item_print();
-        void item_punct();
-        void item_space();
-        void item_upper();
-        void item_xdigit();
-        void negative_item_range( int begin, int end );
-        void negative_item_character( int character );
-        void negative_item_alnum();
-        void negative_item_word();
-        void negative_item_alpha();
-        void negative_item_blank();
-        void negative_item_cntrl();
-        void negative_item_digit();
-        void negative_item_graph();
-        void negative_item_lower();
-        void negative_item_print();
-        void negative_item_punct();
-        void negative_item_space();
-        void negative_item_upper();
-        void negative_item_xdigit();
+    void cat_expression();
+    void or_expression();
+    void star_expression();
+    void plus_expression();
+    void optional_expression();
+    void begin_bracket_expression();
+    void begin_negative_bracket_expression();
+    void end_bracket_expression();
+    void action_expression( const std::string& identifier );
+    void character( int character );
+    void dot();
+    void item_range( int begin, int end );
+    void item_character( int character );
+    void item_alnum();
+    void item_word();
+    void item_alpha();
+    void item_blank();
+    void item_cntrl();
+    void item_digit();
+    void item_graph();
+    void item_lower();
+    void item_print();
+    void item_punct();
+    void item_space();
+    void item_upper();
+    void item_xdigit();
+    void negative_item_range( int begin, int end );
+    void negative_item_character( int character );
+    void negative_item_alnum();
+    void negative_item_word();
+    void negative_item_alpha();
+    void negative_item_blank();
+    void negative_item_cntrl();
+    void negative_item_digit();
+    void negative_item_graph();
+    void negative_item_lower();
+    void negative_item_print();
+    void negative_item_punct();
+    void negative_item_space();
+    void negative_item_upper();
+    void negative_item_xdigit();
 
-    private:
-        std::shared_ptr<RegexNode> regex_node( RegexNodeType type );
-        std::shared_ptr<RegexNode> regex_node( int begin, int end );
-        std::shared_ptr<RegexNode> regex_node( int begin, int end, const RegexToken* token );
-        std::shared_ptr<RegexNode> regex_node( const RegexAction* action );
+private:
+    std::shared_ptr<RegexNode> regex_node( RegexNodeType type );
+    std::shared_ptr<RegexNode> regex_node( int begin, int end );
+    std::shared_ptr<RegexNode> regex_node( int begin, int end, const RegexToken* token );
+    std::shared_ptr<RegexNode> regex_node( const RegexAction* action );
 
-        void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
-        void print_nodes( const std::vector<std::shared_ptr<RegexNode> >& nodes, int level ) const;
+    void print_positions( const std::set<RegexNode*, RegexNodeLess>& positions ) const;
+    void print_nodes( const std::vector<std::shared_ptr<RegexNode> >& nodes, int level ) const;
 
-        void calculate_symbols_for_characters_start_and_end();
-        void calculate_combined_parse_tree( const std::vector<RegexToken>& tokens );
-        void calculate_nullable_first_last_and_follow();
-        void parse_regular_expression( const RegexToken& token );
-        void parse_literal( const RegexToken& token );
+    void calculate_symbols_for_characters_start_and_end();
+    void calculate_combined_parse_tree( const std::vector<RegexToken>& tokens );
+    void calculate_nullable_first_last_and_follow();
+    void parse_regular_expression( const RegexToken& token );
+    void parse_literal( const RegexToken& token );
 
-        int escape( std::string::const_iterator start, std::string::const_iterator end, std::string::const_iterator* next ) const;
-        void insert_characters( int begin, int end );
-        void erase_characters( int begin, int end );
-        void insert_characters( const char* characters );
-        void erase_characters( const char* characters );
+    int escape( std::string::const_iterator start, std::string::const_iterator end, std::string::const_iterator* next ) const;
+    void insert_characters( int begin, int end );
+    void erase_characters( int begin, int end );
+    void insert_characters( const char* characters );
+    void erase_characters( const char* characters );
 };
 
 }

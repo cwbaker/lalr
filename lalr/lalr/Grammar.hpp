@@ -26,13 +26,13 @@ class Grammar
     std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the grammar.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the grammar.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the grammar.
-    std::vector<RegexToken> whitespace_tokens_;
-    bool active_whitespace_directive_;
-    bool active_precedence_directive_;
-    Associativity associativity_;
-    int precedence_;
-    GrammarProduction* active_production_;
-    GrammarSymbol* active_symbol_;
+    std::vector<RegexToken> whitespace_tokens_; ///< Regular expressions that define whitespace in this grammar.
+    bool active_whitespace_directive_; ///< True iff a whitespace directive is active.
+    bool active_precedence_directive_; ///< True iff a precedence directive is active.
+    Associativity associativity_; ///< Most recently set associativity.
+    int precedence_; ///< Current precedence.
+    GrammarProduction* active_production_; ///< Currently active production.
+    GrammarSymbol* active_symbol_; ///< Currently active symbol.
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.

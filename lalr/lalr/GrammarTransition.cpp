@@ -29,14 +29,14 @@ using namespace lalr;
 //  `GrammarAction::INVALID_INDEX` if no action is taken.
 */
 GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
-: symbol_( symbol ),
-  state_( NULL ),
-  reduced_symbol_( reduced_symbol ),
-  reduced_length_( reduced_length ),
-  precedence_( precedence ),
-  action_( action ),
-  type_( TRANSITION_REDUCE ),
-  index_( INVALID_INDEX )
+: symbol_( symbol )
+, state_( nullptr )
+, reduced_symbol_( reduced_symbol )
+, reduced_length_( reduced_length )
+, precedence_( precedence )
+, action_( action )
+, type_( TRANSITION_REDUCE )
+, index_( INVALID_INDEX )
 {
     LALR_ASSERT( reduced_symbol_ );
     LALR_ASSERT( reduced_length_ >= 0 );
@@ -53,14 +53,14 @@ GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const Grammar
 //  The state that this transition is to (assumed not null).
 */
 GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, GrammarState* state )
-: symbol_( symbol ),
-  state_( state ),
-  reduced_symbol_( nullptr ),
-  reduced_length_( 0 ),
-  precedence_( 0 ),
-  action_( GrammarAction::INVALID_INDEX ),
-  type_( TRANSITION_SHIFT ),
-  index_( INVALID_INDEX )
+: symbol_( symbol )
+, state_( state )
+, reduced_symbol_( nullptr )
+, reduced_length_( 0 )
+, precedence_( 0 )
+, action_( GrammarAction::INVALID_INDEX )
+, type_( TRANSITION_SHIFT )
+, index_( INVALID_INDEX )
 {
     LALR_ASSERT( symbol_ );
     LALR_ASSERT( state_ );

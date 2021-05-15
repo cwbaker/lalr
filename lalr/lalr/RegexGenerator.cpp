@@ -31,12 +31,12 @@ using namespace lalr;
 // Constructor.
 */
 RegexGenerator::RegexGenerator()
-: error_policy_( nullptr ),
-  syntax_tree_( nullptr ),
-  actions_(),
-  states_(),
-  start_state_( nullptr ),
-  ranges_()
+: error_policy_( nullptr )
+, syntax_tree_( nullptr )
+, actions_()
+, states_()
+, start_state_( nullptr )
+, ranges_()
 {
     syntax_tree_ = new RegexSyntaxTree;
 }

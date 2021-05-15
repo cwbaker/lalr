@@ -28,10 +28,10 @@ using namespace lalr;
 //  transition doesn't take an action.
 */
 RegexTransition::RegexTransition( int begin, int end, const RegexState* state, const RegexAction* action )
-: begin_( begin ),
-  end_( end ),
-  state_( state ),
-  action_( action )
+: begin_( begin )
+, end_( end )
+, state_( state )
+, action_( action )
 {
     LALR_ASSERT( begin_ < end_ );
     LALR_ASSERT( state_ );

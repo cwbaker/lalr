@@ -68,41 +68,41 @@ class RegexNode : public std::enable_shared_from_this<RegexNode>
     std::set<RegexNode*, RegexNodeLess> last_positions_; ///< The last positions at the node.
     std::set<RegexNode*, RegexNodeLess> follow_positions_; ///< The follow positions at the node.
 
-    public:
-        RegexNode( int index, RegexNodeType type );
-        RegexNode( int index, int begin_character, int end_character );
-        RegexNode( int index, int begin_character, int end_character, const RegexToken* token );
-        RegexNode( int index, const RegexAction* action );
+public:
+    RegexNode( int index, RegexNodeType type );
+    RegexNode( int index, int begin_character, int end_character );
+    RegexNode( int index, int begin_character, int end_character, const RegexToken* token );
+    RegexNode( int index, const RegexAction* action );
 
-        int get_index() const;
-        RegexNodeType get_type() const;
-        const char* get_lexeme() const;
-        int get_begin_character() const;
-        int get_end_character() const;
-        const RegexToken* get_token() const;
-        const RegexAction* get_action() const;
-        bool is_match( int begin, int end ) const;
-        bool is_end() const;
-        bool is_action() const;
+    int get_index() const;
+    RegexNodeType get_type() const;
+    const char* get_lexeme() const;
+    int get_begin_character() const;
+    int get_end_character() const;
+    const RegexToken* get_token() const;
+    const RegexAction* get_action() const;
+    bool is_match( int begin, int end ) const;
+    bool is_end() const;
+    bool is_action() const;
 
-        void add_node( const std::shared_ptr<RegexNode>& node );
-        RegexNode* get_node( int index ) const;
-        const std::vector<std::shared_ptr<RegexNode> >& get_nodes() const;
+    void add_node( const std::shared_ptr<RegexNode>& node );
+    RegexNode* get_node( int index ) const;
+    const std::vector<std::shared_ptr<RegexNode> >& get_nodes() const;
 
-        bool is_nullable() const;
-        const std::set<RegexNode*, RegexNodeLess>& get_first_positions() const;
-        const std::set<RegexNode*, RegexNodeLess>& get_last_positions() const;
-        const std::set<RegexNode*, RegexNodeLess>& get_follow_positions() const;
-        const std::set<RegexNode*, RegexNodeLess>& get_next_positions() const;
+    bool is_nullable() const;
+    const std::set<RegexNode*, RegexNodeLess>& get_first_positions() const;
+    const std::set<RegexNode*, RegexNodeLess>& get_last_positions() const;
+    const std::set<RegexNode*, RegexNodeLess>& get_follow_positions() const;
+    const std::set<RegexNode*, RegexNodeLess>& get_next_positions() const;
 
-        void calculate_nullable();
-        void calculate_first_positions();
-        void calculate_last_positions();
-        void calculate_follow_positions();
+    void calculate_nullable();
+    void calculate_first_positions();
+    void calculate_last_positions();
+    void calculate_follow_positions();
 
-        bool operator<( const RegexNode& node ) const;
+    bool operator<( const RegexNode& node ) const;
 
-        void print( const std::set<RegexNode*>& dot_nodes ) const;
+    void print( const std::set<RegexNode*>& dot_nodes ) const;
 };
 
 }

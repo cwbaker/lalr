@@ -23,11 +23,11 @@ class ParserState;
 class ParserStateMachine
 {
 public:
-    const char* identifier;
-    int actions_size;
-    int symbols_size;
-    int transitions_size;
-    int states_size;
+    const char* identifier; ///< The identifier of this parser.
+    int actions_size; ///< The number of actions.
+    int symbols_size; ///< The number of symbols.
+    int transitions_size; ///< The total number of transitions.
+    int states_size; ///< The number of states.
     const ParserAction* actions; ///< The parser actions for this ParserStateMachine.
     const ParserSymbol* symbols; ///< The symbols in the grammar for this ParserStateMachine.
     const ParserTransition* transitions; ///< The transitions in the state machine for this ParserStateMachine.

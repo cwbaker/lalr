@@ -68,8 +68,8 @@ SUITE( Parsers )
         int errors;            
         
         CheckParserErrorPolicy( int expected_error )
-        : expected_error( expected_error ),
-          errors( 0 )
+        : expected_error( expected_error )
+        , errors( 0 )
         {
         }
 
@@ -87,8 +87,8 @@ SUITE( Parsers )
         int errors;
         
         CheckLexerErrorPolicy( int expected_error )
-        : expected_error( expected_error ),
-          errors( 0 )
+        : expected_error( expected_error )
+        , errors( 0 )
         {
         }
 

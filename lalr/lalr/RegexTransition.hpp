@@ -17,14 +17,14 @@ class RegexTransition
     const RegexState* state_; ///< The state that is transitioned to.
     const RegexAction* action_; ///< The action that is taken on the transition or null if no action is taken.
 
-    public:
-        RegexTransition( int begin, int end, const RegexState* state, const RegexAction* action );
-        int begin() const;
-        int end() const;
-        bool on_character( int character ) const;
-        const RegexState* state() const;
-        const RegexAction* action() const;
-        bool operator<( const RegexTransition& transition ) const;
+public:
+    RegexTransition( int begin, int end, const RegexState* state, const RegexAction* action );
+    int begin() const;
+    int end() const;
+    bool on_character( int character ) const;
+    const RegexState* state() const;
+    const RegexAction* action() const;
+    bool operator<( const RegexTransition& transition ) const;
 };
 
 }

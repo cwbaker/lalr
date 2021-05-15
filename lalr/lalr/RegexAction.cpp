@@ -17,8 +17,8 @@ using namespace lalr;
 //  The identifier of this action.
 */
 RegexAction::RegexAction( int index, const std::string& identifier )
-: index_( index ),
-  identifier_( identifier )
+: index_( index )
+, identifier_( identifier )
 {
 }
   

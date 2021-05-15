@@ -27,17 +27,17 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &ab );
         CHECK( lexer.lexeme() == "ab" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "ac";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -46,7 +46,7 @@ SUITE( RegularExpressions )
         void* a_or_b;
         RegexCompiler compiler;
         compiler.compile( "a|b", &a_or_b );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -63,7 +63,7 @@ SUITE( RegularExpressions )
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -72,7 +72,7 @@ SUITE( RegularExpressions )
         void* ab_star;
         RegexCompiler compiler;
         compiler.compile( "ab*", &ab_star );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -95,12 +95,12 @@ SUITE( RegularExpressions )
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }    
     
 
@@ -109,7 +109,7 @@ SUITE( RegularExpressions )
         void* ab_plus;
         RegexCompiler compiler;
         compiler.compile( "ab+", &ab_plus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "ab";
         lexer.reset( regex, regex + strlen(regex) );
@@ -126,17 +126,17 @@ SUITE( RegularExpressions )
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }    
     
     
@@ -145,7 +145,7 @@ SUITE( RegularExpressions )
         void* ab_question;
         RegexCompiler compiler;
         compiler.compile( "ab?", &ab_question );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -162,7 +162,7 @@ SUITE( RegularExpressions )
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -171,7 +171,7 @@ SUITE( RegularExpressions )
         void* dot;
         RegexCompiler compiler;
         compiler.compile( ".", &dot );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "abcdef";
         lexer.reset( regex, regex + strlen(regex) );
@@ -194,12 +194,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &dot );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -208,7 +208,7 @@ SUITE( RegularExpressions )
         void* abc;
         RegexCompiler compiler;
         compiler.compile( "[abc]", &abc );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -216,7 +216,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -224,7 +224,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -232,12 +232,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -246,7 +246,7 @@ SUITE( RegularExpressions )
         void* minus_abc;
         RegexCompiler compiler;
         compiler.compile( "[-abc]", &minus_abc );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -254,7 +254,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_abc );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -262,7 +262,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_abc );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -270,7 +270,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_abc );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
@@ -278,12 +278,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_abc );
         CHECK( lexer.lexeme() == "-" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -292,7 +292,7 @@ SUITE( RegularExpressions )
         void* abc_minus;
         RegexCompiler compiler;
         compiler.compile( "[abc-]", &abc_minus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -300,7 +300,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc_minus );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -308,7 +308,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc_minus );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -316,7 +316,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc_minus );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
@@ -324,12 +324,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &abc_minus );
         CHECK( lexer.lexeme() == "-" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -338,7 +338,7 @@ SUITE( RegularExpressions )
         void* hat_abc;
         RegexCompiler compiler;
         compiler.compile( "[^abc]", &hat_abc );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -346,7 +346,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -354,7 +354,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -362,22 +362,22 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -386,7 +386,7 @@ SUITE( RegularExpressions )
         void* hat_minus_abc;
         RegexCompiler compiler;
         compiler.compile( "[^-abc]", &hat_minus_abc );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -394,7 +394,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_abc );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -402,7 +402,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_abc );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -410,27 +410,27 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_abc );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -439,7 +439,7 @@ SUITE( RegularExpressions )
         void* hat_abc_minus;
         RegexCompiler compiler;
         compiler.compile( "[^abc-]", &hat_abc_minus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -447,7 +447,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc_minus );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -455,7 +455,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc_minus );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -463,27 +463,27 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_abc_minus );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -492,7 +492,7 @@ SUITE( RegularExpressions )
         void* a_minus_c;
         RegexCompiler compiler;
         compiler.compile( "[a-c]", &a_minus_c );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -500,7 +500,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -508,7 +508,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -516,12 +516,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -530,7 +530,7 @@ SUITE( RegularExpressions )
         void* minus_a_minus_c;
         RegexCompiler compiler;
         compiler.compile( "[-a-c]", &minus_a_minus_c );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -538,7 +538,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_a_minus_c );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -546,7 +546,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_a_minus_c );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -554,7 +554,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_a_minus_c );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
@@ -562,12 +562,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &minus_a_minus_c );
         CHECK( lexer.lexeme() == "-" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -576,7 +576,7 @@ SUITE( RegularExpressions )
         void* a_minus_c_minus;
         RegexCompiler compiler;
         compiler.compile( "[a-c-]", &a_minus_c_minus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
@@ -584,7 +584,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c_minus );
         CHECK( lexer.lexeme() == "a" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -592,7 +592,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c_minus );
         CHECK( lexer.lexeme() == "b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
@@ -600,7 +600,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c_minus );
         CHECK( lexer.lexeme() == "c" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
@@ -608,12 +608,12 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &a_minus_c_minus );
         CHECK( lexer.lexeme() == "-" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -622,7 +622,7 @@ SUITE( RegularExpressions )
         void* hat_a_minus_c;
         RegexCompiler compiler;
         compiler.compile( "[^a-c]", &hat_a_minus_c );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -630,7 +630,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -638,7 +638,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -646,22 +646,22 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -670,7 +670,7 @@ SUITE( RegularExpressions )
         void* hat_minus_a_minus_c;
         RegexCompiler compiler;
         compiler.compile( "[^-a-c]", &hat_minus_a_minus_c );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -678,7 +678,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_a_minus_c );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -686,7 +686,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_a_minus_c );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -694,27 +694,27 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_minus_a_minus_c );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -723,7 +723,7 @@ SUITE( RegularExpressions )
         void* hat_a_minus_c_minus;
         RegexCompiler compiler;
         compiler.compile( "[^a-c-]", &hat_a_minus_c_minus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "d";
         lexer.reset( regex, regex + strlen(regex) );
@@ -731,7 +731,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c_minus );
         CHECK( lexer.lexeme() == "d" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "e";
         lexer.reset( regex, regex + strlen(regex) );
@@ -739,7 +739,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c_minus );
         CHECK( lexer.lexeme() == "e" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -747,27 +747,27 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hat_a_minus_c_minus );
         CHECK( lexer.lexeme() == "f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "a";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "b";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "c";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -776,7 +776,7 @@ SUITE( RegularExpressions )
         void* escape;
         RegexCompiler compiler;
         compiler.compile( "[\\b\\f\\n\\r\\t\\\"\\\'\\\\]", &escape );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "\b";
         lexer.reset( regex, regex + strlen(regex) );
@@ -784,7 +784,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\b" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -792,7 +792,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\n";
         lexer.reset( regex, regex + strlen(regex) );
@@ -800,7 +800,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\n" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\r";
         lexer.reset( regex, regex + strlen(regex) );
@@ -808,7 +808,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\r" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\t";
         lexer.reset( regex, regex + strlen(regex) );
@@ -816,7 +816,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\t" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\\";
         lexer.reset( regex, regex + strlen(regex) );
@@ -824,7 +824,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\\" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\"";
         lexer.reset( regex, regex + strlen(regex) );
@@ -832,7 +832,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\"" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\'";
         lexer.reset( regex, regex + strlen(regex) );
@@ -840,7 +840,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &escape );
         CHECK( lexer.lexeme() == "\'" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -849,7 +849,7 @@ SUITE( RegularExpressions )
         void* octal_escape;
         RegexCompiler compiler;
         compiler.compile( "[\\1\\01\\001\\177]", &octal_escape );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "\1";
         lexer.reset( regex, regex + strlen(regex) );
@@ -857,7 +857,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &octal_escape );
         CHECK( lexer.lexeme() == "\1" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\177";
         lexer.reset( regex, regex + strlen(regex) );
@@ -865,7 +865,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &octal_escape );
         CHECK( lexer.lexeme() == "\177" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );        
+        CHECK( lexer.symbol() == nullptr );        
     }
 
 
@@ -874,7 +874,7 @@ SUITE( RegularExpressions )
         void* hexadecimal_escape;
         RegexCompiler compiler;
         compiler.compile( "[\\x01\\x7f\\xfffd]", &hexadecimal_escape );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "\x01";
         lexer.reset( regex, regex + strlen(regex) );
@@ -882,7 +882,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hexadecimal_escape );
         CHECK( lexer.lexeme() == "\x01" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
 
         regex = "\x7f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -890,7 +890,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &hexadecimal_escape );
         CHECK( lexer.lexeme() == "\x7f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );        
+        CHECK( lexer.symbol() == nullptr );        
     }
     
     
@@ -899,7 +899,7 @@ SUITE( RegularExpressions )
         void* string;
         RegexCompiler compiler;
         compiler.compile( "\\\"([^\\\"]|\\\\\\\")*\\\"", &string );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "\"foo\"";
         lexer.reset( regex, regex + strlen(regex) );
@@ -907,7 +907,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &string );
         CHECK( lexer.lexeme() == "\"foo\"" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
     
@@ -916,7 +916,7 @@ SUITE( RegularExpressions )
         void* plus_or_minus;
         RegexCompiler compiler;
         compiler.compile( "(\\+|\\-)?", &plus_or_minus );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "+";
         lexer.reset( regex, regex + strlen(regex) );
@@ -924,7 +924,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &plus_or_minus );
         CHECK( lexer.lexeme() == "+" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         
         regex = "-";
         lexer.reset( regex, regex + strlen(regex) );
@@ -932,7 +932,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &plus_or_minus );
         CHECK( lexer.lexeme() == "-" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -941,7 +941,7 @@ SUITE( RegularExpressions )
         void* whitespace;
         RegexCompiler compiler;
         compiler.compile( "[ \t\r\n]*", &whitespace );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = " ";
         lexer.reset( regex, regex + strlen(regex) );
@@ -970,7 +970,7 @@ SUITE( RegularExpressions )
         regex = "";
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
         CHECK( lexer.lexeme() == "" );
     }
     
@@ -980,7 +980,7 @@ SUITE( RegularExpressions )
         void* ab_or_cd;
         RegexCompiler compiler;
         compiler.compile( "ab|cd", &ab_or_cd );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "ab";
         lexer.reset( regex, regex + strlen(regex) );
@@ -997,7 +997,7 @@ SUITE( RegularExpressions )
         regex = "acd";      
         lexer.reset( regex, regex + strlen(regex) );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1018,7 +1018,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == lt );
         CHECK( lexer.lexeme() == "<" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );        
+        CHECK( lexer.symbol() == nullptr );        
 
         regex = "<?xml";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1026,7 +1026,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == lt_question_xml );
         CHECK( lexer.lexeme() == "<?xml" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -1035,7 +1035,7 @@ SUITE( RegularExpressions )
         void* alnum;
         RegexCompiler compiler;
         compiler.compile( "[[:alnum:]]*", &alnum );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "ABZaez03459";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1043,7 +1043,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &alnum );
         CHECK( lexer.lexeme() == "ABZaez03459" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -1052,7 +1052,7 @@ SUITE( RegularExpressions )
         void* word;
         RegexCompiler compiler;
         compiler.compile( "[[:word:]]*", &word );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "ABZaez03459_";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1060,7 +1060,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &word );
         CHECK( lexer.lexeme() == "ABZaez03459_" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1069,7 +1069,7 @@ SUITE( RegularExpressions )
         void* alpha;
         RegexCompiler compiler;
         compiler.compile( "[[:alpha:]]*", &alpha );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "ABCMNOXYZabcmnoxyz";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1077,7 +1077,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &alpha );
         CHECK( lexer.lexeme() == "ABCMNOXYZabcmnoxyz" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1086,7 +1086,7 @@ SUITE( RegularExpressions )
         void* blank;
         RegexCompiler compiler;
         compiler.compile( "[[:blank:]]*", &blank );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = " \t";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1094,7 +1094,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &blank );
         CHECK( lexer.lexeme() == " \t" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1103,7 +1103,7 @@ SUITE( RegularExpressions )
         void* cntrl;
         RegexCompiler compiler;
         compiler.compile( "[[:cntrl:]]*", &cntrl );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "\x01\x02\x7f";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1111,7 +1111,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &cntrl );
         CHECK( lexer.lexeme() == "\x01\x02\x7f" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1120,7 +1120,7 @@ SUITE( RegularExpressions )
         void* digit;
         RegexCompiler compiler;
         compiler.compile( "[[:digit:]]*", &digit );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "012456789";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1128,7 +1128,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &digit );
         CHECK( lexer.lexeme() == "012456789" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
 
 
@@ -1137,7 +1137,7 @@ SUITE( RegularExpressions )
         void* graph;
         RegexCompiler compiler;
         compiler.compile( "[[:graph:]]*", &graph );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "abcdefg";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1145,7 +1145,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &graph );
         CHECK( lexer.lexeme() == "abcdefg" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }        
 
     
@@ -1154,7 +1154,7 @@ SUITE( RegularExpressions )
         void* lower;
         RegexCompiler compiler;
         compiler.compile( "[[:lower:]]*", &lower );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "abcmnoxyz";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1162,7 +1162,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &lower );
         CHECK( lexer.lexeme() == "abcmnoxyz" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -1171,7 +1171,7 @@ SUITE( RegularExpressions )
         void* print;
         RegexCompiler compiler;
         compiler.compile( "[[:print:]]*", &print );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "abcd";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1179,7 +1179,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &print );
         CHECK( lexer.lexeme() == "abcd" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -1188,7 +1188,7 @@ SUITE( RegularExpressions )
         void* punct;
         RegexCompiler compiler;
         compiler.compile( "[[:punct:]]*", &punct );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "$#@%";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1196,7 +1196,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &punct );
         CHECK( lexer.lexeme() == "$#@%" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -1206,7 +1206,7 @@ SUITE( RegularExpressions )
         void* space;
         RegexCompiler compiler;
         compiler.compile( "[[:space:]]*", &space );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = " \t\n\r";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1214,7 +1214,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &space );
         CHECK( lexer.lexeme() == " \t\n\r" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -1224,7 +1224,7 @@ SUITE( RegularExpressions )
         void* upper;
         RegexCompiler compiler;
         compiler.compile( "[[:upper:]]*", &upper );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "ABCMNOXYZ";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1232,7 +1232,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &upper );
         CHECK( lexer.lexeme() == "ABCMNOXYZ" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
 
@@ -1241,7 +1241,7 @@ SUITE( RegularExpressions )
         void* xdigit;
         RegexCompiler compiler;
         compiler.compile( "[[:xdigit:]]*", &xdigit );
-        Lexer<const char*> lexer( compiler.state_machine(), NULL );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
 
         const char* regex = "0129ABDfacef";
         lexer.reset( regex, regex + strlen(regex) );
@@ -1249,7 +1249,7 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &xdigit );
         CHECK( lexer.lexeme() == "0129ABDfacef" );
         lexer.advance();
-        CHECK( lexer.symbol() == NULL );
+        CHECK( lexer.symbol() == nullptr );
     }
     
     
@@ -1258,7 +1258,7 @@ SUITE( RegularExpressions )
         void* whitespace;
         RegexCompiler compiler;
         compiler.compile( "[ \\t\\r\\n]", &whitespace );
-        Lexer<PositionIterator<const char*> > lexer( compiler.state_machine(), NULL );
+        Lexer<PositionIterator<const char*> > lexer( compiler.state_machine(), nullptr );
         
         const char* regex = "\n \r\n \r \r\n";
         lexer.reset( PositionIterator<const char*>(regex, regex + strlen(regex)), PositionIterator<const char*>() );
