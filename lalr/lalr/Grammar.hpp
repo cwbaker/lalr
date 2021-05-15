@@ -36,9 +36,6 @@ class Grammar
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
-    std::unique_ptr<GrammarCompiler> parser_allocations_;
-    std::unique_ptr<RegexCompiler> lexer_allocations_;
-    std::unique_ptr<RegexCompiler> whitespace_lexer_allocations_;
 
 public:
     Grammar();
