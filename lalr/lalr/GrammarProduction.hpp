@@ -25,29 +25,29 @@ class GrammarProduction
     std::vector<GrammarSymbol*> symbols_; ///< The symbols on the right hand side of this production.
     const GrammarSymbol* precedence_symbol_; /// The symbol that defines precedence for this production or null to use the right most terminal.
 
-    public:
-        GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action );
+public:
+    GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action );
 
-        int index() const;
-        GrammarSymbol* symbol() const;
-        int line() const;
-        int column() const;
-        int count_references_to_symbol( const GrammarSymbol* symbol ) const;
-        const GrammarSymbol* find_rightmost_terminal_symbol() const;
-        const GrammarSymbol* symbol_by_position( int position ) const;
-        const std::vector<GrammarSymbol*>& symbols() const;
-        int length() const;
-        const GrammarAction* action() const;
-        int action_index() const;
-        const GrammarSymbol* precedence_symbol() const;
-        int precedence() const;
+    int index() const;
+    GrammarSymbol* symbol() const;
+    int line() const;
+    int column() const;
+    int count_references_to_symbol( const GrammarSymbol* symbol ) const;
+    const GrammarSymbol* find_rightmost_terminal_symbol() const;
+    const GrammarSymbol* symbol_by_position( int position ) const;
+    const std::vector<GrammarSymbol*>& symbols() const;
+    int length() const;
+    const GrammarAction* action() const;
+    int action_index() const;
+    const GrammarSymbol* precedence_symbol() const;
+    int precedence() const;
 
-        void append_symbol( GrammarSymbol* symbol );        
-        void set_action( const GrammarAction* action );        
-        void set_precedence_symbol( const GrammarSymbol* symbol );        
-        void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
+    void append_symbol( GrammarSymbol* symbol );        
+    void set_action( const GrammarAction* action );        
+    void set_precedence_symbol( const GrammarSymbol* symbol );        
+    void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
 
-        static const int INVALID_INDEX = -1;
+    static const int INVALID_INDEX = -1;
 };
 
 }

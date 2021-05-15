@@ -12,12 +12,12 @@ class ParserStateMachine;
 
 class GrammarParser
 {
-    ErrorPolicy* error_policy_;
-    Grammar* grammar_;
-    const char* position_;
-    const char* end_;
-    int line_;
-    std::string lexeme_;
+    ErrorPolicy* error_policy_; ///< ErrorPolicy to report errors to.
+    Grammar* grammar_; ///< Grammar to build from parsing input.
+    const char* position_; ///< Current input position.
+    const char* end_; ///< One past the last character of input to parse.
+    int line_; ///< Current line number.
+    std::string lexeme_; ///< Currently parsed lexeme.
     int errors_; ///< The number of errors that occured during parsing and generation.
 
 public:

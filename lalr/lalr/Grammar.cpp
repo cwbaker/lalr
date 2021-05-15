@@ -23,19 +23,19 @@ using std::unique_ptr;
 using namespace lalr;
 
 Grammar::Grammar()
-: identifier_(),
-  symbols_(),
-  productions_(),
-  actions_(),
-  whitespace_tokens_(),
-  active_whitespace_directive_( false ),
-  active_precedence_directive_( false ),
-  associativity_( ASSOCIATE_NULL ),
-  precedence_( 0 ),
-  active_production_( nullptr ),
-  active_symbol_( nullptr ),
-  start_symbol_( nullptr ),
-  end_symbol_( nullptr ),
+: identifier_()
+, symbols_()
+, productions_()
+, actions_()
+, whitespace_tokens_()
+, active_whitespace_directive_( false )
+, active_precedence_directive_( false )
+, associativity_( ASSOCIATE_NULL )
+, precedence_( 0 )
+, active_production_( nullptr )
+, active_symbol_( nullptr )
+, start_symbol_( nullptr )
+, end_symbol_( nullptr ),
   error_symbol_( nullptr )
 {
     start_symbol_ = add_symbol( ".start", 0, LEXEME_NULL, SYMBOL_NON_TERMINAL );

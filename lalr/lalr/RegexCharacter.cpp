@@ -18,8 +18,8 @@ using namespace lalr;
 //  One past the last character in the represented interval.
 */
 RegexCharacter::RegexCharacter( int begin_character, int end_character )
-: begin_character_( begin_character ),
-  end_character_( end_character )
+: begin_character_( begin_character )
+, end_character_( end_character )
 {
     LALR_ASSERT( begin_character_ < end_character_ );
 }
@@ -35,7 +35,6 @@ int RegexCharacter::begin_character() const
     return begin_character_;
 }
 
-
 /**
 // Get the character one past the last character in the represented interval.
 //
@@ -46,7 +45,6 @@ int RegexCharacter::end_character() const
 {
     return end_character_;
 }
-
 
 /**
 // Less than operator.

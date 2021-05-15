@@ -18,8 +18,8 @@ using namespace lalr;
 //  The identifier of this action (assumed not empty).
 */
 GrammarAction::GrammarAction( int index, const std::string& identifier )
-: index_( index ),
-  identifier_( identifier )
+: index_( index )
+, identifier_( identifier )
 {
     LALR_ASSERT( index_ >= 0 );
     LALR_ASSERT( !identifier_.empty() );

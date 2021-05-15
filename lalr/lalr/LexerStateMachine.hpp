@@ -17,13 +17,13 @@ class LexerState;
 class LexerStateMachine
 {
 public:
-    int actions_size;
-    int transitions_size;
-    int states_size;
-    const LexerAction* actions;
-    const LexerTransition* transitions;
-    const LexerState* states;
-    const LexerState* start_state;
+    int actions_size; ///< The number of actions.
+    int transitions_size; ///< The total number of transitions.
+    int states_size; ///< The number of states.
+    const LexerAction* actions; ///< The actions in this lexer.
+    const LexerTransition* transitions; ///< The transitions in this lexer (for all states).
+    const LexerState* states; ///< The states in this lexer.
+    const LexerState* start_state; ///< The starting state in this lexer.
 };
 
 }

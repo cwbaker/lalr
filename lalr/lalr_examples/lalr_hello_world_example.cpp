@@ -14,6 +14,7 @@ void lalr_hello_world_example()
         "   hello_world: 'Hello World!' [hello_world];\n"
         "}\n"
     ;
+
     GrammarCompiler compiler;
     compiler.compile( hello_world_grammar, hello_world_grammar + strlen(hello_world_grammar) );
     Parser<const char*> parser( compiler.parser_state_machine() );

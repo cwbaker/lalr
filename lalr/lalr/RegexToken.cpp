@@ -11,12 +11,12 @@ using std::vector;
 using namespace lalr;
 
 RegexToken::RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme )
-: type_( type ),
-  line_( line ),
-  column_( column ),
-  symbol_( symbol ),
-  lexeme_( lexeme ),
-  conflicted_with_()
+: type_( type )
+, line_( line )
+, column_( column )
+, symbol_( symbol )
+, lexeme_( lexeme )
+, conflicted_with_()
 {
 }
 

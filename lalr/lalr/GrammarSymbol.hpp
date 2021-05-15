@@ -16,14 +16,14 @@ class GrammarProduction;
 
 class GrammarSymbol
 {
-    std::string lexeme_;
+    std::string lexeme_; ///< The lexeme of this symbol.
     std::string identifier_; ///< The identifier for this symbol (generated from its lexeme).
-    SymbolType symbol_type_;
-    LexemeType lexeme_type_;
-    Associativity associativity_;
-    int precedence_;
-    int line_;
-    int index_;
+    SymbolType symbol_type_; ///< The type of this symbol (terminal, non-terminal, or end).
+    LexemeType lexeme_type_; ///< The type of this symbol's lexeme (regular expression or literal).
+    Associativity associativity_; ///< The associativity of this symbol.
+    int precedence_; ///< The precedence of this symbol.
+    int line_; ///< The line that this symbol is defined on.
+    int index_; ///< The index of this symbol among all symbols.
     bool nullable_; ///< True if this symbol is nullable otherwise false.
     std::set<const GrammarSymbol*, GrammarSymbolLess> first_; ///< The symbols that can start this symbol in a production or regular expression.
     std::set<const GrammarSymbol*, GrammarSymbolLess> follow_; ///< The symbols that can follow this symbol in a production or regular expression.

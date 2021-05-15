@@ -23,14 +23,20 @@ using namespace lalr;
 // Default constructor.
 */
 RegexSyntaxTree::RegexSyntaxTree()
-: generator_( nullptr ),
-  bracket_expression_characters_(),
-  index_( 0 ),
-  nodes_(),
-  errors_( 0 )
+: generator_( nullptr )
+, bracket_expression_characters_()
+, index_( 0 )
+, nodes_()
+, errors_( 0 )
 {
 }
 
+/**
+// Is this syntax tree empty?
+//
+// @return
+//  True if this syntax tree is empty otherwise false.
+*/
 bool RegexSyntaxTree::empty() const
 {
     return nodes_.empty();

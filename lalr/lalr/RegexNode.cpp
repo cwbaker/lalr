@@ -30,17 +30,17 @@ const int lalr::INVALID_END_CHARACTER = -1;
 //  The type of this node.
 */
 RegexNode::RegexNode( int index, RegexNodeType type )
-: index_( index ),
-  type_( type ),
-  begin_character_( INVALID_BEGIN_CHARACTER ),
-  end_character_( INVALID_END_CHARACTER ),
-  token_( NULL ),
-  action_( NULL ),
-  nodes_(),
-  nullable_( false ),
-  first_positions_(),
-  last_positions_(),
-  follow_positions_()
+: index_( index )
+, type_( type )
+, begin_character_( INVALID_BEGIN_CHARACTER )
+, end_character_( INVALID_END_CHARACTER )
+, token_( NULL )
+, action_( NULL )
+, nodes_()
+, nullable_( false )
+, first_positions_()
+, last_positions_()
+, follow_positions_()
 {
     LALR_ASSERT( type_ != LEXER_NODE_SYMBOL );
 }
@@ -59,17 +59,17 @@ RegexNode::RegexNode( int index, RegexNodeType type )
 //  One past the last character in the interval for this node.
 */
 RegexNode::RegexNode( int index, int begin_character, int end_character )
-: index_( index ),
-  type_( LEXER_NODE_SYMBOL ),
-  begin_character_( begin_character ),
-  end_character_( end_character ),
-  token_( NULL ),
-  action_( NULL ),
-  nodes_(),
-  nullable_( false ),
-  first_positions_(),
-  last_positions_(),
-  follow_positions_()
+: index_( index )
+, type_( LEXER_NODE_SYMBOL )
+, begin_character_( begin_character )
+, end_character_( end_character )
+, token_( NULL )
+, action_( NULL )
+, nodes_()
+, nullable_( false )
+, first_positions_()
+, last_positions_()
+, follow_positions_()
 {
     LALR_ASSERT( begin_character_ < end_character_ );
 }
@@ -91,17 +91,17 @@ RegexNode::RegexNode( int index, int begin_character, int end_character )
 //  The RegexToken recognized at this node (assumed not null).
 */
 RegexNode::RegexNode( int index, int begin_character, int end_character, const RegexToken* token )
-: index_( index ),
-  type_( LEXER_NODE_SYMBOL ),
-  begin_character_( begin_character ),
-  end_character_( end_character ),
-  token_( token ),
-  action_( NULL ),
-  nodes_(),
-  nullable_( false ),
-  first_positions_(),
-  last_positions_(),
-  follow_positions_()
+: index_( index )
+, type_( LEXER_NODE_SYMBOL )
+, begin_character_( begin_character )
+, end_character_( end_character )
+, token_( token )
+, action_( NULL )
+, nodes_()
+, nullable_( false )
+, first_positions_()
+, last_positions_()
+, follow_positions_()
 {
     LALR_ASSERT( begin_character_ < end_character_ );
     LALR_ASSERT( token_ );
@@ -117,17 +117,17 @@ RegexNode::RegexNode( int index, int begin_character, int end_character, const R
 //  The action taken at this node (assumed not null).
 */
 RegexNode::RegexNode( int index, const RegexAction* action )
-: index_( index ),
-  type_( LEXER_NODE_ACTION ),
-  begin_character_( BEGIN_CHARACTER ),
-  end_character_( END_CHARACTER ),
-  token_( NULL ),
-  action_( action ),
-  nodes_(),
-  nullable_( false ),
-  first_positions_(),
-  last_positions_(),
-  follow_positions_()
+: index_( index )
+, type_( LEXER_NODE_ACTION )
+, begin_character_( BEGIN_CHARACTER )
+, end_character_( END_CHARACTER )
+, token_( NULL )
+, action_( action )
+, nodes_()
+, nullable_( false )
+, first_positions_()
+, last_positions_()
+, follow_positions_()
 {
     LALR_ASSERT( action_ );
 }

@@ -15,13 +15,13 @@ using std::string;
 using namespace lalr;
 
 GrammarParser::GrammarParser()
-: error_policy_( nullptr ),
-  grammar_( nullptr ),
-  position_( nullptr ),
-  end_( nullptr ),
-  line_( 1 ),
-  lexeme_(),
-  errors_( 0 )
+: error_policy_( nullptr )
+, grammar_( nullptr )
+, position_( nullptr )
+, end_( nullptr )
+, line_( 1 )
+, lexeme_()
+, errors_( 0 )
 {
     const size_t lexeme_reserve = 256;
     lexeme_.reserve( lexeme_reserve );

@@ -42,24 +42,24 @@ class Lexer
     const void* symbol_; ///< The most recently matched symbol or null if no symbol has been matched.
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
 
-    public:
-        Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );
-        void set_action_handler( const char* identifier, LexerActionFunction function );
-        const std::basic_string<Char, Traits, Allocator>& lexeme() const;
-        int line() const;
-        int column() const;
-        const void* symbol() const;
-        const Iterator& position() const;
-        bool full() const;
-        void reset( Iterator start, Iterator finish );
-        void advance();
-        
-    private:
-        void skip();
-        const void* run();
-        void error();
-        void fire_error( int line, int column, int error, const char* format, ... ) const;
-        const LexerTransition* find_transition_by_character( const LexerState* state, int character ) const;
+public:
+    Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );
+    void set_action_handler( const char* identifier, LexerActionFunction function );
+    const std::basic_string<Char, Traits, Allocator>& lexeme() const;
+    int line() const;
+    int column() const;
+    const void* symbol() const;
+    const Iterator& position() const;
+    bool full() const;
+    void reset( Iterator start, Iterator finish );
+    void advance();
+    
+private:
+    void skip();
+    const void* run();
+    void error();
+    void fire_error( int line, int column, int error, const char* format, ... ) const;
+    const LexerTransition* find_transition_by_character( const LexerState* state, int character ) const;
 };
 
 }

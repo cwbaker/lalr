@@ -19,11 +19,11 @@ using namespace lalr;
 // Constructor.
 */
 RegexState::RegexState()
-: items_(),
-  transitions_(),
-  symbol_( NULL ),
-  processed_( false ),
-  index_( -1 )
+: items_()
+, transitions_()
+, symbol_( nullptr )
+, processed_( false )
+, index_( -1 )
 {
 }
 
@@ -56,7 +56,7 @@ const RegexTransition* RegexState::find_transition_by_character( int character )
         ++transition;
     }
 
-    return transition != transitions_.end() ? &(*transition) : NULL;
+    return transition != transitions_.end() ? &(*transition) : nullptr;
 }
 
 /**
@@ -148,7 +148,7 @@ int RegexState::add_item( const std::set<RegexNode*, RegexNodeLess>& next_nodes 
 */
 void RegexState::add_transition( int begin, int end, RegexState* state )
 {
-    const RegexAction* action = NULL;
+    const RegexAction* action = nullptr;
     std::set<RegexItem>::const_iterator item = items_.begin();
     while ( item != items_.end() && !action )
     {

@@ -27,11 +27,11 @@ namespace lalr
 */
 template <class Char, class Traits, class Allocator>
 ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, int line, int column )
-: state_( state ),
-  symbol_( symbol ),
-  lexeme_(),
-  line_( line ),
-  column_( column )
+: state_( state )
+, symbol_( symbol )
+, lexeme_()
+, line_( line )
+, column_( column )
 {
     LALR_ASSERT( state );
     LALR_ASSERT( line >= 0 );
@@ -61,11 +61,11 @@ ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const
 */
 template <class Char, class Traits, class Allocator>
 ParserNode<Char, Traits, Allocator>::ParserNode( const ParserState* state, const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
-: state_( state ),
-  symbol_( symbol ),
-  lexeme_( lexeme ),
-  line_( line ),
-  column_( column )
+: state_( state )
+, symbol_( symbol )
+, lexeme_( lexeme )
+, line_( line )
+, column_( column )
 {
     LALR_ASSERT( state );
     LALR_ASSERT( line >= 0 );

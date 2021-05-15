@@ -38,8 +38,8 @@ namespace lalr
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 Parser<Iterator, UserData, Char, Traits, Allocator>::ParserActionHandler::ParserActionHandler( const ParserAction* action, ParserActionFunction function )
-: action_( action ),
-  function_( function )
+: action_( action )
+, function_( function )
 {
 }
 
@@ -60,16 +60,16 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::ParserActionHandler::Parser
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMachine* state_machine, ErrorPolicy* error_policy )
-: state_machine_( state_machine ),
-  error_policy_( error_policy ),
-  nodes_(),
-  user_data_(),
-  lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, error_policy ),
-  action_handlers_(),
-  default_action_handler_( NULL ),
-  debug_enabled_( false ),
-  accepted_( false ),
-  full_( false )
+: state_machine_( state_machine )
+, error_policy_( error_policy )
+, nodes_()
+, user_data_()
+, lexer_( state_machine_->lexer_state_machine, state_machine_->whitespace_lexer_state_machine, state_machine_->end_symbol, error_policy )
+, action_handlers_()
+, default_action_handler_( nullptr )
+, debug_enabled_( false )
+, accepted_( false )
+, full_( false )
 {
     LALR_ASSERT( state_machine_ );
     
@@ -78,7 +78,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     const ParserAction* actions_end = action + state_machine_->actions_size;
     while ( action != actions_end )
     {
-        action_handlers_.push_back( ParserActionHandler(action, NULL) );
+        action_handlers_.push_back( ParserActionHandler(action, nullptr) );
         ++action;
     }
 
