@@ -36,8 +36,7 @@ Grammar::Grammar()
   active_symbol_( nullptr ),
   start_symbol_( nullptr ),
   end_symbol_( nullptr ),
-  error_symbol_( nullptr ),
-  parser_allocations_()
+  error_symbol_( nullptr )
 {
     start_symbol_ = add_symbol( ".start", 0, LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = add_symbol( ".end", 0, LEXEME_NULL, SYMBOL_END );
