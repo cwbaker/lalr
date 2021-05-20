@@ -26,12 +26,6 @@ local cc = require 'forge.cc' {
         ('BUILD_VARIANT_%s'):format( upper(variant) );
         ('BUILD_VERSION="\\"%s\\""'):format( version );
     };
-    visual_studio = {
-        sln = root( 'lalr.sln' );
-    };
-    xcode = {
-        xcodeproj = root( 'lalr.xcodeproj' );
-    };
 
     architecture = 'x86_64';
     assertions = variant ~= 'shipping';
