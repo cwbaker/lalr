@@ -9,7 +9,7 @@ Modern [LALR(1)](https://en.wikipedia.org/wiki/LALR_parser) parser generator and
 - Generate LALR(1) parsers in C++ from BNF grammars.
 - Compile grammars at build-time or run-time.
 - Bind lexer actions for escaping characters and symbol table lookup.
-- Bind actions to `std::tr1::function` objects.
+- Bind actions to `std::function` objects.
 - Specify terminals inline in the grammar.
 - Re-entrant and thread-safe.
 
