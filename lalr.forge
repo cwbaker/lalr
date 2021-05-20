@@ -1,0 +1,10 @@
+
+buildfile 'src/lalr/lalr.forge';
+
+for _, cc in toolsets('^cc.*') do
+    cc:all {
+        'src/lalr/all';
+        'src/lalr/lalrc/all';
+        'src/lalr/lalr_test/all';
+    };
+end

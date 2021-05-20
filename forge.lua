@@ -1,8 +1,8 @@
 
 local paths = {
     package.path;
-    root( 'lalr/?.lua' );
-    root( 'lalr/?/init.lua' );
+    root( 'src/lalr/?.lua' );
+    root( 'src/lalr/?/init.lua' );
 };
 package.path = table.concat( paths, ';' );
 
@@ -15,8 +15,8 @@ local cc = require 'forge.cc' {
     lib = root( ('%s/lib'):format(variant) );
     obj = root( ('%s/obj'):format(variant) );
     include_directories = {
-        root( 'lalr' );
-        root( 'unittest-cpp' );
+        root( 'src' );
+        root( 'src/unittest-cpp' );
     };
     library_directories = {
         root( ('%s/lib'):format(variant) );
@@ -55,7 +55,7 @@ local cc = require 'forge.cc' {
 };
 
 -- Bump the C++ standard to c++14 when building on Windows as that is the 
--- closest standard supported by Microsoft Visual C++.
+-- lowest standard supported by Microsoft Visual C++.
 local settings = cc.settings;
 if settings.platform == 'windows' then
     settings.standard = 'c++14';
@@ -64,11 +64,12 @@ end
 local lalr = require 'forge.lalr';
 cc:install( lalr );
 
-buildfile 'lalr/lalr.forge';
-buildfile 'unittest-cpp/unittest-cpp.forge';
+buildfile 'src/lalr/lalr.forge';
+buildfile 'src/unittest-cpp/unittest-cpp.forge';
 
 cc:all {
-    'lalr/lalrc/all',
-    'lalr/lalr_examples/all',
-    'lalr/lalr_test/all'
+    'src/lalr/all',
+    'src/lalr/lalrc/all',
+    'src/lalr/lalr_examples/all',
+    'src/lalr/lalr_test/all'
 };
