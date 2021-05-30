@@ -40,7 +40,7 @@ int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* er
     errors_ = 0;
     if ( !match_grammar() )
     {
-        error( 1, 0, LALR_ERROR_SYNTAX, "parsing grammar failed" );
+        error( 1, LALR_ERROR_SYNTAX, "parsing grammar failed" );
     }
     return errors_;
 }
@@ -235,7 +235,7 @@ bool GrammarParser::match_literal()
             expect( "'" );
             return true;
         }
-        error( line_, 0, LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        error( line_, LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
         return false;
     }
     return false;
@@ -388,11 +388,11 @@ bool GrammarParser::expect( const char* lexeme )
         return true;
     }
     position_ = end_;
-    error( line_, 0, LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
+    error( line_, LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
     return false;
 }
 
-void GrammarParser::error( int line, int column, int error, const char* format, ... )
+void GrammarParser::error( int line, int error, const char* format, ... )
 {
     LALR_ASSERT( format );
     ++errors_;
@@ -400,7 +400,7 @@ void GrammarParser::error( int line, int column, int error, const char* format, 
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, column, error, format, args );
+        error_policy_->lalr_error( line, 0, error, format, args );
         va_end( args );
     }
 }

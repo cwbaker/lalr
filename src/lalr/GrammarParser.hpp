@@ -50,7 +50,7 @@ private:
     bool match( const char* lexeme );
     bool match_without_skipping_whitespace( const char* lexeme );
     bool expect( const char* lexeme );
-    void error( int line, int column, int error, const char* format, ... );
+    void error( int line, int error, const char* format, ... );
     const char* new_line( const char* position );
     static bool is_new_line( const char* position );
 };
