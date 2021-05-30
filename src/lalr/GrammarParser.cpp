@@ -127,7 +127,7 @@ bool GrammarParser::match_symbol()
 {
     if ( match_error() )
     {
-        grammar_->error();
+        grammar_->error( line_ );
         return true;
     }
     else if ( match_literal() )
@@ -202,12 +202,12 @@ bool GrammarParser::match_action()
     {
         if ( match_identifier() )
         {
-            grammar_->action( lexeme_.c_str() );
+            grammar_->action( lexeme_.c_str(), line_ );
         }
         expect( "]" );
         return true;
     }
-    grammar_->end_expression();
+    grammar_->end_expression( line_ );
     return false;
 }
 

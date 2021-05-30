@@ -168,8 +168,9 @@ Grammar& Grammar::end_production()
     return *this;
 }
 
-Grammar& Grammar::end_expression()
+Grammar& Grammar::end_expression( int line )
 {
+    LALR_ASSERT( line >= 1 );
     // If there is an active symbol but no active production then an empty
     // production is being specified (the nil action marks the end of a 
     // production for which no symbols have been specified).
@@ -177,15 +178,16 @@ Grammar& Grammar::end_expression()
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }
     }
     active_production_ = nullptr;
     return *this;
 }
 
-Grammar& Grammar::error()
+Grammar& Grammar::error( int line )
 {
+    LALR_ASSERT( line >= 1 );
     if ( associativity_ != ASSOCIATE_NULL )
     {
         GrammarSymbol* symbol = error_symbol();
@@ -196,21 +198,23 @@ Grammar& Grammar::error()
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }
         active_production_->append_symbol( error_symbol() );            
     }
     return *this;
 }
 
-Grammar& Grammar::action( const char* identifier )
+Grammar& Grammar::action( const char* identifier, int line )
 {
+    LALR_ASSERT( identifier );
+    LALR_ASSERT( line >= 1 );
     LALR_ASSERT( active_symbol_ );
     if ( active_symbol_ )
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }
         active_production_->set_action( add_action(identifier) );
         active_production_ = nullptr;
@@ -237,7 +241,7 @@ Grammar& Grammar::literal( const char* literal, int line )
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }        
         if ( active_precedence_directive_ )
         {
@@ -271,7 +275,7 @@ Grammar& Grammar::regex( const char* regex, int line )
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }
         if ( active_precedence_directive_ )
         {
@@ -301,7 +305,7 @@ Grammar& Grammar::identifier( const char* identifier, int line )
     {
         if ( !active_production_ )
         {
-            active_production_ = add_production( active_symbol_ );
+            active_production_ = add_production( active_symbol_, line );
         }
         if ( active_precedence_directive_ )
         {
@@ -362,9 +366,10 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
     return symbol;
 }
 
-GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
+GrammarProduction* Grammar::add_production( GrammarSymbol* symbol, int line )
 {
     LALR_ASSERT( symbol );
+    LALR_ASSERT( line > 0 );
     if ( productions_.empty() )
     {
         LALR_ASSERT( start_symbol_ );
@@ -374,7 +379,7 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol )
         productions_.push_back( move(production) );
     }
 
-    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, symbol->line(), -1, nullptr) );
+    unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, line, -1, nullptr) );
     symbol->append_production( production.get() );
     productions_.push_back( move(production) );
     return productions_.back().get();
