@@ -223,12 +223,12 @@ bool GrammarParser::match_literal()
     {
         bool escaped = false;
         const char* position = position_;
-        while ( position != end_ && (*position != '\'' || escaped) && !is_newline(*position) )
+        while ( position != end_ && (*position != '\'' || escaped) && !is_new_line(position) )
         {
             escaped = *position == '\\';
             ++position;
         }
-        if ( position == end_ || !is_newline(*position) )
+        if ( position == end_ || !is_new_line(position) )
         {
             lexeme_.assign( position_, position );
             position_ = position;
@@ -292,16 +292,13 @@ bool GrammarParser::match_whitespace()
     const char* position = position_;
     if ( position != end_ && isspace(*position) )
     {
-        bool newline = false;
         while ( position != end_ && isspace(*position) )
         {
-            if ( !newline && (*position == '\n' || *position == '\r') )
+            if ( is_new_line(position) )
             {
-                newline = true;
                 ++line_;
             }
             ++position;
-            newline = false;
         }
         position_ = position;
         return true;        
@@ -313,33 +310,12 @@ bool GrammarParser::match_line_comment()
 {
     if ( match_without_skipping_whitespace("//") )
     {
-        bool done = false;
         const char* position = position_;
-        while ( position != end_ && !done )
+        while ( position != end_ && !is_new_line(position) )
         {
-            done = *position == '\n' || *position == '\r';
             ++position;
         }
-        if ( position != end_ )
-        {
-            if ( *position == '\n' )
-            {
-                ++position;
-                if ( position != end_ && *position == '\r' )
-                {
-                    ++position;
-                }
-            }
-            else if ( *position == '\r' )
-            {
-                ++position;
-                if ( position != end_ && *position == '\n' )
-                {
-                    ++position;
-                }
-            }
-        }
-        position_ = position;
+        position_ = new_line( position );
         return true;
     }
     return false;
@@ -356,9 +332,20 @@ bool GrammarParser::match_block_comment()
             if ( *position == '*' )
             {
                 ++position;
-                done = position != end_ && *position == '/';
+                if ( position != end_ && *position == '/' )
+                {
+                    done = true;
+                    ++position;
+                }
             }
-            ++position;
+            else if ( is_new_line(position) )
+            {
+                position = new_line( position );
+            }
+            else
+            {
+                ++position;
+            }
         }
         position_ = position;
         return true;        
@@ -418,7 +405,33 @@ void GrammarParser::error( int line, int column, int error, const char* format, 
     }
 }
 
-bool GrammarParser::is_newline( int character )
+const char* GrammarParser::new_line( const char* position )
 {
-    return character == '\n' || character == '\r';
+    if ( position != end_ )
+    {
+        if ( *position == '\n' )
+        {
+            ++position;
+            if ( position != end_ && *position == '\r' )
+            {
+                ++position;
+            }
+            ++line_;
+        }
+        else if ( *position == '\r' )
+        {
+            ++position;
+            if ( position != end_ && *position == '\n' )
+            {
+                ++position;
+            }
+            ++line_;
+        }
+    }
+    return position;
+}
+
+bool GrammarParser::is_new_line( const char* position )
+{
+    return *position == '\n' || *position == '\r';
 }

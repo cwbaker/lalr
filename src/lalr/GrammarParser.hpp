@@ -51,7 +51,8 @@ private:
     bool match_without_skipping_whitespace( const char* lexeme );
     bool expect( const char* lexeme );
     void error( int line, int column, int error, const char* format, ... );
-    static bool is_newline( int character );
+    const char* new_line( const char* position );
+    static bool is_new_line( const char* position );
 };
 
 }
