@@ -51,7 +51,7 @@ public:
     int generate( Grammar& grammar, ErrorPolicy* error_policy );
             
 private:
-    void fire_error( int line, int column, int error, const char* format, ... );
+    void fire_error( int line, int error, const char* format, ... );
     void fire_printf( const char* format, ... ) const;
     std::set<const GrammarSymbol*, GrammarSymbolLess> lookahead( const GrammarItem& item ) const;
     void closure( const std::shared_ptr<GrammarState>& state );
