@@ -140,27 +140,6 @@ void GrammarGenerator::fire_error( int line, int error, const char* format, ... 
 }
 
 /**
-// Fire debug output at the event sink.
-//
-// @param format
-//  The printf-style format string that describes the text to print.
-//
-// @param args
-//  Arguments as described by \e format.
-*/
-void GrammarGenerator::fire_printf( const char* format, ... ) const
-{
-    if ( error_policy_ )
-    {
-        LALR_ASSERT( format );
-        va_list args;
-        va_start( args, format );
-        error_policy_->lalr_vprintf( format, args );
-        va_end( args );
-    }
-}
-
-/**
 // Generate lookaheads for an item.
 //
 // @param item
