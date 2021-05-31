@@ -741,7 +741,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             {
                 if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
                 {
-                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict on '%s' for '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str() );
+                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'", production->symbol()->identifier().c_str(), symbol->lexeme().c_str() );
                 }
                 else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
                 {
@@ -755,7 +755,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             {
                 if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
                 {
-                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict on '%s' for '%s' and '%s'", symbol->identifier().c_str(), production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str() );
+                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'", production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str() );
                 }
                 else if ( production->precedence() > transition->precedence() )
                 {
