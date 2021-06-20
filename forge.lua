@@ -9,7 +9,7 @@ package.path = table.concat( paths, ';' );
 variant = variant or 'debug';
 
 local cc = require 'forge.cc' {    
-    identifier = 'cc_${platform}_${architecture}';
+    identifier = 'cc_${platform}';
     platform = operating_system();
     bin = root( ('%s/bin'):format(variant) );
     lib = root( ('%s/lib'):format(variant) );
@@ -27,7 +27,6 @@ local cc = require 'forge.cc' {
         ('BUILD_VERSION="\\"%s\\""'):format( version );
     };
 
-    architecture = 'x86_64';
     assertions = variant ~= 'shipping';
     debug = variant ~= 'shipping';
     debuggable = variant ~= 'shipping';
