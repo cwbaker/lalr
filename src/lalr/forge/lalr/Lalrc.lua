@@ -1,8 +1,8 @@
 
-local Lalrc = PatternPrototype( 'Lalrc' );
+local Lalrc = PatternRule( 'Lalrc' );
 
 function Lalrc.created( toolset, target )
-    local lalrc = toolset:interpolate( toolset.settings.lalr.lalrc );
+    local lalrc = toolset:interpolate( toolset.lalr.lalrc );
     target:add_dependency( toolset:Target(lalrc) );
 end
 

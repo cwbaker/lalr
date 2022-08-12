@@ -1,5 +1,5 @@
 
-local lalr = ToolsetPrototype( 'lalr' );
+local lalr = {};
 
 function lalr.configure( toolset, lalr_settings )
 	return {
@@ -7,7 +7,8 @@ function lalr.configure( toolset, lalr_settings )
 	};
 end
 
-function lalr.initialize( toolset )
+function lalr.install( toolset )
+    toolset:configure_once( 'lalr', lalr.configure );
 	toolset.Lalrc = require( 'forge.lalr.Lalrc' );
 	return true;
 end
