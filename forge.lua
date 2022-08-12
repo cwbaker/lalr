@@ -8,8 +8,9 @@ package.path = table.concat( paths, ';' );
 
 variant = variant or 'debug';
 
-local cc = require 'forge.cc' {    
-    identifier = 'cc_${platform}';
+local forge = require( 'forge' ):load( variant );
+
+local cc = forge.Toolset 'cc_${platform}' {
     platform = operating_system();
     bin = root( ('%s/bin'):format(variant) );
     lib = root( ('%s/lib'):format(variant) );
@@ -47,11 +48,12 @@ local cc = require 'forge.cc' {
     warnings_as_errors = true;
 };
 
+cc:install( 'forge.cc' );
+
 -- Bump the C++ standard to c++14 when building on Windows as that is the 
 -- lowest standard supported by Microsoft Visual C++.
-local settings = cc.settings;
-if settings.platform == 'windows' then
-    settings.standard = 'c++14';
+if cc.platform == 'windows' then
+    cc.standard = 'c++14';
 end
 
 local lalr = require 'forge.lalr';

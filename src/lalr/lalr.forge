@@ -3,13 +3,13 @@ buildfile 'lalrc/lalrc.forge';
 buildfile 'lalr_examples/lalr_examples.forge';
 buildfile 'lalr_test/lalr_test.forge';
 
-for _, toolset in toolsets('cc.*') do    
-    toolset:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
-        toolset:Cxx '${obj}/%1' {
+for _, cc in toolsets('^cc.*') do    
+    cc:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
+        cc:Cxx '${obj}/%1' {
             'ErrorPolicy.cpp',
         };
 
-        toolset:Cxx '${obj}/%1' {
+        cc:Cxx '${obj}/%1' {
             'Grammar.cpp',
             'GrammarAction.cpp',
             'GrammarCompiler.cpp',
@@ -24,7 +24,7 @@ for _, toolset in toolsets('cc.*') do
             'GrammarTransition.cpp'
         };
 
-        toolset:Cxx '${obj}/%1' {
+        cc:Cxx '${obj}/%1' {
             'RegexAction.cpp',
             'RegexCharacter.cpp',
             'RegexCompiler.cpp',

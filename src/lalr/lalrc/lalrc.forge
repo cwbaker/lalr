@@ -1,9 +1,9 @@
 
-for _, toolset in toolsets('cc.*') do    
-    toolset:all {
-        toolset:Executable '${bin}/lalrc' {
+for _, cc in toolsets('^cc.*') do    
+    cc:all {
+        cc:Executable '${bin}/lalrc' {
             '${lib}/lalr_${platform}_${architecture}';
-            toolset:Cxx '${obj}/%1' {
+            cc:Cxx '${obj}/%1' {
                 'lalrc.cpp'
             };
         };

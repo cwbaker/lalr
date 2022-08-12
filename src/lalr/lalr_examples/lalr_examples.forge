@@ -1,12 +1,12 @@
 
-for _, toolset in toolsets('cc.*') do
-    local toolset = toolset:inherit {
+for _, cc in toolsets('^cc.*') do
+    local cc = cc:inherit {
         warning_level = 0;
     };
 
-    local lalr_examples = toolset:Executable '${bin}/lalr_examples' {
+    local lalr_examples = cc:Executable '${bin}/lalr_examples' {
         '${lib}/lalr_${platform}_${architecture}';
-        toolset:Cxx '${obj}/%1' {
+        cc:Cxx '${obj}/%1' {
             "lalr_examples.cpp",
             "lalr_error_handling_calculator_example.cpp",
             "lalr_hello_world_example.cpp",
@@ -19,23 +19,23 @@ for _, toolset in toolsets('cc.*') do
     -- If the Lalrc target prototype has been defined then use it to rebuild
     -- the example parse tables from grammars.  Otherwise just use the source
     -- files directly.
-    if toolset.Lalrc then 
+    if cc.Lalrc then 
         lalr_examples {
-            toolset:Cxx '${obj}/%1' {
-                toolset:Lalrc '${obj}/%1.cpp' {
+            cc:Cxx '${obj}/%1' {
+                cc:Lalrc '${obj}/%1.cpp' {
                     'error_handling_calculator.g';
                 };
-                toolset:Lalrc '${obj}/%1.cpp' {
+                cc:Lalrc '${obj}/%1.cpp' {
                     'json.g';
                 };
-                toolset:Lalrc '${obj}/%1.cpp' {
+                cc:Lalrc '${obj}/%1.cpp' {
                     'xml.g';
                 };
             };
         };
     else
         lalr_examples {
-            toolset:Cxx '${obj}/%1' {
+            cc:Cxx '${obj}/%1' {
                 'calculator.cpp',
                 'json.cpp',
                 'xml.cpp',
@@ -43,7 +43,7 @@ for _, toolset in toolsets('cc.*') do
         };
     end
 
-    toolset:all {
+    cc:all {
         lalr_examples;
     };
 end
