@@ -1288,4 +1288,57 @@ SUITE( RegularExpressions )
         CHECK( lexer.symbol() == &whitespace );
         CHECK( lexer.position().line() == 5 );        
     }
+
+
+    TEST( CaseInsensitiveKeywords )
+    {
+        void* select;
+        RegexCompiler compiler;
+        compiler.compile( "(SELECT)|(select)", &select );
+        Lexer<PositionIterator<const char*> > lexer( compiler.state_machine(), nullptr );
+        
+        const char* upper = "SELECT";
+        lexer.reset( PositionIterator<const char*>(upper, upper + strlen(upper)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == &select );
+        CHECK( lexer.lexeme() == "SELECT" );
+        
+        const char* lower = "select";
+        lexer.reset( PositionIterator<const char*>(lower, lower + strlen(lower)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == &select );
+        CHECK( lexer.lexeme() == "select" );
+        
+        const char* mixed = "SeLect";
+        lexer.reset( PositionIterator<const char*>(mixed, mixed + strlen(mixed)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == nullptr );
+    }
+
+
+    TEST( MixedCaseInsensitiveKeywords )
+    {
+        void* select;
+        RegexCompiler compiler;
+        compiler.compile( "[Ss][Ee][Ll][Ee][Cc][Tt]", &select );
+        Lexer<PositionIterator<const char*> > lexer( compiler.state_machine(), nullptr );
+        
+        const char* upper = "SELECT";
+        lexer.reset( PositionIterator<const char*>(upper, upper + strlen(upper)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == &select );
+        CHECK( lexer.lexeme() == "SELECT" );
+        
+        const char* lower = "select";
+        lexer.reset( PositionIterator<const char*>(lower, lower + strlen(lower)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == &select );
+        CHECK( lexer.lexeme() == "select" );
+        
+        const char* mixed = "SeLect";
+        lexer.reset( PositionIterator<const char*>(mixed, mixed + strlen(mixed)), PositionIterator<const char*>() );
+        lexer.advance();
+        CHECK( lexer.symbol() == &select );
+        CHECK( lexer.lexeme() == "SeLect" );
+    }
 }
