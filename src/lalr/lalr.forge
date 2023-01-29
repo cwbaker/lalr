@@ -27,6 +27,10 @@ for _, cc in toolsets('^cc.*') do
             };
 
             cc:Cxx '${obj}/%1' {
+                'TracyClient.cpp';
+            };
+
+            cc:Cxx '${obj}/%1' {
                 'RegexAction.cpp',
                 'RegexCharacter.cpp',
                 'RegexCompiler.cpp',

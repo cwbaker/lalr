@@ -18,6 +18,7 @@ local cc = forge.Toolset 'cc_${platform}' {
     include_directories = {
         root( 'src' );
         root( 'src/unittest-cpp' );
+        root( '../tracy/public/tracy' );
     };
     library_directories = {
         root( ('%s/lib'):format(variant) );
@@ -26,6 +27,7 @@ local cc = forge.Toolset 'cc_${platform}' {
         ('BUILD_PLATFORM_%s'):format( upper(platform) );
         ('BUILD_VARIANT_%s'):format( upper(variant) );
         ('BUILD_VERSION="\\"%s\\""'):format( version );
+        'TRACY_ENABLE';
     };
 
     assertions = variant ~= 'shipping';

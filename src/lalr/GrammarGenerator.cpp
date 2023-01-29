@@ -24,6 +24,7 @@
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 #include <memory>
+#include <Tracy.hpp> 
 
 using std::set;
 using std::vector;
