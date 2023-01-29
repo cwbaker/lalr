@@ -15,7 +15,7 @@ cql {
 %left COLLATE ;
 %right UMINUS '~' ;
 
-%whitespace "[ \t\r\n]*";
+%whitespace "( \t\r\n|\-\-:line_comment:|/\*:block_comment:)*";
 
 program :
     opt_stmt_list

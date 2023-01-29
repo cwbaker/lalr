@@ -1,4 +1,5 @@
 
+buildfile 'cql/cql.forge';
 buildfile 'lalrc/lalrc.forge';
 buildfile 'lalr_examples/lalr_examples.forge';
 buildfile 'lalr_test/lalr_test.forge';
