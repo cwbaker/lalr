@@ -30,6 +30,7 @@ Grammar::Grammar()
 , whitespace_tokens_()
 , active_whitespace_directive_( false )
 , active_precedence_directive_( false )
+, active_case_insensitive_(false)
 , associativity_( ASSOCIATE_NULL )
 , precedence_( 0 )
 , active_production_( nullptr )
@@ -133,6 +134,12 @@ Grammar& Grammar::whitespace()
     active_precedence_directive_ = false;
     active_production_ = nullptr;
     active_symbol_ = nullptr;
+    return *this;
+}
+
+Grammar& Grammar::case_insensitive()
+{
+    active_case_insensitive_ = true;
     return *this;
 }
 
@@ -326,6 +333,67 @@ Grammar& Grammar::identifier( const char* identifier, int line )
     return *this;
 }
 
+static void ouptputTerminal(const GrammarSymbol *sym)
+{
+    if(sym->symbol_type() == SYMBOL_TERMINAL) {
+        if(sym->lexeme_type() == LEXEME_LITERAL)
+            printf("'%s'", sym->lexeme().c_str());
+        else
+            printf("\"%s\"", sym->lexeme().c_str());
+    }
+    else
+        printf("%s", sym->lexeme().c_str());
+}
+
+void Grammar::genEBNF()
+{
+    printf("// start EBNF %zd\n", productions().size());
+    GrammarProduction* last_production = NULL;
+    bool production_continuation = false;
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions().begin(); i != productions().end(); ++i )
+    {
+        GrammarProduction* production = i->get();
+        LALR_ASSERT( production );
+        bool same_production = last_production && last_production->symbol() == production->symbol();
+        if(same_production) {
+            production_continuation = true;
+            //printf(" //%s ::= %d", production->symbol()->lexeme().c_str(), production->length());
+        }
+        else {
+            production_continuation = false;
+            const char *sym_prefix = "";
+            const char *sym_name = production->symbol()->lexeme().c_str();
+            if(sym_name[0] == '.')
+            {
+                ++sym_name;
+                sym_prefix = "ebnf_x_";
+            }
+            //printf("\n\n%s%s ::= // %d\n\t", sym_prefix, sym_name, production->length());
+            printf("\n\n%s%s ::=\n\t", sym_prefix, sym_name);
+        }
+        if(production->length() > 0) {
+            for(int elm=0; elm < production->length(); ++elm) {
+                const GrammarSymbol *sym = production->symbol_by_position(elm);
+                if(production_continuation) {
+                    production_continuation = false;
+                    printf("\n\t| ");
+                }
+                else printf(" ");
+                ouptputTerminal(sym);
+            }
+        }
+        else {
+            printf("/*empty*/");
+        }
+        if(production->precedence_symbol()) {
+            printf(" //%%precedence ");
+            ouptputTerminal(production->precedence_symbol());
+        }
+        last_production = production;
+    }
+    printf("\n\n// end EBNF\n");
+}
+
 GrammarSymbol* Grammar::literal_symbol( const char* lexeme, int line )
 {
     LALR_ASSERT( lexeme );
@@ -362,7 +430,7 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
         symbol->set_line( line );
         symbol->set_lexeme_type( lexeme_type );
         symbol->set_symbol_type( symbol_type );
-        symbols_.push_back( move(symbol) );
+        symbols_.push_back( std::move(symbol) );
         return symbols_.back().get();
     }
 
@@ -382,12 +450,12 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol, int line )
         unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
-        productions_.push_back( move(production) );
+        productions_.push_back( std::move(production) );
     }
 
     unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, line, -1, nullptr) );
     symbol->append_production( production.get() );
-    productions_.push_back( move(production) );
+    productions_.push_back( std::move(production) );
     return productions_.back().get();
 }
 
@@ -403,7 +471,7 @@ GrammarAction* Grammar::add_action( const char* identifier )
     {
         int index = int(actions_.size());
         unique_ptr<GrammarAction> action( new GrammarAction(index, identifier) );
-        actions_.push_back( move(action) );
+        actions_.push_back( std::move(action) );
         return actions_.back().get();
     }
     return i->get();

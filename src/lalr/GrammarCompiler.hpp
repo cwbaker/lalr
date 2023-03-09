@@ -35,7 +35,7 @@ public:
     const RegexCompiler* lexer() const;
     const RegexCompiler* whitespace_lexer() const;
     const ParserStateMachine* parser_state_machine() const;
-    int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr );
+    int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr, bool genEBNF = false );
 
 private:
     const char* add_string( const std::string& string );

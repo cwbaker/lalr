@@ -142,7 +142,7 @@ const RegexAction* RegexGenerator::add_lexer_action( const std::string& identifi
         if ( i == actions_.end() )
         {
             unique_ptr<RegexAction> action( new RegexAction(int(actions_.size()), identifier) );
-            actions_.push_back( move(action) );
+            actions_.push_back( std::move(action) );
             i = actions_.end() - 1;
         }
         return i->get();
@@ -242,7 +242,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
         state->add_item( syntax_tree.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
         *start_state = state.get();
-        states->insert( move(state) );
+        states->insert( std::move(state) );
 
         int added = 1;
         while ( added > 0 )
@@ -292,7 +292,7 @@ void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::s
                             {
                                 state->add_transition( begin, end, goto_state.get() );
                                 generate_symbol_for_state( goto_state.get() );
-                                states->insert( move(goto_state) );
+                                states->insert( std::move(goto_state) );
                                 added += 1;
                             }
                             else

@@ -49,6 +49,7 @@ int main( int argc, char** argv )
     string output;
     bool print = false;
     bool help = false;
+    bool gen_ebnf = false;
     bool version = false;
 
     int argi = 1;
@@ -57,6 +58,11 @@ int main( int argc, char** argv )
         if ( argv[argi][0] != '-' )
         {
             input = argv[argi];
+            argi += 1;
+        }
+        else if ( strcmp(argv[argi], "-e") == 0 || strcmp(argv[argi], "--ebnf") == 0 )
+        {
+            gen_ebnf = true;
             argi += 1;
         }
         else if ( strcmp(argv[argi], "-o") == 0 || strcmp(argv[argi], "--output") == 0 )
@@ -94,6 +100,7 @@ int main( int argc, char** argv )
         printf( "-v|--version  Display version\n" );
         printf( "-p|--print    Print parser state machine\n" );
         printf( "-o|--output   Output file\n" );
+        printf( "-e|--ebnf     Output EBNF grammar\n" );
         printf( "\n" );
         return help ? EXIT_SUCCESS : EXIT_FAILURE;
     }
@@ -129,21 +136,24 @@ int main( int argc, char** argv )
 
         GrammarCompiler compiler;
         ErrorPolicy error_policy;
-        int errors = compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
+        int errors = compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy, gen_ebnf );
         if ( errors != 0 )            
         {
             return EXIT_FAILURE;
         }
 
-        const ParserStateMachine* state_machine = compiler.parser_state_machine();
-        open( !output.empty() ? output.c_str() : nullptr );
-        if ( print )
+        if(!gen_ebnf)
         {
-            print_cxx_parser_state_machine( state_machine );
-        }
-        else
-        {
-            generate_cxx_parser_state_machine( state_machine );
+            const ParserStateMachine* state_machine = compiler.parser_state_machine();
+            open( !output.empty() ? output.c_str() : nullptr );
+            if ( print )
+            {
+                print_cxx_parser_state_machine( state_machine );
+            }
+            else
+            {
+                generate_cxx_parser_state_machine( state_machine );
+            }
         }
         close();
     }
