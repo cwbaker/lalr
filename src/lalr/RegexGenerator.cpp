@@ -162,7 +162,7 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
     syntax_tree_->reset( token, this );
     generate_states( *syntax_tree_, &states_, &start_state_ );
     error_policy_ = nullptr;
-    return 0;
+    return syntax_tree_->errors();
 }
 
 int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
@@ -176,7 +176,7 @@ int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy
     syntax_tree_->reset( tokens, this );
     generate_states( *syntax_tree_, &states_, &start_state_ );
     error_policy_ = nullptr;
-    return 0;
+    return syntax_tree_->errors();
 }
 
 /**

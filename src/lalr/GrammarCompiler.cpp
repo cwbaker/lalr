@@ -77,11 +77,45 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
     {
         GrammarGenerator generator;
         errors = generator.generate( grammar, error_policy );
+
         if ( errors == 0 )
         {
             populate_parser_state_machine( grammar, generator );
-            populate_lexer_state_machine( generator, error_policy );
-            populate_whitespace_lexer_state_machine( grammar, error_policy );
+
+            // Generate tokens for generating the lexical analyzer from each of 
+            // the terminal symbols in the grammar.
+            vector<RegexToken> tokens;
+            int column = 1;
+            const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
+            for ( size_t i = 0; i < grammar_symbols.size(); ++i, ++column )
+            {
+                const GrammarSymbol* grammar_symbol = grammar_symbols[i].get();
+                LALR_ASSERT( grammar_symbol );
+                if ( grammar_symbol->symbol_type() == SYMBOL_TERMINAL )
+                {
+                    const ParserSymbol* symbol = &symbols_[i];
+                    LALR_ASSERT( symbol );
+                    int line = grammar_symbol->line();
+                    RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
+                    tokens.push_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
+                }
+            }
+
+            errors += lexer_->compile( tokens, error_policy );
+            if ( errors == 0 )
+            {
+                parser_state_machine_->lexer_state_machine = lexer_->state_machine();
+            }
+
+            const vector<RegexToken>& whitespace_tokens = grammar.whitespace_tokens();
+            if ( !whitespace_tokens.empty() )
+            {
+                errors += whitespace_lexer_->compile( whitespace_tokens, error_policy );
+                if ( errors == 0 )
+                {
+                    parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
+                }
+            }
         }
     }
     return errors;
@@ -134,25 +168,6 @@ void GrammarCompiler::set_states( std::unique_ptr<ParserState[]>& states, int st
     parser_state_machine_->states_size = states_size;
     parser_state_machine_->states = states_.get();
     parser_state_machine_->start_state = start_state;
-}
-
-void GrammarCompiler::set_lexer_allocations( std::unique_ptr<RegexCompiler>& lexer_allocations )
-{
-    LALR_ASSERT( lexer_allocations.get() );
-    if ( lexer_allocations )
-    {
-        lexer_ = move( lexer_allocations );
-        parser_state_machine_->lexer_state_machine = lexer_->state_machine();
-    }
-}
-
-void GrammarCompiler::set_whitespace_lexer_allocations( std::unique_ptr<RegexCompiler>& whitespace_lexer_allocations )
-{
-    if ( whitespace_lexer_allocations )
-    {
-        whitespace_lexer_ = move( whitespace_lexer_allocations );
-        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
-    }
 }
 
 void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator )
@@ -242,40 +257,4 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     set_symbols( symbols, symbols_size );
     set_transitions( transitions, transitions_size );
     set_states( states, states_size, start_state );
-}
-
-void GrammarCompiler::populate_lexer_state_machine( const GrammarGenerator& generator, ErrorPolicy* error_policy )
-{
-    // Generate tokens for generating the lexical analyzer from each of 
-    // the terminal symbols in the grammar.
-    const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
-    vector<RegexToken> tokens;
-    int column = 1;
-    for ( size_t i = 0; i < grammar_symbols.size(); ++i, ++column )
-    {
-        const GrammarSymbol* grammar_symbol = grammar_symbols[i].get();
-        LALR_ASSERT( grammar_symbol );
-        if ( grammar_symbol->symbol_type() == SYMBOL_TERMINAL )
-        {
-            const ParserSymbol* symbol = &symbols_[i];
-            LALR_ASSERT( symbol );
-            int line = grammar_symbol->line();
-            RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-            tokens.push_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
-        }
-    }
-
-    lexer_->compile( tokens, error_policy );
-    parser_state_machine_->lexer_state_machine = lexer_->state_machine();
-}
-
-void GrammarCompiler::populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy )
-{
-    unique_ptr<RegexCompiler> whitespace_lexer_allocations;
-    const vector<RegexToken>& whitespace_tokens = grammar.whitespace_tokens();
-    if ( !whitespace_tokens.empty() )
-    {
-        whitespace_lexer_->compile( whitespace_tokens, error_policy );
-        parser_state_machine_->whitespace_lexer_state_machine = whitespace_lexer_->state_machine();
-    }
 }

@@ -43,11 +43,7 @@ private:
     void set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int symbols_size );
     void set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size );
     void set_states( std::unique_ptr<ParserState[]>& states, int states_size, const ParserState* start_state );
-    void set_lexer_allocations( std::unique_ptr<RegexCompiler>& lexer_allocations );
-    void set_whitespace_lexer_allocations( std::unique_ptr<RegexCompiler>& whitespace_lexer_allocations );
     void populate_parser_state_machine( const Grammar& grammar, const GrammarGenerator& generator );
-    void populate_lexer_state_machine( const GrammarGenerator& generator, ErrorPolicy* error_policy );
-    void populate_whitespace_lexer_state_machine( const Grammar& grammar, ErrorPolicy* error_policy );
 };
 
 }

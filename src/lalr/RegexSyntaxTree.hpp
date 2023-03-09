@@ -27,7 +27,7 @@ class RegexSyntaxTree
     RegexGenerator* generator_; ///< The RegexGenerator to retrieve actions from and report errors and debug information to.
     std::set<RegexCharacter> bracket_expression_characters_; ///< The characters in the current bracket expression.
     int index_; ///< The current node index.
-    std::vector<std::shared_ptr<RegexNode> > nodes_; ///< The current nodes.
+    std::vector<std::shared_ptr<RegexNode>> nodes_; ///< The current nodes.
     int errors_; ///< The number of errors that have occured.
 
 public:

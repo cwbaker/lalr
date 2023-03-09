@@ -23,8 +23,6 @@ RegexCompiler::RegexCompiler()
 , states_()
 , state_machine_() 
 {
-    state_machine_.reset( new LexerStateMachine );
-    memset( state_machine_.get(), 0, sizeof(*state_machine_) );
 }
 
 RegexCompiler::~RegexCompiler()
@@ -36,7 +34,7 @@ const LexerStateMachine* RegexCompiler::state_machine() const
     return state_machine_.get();
 }
 
-void RegexCompiler::compile( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy )
+int RegexCompiler::compile( const std::string& regular_expression, void* symbol, ErrorPolicy* error_policy )
 {
     RegexGenerator generator;
     int errors = generator.generate( regular_expression, symbol, error_policy );
@@ -44,9 +42,10 @@ void RegexCompiler::compile( const std::string& regular_expression, void* symbol
     {
         populate_lexer_state_machine( generator );
     }
+    return errors;
 }
 
-void RegexCompiler::compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
+int RegexCompiler::compile( const std::vector<RegexToken>& tokens, ErrorPolicy* error_policy )
 {
     RegexGenerator generator;
     int errors = generator.generate( tokens, error_policy );
@@ -54,6 +53,7 @@ void RegexCompiler::compile( const std::vector<RegexToken>& tokens, ErrorPolicy*
     {
         populate_lexer_state_machine( generator );
     }
+    return errors;
 }
 
 const char* RegexCompiler::add_string( const std::string& string )
@@ -86,6 +86,9 @@ void RegexCompiler::set_states( std::unique_ptr<LexerState[]>& states, int state
 
 void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generator )
 {
+    state_machine_.reset( new LexerStateMachine );
+    memset( state_machine_.get(), 0, sizeof(*state_machine_) );
+
     const vector<unique_ptr<RegexAction>>& source_actions = generator.actions();
     const set<unique_ptr<RegexState>, RegexStateLess>& source_states = generator.states();
 
