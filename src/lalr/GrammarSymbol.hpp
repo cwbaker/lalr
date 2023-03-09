@@ -25,6 +25,7 @@ class GrammarSymbol
     int line_; ///< The line that this symbol is defined on.
     int index_; ///< The index of this symbol among all symbols.
     bool nullable_; ///< True if this symbol is nullable otherwise false.
+    bool referenced_in_precedence_directive_; ///< True if this symbol is referenced by a %precedence directive.
     std::set<const GrammarSymbol*, GrammarSymbolLess> first_; ///< The symbols that can start this symbol in a production or regular expression.
     std::set<const GrammarSymbol*, GrammarSymbolLess> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
     std::vector<GrammarProduction*> productions_; ///< The productions that reduce to this symbol.
@@ -41,6 +42,7 @@ public:
     int line() const;
     int index() const;
     bool nullable() const;
+    bool referenced_in_precedence_directive() const;
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& first() const;
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& follow() const;
     const std::vector<GrammarProduction*>& productions() const;
@@ -56,6 +58,7 @@ public:
     void set_line( int line );
     void set_index( int index );
     void set_nullable( bool nullable );
+    void set_referenced_in_precedence_directive( bool referenced_in_precedence_directive );
     void append_production( GrammarProduction* production );
     void calculate_identifier();
     void replace_by_non_terminal( const GrammarSymbol* non_terminal_symbol );    

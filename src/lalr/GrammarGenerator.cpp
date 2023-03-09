@@ -357,9 +357,9 @@ void GrammarGenerator::check_for_undefined_symbol_errors()
         {
             const GrammarSymbol* symbol = i->get();
             LALR_ASSERT( symbol );
-            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && symbol->precedence() <= 0 )
+            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && !symbol->referenced_in_precedence_directive() )
             {
-                error( 1, PARSER_ERROR_UNDEFINED_SYMBOL, "undefined symbol '%s' in grammar '%s'", symbol->identifier().c_str(), identifier_.c_str() );
+                error( symbol->line(), PARSER_ERROR_UNDEFINED_SYMBOL, "undefined symbol '%s'", symbol->identifier().c_str(), identifier_.c_str() );
             }
         }
     }

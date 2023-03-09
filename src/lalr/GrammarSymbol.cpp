@@ -23,6 +23,7 @@ GrammarSymbol::GrammarSymbol( const std::string& lexeme )
 , line_( 0 )
 , index_( -1 )
 , nullable_( false )
+, referenced_in_precedence_directive_( false )
 , first_()
 , follow_()
 , productions_()
@@ -72,6 +73,11 @@ int GrammarSymbol::index() const
 bool GrammarSymbol::nullable() const
 {
     return nullable_;
+}
+
+bool GrammarSymbol::referenced_in_precedence_directive() const
+{
+    return referenced_in_precedence_directive_;
 }
 
 const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::first() const
@@ -178,6 +184,11 @@ void GrammarSymbol::set_index( int index )
 void GrammarSymbol::set_nullable( bool nullable )
 {
     nullable_ = nullable;
+}
+
+void GrammarSymbol::set_referenced_in_precedence_directive( bool referenced_in_precedence_directive )
+{
+    referenced_in_precedence_directive_ = referenced_in_precedence_directive;
 }
 
 void GrammarSymbol::append_production( GrammarProduction* production )

@@ -245,7 +245,9 @@ Grammar& Grammar::literal( const char* literal, int line )
         }        
         if ( active_precedence_directive_ )
         {
-            active_production_->set_precedence_symbol( literal_symbol(literal, line) );
+            GrammarSymbol* symbol = literal_symbol( literal, line );
+            active_production_->set_precedence_symbol( symbol );
+            symbol->set_referenced_in_precedence_directive( true );
             active_precedence_directive_ = false;
         }
         else
@@ -279,7 +281,9 @@ Grammar& Grammar::regex( const char* regex, int line )
         }
         if ( active_precedence_directive_ )
         {
-            active_production_->set_precedence_symbol( regex_symbol(regex, line) );
+            GrammarSymbol* symbol = regex_symbol( regex, line );
+            symbol->set_referenced_in_precedence_directive( true );
+            active_production_->set_precedence_symbol( symbol );
             active_precedence_directive_ = false;
         }
         else
@@ -309,7 +313,9 @@ Grammar& Grammar::identifier( const char* identifier, int line )
         }
         if ( active_precedence_directive_ )
         {
-            active_production_->set_precedence_symbol( non_terminal_symbol(identifier, line) );
+            GrammarSymbol* symbol = non_terminal_symbol( identifier, line );
+            symbol->set_referenced_in_precedence_directive( true );
+            active_production_->set_precedence_symbol( symbol );
             active_precedence_directive_ = false;
         }
         else
