@@ -442,8 +442,8 @@ void GrammarGenerator::calculate_identifiers()
 //
 // Any symbols with one or more productions are assumed to be non-terminals
 // and any symbols with no productions are assumed to be terminals.  Another
-// pass is made over the symbols in to convert non-terminals symbols that 
-// contain only a single production with one terminal symbol into terminals.
+// pass is made over the symbols to convert non-terminals symbols with only
+// a single production with one terminal symbol into terminals.
 // See `Grammar::calculate_implicit_terminal_symbols()`.
 //
 // The `.start`, `.end`, and `.error` symbols are exempt from the above 
@@ -462,21 +462,21 @@ void GrammarGenerator::calculate_terminal_and_non_terminal_symbols()
 }
 
 /**
-// Calculate the non terminal symbols that are really just named terminals.
+// Calculate the non-terminal symbols that are really named terminals.
 //
 // Any symbols that contain a single production that contains only a terminal 
-// symbol are really just acting as names for that terminal symbol.  To make 
-// the parser easier to understand and more efficient these symbols are 
-// collapsed by making any references to the non terminal symbol refer directly
-// to the terminal symbol.  The identifier of the terminal is changed to be 
-// the more readable name of the non terminal.
+// symbol are aliases for that terminal symbol.  To make the parser easier to
+// understand and more efficient these symbols are  collapsed by making any
+// references to the non-terminal refer directly to the terminal.  The
+// identifier of the terminal is changed to be the more readable name of the
+// non-terminal.
 //
-// For example the rule 'integer: "[0-9]+";' creates a non terminal
-// symbol 'integer' and a terminal symbol '"[0-9]+"'.  The non terminal
+// For example the rule 'integer: "[0-9]+";' creates a non-terminal
+// symbol 'integer' and a terminal symbol '"[0-9]+"'.  The non-terminal
 // symbol 'integer' is redundant from the point of view of the parser as it
 // adds only a trivial reduction from one symbol type to another.  To optimize
-// this situation the terminal is collapsed into the non terminal keeping the
-// more readable name of the non terminal but removing the redundant 
+// this situation the terminal is collapsed into the non-terminal keeping the
+// more readable name of the non-terminal but removing the redundant 
 // reduction.
 */
 void GrammarGenerator::calculate_implicit_terminal_symbols()
