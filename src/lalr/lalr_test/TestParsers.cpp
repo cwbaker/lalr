@@ -8,6 +8,8 @@
 #include <lalr/ErrorCode.hpp>
 #include <lalr/GrammarCompiler.hpp>
 #include <lalr/ErrorPolicy.hpp>
+#include <lalr/line_comment.hpp>
+#include <lalr/block_comment.hpp>
 #include <functional>
 #include <UnitTest++/UnitTest++.h>
 #include <string.h>
@@ -751,30 +753,6 @@ SUITE( Parsers )
         
     TEST( LineCommentInWhitespaceDirective )
     {
-        struct LineComment
-        {
-            static void line_comment( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
-            {
-                LALR_ASSERT( begin );
-                LALR_ASSERT( end );
-                LALR_ASSERT( begin <= end );
-                LALR_ASSERT( lexeme );
-                LALR_ASSERT( position );
-                LALR_ASSERT( lines );
-                
-                lexeme->clear();
-                
-                const char* i = begin;
-                while ( i != end && *i != '\n' && *i != '\r' )
-                {
-                    ++i;
-                }
-                
-                *position = i;
-                *lines = 1;
-            }
-        };
-    
         const char* line_comment_grammar = 
             "LineComment {\n"
             "   %whitespace \"([ \\t\\r\\n]|\\/\\/:line_comment:)*\";\n"
@@ -788,7 +766,7 @@ SUITE( Parsers )
         compiler.compile( line_comment_grammar, line_comment_grammar + strlen(line_comment_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
         parser.lexer_action_handlers()
-            ( "line_comment", &LineComment::line_comment )
+            ( "line_comment", &line_comment<const char*> )
         ;
 
         const char* input = 
@@ -804,46 +782,6 @@ SUITE( Parsers )
 
     TEST( BlockCommentInWhitespaceDirective )
     {
-        struct BlockComment
-        {
-            static void block_comment( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
-            {
-                LALR_ASSERT( begin );
-                LALR_ASSERT( end );
-                LALR_ASSERT( begin <= end );
-                LALR_ASSERT( lexeme );
-                LALR_ASSERT( position );
-                LALR_ASSERT( lines );
-
-                lexeme->clear();
-                                
-                bool done = false;
-                const char* i = begin;
-                while ( i != end && !done )
-                {
-                    while ( i != end && *i != '*' )
-                    {
-                        ++i;
-                    }
-
-                    if ( i != end )
-                    {
-                        LALR_ASSERT( *i == '*' );
-
-                        ++i;
-                        if ( *i == '/' )
-                        {
-                            ++i;
-                            done = true;
-                        }
-                    }        
-                }
-                
-                *position = i;
-                *lines = 0;
-            }
-        };
-    
         const char* block_comment_grammar = 
             "BlockComment {\n"
             "   %whitespace \"([ \\t\\r\\n]|\\/\\*:block_comment:)*\";\n"
@@ -857,7 +795,7 @@ SUITE( Parsers )
         compiler.compile( block_comment_grammar, block_comment_grammar + strlen(block_comment_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
         parser.lexer_action_handlers()
-            ( "block_comment", &BlockComment::block_comment )
+            ( "block_comment", &block_comment<const char*> )
         ;
 
         const char* input = 
