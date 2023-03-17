@@ -35,7 +35,7 @@ class Parser
 public:
     typedef lalr::ParserNode<Char, Traits, Allocator> ParserNode;
     typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
-    typedef std::function<void (Iterator begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol, Iterator* position, int* lines)> LexerActionFunction;
+    typedef std::function<PositionIterator<Iterator> (const PositionIterator<Iterator>& begin, const PositionIterator<Iterator>& end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
     typedef std::function<UserData (const UserData* data, const ParserNode* nodes, size_t length)> ParserActionFunction;
 
 private:

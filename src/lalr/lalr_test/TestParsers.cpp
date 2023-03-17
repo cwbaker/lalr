@@ -694,32 +694,24 @@ SUITE( Parsers )
     {
         struct StringLexer
         {
-            static void string_lexer( const char* begin, const char* end, std::string* lexeme, const void** /*symbol*/, const char** position, int* lines )
+            static PositionIterator<const char*> string_lexer( const PositionIterator<const char*>& begin, const PositionIterator<const char*>& end, std::string* lexeme, const void** /*symbol*/ )
             {
-                LALR_ASSERT( begin );
-                LALR_ASSERT( end );
-                LALR_ASSERT( begin <= end );
                 LALR_ASSERT( lexeme );
-                LALR_ASSERT( position );
-                LALR_ASSERT( lines );
 
                 lexeme->clear();
 
-                const char* i = begin;
+                PositionIterator<const char*> i = begin;
                 while ( i != end && *i != '\'' )
                 {
                     *lexeme += *i;
                     ++i;
-                }
-                
+                }                
                 if ( i != end )
                 {
                     LALR_ASSERT( *i == '\'' );
                     ++i;
-                }
-                
-                *position = i;
-                *lines = 0;
+                }                
+                return i;
             }
         };
     
@@ -949,18 +941,19 @@ SUITE( Parsers )
         const void* value_symbol_;
 
         LexerConflictResolutionActionHandler( const ParserStateMachine* parser_state_machine )
-        : prototype_symbol_( find_symbol_by_identifier(parser_state_machine, "prototype") ),
-          value_symbol_( find_symbol_by_identifier(parser_state_machine, "value") )
+        : prototype_symbol_( find_symbol_by_identifier(parser_state_machine, "prototype") )
+        , value_symbol_( find_symbol_by_identifier(parser_state_machine, "value") )
         {
             LALR_ASSERT( prototype_symbol_ );
             LALR_ASSERT( value_symbol_ );
         }
 
-        void prototype( const char* /*begin*/, const char* /*end*/, std::string* lexeme, const void** symbol, const char** /*position*/, int* /*lines*/ ) const
+        PositionIterator<const char*> prototype( const PositionIterator<const char*>& begin, const PositionIterator<const char*>& /*end*/, std::string* lexeme, const void** symbol ) const
         {
             LALR_ASSERT( lexeme );
             LALR_ASSERT( symbol );
             *symbol = *lexeme == "prototype" ? prototype_symbol_ : value_symbol_;
+            return begin;
         }
     };
     
@@ -987,7 +980,7 @@ SUITE( Parsers )
             Parser<const char*> parser( compiler.parser_state_machine() );
             LexerConflictResolutionActionHandler action_handler( compiler.parser_state_machine() );
             parser.lexer_action_handlers()
-                ( "prototype", bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4, _5, _6) )
+                ( "prototype", bind(&LexerConflictResolutionActionHandler::prototype, &action_handler, _1, _2, _3, _4) )
             ;
 
             const char* input = "prototype { prototype { value value } value value }";
