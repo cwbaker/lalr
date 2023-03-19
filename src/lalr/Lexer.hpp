@@ -42,6 +42,9 @@ class Lexer
     int column_; ///< The column number at the start of the most recently matched lexeme.
     const void* symbol_; ///< The most recently matched symbol or null if no symbol has been matched.
     bool full_; ///< True when this Lexer scanned all of its input otherwise false.
+    PositionIterator<Iterator> matched_position_; ///< The position at the end of the most recent match.
+    std::basic_string<Char, Traits, Allocator> matched_lexeme_; ///< The lexeme at the most recent match.
+    const void* matched_symbol_; ///< The symbol at the most recent match.
 
 public:
     Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );

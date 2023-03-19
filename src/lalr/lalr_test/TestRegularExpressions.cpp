@@ -10,6 +10,7 @@
 #include <string.h>
 
 using std::string;
+using std::vector;
 using namespace lalr;
 
 SUITE( RegularExpressions )
@@ -1340,5 +1341,42 @@ SUITE( RegularExpressions )
         lexer.advance();
         CHECK( lexer.symbol() == &select );
         CHECK( lexer.lexeme() == "SeLect" );
+    }
+
+
+    TEST( KeywordsWithWhitespace )
+    {
+        const void* not_ = nullptr;
+        const void* null_ = nullptr;
+        const void* not_between = nullptr;
+        const void* space = nullptr;
+
+        vector<RegexToken> tokens;
+        tokens.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 1, 1, &not_, "NOT|not") );
+        tokens.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 2, 1, &null_, "NULL|null") );
+        tokens.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 3, 1, &not_between, "(NOT|not)[[:space:]]+(BETWEEN|between)") );
+        tokens.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 4, 1, &space, "[[:space:]]") );
+
+        RegexCompiler compiler;
+        compiler.compile( tokens );
+        Lexer<const char*> lexer( compiler.state_machine(), nullptr );
+
+        const char* text = "NOT NULL";
+        lexer.reset( text, text + strlen(text) );
+        lexer.advance();
+        CHECK_EQUAL( "NOT", lexer.lexeme() );
+        CHECK( lexer.symbol() == &not_ );
+        lexer.advance();
+        CHECK_EQUAL( " ", lexer.lexeme() );
+        CHECK( lexer.symbol() == &space );
+        lexer.advance();
+        CHECK_EQUAL( "NULL", lexer.lexeme() );
+        CHECK( lexer.symbol() == &null_ );
+
+        text = "NOT BETWEEN";
+        lexer.reset( text, text + strlen(text) );
+        lexer.advance();
+        CHECK_EQUAL( "NOT BETWEEN", lexer.lexeme() );
+        CHECK( lexer.symbol() == &not_between );
     }
 }

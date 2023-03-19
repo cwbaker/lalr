@@ -61,6 +61,9 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 , column_ ( 1 )
 , symbol_( nullptr )
 , full_( false )
+, matched_position_()
+, matched_lexeme_()
+, matched_symbol_(nullptr)
 {
     if ( state_machine_ )
     {
@@ -214,6 +217,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::reset( Iterator start, Iterator f
     end_ = finish;
     symbol_ = nullptr;
     full_ = false;
+    matched_lexeme_.clear();
+    matched_symbol_ = nullptr;
 }
 
 /**
@@ -236,6 +241,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::advance()
     line_ = position_.line();
     column_ = position_.column();
     full_ = position_.ended();
+    matched_lexeme_.clear();
+    matched_symbol_ = nullptr;
     symbol_ = !position_.ended() ? run() : end_symbol_;
 }
 
@@ -304,7 +311,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
         {
             state = transition->state;
             symbol = state->symbol;
-            
+
             if ( transition->action )
             {
                 int index = transition->action->index;
@@ -321,8 +328,27 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
                 lexeme_ += *position_;
                 ++position_;
             }
+
+            if ( symbol )
+            {
+                matched_symbol_ = symbol;
+                matched_lexeme_ = lexeme_;
+                matched_position_ = position_;
+            }
         }
         
+        // Back-track to the most recently matched symbol and lexeme if the
+        // run terminates on a character that doesn't match a symbol.  This
+        // allows for tokens that are prefixes of different, longer tokens.  
+        if ( !symbol && matched_symbol_ )
+        {
+            symbol = matched_symbol_;
+            position_ = matched_position_;
+            lexeme_ = matched_lexeme_;
+            matched_symbol_ = nullptr;
+            matched_lexeme_.clear();
+        }
+
         if ( !position_.ended() && !symbol && lexeme_.empty() )
         {
             error();
