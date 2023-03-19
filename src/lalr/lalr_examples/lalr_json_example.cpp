@@ -4,6 +4,7 @@
 #include <list>
 #include <lalr/Parser.ipp>
 #include <lalr/PositionIterator.hpp>
+#include <lalr/string_literal.hpp>
 #include <string.h>
 
 using namespace std;
@@ -58,33 +59,6 @@ struct JsonUserData
     {
     }    
 };
-
-static void string_( PositionIterator<const char*> begin, PositionIterator<const char*> end, std::string* lexeme, const void** /*symbol*/, PositionIterator<const char*>* position, int* lines )
-{
-    LALR_ASSERT( lexeme );
-    LALR_ASSERT( lexeme->length() == 1 );
-    LALR_ASSERT( position );
-    LALR_ASSERT( lines );
-
-    PositionIterator<const char*> i = begin;
-    int terminator = lexeme->at( 0 );
-    LALR_ASSERT( terminator == '\'' || terminator == '"' );
-    lexeme->clear();
-    
-    while ( *i != terminator && i != end )
-    {
-        *lexeme += *i;
-        ++i;
-    }
-
-    if ( i != end )
-    {
-        ++i;
-    }
-
-    *position = i;
-    *lines = 0;
-}
 
 static JsonUserData document( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
@@ -177,8 +151,8 @@ static void print( const Element* element, int level )
 void lalr_json_example()
 {
     extern const lalr::ParserStateMachine* json_parser_state_machine;
-    Parser<PositionIterator<const char*>, JsonUserData> parser( json_parser_state_machine );
-    parser.set_lexer_action_handler( "string", &string_ );
+    Parser<const char*, JsonUserData> parser( json_parser_state_machine );
+    parser.set_lexer_action_handler( "string", &string_literal<const char*> );
     parser.parser_action_handlers()
         ( "document", &document )
         ( "element", &element )
@@ -201,7 +175,7 @@ void lalr_json_example()
     "    }\n"
     "}\n";
 
-    parser.parse( PositionIterator<const char*>(input, input + strlen(input)), PositionIterator<const char*>() );
+    parser.parse( input, input + strlen(input) );
     LALR_ASSERT( parser.accepted() );
     LALR_ASSERT( parser.full() );
     print( parser.user_data().element_.get(), 0 );
