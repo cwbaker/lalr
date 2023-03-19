@@ -53,6 +53,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 , end_symbol_( end_symbol )
 , error_policy_( error_policy )
 , action_handlers_()
+, whitespace_action_handlers_()
 , position_()
 , end_()
 , lexeme_()
@@ -63,13 +64,7 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 {
     if ( state_machine_ )
     {
-        int actions_size = state_machine_->actions_size;
-        if ( whitespace_state_machine_ )
-        {
-            actions_size += whitespace_state_machine_->actions_size;   
-        }
-        action_handlers_.reserve( actions_size );
-
+        action_handlers_.reserve( state_machine_->actions_size );
         const LexerAction* actions = state_machine_->actions;
         const LexerAction* actions_end = actions + state_machine_->actions_size;
         for ( auto action = actions; action != actions_end; ++action )
@@ -79,11 +74,12 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 
         if ( whitespace_state_machine_ )
         {
+            whitespace_action_handlers_.reserve( whitespace_state_machine_->actions_size );
             const LexerAction* actions = whitespace_state_machine_->actions;
             const LexerAction* actions_end = actions + whitespace_state_machine_->actions_size;
             for ( auto action = actions; action != actions_end; ++action )
             {
-                action_handlers_.push_back( LexerActionHandler(action, nullptr) );
+                whitespace_action_handlers_.push_back( LexerActionHandler(action, nullptr) );
             }
         }
     }
@@ -108,8 +104,19 @@ void Lexer<Iterator, Char, Traits, Allocator>::set_action_handler( const char* i
     {
         ++action_handler;
     }
-    
+
     if ( action_handler != action_handlers_.end() )
+    {
+        action_handler->function_ = function;
+    }
+
+    action_handler = whitespace_action_handlers_.begin();
+    while ( action_handler != whitespace_action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
+    {
+        ++action_handler;
+    }
+
+    if ( action_handler != whitespace_action_handlers_.end() )
     {
         action_handler->function_ = function;
     }
@@ -252,8 +259,8 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
             if ( transition->action )
             {
                 int index = transition->action->index;
-                LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
-                const LexerActionFunction& function = action_handlers_[index].function_;
+                LALR_ASSERT( index >= 0 && index < (int) whitespace_action_handlers_.size() );                
+                const LexerActionFunction& function = whitespace_action_handlers_[index].function_;
                 LALR_ASSERT( function );
                 const void* symbol = nullptr;
                 int lines = 0;
