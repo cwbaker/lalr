@@ -580,6 +580,37 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
 }
 
 /**
+// Generate a list of expected symbols to report in an error.
+//
+// Generates a list of the symbols that transition out of *state* so that
+// they can be reported when an unhandled syntax error is encountered.
+//
+// @return
+//  A string containing the expected symbols.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+std::string Parser<Iterator, UserData, Char, Traits, Allocator>::expected_symbols( const ParserState* state ) const
+{
+    std::string expected_symbols;
+    if ( state )
+    {
+        for ( int i = 0; i < state->length; ++i )
+        {
+            const ParserTransition* transition = &state->transitions[i];
+            if ( transition->symbol )
+            {
+                if ( !expected_symbols.empty() )
+                {
+                    expected_symbols += ", ";
+                }
+                expected_symbols += transition->symbol->identifier;
+            }
+        }
+    }
+    return expected_symbols;
+}
+
+/**
 // Shift the current token onto the stack.
 //
 // @param transition
@@ -677,6 +708,9 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     LALR_ASSERT( accepted );
     LALR_ASSERT( rejected );
 
+    const std::basic_string<Char, Traits, Allocator> lexeme = lexer_.lexeme();
+    const ParserState* state = !nodes_.empty() ? nodes_.back().state() : nullptr;
+
     bool handled = false;
     while ( !nodes_.empty() && !handled && !*accepted && !*rejected )
     {
@@ -710,7 +744,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     
     if ( nodes_.empty() )
     {
-        fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error" );
+        fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error on '%s' when expecting %s", lexeme.c_str(), expected_symbols(state).c_str() );
         *rejected = true;
     }
 }

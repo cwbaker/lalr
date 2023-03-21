@@ -87,6 +87,7 @@ private:
     void debug_shift( const ParserNode& node ) const;
     void debug_reduce( const ParserSymbol* reduced_symbol, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
     UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
+    std::string expected_symbols( const ParserState* state ) const;
     void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
     void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );
     void error( bool* accepted, bool* rejected, int line, int column );
