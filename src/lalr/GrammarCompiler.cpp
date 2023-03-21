@@ -148,6 +148,7 @@ void GrammarCompiler::set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int
     parser_state_machine_->start_symbol = &symbols_[0];
     parser_state_machine_->end_symbol = &symbols_[1];
     parser_state_machine_->error_symbol = &symbols_[2];
+    parser_state_machine_->whitespace_symbol = &symbols_[3];
 } 
 
 void GrammarCompiler::set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size )

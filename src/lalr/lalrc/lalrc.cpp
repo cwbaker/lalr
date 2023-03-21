@@ -356,6 +356,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     write( "    &symbols[%d], // start symbol\n", state_machine->start_symbol->index );
     write( "    &symbols[%d], // end symbol\n", state_machine->end_symbol->index );
     write( "    &symbols[%d], // error symbol\n", state_machine->error_symbol->index );
+    write( "    &symbols[%d], // whitespace symbol\n", state_machine->whitespace_symbol->index );
     write( "    &states[%d], // start state\n", state_machine->start_state->index );
     write( "    %s, // lexer state machine\n", state_machine->lexer_state_machine ? "&lexer_state_machine" : "null" );
     write( "    %s // whitespace lexer state machine\n", state_machine->whitespace_lexer_state_machine ? "&whitespace_lexer_state_machine" : "null" );

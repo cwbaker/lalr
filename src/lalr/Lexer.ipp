@@ -257,26 +257,44 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
 
     if ( whitespace_state_machine_ )
     {
-        const LexerState* state = whitespace_state_machine_->start_state;
-        LALR_ASSERT( state );
-        const LexerTransition* transition = nullptr;
-        while ( !position_.ended() && (transition = find_transition_by_character(state, *position_)) )
-        {
-            state = transition->state;            
-            if ( transition->action )
+        const LexerState* start_state = whitespace_state_machine_->start_state;
+        LALR_ASSERT( start_state );
+        const LexerState* state = start_state;
+        const LexerTransition* transition = find_transition_by_character( start_state, *position_ );
+        while ( !position_.ended() && transition )
+        {   
+            PositionIterator<Iterator> position = position_;
+            while ( !position_.ended() && transition )
             {
-                int index = transition->action->index;
-                LALR_ASSERT( index >= 0 && index < (int) whitespace_action_handlers_.size() );                
-                const LexerActionFunction& function = whitespace_action_handlers_[index].function_;
-                LALR_ASSERT( function );
-                const void* symbol = nullptr;
-                position_ = function( position_, PositionIterator<Iterator>(end_, end_), &lexeme_, &symbol );
+                if ( transition->action )
+                {
+                    int index = transition->action->index;
+                    LALR_ASSERT( index >= 0 && index < (int) whitespace_action_handlers_.size() );                
+                    const LexerActionFunction& function = whitespace_action_handlers_[index].function_;
+                    LALR_ASSERT( function );
+                    const void* symbol = nullptr;
+                    position_ = function( position_, PositionIterator<Iterator>(end_, end_), &lexeme_, &symbol );
+                }
+                else
+                {
+                    ++position_;
+                }
+                state = transition->state;
+                transition = find_transition_by_character( state, *position_ );
+            }
+
+            // If a whitespace token was matched then reset to the start
+            // state and try to match another.  Otherwise restore the position
+            // to the start of the failed match.
+            if ( state->symbol )
+            {
+                transition = find_transition_by_character( start_state, *position_ );
             }
             else
             {
-                ++position_;
+                position_ = position;
             }
-        }        
+        }
     }
 }
 

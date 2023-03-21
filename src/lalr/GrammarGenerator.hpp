@@ -38,6 +38,7 @@ class GrammarGenerator
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
+    GrammarSymbol* whitespace_symbol_; ///< The whitespace symbol.
     GrammarState* start_state_; ///< The start state.
     int errors_; ///< The number of errors that occured during parsing and generation.
 

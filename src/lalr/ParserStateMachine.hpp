@@ -35,6 +35,7 @@ public:
     const ParserSymbol* start_symbol; ///< The start symbol.
     const ParserSymbol* end_symbol; ///< The end symbol.
     const ParserSymbol* error_symbol; ///< The error symbol.
+    const ParserSymbol* whitespace_symbol; ///< The whitespace symbol.
     const ParserState* start_state; ///< The start state.
     const LexerStateMachine* lexer_state_machine; ///< The state machine used by the lexer to match tokens
     const LexerStateMachine* whitespace_lexer_state_machine; ///< The state machine used by the lexer to skip whitespace

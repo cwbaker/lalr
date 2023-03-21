@@ -35,12 +35,14 @@ Grammar::Grammar()
 , active_production_( nullptr )
 , active_symbol_( nullptr )
 , start_symbol_( nullptr )
-, end_symbol_( nullptr ),
-  error_symbol_( nullptr )
+, end_symbol_( nullptr )
+, error_symbol_( nullptr )
+, whitespace_symbol_( nullptr )
 {
     start_symbol_ = add_symbol( ".start", 0, LEXEME_NULL, SYMBOL_NON_TERMINAL );
     end_symbol_ = add_symbol( ".end", 0, LEXEME_NULL, SYMBOL_END );
     error_symbol_ = add_symbol( "error", 0, LEXEME_NULL, SYMBOL_NULL );
+    whitespace_symbol_ = add_symbol( ".whitespace", 0, LEXEME_NULL, SYMBOL_NULL );
 }
 
 Grammar::~Grammar()
@@ -85,6 +87,11 @@ GrammarSymbol* Grammar::end_symbol() const
 GrammarSymbol* Grammar::error_symbol() const
 {
     return error_symbol_;
+}
+
+GrammarSymbol* Grammar::whitespace_symbol() const
+{
+    return whitespace_symbol_;
 }
 
 Grammar& Grammar::grammar( const std::string& identifier )
@@ -265,7 +272,7 @@ Grammar& Grammar::regex( const char* regex, int line )
     LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, 0, nullptr, regex) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_REGULAR_EXPRESSION, 0, 0, whitespace_symbol_, regex) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {

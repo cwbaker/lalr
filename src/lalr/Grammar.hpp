@@ -36,6 +36,7 @@ class Grammar
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
+    GrammarSymbol* whitespace_symbol_; ///< The whitespace symbol.
 
 public:
     Grammar();
@@ -48,6 +49,7 @@ public:
     GrammarSymbol* start_symbol() const;
     GrammarSymbol* end_symbol() const;
     GrammarSymbol* error_symbol() const;
+    GrammarSymbol* whitespace_symbol() const;
     Grammar& grammar( const std::string& identifier );
     Grammar& left( int line );
     Grammar& right( int line );

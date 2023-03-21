@@ -48,6 +48,7 @@ GrammarGenerator::GrammarGenerator()
 , start_symbol_( nullptr )
 , end_symbol_( nullptr )
 , error_symbol_( nullptr )
+, whitespace_symbol_( nullptr )
 , start_state_( nullptr )
 , errors_( 0 )
 {
@@ -88,6 +89,7 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
     start_symbol_ = grammar.start_symbol();
     end_symbol_ = grammar.end_symbol();
     error_symbol_ = grammar.error_symbol();
+    whitespace_symbol_ = grammar.whitespace_symbol();
     start_state_ = nullptr;
     errors_ = 0;
 
@@ -381,7 +383,7 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
             LALR_ASSERT( symbol );
             
             int references = 0;            
-            if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol->lexeme() != error_symbol_->lexeme() )
+            if ( symbol != start_symbol_ && symbol != end_symbol_ && symbol->lexeme() != error_symbol_->lexeme() && symbol != whitespace_symbol_ )
             {
                 for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
                 {
