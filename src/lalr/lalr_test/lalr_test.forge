@@ -8,6 +8,7 @@ for _, cc in toolsets('^cc.*') do
             cc:Cxx '${obj}/%1' {
                 'main.cpp',
                 'TestParsers.cpp',
+                'TestPositionIterator.cpp',
                 'TestPrecedenceDirectives.cpp',
                 'TestRegularExpressions.cpp'
             };

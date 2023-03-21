@@ -1,5 +1,6 @@
 
 #include <lalr/Parser.ipp>
+#include <lalr/string_literal.hpp>
 #include <list>
 #include <stdio.h>
 #include <string.h>
@@ -56,31 +57,6 @@ struct XmlUserData
     {
     }    
 };
-
-static void string_( const char* begin, const char* end, std::string* lexeme, const void** symbol, const char** position, int* lines )
-{
-    LALR_ASSERT( begin );
-    LALR_ASSERT( end );
-    LALR_ASSERT( lexeme );
-    LALR_ASSERT( lexeme->length() == 1 );
-    LALR_ASSERT( symbol );
-    LALR_ASSERT( position );
-    LALR_ASSERT( lines );
-
-    const char* i = begin;
-    int terminator = lexeme->at( 0 );
-    LALR_ASSERT( terminator == '\'' || terminator == '"' );
-    lexeme->clear();
-    
-    while ( *i != terminator && i < end )
-    {
-        *lexeme += *i;
-        ++i;
-    }
-    
-    *position = i < end ? i + 1 : i;
-    *lines = 0;
-}
 
 static XmlUserData document( const XmlUserData* start, const ParserNode<char>* nodes, size_t length )
 {
@@ -187,7 +163,7 @@ void lalr_xml_example()
     extern const lalr::ParserStateMachine* xml_parser_state_machine;
     Parser<const char*, XmlUserData> parser( xml_parser_state_machine );
     parser.lexer_action_handlers()
-        ( "string", &string_ )
+        ( "string", &string_literal<const char*> )
     ;
     parser.parser_action_handlers()
         ( "document", &document )

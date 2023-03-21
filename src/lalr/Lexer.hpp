@@ -20,7 +20,7 @@ class LexerStateMachine;
 template <class Iterator, class Char = typename std::iterator_traits<Iterator>::value_type, class Traits = typename std::char_traits<Char>, class Allocator = typename std::allocator<Char> >
 class Lexer
 {
-    typedef std::function<void (Iterator begin, Iterator end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol, Iterator* position, int* lines)> LexerActionFunction;
+    typedef std::function<PositionIterator<Iterator> (const PositionIterator<Iterator>& begin, const PositionIterator<Iterator>& end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
 
     struct LexerActionHandler
     {

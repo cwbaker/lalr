@@ -270,10 +270,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
                 const LexerActionFunction& function = whitespace_action_handlers_[index].function_;
                 LALR_ASSERT( function );
                 const void* symbol = nullptr;
-                int lines = 0;
-                Iterator position = position_.position();
-                function( position, end_, &lexeme_, &symbol, &position, &lines );
-                position_.skip( position, lines );
+                position_ = function( position_, PositionIterator<Iterator>(end_, end_), &lexeme_, &symbol );
             }
             else
             {
@@ -318,10 +315,7 @@ const void* Lexer<Iterator, Char, Traits, Allocator>::run()
                 LALR_ASSERT( index >= 0 && index < (int) action_handlers_.size() );                
                 const LexerActionFunction& function = action_handlers_[index].function_;
                 LALR_ASSERT( function );
-                int lines = 0;
-                Iterator position = position_.position();
-                function( position_.position(), end_, &lexeme_, &symbol, &position, &lines );
-                position_.skip( position, lines );
+                position_ = function( position_, PositionIterator<Iterator>(end_, end_), &lexeme_, &symbol );
             }
             else
             {

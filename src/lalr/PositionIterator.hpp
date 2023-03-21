@@ -75,11 +75,21 @@ public:
         int character = *position_;
         ++position_;
         ++column_;
-        if ( character == '\n' || (character == '\r' && (position_ == end_ || *position_ != '\n')) )
+
+        if ( character == '\n' )
         {
             ++line_;
             column_ = 1;
         }
+        else if ( character == '\r' )
+        {
+            if ( position_ != end_ && *position_ == '\n' )
+            {
+                ++position_;
+            }
+            ++line_;
+            column_ = 1;
+        } 
         
         ended_ = position_ == end_;
         return *this;

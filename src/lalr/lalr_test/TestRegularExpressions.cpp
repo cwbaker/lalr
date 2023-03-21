@@ -1261,8 +1261,8 @@ SUITE( RegularExpressions )
         compiler.compile( "[ \\t\\r\\n]", &whitespace );
         Lexer<PositionIterator<const char*> > lexer( compiler.state_machine(), nullptr );
         
-        const char* regex = "\n \r\n \r \r\n";
-        lexer.reset( PositionIterator<const char*>(regex, regex + strlen(regex)), PositionIterator<const char*>() );
+        const char* text = "\n \r\n \r \r\n";
+        lexer.reset( PositionIterator<const char*>(text, text + strlen(text)), PositionIterator<const char*>() );
         lexer.advance();
         CHECK( lexer.symbol() == &whitespace );
         CHECK( lexer.position().line() == 2 );
@@ -1270,24 +1270,23 @@ SUITE( RegularExpressions )
         lexer.advance();
         lexer.advance();
         CHECK( lexer.symbol() == &whitespace );
-        CHECK( lexer.position().line() == 2 );
+        CHECK_EQUAL( 3, lexer.position().line() );
         lexer.advance();
         CHECK( lexer.symbol() == &whitespace );
-        CHECK( lexer.position().line() == 3 );
+        CHECK_EQUAL( 3, lexer.position().line() );
 
         lexer.advance();
         lexer.advance();
         CHECK( lexer.symbol() == &whitespace );
-        CHECK( lexer.position().line() == 4 );
-
-        lexer.advance();
-        lexer.advance();
-        CHECK( lexer.symbol() == &whitespace );
-        CHECK( lexer.position().line() == 4 );
+        CHECK_EQUAL( 4, lexer.position().line() );
 
         lexer.advance();
         CHECK( lexer.symbol() == &whitespace );
-        CHECK( lexer.position().line() == 5 );        
+        lexer.advance();
+        CHECK_EQUAL( 5, lexer.position().line() );
+
+        lexer.advance();
+        CHECK_EQUAL( 5, lexer.position().line() );        
     }
 
 
