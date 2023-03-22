@@ -709,6 +709,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     LALR_ASSERT( rejected );
 
     const std::basic_string<Char, Traits, Allocator> lexeme = lexer_.lexeme();
+    const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
     const ParserState* state = !nodes_.empty() ? nodes_.back().state() : nullptr;
 
     bool handled = false;
@@ -744,7 +745,14 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     
     if ( nodes_.empty() )
     {
-        fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error on '%s' when expecting %s", lexeme.c_str(), expected_symbols(state).c_str() );
+        if ( symbol )
+        {
+            fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error on %s '%s' when expecting %s", symbol->identifier, lexeme.c_str(), expected_symbols(state).c_str() );
+        }
+        else
+        {
+            fire_error( line, column, PARSER_ERROR_SYNTAX, "Syntax error on '%s' when expecting %s", lexeme.c_str(), expected_symbols(state).c_str() );
+        }
         *rejected = true;
     }
 }
