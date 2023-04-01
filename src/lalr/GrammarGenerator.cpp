@@ -96,7 +96,8 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
     calculate_identifiers();
     check_for_undefined_symbol_errors();
     check_for_unreferenced_symbol_errors();
-    check_for_error_symbol_on_left_hand_side_errors();    
+    check_for_implicit_terminal_duplicate_associativity();
+    check_for_error_symbol_on_left_hand_side_errors();
 
     if ( errors_ == 0 )
     {        
@@ -398,6 +399,36 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
                 if ( references == 0 )
                 {
                     error( symbol->line(), PARSER_ERROR_UNREFERENCED_SYMBOL, "unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
+                }
+            }
+        }
+    }
+}
+
+/**
+// Check implicit terminals define precedence and associativity once.
+//
+// Implicit terminals must define precedence and associativity only on one of
+// their forms.  Either the literal/regular expression or the non-terminal that
+// labels them until they are combined.  That precedence and associativity is
+// moved to the implicit terminal when the two symbols are merged.
+*/
+void GrammarGenerator::check_for_implicit_terminal_duplicate_associativity()
+{
+    for ( vector<unique_ptr<GrammarSymbol>>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
+    {
+        GrammarSymbol* non_terminal = i->get();        
+        if ( non_terminal && non_terminal != error_symbol_ )
+        {
+            GrammarSymbol* terminal = non_terminal->implicit_terminal();
+            if ( terminal )
+            {       
+                LALR_ASSERT( terminal != non_terminal );
+                bool terminal_associates = terminal->associativity() != ASSOCIATE_NULL;
+                bool non_terminal_associates = non_terminal->associativity() != ASSOCIATE_NULL;
+                if ( terminal_associates && non_terminal_associates )
+                {
+                    error( terminal->line(), PARSER_ERROR_DUPLICATE_ASSOCIATION_ON_IMPLICIT_TERMINAL, "implicit terminal '%s'/%s' specifies associativity and precedence on both forms", terminal->lexeme().c_str(), non_terminal->lexeme().c_str() );
                 }
             }
         }
