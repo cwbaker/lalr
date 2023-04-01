@@ -387,6 +387,10 @@ void GrammarSymbol::calculate_identifier()
 //
 // This symbol is assumed to be of type `SYMBOL_TERMINAL`.
 //
+// The precedence and associativity is taken from whichever of the symbols
+// has associativity set, if any.  It's an error for both the terminal and
+// non-terminal of an implicit terminal to have associativity set.
+//
 // @param non_terminal_symbol
 //  The non terminal symbol to replace the identifier, precedence, and 
 //  associativity for this symbol with (assumed not null and of type 
@@ -397,9 +401,11 @@ void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_s
     LALR_ASSERT( symbol_type() == SYMBOL_TERMINAL );
     LALR_ASSERT( non_terminal_symbol );    
     LALR_ASSERT( non_terminal_symbol->symbol_type() == SYMBOL_NON_TERMINAL );        
+    LALR_ASSERT( precedence_ == 0 || non_terminal_symbol->precedence_ == 0 );
+    LALR_ASSERT( associativity_ == ASSOCIATE_NULL || non_terminal_symbol->precedence_ == ASSOCIATE_NULL );
     identifier_ = non_terminal_symbol->lexeme_;
-    precedence_ = non_terminal_symbol->precedence_;
-    associativity_ = non_terminal_symbol->associativity_;
+    precedence_ = precedence_ > 0 ? precedence_ : non_terminal_symbol->precedence_;
+    associativity_ = associativity_ != ASSOCIATE_NULL ? associativity_ : non_terminal_symbol->associativity_;
 }
 
 /**
