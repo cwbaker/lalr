@@ -397,7 +397,7 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
 
                 if ( references == 0 )
                 {
-                    error( 1, PARSER_ERROR_UNREFERENCED_SYMBOL, "unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
+                    error( symbol->line(), PARSER_ERROR_UNREFERENCED_SYMBOL, "unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
                 }
             }
         }
