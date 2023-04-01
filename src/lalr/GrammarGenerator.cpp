@@ -468,7 +468,7 @@ void GrammarGenerator::calculate_terminal_and_non_terminal_symbols()
 //
 // Any symbols that contain a single production that contains only a terminal 
 // symbol are aliases for that terminal symbol.  To make the parser easier to
-// understand and more efficient these symbols are  collapsed by making any
+// understand and more efficient these symbols are collapsed by making any
 // references to the non-terminal refer directly to the terminal.  The
 // identifier of the terminal is changed to be the more readable name of the
 // non-terminal.
