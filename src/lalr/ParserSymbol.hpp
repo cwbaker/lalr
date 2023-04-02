@@ -15,6 +15,7 @@ public:
     int index; ///< The index of this symbol.
     const char* identifier; ///< The identifier of this symbol.
     const char* lexeme; ///< The lexeme of this symbol or null if this symbol is non-terminal.
+    const char* label; ///< The human-readable label for this symbol.
     SymbolType type; ///< The type of this symbol.
 };
 

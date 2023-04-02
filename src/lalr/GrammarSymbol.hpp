@@ -39,6 +39,7 @@ public:
     const std::string& identifier() const;
     SymbolType symbol_type() const;
     LexemeType lexeme_type() const;
+    bool literal() const;
     Associativity associativity() const;
     int precedence() const;
     int line() const;

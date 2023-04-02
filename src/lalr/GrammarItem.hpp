@@ -31,6 +31,7 @@ public:
     bool next_node( const GrammarSymbol& symbol ) const;
     const GrammarSymbol* next_symbol() const;
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols() const;
+    std::string label() const;
     bool operator<( const GrammarItem& item ) const;
     int add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const;
 };

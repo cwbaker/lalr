@@ -32,6 +32,7 @@ public:
     const GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol ) const;
     const std::vector<GrammarTransition*>& transitions() const;
     int count_valid_transitions() const;
+    std::string label() const;
     bool processed() const;
     int index() const;
     bool operator<( const GrammarState& state ) const;

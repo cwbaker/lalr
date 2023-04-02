@@ -51,6 +51,11 @@ LexemeType GrammarSymbol::lexeme_type() const
     return lexeme_type_;
 }
 
+bool GrammarSymbol::literal() const
+{
+    return lexeme_type_ == LEXEME_LITERAL;
+}
+
 Associativity GrammarSymbol::associativity() const
 {
     return associativity_;

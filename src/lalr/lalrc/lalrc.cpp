@@ -31,13 +31,15 @@ using std::vector;
 using std::count;
 using namespace lalr;
 
+extern void write_graphviz_dot( const ParserStateMachine* state_machine );
+
 static FILE* file_ = nullptr;
 static int errors_ = 0;
 
 static void error( const char* format, ... );
 static void open( const char* filename );
 static void close();
-static void write( const char* format, ... );
+void write( const char* format, ... );
 static void print_cxx_parser_state_machine( const ParserStateMachine* state_machine );
 static void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine );
 static void generate_cxx_lexer_state_machine( const LexerStateMachine* lexer_state_machine, const char* prefix );
@@ -49,6 +51,7 @@ int main( int argc, char** argv )
     string output;
     bool print = false;
     bool help = false;
+    bool dot = false;
     bool version = false;
 
     int argi = 1;
@@ -67,6 +70,11 @@ int main( int argc, char** argv )
         else if ( strcmp(argv[argi], "-p") == 0 || strcmp(argv[argi], "--print") == 0 )
         {
             print = true;
+            argi += 1;
+        }
+        else if ( strcmp(argv[argi], "-d") == 0 || strcmp(argv[argi], "--dot") == 0 )
+        {
+            dot = true;
             argi += 1;
         }
         else if ( strcmp(argv[argi], "-h") == 0 || strcmp(argv[argi], "--help") == 0 )
@@ -92,7 +100,8 @@ int main( int argc, char** argv )
         printf( "lalrc [options] [-o|--output OUTPUT] INPUT\n" );
         printf( "-h|--help     Display this help message\n" );
         printf( "-v|--version  Display version\n" );
-        printf( "-p|--print    Print parser state machine\n" );
+        printf( "-p|--print    Print state machine\n" );
+        printf( "-d|--dot      Print state machine as GraphViz DOT graph\n" );
         printf( "-o|--output   Output file\n" );
         printf( "\n" );
         return help ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -141,6 +150,10 @@ int main( int argc, char** argv )
         {
             print_cxx_parser_state_machine( state_machine );
         }
+        else if ( dot )
+        {
+            write_graphviz_dot( state_machine );
+        }
         else
         {
             generate_cxx_parser_state_machine( state_machine );
@@ -186,7 +199,7 @@ static void close()
     file_ = nullptr;
 }
 
-static void write( const char* format, ... )
+void write( const char* format, ... )
 {
     if ( file_ )
     {
@@ -277,14 +290,15 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     const ParserSymbol* symbols_end = symbols + state_machine->symbols_size;
     for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
     {
-        write( "    {%d, \"%s\", \"%s\", (SymbolType) %d},\n", 
+        write( "    {%d, \"%s\", \"%s\", \"%s\", (SymbolType) %d},\n", 
             symbol->index, 
             symbol->identifier, 
             sanitize(symbol->lexeme).c_str(),
+            sanitize(symbol->label).c_str(),
             symbol->type
         );
     }
-    write( "    {-1, nullptr, nullptr, (SymbolType) 0}\n" );
+    write( "    {-1, nullptr, nullptr, nullptr, (SymbolType) 0}\n" );
     write( "};\n" );
     write( "\n" );
 
@@ -327,10 +341,11 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     const ParserState* states_end = states + state_machine->states_size;
     for ( const ParserState* state = states; state != states_end; ++state )
     {
-        write( "    {%d, %d, &transitions[%d]},\n",
+        write( "    {%d, %d, &transitions[%d], \"%s\"},\n",
             state->index,
             state->length,
-            state->transitions->index 
+            state->transitions->index,
+            state->label
         );
     }
     write( "    {-1, 0, nullptr}\n" );

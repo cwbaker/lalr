@@ -8,6 +8,7 @@
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
 
+using std::string;
 using std::vector;
 using namespace lalr;
 
@@ -118,6 +119,37 @@ const GrammarSymbol* GrammarItem::next_symbol() const
 const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarItem::lookahead_symbols() const
 {
     return lookahead_symbols_;
+}
+
+std::string GrammarItem::label() const
+{
+    string label;
+
+    label += production_->symbol()->lexeme();
+    label += " ->";
+
+    int position = 0;
+    const vector<GrammarSymbol*>& symbols = production_->symbols();
+    for ( const GrammarSymbol* symbol : symbols )
+    {
+        if ( !label.empty() )
+        {
+            label += " ";
+        }
+        if ( position == position_ )
+        {
+            label += ".";
+        }
+        label += symbol->literal() ? symbol->lexeme() : symbol->identifier();
+        ++position;
+    }
+
+    if ( position == position_ )
+    {
+        label += ".";
+    }
+
+    return label;
 }
 
 /**

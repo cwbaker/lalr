@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 using std::set;
+using std::string;
 using namespace lalr;
 
 /**
@@ -99,6 +100,20 @@ int GrammarState::count_valid_transitions() const
         valid_transitions += transition != nullptr;
     }
     return valid_transitions;
+}
+
+std::string GrammarState::label() const
+{
+    string label;
+    for ( const GrammarItem& item : items_ )
+    {
+        if ( !label.empty() )
+        {
+            label += "\\n";
+        }
+        label += item.label();
+    }
+    return label;
 }
 
 /**

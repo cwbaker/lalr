@@ -198,6 +198,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         symbol->index = source_symbol->index();
         symbol->identifier = add_string( source_symbol->identifier() );
         symbol->lexeme = add_string( source_symbol->lexeme() );
+        symbol->label = source_symbol->literal() ? symbol->lexeme : symbol->identifier;
         symbol->type = source_symbol->symbol_type();
     }
 
@@ -227,6 +228,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         state->index = state_index;
         state->length = grammar_state->count_valid_transitions();
         state->transitions = &transitions[transition_index];
+        state->label = add_string( grammar_state->label() );
         if ( grammar_state == generator.start_state() )
         {
             start_state = state;
