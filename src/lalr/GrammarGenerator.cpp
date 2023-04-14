@@ -655,9 +655,9 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         while ( added > 0 )
         {
             added = 0;
-            for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            for ( set<shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
             {
-                const std::shared_ptr<GrammarState>& state = *i;
+                const shared_ptr<GrammarState>& state = *i;
                 LALR_ASSERT( state );
 
                 if ( !state->processed() )
@@ -722,12 +722,12 @@ void GrammarGenerator::generate_indices_for_states()
 */
 void GrammarGenerator::generate_reduce_transitions()
 {
-    for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( set<shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         GrammarState* state = i->get();
         LALR_ASSERT( state );
             
-        for ( std::set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
+        for ( set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
             if ( item->dot_at_end() )
             {
@@ -809,7 +809,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
 */
 void GrammarGenerator::generate_indices_for_transitions()
 {
-    for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+    for ( set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
     {
         GrammarState* state = i->get();
         LALR_ASSERT( state );
