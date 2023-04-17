@@ -23,6 +23,14 @@ GrammarState::GrammarState()
 {
 }
 
+GrammarState::GrammarState( const GrammarState& state )
+: items_( state.items_ )
+, transitions_( state.transitions_ )
+, processed_( state.processed_ )
+, index_( state.index_ )
+{
+}
+
 /**
 // Get the items in this state.
 //

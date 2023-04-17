@@ -11,6 +11,7 @@
 using std::set;
 using std::vector;
 using std::shared_ptr;
+using std::make_pair;
 using namespace lalr;
 
 GrammarSymbol::GrammarSymbol( const std::string& lexeme )
@@ -93,6 +94,16 @@ const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::follow()
 const std::vector<GrammarProduction*>& GrammarSymbol::productions() const
 {
     return productions_;
+}
+
+const std::multimap<const GrammarSymbol*, GrammarProduction*>& GrammarSymbol::reachable_productions_by_first_symbol() const
+{
+    return reachable_productions_by_first_symbol_;
+}
+
+std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator GrammarSymbol::find_reachable_productions( const GrammarSymbol& first_symbol ) const
+{
+    return reachable_productions_by_first_symbol_.find( &first_symbol );
 }
 
 /**
@@ -195,6 +206,14 @@ void GrammarSymbol::append_production( GrammarProduction* production )
 {
     LALR_ASSERT( production );
     productions_.push_back( production );
+}
+
+void GrammarSymbol::append_reachable_production( GrammarProduction* production )
+{
+    LALR_ASSERT( production );
+    const GrammarSymbol* first_symbol = production->symbol_by_position( 0 );
+    LALR_ASSERT( first_symbol );
+    reachable_productions_by_first_symbol_.insert( make_pair(first_symbol, production) );
 }
 
 /**

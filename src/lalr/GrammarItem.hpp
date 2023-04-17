@@ -29,6 +29,7 @@ public:
     bool dot_at_beginning() const;
     bool dot_at_end() const;
     bool next_node( const GrammarSymbol& symbol ) const;
+    const GrammarSymbol* next_symbol() const;
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols() const;
     bool operator<( const GrammarItem& item ) const;
     int add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const;

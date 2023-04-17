@@ -94,7 +94,19 @@ bool GrammarItem::dot_at_end() const
 */
 bool GrammarItem::next_node( const GrammarSymbol& symbol ) const
 {
-    return production_->symbol_by_position(position_) == &symbol;
+    return production_->symbol_by_position( position_ ) == &symbol;
+}
+
+/**
+// Get the symbol after the dot in this item.
+//
+// @return
+//  The next symbol, i.e. following the dot, in this item or null if there
+//  is no such symbol.
+*/
+const GrammarSymbol* GrammarItem::next_symbol() const
+{
+    return production_->symbol_by_position( position_ );
 }
 
 /**

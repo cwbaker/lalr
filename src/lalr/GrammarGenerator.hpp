@@ -4,6 +4,7 @@
 #include "RegexToken.hpp"
 #include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
+#include "GrammarProductionLess.hpp"
 #include <memory>
 #include <set>
 #include <vector>
@@ -64,12 +65,14 @@ private:
     void check_for_error_symbol_on_left_hand_side_errors();
     void check_for_implicit_terminal_duplicate_associativity();
     void calculate_identifiers();
-    void calculate_terminal_and_non_terminal_symbols();
+    void calculate_terminal_and_non_terminal_symbols();    
     void calculate_implicit_terminal_symbols();
     void calculate_precedence_of_productions();
     void calculate_symbol_indices();
     void calculate_first();
     void calculate_follow();
+    void calculate_reachable_productions();
+    void calculate_reachable_productions_for_symbol( const GrammarSymbol& symbol, std::set<GrammarProduction*, GrammarProductionLess>* productions );
     void generate_states( const GrammarSymbol* start_symbol, const GrammarSymbol* end_symbol, const std::vector<std::unique_ptr<GrammarSymbol>>& symbols );
     void generate_indices_for_states();
     void generate_reduce_transitions();

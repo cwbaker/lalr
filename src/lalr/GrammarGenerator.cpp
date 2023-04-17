@@ -11,6 +11,7 @@
 #include "GrammarSymbol.hpp"   
 #include "GrammarAction.hpp"
 #include "GrammarCompiler.hpp"
+#include "GrammarProductionLess.hpp"
 #include "ParserState.hpp"
 #include "ParserAction.hpp"
 #include "ParserSymbol.hpp"
@@ -24,8 +25,10 @@
 
 using std::set;
 using std::vector;
+using std::multimap;
 using std::unique_ptr;
 using std::shared_ptr;
+using std::make_shared;
 using namespace lalr;
 
 /**
@@ -107,6 +110,7 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
         calculate_first();
         calculate_follow();
         calculate_precedence_of_productions();
+        calculate_reachable_productions();
         generate_states( start_symbol_, end_symbol_, symbols_ );
     }
 
@@ -240,13 +244,26 @@ std::shared_ptr<GrammarState> GrammarGenerator::goto_( const std::shared_ptr<Gra
     const set<GrammarItem>& items = state->items();
     for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
     {
-        if ( item->next_node(symbol) )
+        const GrammarSymbol* next_symbol = item->next_symbol();
+        if ( next_symbol )
         {
-            goto_state->add_item( item->production(), item->position() + 1 );
+            if ( next_symbol == &symbol )
+            {
+                goto_state->add_item( item->production(), item->position() + 1 );
+            }
+    
+            const multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions = next_symbol->reachable_productions_by_first_symbol();
+            auto i = reachable_productions.find( &symbol );
+            while ( i != reachable_productions.end() && i->first == &symbol )
+            {
+                GrammarProduction* production = i->second;
+                const int position = 1;
+                goto_state->add_item( production, position );
+                ++i;
+            }
         }
     }
 
-    closure( goto_state );
     return goto_state;
 }
 
@@ -621,6 +638,49 @@ void GrammarGenerator::calculate_follow()
 }
 
 /**
+// Calculate the productions reachable by right-most derivation from each
+// non-terminal.
+//
+// This pre-calculation is used to add items to goto states that would have
+// been added for transitions from non-kernel items.  This is needed because
+// non-kernel items are excluded in an efficient construction of LALR(1)
+// states.  The pre-calculation provides a more efficient and convenient
+// means of discovering items added for transitions from non-kernel items.
+*/
+void GrammarGenerator::calculate_reachable_productions()
+{
+    for ( const auto& symbol : symbols_ )
+    {
+        set<GrammarProduction*, GrammarProductionLess> productions;
+        calculate_reachable_productions_for_symbol( *symbol, &productions );
+        for ( const auto& production : productions )
+        {
+            symbol->append_reachable_production( production );
+        }
+    }
+}
+
+/**
+// Recursively calculate productions reachable by derivation from symbol.
+*/
+void GrammarGenerator::calculate_reachable_productions_for_symbol( const GrammarSymbol& symbol, std::set<GrammarProduction*, GrammarProductionLess>* productions )
+{
+    LALR_ASSERT( productions );
+    for ( const auto& production : symbol.productions() )
+    {
+        const GrammarSymbol* first_symbol = production->symbol_by_position( 0 );
+        if ( first_symbol )
+        {
+            bool inserted = productions->insert( production ).second;
+            if ( inserted )
+            {
+                calculate_reachable_productions_for_symbol( *first_symbol, productions );
+            }
+        }
+    }
+}
+
+/**
 // Generate the states for a grammar with \e symbols starting with 
 // \e start_symbol and ending when \e end_symbol is accepted.
 //
@@ -641,7 +701,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
 
     if ( !start_symbol->productions().empty() )
     {
-        std::shared_ptr<GrammarState> start_state( new GrammarState() );
+        shared_ptr<GrammarState> start_state = make_shared<GrammarState>();
         start_state->add_item( start_symbol->productions().front(), 0 );
         closure( start_state );
         states_.insert( start_state );
@@ -680,6 +740,20 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
                     }
                 }
             }
+        }
+
+        vector<shared_ptr<GrammarState>> states;
+        states.reserve( states_.size() );
+        for ( const auto& state : states_ )
+        {
+            states.push_back( state );
+        }
+
+        states_.clear();
+        for ( const auto& state : states )
+        {
+            closure( state );
+            states_.insert( state );
         }
         
         generate_indices_for_states();

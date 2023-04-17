@@ -18,6 +18,7 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarItem.cpp',
                 'GrammarParser.cpp',
                 'GrammarProduction.cpp',
+                'GrammarProductionLess.cpp',
                 'GrammarState.cpp',
                 'GrammarStateLess.cpp',
                 'GrammarSymbol.cpp',

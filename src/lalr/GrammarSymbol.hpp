@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 
 namespace lalr
 {
@@ -29,6 +30,7 @@ class GrammarSymbol
     std::set<const GrammarSymbol*, GrammarSymbolLess> first_; ///< The symbols that can start this symbol in a production or regular expression.
     std::set<const GrammarSymbol*, GrammarSymbolLess> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
     std::vector<GrammarProduction*> productions_; ///< The productions that reduce to this symbol.
+    std::multimap<const GrammarSymbol*, GrammarProduction*> reachable_productions_by_first_symbol_; ///< The productions reachable by right-most derivation from this symbol by their first symbol.
 
 public:
     GrammarSymbol( const std::string& lexeme );
@@ -46,6 +48,8 @@ public:
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& first() const;
     const std::set<const GrammarSymbol*, GrammarSymbolLess>& follow() const;
     const std::vector<GrammarProduction*>& productions() const;
+    const std::multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions_by_first_symbol() const;
+    std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator find_reachable_productions( const GrammarSymbol& first_symbol ) const;
     GrammarSymbol* implicit_terminal() const;
     bool matches( const std::string& lexeme, SymbolType symbol_type ) const;
 
@@ -60,6 +64,7 @@ public:
     void set_nullable( bool nullable );
     void set_referenced_in_precedence_directive( bool referenced_in_precedence_directive );
     void append_production( GrammarProduction* production );
+    void append_reachable_production( GrammarProduction* production );
     void calculate_identifier();
     void replace_by_non_terminal( const GrammarSymbol* non_terminal_symbol );    
     int add_symbol_to_first( const GrammarSymbol* symbol );

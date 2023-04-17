@@ -24,6 +24,7 @@ class GrammarState
 
 public:
     GrammarState();
+    GrammarState( const GrammarState& state );
 
     const std::set<GrammarItem>& items() const;
     const GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol ) const;
