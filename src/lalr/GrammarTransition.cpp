@@ -4,6 +4,7 @@
 //    
 
 #include "GrammarTransition.hpp"
+#include "GrammarProduction.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
@@ -17,30 +18,16 @@ using namespace lalr;
 // @param symbol
 //  The symbol that this transition is made on (assumed not null).
 //
-// @param reduced_symbol
-//  The GrammarSymbol that this transition reduces to.
-//
-// @param length
-//  The number of symbols on the right-hand side of the production that this 
-//  transition reduces.
-//
-// @param action
-//  The index of the action taken on this reduction or 
-//  `GrammarAction::INVALID_INDEX` if no action is taken.
+// @param production
+//  The GrammarProduction that this transition reduces (assumed not null).
 */
-GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const GrammarProduction* production )
 : symbol_( symbol )
 , state_( nullptr )
-, reduced_symbol_( reduced_symbol )
-, reduced_length_( reduced_length )
-, precedence_( precedence )
-, action_( action )
-, type_( TRANSITION_REDUCE )
-, index_( INVALID_INDEX )
+, production_( production )
 {
-    LALR_ASSERT( reduced_symbol_ );
-    LALR_ASSERT( reduced_length_ >= 0 );
-    LALR_ASSERT( precedence_ >= 0 );
+    LALR_ASSERT( symbol_ );
+    LALR_ASSERT( production_ );
 }
 
 /**
@@ -55,12 +42,7 @@ GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, const Grammar
 GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, GrammarState* state )
 : symbol_( symbol )
 , state_( state )
-, reduced_symbol_( nullptr )
-, reduced_length_( 0 )
-, precedence_( 0 )
-, action_( GrammarAction::INVALID_INDEX )
-, type_( TRANSITION_SHIFT )
-, index_( INVALID_INDEX )
+, production_( nullptr )
 {
     LALR_ASSERT( symbol_ );
     LALR_ASSERT( state_ );
@@ -70,42 +52,52 @@ GrammarTransition::GrammarTransition( const GrammarSymbol* symbol, GrammarState*
 // Get the state that this transition is to.
 //
 // @return
-//  The state or null if this transition is a reduce transition.
+//  The state or null if this transition is a reduction.
 */
 GrammarState* GrammarTransition::state() const
 {
     return state_;
 }
 
+/**
+// Get the production that this transition reduces.
+//
+// @return
+//  The reduced production or null if this transition is a shift.
+*/
+const GrammarProduction* GrammarTransition::production() const
+{
+    return production_;
+}
+
+bool GrammarTransition::is_shift() const
+{
+    return state_ != nullptr;
+}
+
+bool GrammarTransition::is_reduce() const
+{
+    return production_ != nullptr;
+}
+
 const GrammarSymbol* GrammarTransition::reduced_symbol() const
 {
-    return reduced_symbol_;
+    return production_ ? production_->symbol() : nullptr;
 }
 
 int GrammarTransition::reduced_length() const
 {
-    return reduced_length_;
+    return production_ ? production_->length() : 0;
 }
 
 int GrammarTransition::precedence() const
 {
-    return precedence_;
+    return production_ ? production_->precedence() : 0;
 }
 
 int GrammarTransition::action() const
 {
-    return action_;
-}
-
-/**
-// Get the type of this transition.
-//
-// @return
-//  The type of this transition.
-*/
-TransitionType GrammarTransition::type() const
-{
-    return type_;
+    return production_ ? production_->action_index() : 0;
 }
 
 /**
@@ -130,70 +122,22 @@ bool GrammarTransition::taken_on_symbol( const GrammarSymbol* symbol ) const
 */
 const GrammarSymbol* GrammarTransition::symbol() const
 {
-    LALR_ASSERT( symbol_ );
     return symbol_;
 }
 
 /**
-// Get the index of this transition.
-//
-// @return
-//  The index.
-*/
-int GrammarTransition::index() const
-{
-    return index_;
-}
-
-/**
-// Less than operator.
-//
-// @param transition
-//  The transition to compare this transition with.
-//
-// @return
-//  True if the address of this transition's symbol is less than the address 
-//  of \e transition's symbol.
-*/
-bool GrammarTransition::operator<( const GrammarTransition& transition ) const
-{
-    LALR_ASSERT( symbol_->index() >= 0 );
-    LALR_ASSERT( transition.symbol()->index() >= 0 );
-    return symbol_->index() < transition.symbol()->index();
-}
-
-/**
-// Set the index of this transition.
-//
-// @param index
-//  The value to set the index of this production to.
-*/
-void GrammarTransition::set_index( int index ) const
-{
-    index_ = index;
-}
-
-/**
-// Change this transition from being a shift transition into being a reduce
-// transition.
+// Change this transition from a shift into a reduction.
 //
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
+void GrammarTransition::override_shift_to_reduce( const GrammarProduction* production ) const
 {
-    LALR_ASSERT( type_ == TRANSITION_SHIFT );
     LALR_ASSERT( state_ );
-    LALR_ASSERT( !reduced_symbol_ );
-    LALR_ASSERT( length >= 0 );
-    LALR_ASSERT( precedence >= 0 );
-    LALR_ASSERT( symbol );    
-    type_ = TRANSITION_REDUCE;
+    LALR_ASSERT( !production_ );
+    LALR_ASSERT( production );
     state_ = nullptr;
-    reduced_symbol_ = symbol;
-    reduced_length_ = length;
-    precedence_ = precedence;
-    action_ = action;
+    production_ = production;
 }
 
 /**
@@ -203,16 +147,9 @@ void GrammarTransition::override_shift_to_reduce( const GrammarSymbol* symbol, i
 // @param reduced_production
 //  The production to reduce by when this transition is taken.
 */
-void GrammarTransition::override_reduce_to_reduce( const GrammarSymbol* symbol, int length, int precedence, int action ) const
+void GrammarTransition::override_reduce_to_reduce( const GrammarProduction* production ) const
 {
-    LALR_ASSERT( type_ == TRANSITION_REDUCE );
-    LALR_ASSERT( reduced_symbol_ );
-    LALR_ASSERT( symbol );
-    LALR_ASSERT( length >= 0 );
-    LALR_ASSERT( precedence >= 0 );
-    LALR_ASSERT( reduced_symbol_ != symbol );
-    reduced_symbol_ = symbol;
-    reduced_length_ = length;
-    precedence_ = precedence;
-    action_ = action;
+    LALR_ASSERT( !state_ );
+    LALR_ASSERT( production );
+    production_ = production;
 }

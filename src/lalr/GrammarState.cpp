@@ -6,6 +6,7 @@
 #include "GrammarState.hpp"
 #include "GrammarItem.hpp"
 #include "GrammarTransition.hpp"
+#include "GrammarSymbol.hpp"
 #include "assert.hpp"
 #include <stdio.h>
 
@@ -53,20 +54,18 @@ const std::set<GrammarItem>& GrammarState::items() const
 //  state.
 */
 const GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol ) const
-{    
-    const GrammarTransition* transition = NULL;
-    
+{
     if ( symbol )
     {
-        std::set<GrammarTransition>::const_iterator i = transitions_.begin();
-        while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
+        int index = symbol->index();
+        if ( index >= 0 && index < int(transitions_.size()) )
         {
-            ++i;
+            const GrammarTransition* transition = transitions_[index];
+            LALR_ASSERT( !transition || transition->symbol() == symbol );
+            return transition;
         }
-        transition = i != transitions_.end() ? &(*i) : NULL;
     }
-    
-    return transition;
+    return nullptr;
 }
 
 /**
@@ -75,9 +74,19 @@ const GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarS
 // @return
 //  The transitions.
 */
-const std::set<GrammarTransition>& GrammarState::transitions() const
+const std::vector<GrammarTransition*>& GrammarState::transitions() const
 {
     return transitions_;
+}
+
+int GrammarState::count_valid_transitions() const
+{
+    int valid_transitions = 0;
+    for ( const GrammarTransition* transition : transitions_ )
+    {
+        valid_transitions += transition != nullptr;
+    }
+    return valid_transitions;
 }
 
 /**
@@ -167,12 +176,12 @@ int GrammarState::add_lookahead_symbols( GrammarProduction* production, int posi
 // @param state
 //  The state to transition to (assumed not null).
 */
-void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* state )
+void GrammarState::add_shift_transition( GrammarTransition* transition )
 {
-    LALR_ASSERT( symbol );
-    LALR_ASSERT( state );
-    LALR_ASSERT( transitions_.find(GrammarTransition(symbol, state)) == transitions_.end() );
-    transitions_.insert( GrammarTransition(symbol, state) );
+    LALR_ASSERT( transition );
+    LALR_ASSERT( transition->is_shift() );
+    LALR_ASSERT( !find_transition_by_symbol(transition->symbol()) );
+    add_transition( transition );
 }
 
 /**
@@ -181,64 +190,21 @@ void GrammarState::add_transition( const GrammarSymbol* symbol, GrammarState* st
 // @param symbol
 //  The symbol to make the reduction on.
 //
-// @param reduced_symbol
-//  The symbol that is reduced to.
-//
-// @param reduced_length
-//  The number of symbols on the right-hand side of the production that is
-//  reduced.
-//
-// @param action
-//  The index of the action taken on the reduction or 
-//  `Action::INVALID_INDEX` if no action is taken.
+// @param production
+//  The production to reduce.
 */
-void GrammarState::add_transition( const GrammarSymbol* symbol, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
+void GrammarState::add_reduce_transition( GrammarTransition* transition )
 {
-    LALR_ASSERT( symbol );
-    LALR_ASSERT( reduced_symbol );
-    LALR_ASSERT( reduced_length >= 0 );
-    LALR_ASSERT( precedence >= 0 );
-
-    std::set<GrammarTransition>::iterator transition = transitions_.find( GrammarTransition(symbol, reduced_symbol, reduced_length, precedence, action) );
-    if ( transition != transitions_.end() )
-    {        
-        LALR_ASSERT( transition->type() == TRANSITION_SHIFT );
-        transition->override_shift_to_reduce( reduced_symbol, reduced_length, precedence, action );
+    LALR_ASSERT( transition );
+    LALR_ASSERT( transition->is_reduce() );
+    GrammarTransition* existing_transition = find_transition_by_symbol( transition->symbol() );
+    if ( existing_transition )
+    {
+        existing_transition->override_shift_to_reduce( transition->production() );
     }
     else
     {
-        transition = transitions_.insert( GrammarTransition(symbol, reduced_symbol, reduced_length, precedence, action) ).first;
-    }
-}
-
-/**
-// Add a reduction to \e production from this state on any of the symbols in 
-// \e symbols.
-//
-// @param symbols
-//  The symbols to make the reduction on.
-//
-// @param reduced_symbol
-//  The symbol that is reduced to.
-//
-// @param reduced_length
-//  The number of symbols on the right-hand side of the production that is
-//  reduced.
-//
-// @param action
-//  The index of the action taken on the reduction or 
-//  `Action::INVALID_INDEX` if no action is taken.
-*/
-void GrammarState::add_transition( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols, const GrammarSymbol* reduced_symbol, int reduced_length, int precedence, int action )
-{
-    LALR_ASSERT( reduced_symbol );
-    LALR_ASSERT( reduced_length >= 0 );
-    LALR_ASSERT( precedence >= 0 );
-    for ( set<const GrammarSymbol*>::const_iterator i = symbols.begin(); i != symbols.end(); ++i )
-    {
-        const GrammarSymbol* symbol = *i;
-        LALR_ASSERT( symbol );
-        add_transition( symbol, reduced_symbol, reduced_length, precedence, action );
+        add_transition( transition );
     }
 }
 
@@ -254,32 +220,15 @@ void GrammarState::add_transition( const std::set<const GrammarSymbol*, GrammarS
 */
 GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol* symbol )
 {    
-    GrammarTransition* transition = NULL;  
-      
     if ( symbol )
     {
-        std::set<GrammarTransition>::iterator i = transitions_.begin();
-        while ( i != transitions_.end() && !i->taken_on_symbol(symbol) )
+        int index = symbol->index();
+        if ( index >= 0 && index < int(transitions_.size()) )
         {
-            ++i;
+            return transitions_[index];
         }
-        transition = i != transitions_.end() ? const_cast<GrammarTransition*>(&(*i)) : NULL;
-    }    
-    
-    return transition;
-}
-
-/**
-// Generate indices for the transitions in this state.
-*/
-void GrammarState::generate_indices_for_transitions()
-{
-    int index = 0;
-    for ( std::set<GrammarTransition>::iterator transition = transitions_.begin(); transition != transitions_.end(); ++transition )
-    {
-        transition->set_index( index );
-        ++index;
     }
+    return nullptr;
 }
 
 /**
@@ -302,4 +251,19 @@ void GrammarState::set_processed( bool processed )
 void GrammarState::set_index( int index )
 {
     index_ = index;
+}
+
+void GrammarState::add_transition( GrammarTransition* transition )
+{
+    LALR_ASSERT( transition );
+    LALR_ASSERT( transition->symbol() );
+    int index = transition->symbol()->index();
+    if ( index >= int(transitions_.size()) )
+    {
+        int transitions_to_insert = index - int(transitions_.size()) + 1;
+        transitions_.insert( transitions_.end(), transitions_to_insert, nullptr );
+    }
+    LALR_ASSERT( index < int(transitions_.size()) );
+    LALR_ASSERT( !transitions_[index] );
+    transitions_[index] = transition;
 }

@@ -18,6 +18,7 @@ class LexerStateMachine;
 class GrammarCompiler;
 class GrammarAction;
 class GrammarSymbol;
+class GrammarTransition;
 class GrammarItem;
 class GrammarState;
 class GrammarProduction;
@@ -36,6 +37,7 @@ class GrammarGenerator
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<GrammarState>, GrammarStateLess> states_; ///< The states in the parser's state machine.
+    std::vector<std::unique_ptr<GrammarTransition>> transitions_; ///< The transitions in the parser.
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
@@ -49,11 +51,14 @@ public:
     const std::vector<std::unique_ptr<GrammarAction>>& actions() const;
     const std::vector<std::unique_ptr<GrammarSymbol>>& symbols() const;
     const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& states() const;
+    const std::vector<std::unique_ptr<GrammarTransition>>& transitions() const;
     const GrammarState* start_state() const;
     int generate( Grammar& grammar, ErrorPolicy* error_policy );
             
 private:
     void error( int line, int error, const char* format, ... );
+    GrammarTransition* shift_transition( const GrammarSymbol* symbol, GrammarState* state );
+    GrammarTransition* reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production );
     std::set<const GrammarSymbol*, GrammarSymbolLess> lookahead( const GrammarItem& item ) const;
     void closure( const std::shared_ptr<GrammarState>& state );
     std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol );

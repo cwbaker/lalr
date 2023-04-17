@@ -210,7 +210,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     {
         const GrammarState* grammar_state = i->get();
         LALR_ASSERT( grammar_state );
-        transitions_size += int(grammar_state->transitions().size());
+        transitions_size += grammar_state->count_valid_transitions();
     }
     unique_ptr<ParserTransition[]> transitions( new ParserTransition [transitions_size] );
 
@@ -223,9 +223,9 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         LALR_ASSERT( grammar_state );
         ParserState* state = &states[state_index];
         LALR_ASSERT( state );
-        const set<GrammarTransition>& source_transitions = grammar_state->transitions();
+        const vector<GrammarTransition*>& source_transitions = grammar_state->transitions();
         state->index = state_index;
-        state->length = int(source_transitions.size());
+        state->length = grammar_state->count_valid_transitions();
         state->transitions = &transitions[transition_index];
         if ( grammar_state == generator.start_state() )
         {
@@ -233,22 +233,23 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         }
         for ( auto j = source_transitions.begin(); j != source_transitions.end(); ++j )
         {
-            const GrammarTransition* source_transition = &(*j);
-            LALR_ASSERT( source_transition );
-            const GrammarSymbol* source_symbol = source_transition->symbol();
-            LALR_ASSERT( source_symbol );
-            const GrammarState* state_transitioned_to = source_transition->state();
-            const GrammarSymbol* reduced_symbol = source_transition->reduced_symbol();
-            ParserTransition* transition = &transitions[transition_index];
-            transition->symbol = &symbols[source_symbol->index()];
-            transition->state = state_transitioned_to ? &states[state_transitioned_to->index()] : nullptr;
-            transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->index()] : nullptr;
-            transition->reduced_length = source_transition->reduced_length();
-            transition->precedence = source_transition->precedence();
-            transition->action = source_transition->action();
-            transition->type = source_transition->type();
-            transition->index = transition_index;
-            ++transition_index;
+            const GrammarTransition* source_transition = *j;
+            if ( source_transition )
+            {
+                const GrammarSymbol* source_symbol = source_transition->symbol();
+                LALR_ASSERT( source_symbol );
+                const GrammarState* state_transitioned_to = source_transition->state();
+                const GrammarSymbol* reduced_symbol = source_transition->reduced_symbol();
+                ParserTransition* transition = &transitions[transition_index];
+                transition->symbol = &symbols[source_symbol->index()];
+                transition->state = state_transitioned_to ? &states[state_transitioned_to->index()] : nullptr;
+                transition->reduced_symbol = reduced_symbol ? &symbols[reduced_symbol->index()] : nullptr;
+                transition->reduced_length = source_transition->reduced_length();
+                transition->precedence = source_transition->precedence();
+                transition->action = source_transition->action();
+                transition->index = transition_index;
+                ++transition_index;
+            }
         }
         ++state_index;
     }

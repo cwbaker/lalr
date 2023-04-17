@@ -296,30 +296,28 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     {
         if ( transition->reduced_symbol )
         {
-            write( "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, (TransitionType) %d, %d},\n",
+            write( "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->reduced_symbol->index,
                 transition->reduced_length,
                 transition->precedence,
                 transition->action,
-                transition->type,
                 transition->index
             );
         }
         else
         {
-            write( "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, (TransitionType) %d, %d},\n",
+            write( "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->state ? transition->state->index : -1,
                 transition->reduced_length,
                 transition->precedence,
                 transition->action,
-                transition->type,
                 transition->index
             );
         }
     }
-    write( "    {nullptr, nullptr, nullptr, 0, 0, 0, (TransitionType) 0, -1}\n" );
+    write( "    {nullptr, nullptr, nullptr, 0, 0, 0, -1}\n" );
     write( "};\n" );
     write( "\n" );
 

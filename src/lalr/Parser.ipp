@@ -180,13 +180,13 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
     bool rejected = false;
     
     const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
-    while ( !accepted && !rejected && transition && transition->type == TRANSITION_REDUCE )
+    while ( !accepted && !rejected && transition && transition->reduced_symbol )
     {
         reduce( transition, &accepted, &rejected );
         transition = find_transition( symbol, nodes_.back().state() );
     }
     
-    if ( transition && transition->type == TRANSITION_SHIFT )
+    if ( transition && transition->state )
     {
         shift( transition, lexeme, line, column );
     }
@@ -718,22 +718,15 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
         const ParserTransition* transition = find_transition( state_machine_->error_symbol, nodes_.back().state() );
         if ( transition )
         {
-            switch ( transition->type )
+            if ( transition->state )
             {
-                case TRANSITION_SHIFT:
-                    shift( transition, std::basic_string<Char, Traits, Allocator>(), line, column );
-                    handled = true;
-                    break;
-
-                case TRANSITION_REDUCE:
-                    reduce( transition, accepted, rejected );
-                    break;
-                    
-                default:
-                    LALR_ASSERT( false );
-                    fire_error( line, column, PARSER_ERROR_UNEXPECTED, "Unexpected transition type '%d'", transition->type );
-                    *rejected = true;
-                    break;
+                shift( transition, std::basic_string<Char, Traits, Allocator>(), line, column );
+                handled = true;
+            }
+            else
+            {
+                LALR_ASSERT( transition->reduced_symbol );
+                reduce( transition, accepted, rejected );                
             }
         }
         else

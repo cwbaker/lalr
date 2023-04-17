@@ -5,6 +5,7 @@
 
 #include "GrammarGenerator.hpp"
 #include "GrammarProduction.hpp"
+#include "GrammarTransition.hpp"
 #include "GrammarState.hpp"
 #include "GrammarItem.hpp"
 #include "Grammar.hpp"
@@ -22,6 +23,7 @@
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
+#include <memory>
 
 using std::set;
 using std::vector;
@@ -29,6 +31,7 @@ using std::multimap;
 using std::unique_ptr;
 using std::shared_ptr;
 using std::make_shared;
+using std::make_unique;
 using namespace lalr;
 
 /**
@@ -48,6 +51,7 @@ GrammarGenerator::GrammarGenerator()
 , productions_()
 , symbols_()
 , states_()
+, transitions_()
 , start_symbol_( nullptr )
 , end_symbol_( nullptr )
 , error_symbol_( nullptr )
@@ -76,6 +80,11 @@ const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& GrammarGenerato
     return states_;
 }
 
+const std::vector<std::unique_ptr<GrammarTransition>>& GrammarGenerator::transitions() const
+{
+    return transitions_;
+}
+
 const GrammarState* GrammarGenerator::start_state() const
 {
     return start_state_;
@@ -89,6 +98,7 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
     productions_.swap( grammar.productions() );
     symbols_.swap( grammar.symbols() );
     states_.clear();
+    transitions_.clear();
     start_symbol_ = grammar.start_symbol();
     end_symbol_ = grammar.end_symbol();
     error_symbol_ = grammar.error_symbol();
@@ -144,6 +154,18 @@ void GrammarGenerator::error( int line, int error, const char* format, ... )
         error_policy_->lalr_error( line, 0, error, format, args );
         va_end( args );
     }
+}
+
+GrammarTransition* GrammarGenerator::shift_transition( const GrammarSymbol* symbol, GrammarState* state )
+{
+    transitions_.push_back( make_unique<GrammarTransition>(symbol, state) );
+    return transitions_.back().get();
+}
+
+GrammarTransition* GrammarGenerator::reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production )
+{
+    transitions_.push_back( make_unique<GrammarTransition>(symbol, production) );
+    return transitions_.back().get();
 }
 
 /**
@@ -326,22 +348,26 @@ int GrammarGenerator::lookahead_goto( GrammarState* state ) const
 
     int added = 0;
 
-    const set<GrammarTransition>& transitions = state->transitions();
-    for ( set<GrammarTransition>::const_iterator transition = transitions.begin(); transition != transitions.end(); ++transition )
+    const vector<GrammarTransition*>& transitions = state->transitions();
+    for ( vector<GrammarTransition*>::const_iterator i = transitions.begin(); i != transitions.end(); ++i )
     {
-        const GrammarSymbol* symbol = transition->symbol();
-        LALR_ASSERT( symbol );
-
-        const set<GrammarItem>& items = state->items();
-        for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+        const GrammarTransition* transition = *i;
+        if ( transition )
         {
-            int position = item->position();
-            if ( item->production()->symbol_by_position(position) == symbol )
+            const GrammarSymbol* symbol = transition->symbol();
+            LALR_ASSERT( symbol );
+
+            const set<GrammarItem>& items = state->items();
+            for ( set<GrammarItem>::const_iterator item = items.begin(); item != items.end(); ++item )
             {
-                GrammarState* goto_state = transition->state();
-                added += goto_state->add_lookahead_symbols( item->production(), position + 1, item->lookahead_symbols() );
+                int position = item->position();
+                if ( item->production()->symbol_by_position(position) == symbol )
+                {
+                    GrammarState* goto_state = transition->state();
+                    added += goto_state->add_lookahead_symbols( item->production(), position + 1, item->lookahead_symbols() );
+                }
             }
-        }        
+        }
     }
 
     return added;
@@ -734,7 +760,7 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
                             {                    
                                 std::shared_ptr<GrammarState> actual_goto_state = *states_.insert( goto_state ).first;
                                 added += goto_state == actual_goto_state ? 1 : 0;
-                                state->add_transition( symbol, actual_goto_state.get() );
+                                state->add_shift_transition( shift_transition(symbol, actual_goto_state.get()) );
                             }
                         }
                     }
@@ -772,7 +798,6 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         }
         
         generate_reduce_transitions();
-        generate_indices_for_transitions();
     }
 }
 
@@ -838,55 +863,32 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
     GrammarTransition* transition = state->find_transition_by_symbol( symbol );
     if ( !transition )
     {
-        state->add_transition( symbol, production->symbol(), production->length(), production->precedence(), production->action_index() );
+        state->add_reduce_transition( reduce_transition(symbol, production) );
     }
     else
     {
-        switch ( transition->type() )
+        if ( transition->is_shift() )
         {
-            case TRANSITION_SHIFT:
+            if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
             {
-                if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
-                {
-                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'", production->symbol()->identifier().c_str(), symbol->lexeme().c_str() );
-                }
-                else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
-                {
-                    transition->override_shift_to_reduce( production->symbol(), production->length(), production->precedence(), production->action_index() );
-                }
-
-                break;
+                error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'", production->symbol()->identifier().c_str(), symbol->lexeme().c_str() );
             }
-            
-            case TRANSITION_REDUCE:
+            else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
             {
-                if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
-                {
-                    error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'", production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str() );
-                }
-                else if ( production->precedence() > transition->precedence() )
-                {
-                    transition->override_reduce_to_reduce( production->symbol(), production->length(), production->precedence(), production->action_index() );
-                }
-                break;
+                transition->override_shift_to_reduce( production );
             }
-                
-            default:
-                LALR_ASSERT( false );
-                break;
         }
-    }
-}
-
-/**
-// Generate indices for the transitions in each state.
-*/
-void GrammarGenerator::generate_indices_for_transitions()
-{
-    for ( set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
-    {
-        GrammarState* state = i->get();
-        LALR_ASSERT( state );
-        state->generate_indices_for_transitions();        
+        else
+        {
+            LALR_ASSERT( transition->is_reduce() );
+            if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
+            {
+                error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'", production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str() );
+            }
+            else if ( production->precedence() > transition->precedence() )
+            {
+                transition->override_reduce_to_reduce( production );
+            }
+        }
     }
 }
