@@ -25,6 +25,7 @@ class GrammarState
 
 public:
     GrammarState();
+    GrammarState( GrammarState&& state );
     GrammarState( const GrammarState& state );
 
     const std::set<GrammarItem>& items() const;
@@ -47,6 +48,9 @@ public:
 
 private:
     void add_transition( GrammarTransition* transition );
+
+    GrammarState& operator=( GrammarState&& state ) = delete;
+    GrammarState& operator=( const GrammarState& state ) = delete;
 };
 
 }

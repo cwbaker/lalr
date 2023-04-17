@@ -24,6 +24,18 @@ GrammarState::GrammarState()
 {
 }
 
+GrammarState::GrammarState( GrammarState&& state )
+: items_()
+, transitions_()
+, processed_( false )
+, index_( INVALID_INDEX )
+{
+    std::swap( items_, state.items_ );
+    std::swap( transitions_, state.transitions_ );
+    std::swap( processed_, state.processed_ );
+    std::swap( index_, state.index_ );
+}
+
 GrammarState::GrammarState( const GrammarState& state )
 : items_( state.items_ )
 , transitions_( state.transitions_ )
