@@ -1,7 +1,7 @@
 #ifndef LALR_GRAMMARSYMBOL_HPP_INCLUDED
 #define LALR_GRAMMARSYMBOL_HPP_INCLUDED
 
-#include "GrammarSymbolLess.hpp"
+#include "GrammarSymbolSet.hpp"
 #include "SymbolType.hpp"
 #include "LexemeType.hpp"
 #include "Associativity.hpp"
@@ -27,8 +27,8 @@ class GrammarSymbol
     int index_; ///< The index of this symbol among all symbols.
     bool nullable_; ///< True if this symbol is nullable otherwise false.
     bool referenced_in_precedence_directive_; ///< True if this symbol is referenced by a %precedence directive.
-    std::set<const GrammarSymbol*, GrammarSymbolLess> first_; ///< The symbols that can start this symbol in a production or regular expression.
-    std::set<const GrammarSymbol*, GrammarSymbolLess> follow_; ///< The symbols that can follow this symbol in a production or regular expression.
+    GrammarSymbolSet first_; ///< The symbols that can start this symbol in a production or regular expression.
+    GrammarSymbolSet follow_; ///< The symbols that can follow this symbol in a production or regular expression.
     std::vector<GrammarProduction*> productions_; ///< The productions that reduce to this symbol.
     std::multimap<const GrammarSymbol*, GrammarProduction*> reachable_productions_by_first_symbol_; ///< The productions reachable by right-most derivation from this symbol by their first symbol.
 
@@ -46,8 +46,8 @@ public:
     int index() const;
     bool nullable() const;
     bool referenced_in_precedence_directive() const;
-    const std::set<const GrammarSymbol*, GrammarSymbolLess>& first() const;
-    const std::set<const GrammarSymbol*, GrammarSymbolLess>& follow() const;
+    const GrammarSymbolSet& first() const;
+    const GrammarSymbolSet& follow() const;
     const std::vector<GrammarProduction*>& productions() const;
     const std::multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions_by_first_symbol() const;
     std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator find_reachable_productions( const GrammarSymbol& first_symbol ) const;
@@ -69,9 +69,9 @@ public:
     void calculate_identifier();
     void replace_by_non_terminal( const GrammarSymbol* non_terminal_symbol );    
     int add_symbol_to_first( const GrammarSymbol* symbol );
-    int add_symbols_to_first( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols );
+    int add_symbols_to_first( const GrammarSymbolSet& symbols );
     int add_symbol_to_follow( const GrammarSymbol* symbol );
-    int add_symbols_to_follow( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols );
+    int add_symbols_to_follow( const GrammarSymbolSet& symbols );
     int calculate_first();
     int calculate_follow();
 };

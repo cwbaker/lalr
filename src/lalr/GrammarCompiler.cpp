@@ -228,7 +228,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         state->index = state_index;
         state->length = grammar_state->count_valid_transitions();
         state->transitions = &transitions[transition_index];
-        state->label = add_string( grammar_state->label() );
+        state->label = add_string( generator.label_state(*grammar_state) );
         if ( grammar_state == generator.start_state() )
         {
             start_state = state;

@@ -86,12 +86,12 @@ bool GrammarSymbol::referenced_in_precedence_directive() const
     return referenced_in_precedence_directive_;
 }
 
-const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::first() const
+const GrammarSymbolSet& GrammarSymbol::first() const
 {
     return first_;
 }
 
-const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarSymbol::follow() const
+const GrammarSymbolSet& GrammarSymbol::follow() const
 {
     return follow_;
 }
@@ -444,7 +444,7 @@ void GrammarSymbol::replace_by_non_terminal( const GrammarSymbol* non_terminal_s
 int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
 {
     LALR_ASSERT( symbol );
-    return first_.insert( symbol ).second ? 1 : 0;
+    return first_.insert( symbol );
 }
 
 /**
@@ -456,11 +456,9 @@ int GrammarSymbol::add_symbol_to_first( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols )
+int GrammarSymbol::add_symbols_to_first( const GrammarSymbolSet& symbols )
 {
-    size_t original_size = first_.size();
-    first_.insert( symbols.begin(), symbols.end() );
-    return int(first_.size() - original_size);
+    return first_.insert( symbols );
 }
 
 /**
@@ -475,7 +473,7 @@ int GrammarSymbol::add_symbols_to_first( const std::set<const GrammarSymbol*, Gr
 int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
 {
     LALR_ASSERT( symbol );
-    return follow_.insert( symbol ).second ? 1 : 0;
+    return follow_.insert( symbol );
 }
 
 /**
@@ -487,11 +485,9 @@ int GrammarSymbol::add_symbol_to_follow( const GrammarSymbol* symbol )
 // @return
 //  The number of symbols added.
 */
-int GrammarSymbol::add_symbols_to_follow( const std::set<const GrammarSymbol*, GrammarSymbolLess>& symbols )
+int GrammarSymbol::add_symbols_to_follow( const GrammarSymbolSet& symbols )
 {
-    size_t original_size = follow_.size();
-    follow_.insert( symbols.begin(), symbols.end() );
-    return int(follow_.size() - original_size);
+    return follow_.insert( symbols );
 }
 
 /**

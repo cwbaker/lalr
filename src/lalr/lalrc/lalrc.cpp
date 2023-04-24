@@ -139,7 +139,7 @@ int main( int argc, char** argv )
         GrammarCompiler compiler;
         ErrorPolicy error_policy;
         int errors = compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
-        if ( errors != 0 )            
+        if ( errors != 0 )
         {
             return EXIT_FAILURE;
         }

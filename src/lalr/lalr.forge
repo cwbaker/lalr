@@ -8,6 +8,7 @@ for _, cc in toolsets('^cc.*') do
         cc:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
             cc:Cxx '${obj}/%1' {
                 'ErrorPolicy.cpp',
+                'ThreadPool.cpp';
             };
 
             cc:Cxx '${obj}/%1' {
@@ -16,6 +17,7 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarCompiler.cpp',
                 'GrammarGenerator.cpp',
                 'GrammarItem.cpp',
+                'GrammarLookahead.cpp',
                 'GrammarParser.cpp',
                 'GrammarProduction.cpp',
                 'GrammarProductionLess.cpp',
@@ -23,6 +25,7 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarStateLess.cpp',
                 'GrammarSymbol.cpp',
                 'GrammarSymbolLess.cpp',
+                'GrammarSymbolSet.cpp',
                 'GrammarTransition.cpp'
             };
 

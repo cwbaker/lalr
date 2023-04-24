@@ -5,6 +5,8 @@
 #include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
 #include "GrammarProductionLess.hpp"
+#include "GrammarSymbolSet.hpp"
+#include "GrammarLookahead.hpp"
 #include <memory>
 #include <set>
 #include <vector>
@@ -14,6 +16,7 @@ namespace lalr
 {
 
 class ErrorPolicy;
+class ThreadPool;
 class LexerStateMachine;
 class GrammarCompiler;
 class GrammarAction;
@@ -32,12 +35,14 @@ class Grammar;
 class GrammarGenerator
 {
     ErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
+    ThreadPool* thread_pool_; ///< The pool of threads to use to generate the parser.
     std::string identifier_; ///< The identifier of the parser.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.
     std::vector<std::unique_ptr<GrammarSymbol>> symbols_; ///< The symbols in the parser.
     std::set<std::shared_ptr<GrammarState>, GrammarStateLess> states_; ///< The states in the parser's state machine.
     std::vector<std::unique_ptr<GrammarTransition>> transitions_; ///< The transitions in the parser.
+    std::vector<GrammarLookahead> lookaheads_; // Lookaheads for each item in each state.
     GrammarSymbol* start_symbol_; ///< The start symbol.
     GrammarSymbol* end_symbol_; ///< The end symbol.
     GrammarSymbol* error_symbol_; ///< The error symbol.
@@ -53,17 +58,17 @@ public:
     const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& states() const;
     const std::vector<std::unique_ptr<GrammarTransition>>& transitions() const;
     const GrammarState* start_state() const;
+    std::string label_state( const GrammarState& state ) const;
+    std::string label_item( const GrammarItem& item ) const;
     int generate( Grammar& grammar, ErrorPolicy* error_policy );
             
 private:
     void error( int line, int error, const char* format, ... );
     GrammarTransition* shift_transition( const GrammarSymbol* symbol, GrammarState* state );
     GrammarTransition* reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production );
-    std::set<const GrammarSymbol*, GrammarSymbolLess> lookahead( const GrammarItem& item ) const;
+    GrammarSymbolSet spontaneous_lookaheads( const GrammarItem& item ) const;
     void closure( const std::shared_ptr<GrammarState>& state );
     std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol );
-    int lookahead_closure( GrammarState* state ) const;
-    int lookahead_goto( GrammarState* state ) const;
     void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
     void check_for_undefined_symbol_errors();
     void check_for_unreferenced_symbol_errors();
@@ -78,6 +83,9 @@ private:
     void calculate_follow();
     void calculate_reachable_productions();
     void calculate_reachable_productions_for_symbol( const GrammarSymbol& symbol, std::set<GrammarProduction*, GrammarProductionLess>* productions );
+    void generate_spontaneous_lookaheads();
+    void generate_goto_items();
+    void generate_propagated_lookaheads();
     void generate_states( const GrammarSymbol* start_symbol, const GrammarSymbol* end_symbol, const std::vector<std::unique_ptr<GrammarSymbol>>& symbols );
     void generate_indices_for_states();
     void generate_reduce_transitions();

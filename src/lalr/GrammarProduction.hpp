@@ -33,6 +33,7 @@ public:
     int line() const;
     int column() const;
     int count_references_to_symbol( const GrammarSymbol* symbol ) const;
+    bool nullable_after( int position ) const;
     const GrammarSymbol* find_rightmost_terminal_symbol() const;
     const GrammarSymbol* symbol_by_position( int position ) const;
     const std::vector<GrammarSymbol*>& symbols() const;

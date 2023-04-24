@@ -105,6 +105,35 @@ int GrammarProduction::count_references_to_symbol( const GrammarSymbol* symbol )
 }
 
 /**
+// Are all symbols from *position* onwards nullable?
+//
+// @param position
+//  The position to check symbols for being nullable from, assumed zero or
+//  greater.
+//
+// @return
+//  True if symbols from [position, length) are nullable otherwise false.
+*/
+bool GrammarProduction::nullable_after( int position ) const
+{
+    LALR_ASSERT( position >= 0 && position <= length() );
+    if ( position >= 0 && position < length() )
+    {
+        vector<GrammarSymbol*>::const_iterator begin = symbols_.begin() + position;
+        for ( vector<GrammarSymbol*>::const_iterator i = begin; i != symbols_.end(); ++i )
+        {
+            const GrammarSymbol* symbol = *i;
+            LALR_ASSERT( symbol );
+            if ( !symbol->nullable() )
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/**
 // Find the rightmost terminal symbol in this production.
 //
 // If there is more than one possible rightmost terminal symbol because of 

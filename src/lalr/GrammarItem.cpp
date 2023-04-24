@@ -7,18 +7,23 @@
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
+#include <algorithm>
+#include <limits>
 
+using std::find;
 using std::string;
 using std::vector;
+using std::numeric_limits;
 using namespace lalr;
 
 /**
 // Constructor.
 */
 GrammarItem::GrammarItem()
-: production_()
+: production_index_( 0 )
 , position_( 0 )
-, lookahead_symbols_()
+, production_( nullptr )
+, index_( 0 )
 {
 }
 
@@ -32,12 +37,20 @@ GrammarItem::GrammarItem()
 //  The position of the dot in this item.
 */
 GrammarItem::GrammarItem( GrammarProduction* production, int position )
-: production_( production )
+: production_index_( production->index() )
 , position_( position )
-, lookahead_symbols_()
+, production_( production )
+, index_( 0 )
 {
     LALR_ASSERT( production_ );
+    LALR_ASSERT( production_->index() >= 0 && production_->index() < numeric_limits<unsigned short>::max() );
+    LALR_ASSERT( position_ >= 0 && position_ <  numeric_limits<unsigned short>::max() );
     LALR_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
+}
+
+int GrammarItem::index() const
+{
+    return index_;
 }
 
 /**
@@ -110,46 +123,9 @@ const GrammarSymbol* GrammarItem::next_symbol() const
     return production_->symbol_by_position( position_ );
 }
 
-/**
-// Get the lookahead set for this item.
-//
-// @return
-//  The lookahead set.
-*/
-const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarItem::lookahead_symbols() const
+bool GrammarItem::nullable_after_next() const
 {
-    return lookahead_symbols_;
-}
-
-std::string GrammarItem::label() const
-{
-    string label;
-
-    label += production_->symbol()->lexeme();
-    label += " ->";
-
-    int position = 0;
-    const vector<GrammarSymbol*>& symbols = production_->symbols();
-    for ( const GrammarSymbol* symbol : symbols )
-    {
-        if ( !label.empty() )
-        {
-            label += " ";
-        }
-        if ( position == position_ )
-        {
-            label += ".";
-        }
-        label += symbol->literal() ? symbol->lexeme() : symbol->identifier();
-        ++position;
-    }
-
-    if ( position == position_ )
-    {
-        label += ".";
-    }
-
-    return label;
+    return production_->nullable_after( position_ + 1 );
 }
 
 /**
@@ -166,23 +142,12 @@ std::string GrammarItem::label() const
 bool GrammarItem::operator<( const GrammarItem& item ) const
 {
     return 
-        production_->index() < item.production_->index() || 
-        (production_->index() == item.production_->index() && position_ < item.position_)
+        production_index_ < item.production_index_ || 
+        (production_index_ == item.production_index_ && position_ < item.position_)
     ;
 }
 
-/**
-// Add \e lookahead_symbols to the lookahead symbols for this item.
-//
-// @param lookahead_symbols
-//  The lookahead symbols to add to this item.
-//
-// @return
-//  The number of symbols added to the lookahead set of this item.
-*/
-int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const
+void GrammarItem::set_index( int index ) const
 {
-    size_t original_size = lookahead_symbols_.size();
-    lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
-    return int(lookahead_symbols_.size() - original_size);
+    index_ = index;
 }

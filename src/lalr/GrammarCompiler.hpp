@@ -10,6 +10,8 @@ namespace lalr
 
 class ErrorPolicy;
 class Grammar;
+class GrammarState;
+class GrammarItem;
 class GrammarGenerator;
 class ParserAction;
 class ParserSymbol;
