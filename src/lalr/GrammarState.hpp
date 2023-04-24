@@ -38,7 +38,7 @@ public:
     bool operator<( const GrammarState& state ) const;
 
     int add_item( GrammarProduction* production, int position );
-    int add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols );
+    int add_lookaheads( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols );
     void add_shift_transition( GrammarTransition* transition );
     void add_reduce_transition( GrammarTransition* transition );
     GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol );

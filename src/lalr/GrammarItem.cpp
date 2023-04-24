@@ -18,7 +18,7 @@ using namespace lalr;
 GrammarItem::GrammarItem()
 : production_()
 , position_( 0 )
-, lookahead_symbols_()
+, lookaheads_()
 {
 }
 
@@ -34,7 +34,7 @@ GrammarItem::GrammarItem()
 GrammarItem::GrammarItem( GrammarProduction* production, int position )
 : production_( production )
 , position_( position )
-, lookahead_symbols_()
+, lookaheads_()
 {
     LALR_ASSERT( production_ );
     LALR_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
@@ -116,9 +116,9 @@ const GrammarSymbol* GrammarItem::next_symbol() const
 // @return
 //  The lookahead set.
 */
-const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarItem::lookahead_symbols() const
+const std::set<const GrammarSymbol*, GrammarSymbolLess>& GrammarItem::lookaheads() const
 {
-    return lookahead_symbols_;
+    return lookaheads_;
 }
 
 std::string GrammarItem::label() const
@@ -172,17 +172,17 @@ bool GrammarItem::operator<( const GrammarItem& item ) const
 }
 
 /**
-// Add \e lookahead_symbols to the lookahead symbols for this item.
+// Add \e lookaheads to the lookahead symbols for this item.
 //
-// @param lookahead_symbols
+// @param lookaheads
 //  The lookahead symbols to add to this item.
 //
 // @return
 //  The number of symbols added to the lookahead set of this item.
 */
-int GrammarItem::add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const
+int GrammarItem::add_lookaheads( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookaheads ) const
 {
-    size_t original_size = lookahead_symbols_.size();
-    lookahead_symbols_.insert( lookahead_symbols.begin(), lookahead_symbols.end() );
-    return int(lookahead_symbols_.size() - original_size);
+    size_t original_size = lookaheads_.size();
+    lookaheads_.insert( lookaheads.begin(), lookaheads.end() );
+    return int(lookaheads_.size() - original_size);
 }

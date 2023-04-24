@@ -23,6 +23,7 @@
 #include "assert.hpp"
 #include <iterator>
 #include <string.h>
+#include <Tracy.hpp>
 
 using std::set;
 using std::vector;
@@ -69,6 +70,8 @@ const ParserStateMachine* GrammarCompiler::parser_state_machine() const
 
 int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
 {
+    ZoneScoped;
+
     Grammar grammar;
 
     GrammarParser parser;

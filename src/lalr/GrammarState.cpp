@@ -186,12 +186,12 @@ int GrammarState::add_item( GrammarProduction* production, int position )
 // @return
 //  The number of lookahead symbols added.
 */
-int GrammarState::add_lookahead_symbols( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols )
+int GrammarState::add_lookaheads( GrammarProduction* production, int position, const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols )
 {
     LALR_ASSERT( production );
     std::set<GrammarItem>::iterator item = items_.find( GrammarItem(production, position) );
     LALR_ASSERT( item != items_.end() );
-    return item->add_lookahead_symbols( lookahead_symbols );
+    return item->add_lookaheads( lookahead_symbols );
 }
 
 /**

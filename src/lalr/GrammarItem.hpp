@@ -19,7 +19,7 @@ class GrammarItem
 {
     GrammarProduction* production_; ///< The production that this item is for.
     int position_; ///< The position of the dot in this item.
-    mutable std::set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols_; ///< The lookahead Symbols for this item.
+    mutable std::set<const GrammarSymbol*, GrammarSymbolLess> lookaheads_; ///< The lookahead Symbols for this item.
 
 public:
     GrammarItem();
@@ -30,10 +30,10 @@ public:
     bool dot_at_end() const;
     bool next_node( const GrammarSymbol& symbol ) const;
     const GrammarSymbol* next_symbol() const;
-    const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols() const;
+    const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookaheads() const;
     std::string label() const;
     bool operator<( const GrammarItem& item ) const;
-    int add_lookahead_symbols( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookahead_symbols ) const;
+    int add_lookaheads( const std::set<const GrammarSymbol*, GrammarSymbolLess>& lookaheads ) const;
 };
 
 }

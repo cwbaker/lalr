@@ -24,7 +24,7 @@
 #include "ErrorCode.hpp"
 #include "assert.hpp"
 #include <memory>
-#include <Tracy.hpp> 
+#include <Tracy.hpp>
 
 using std::set;
 using std::vector;
@@ -93,6 +93,8 @@ const GrammarState* GrammarGenerator::start_state() const
 
 int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
 {
+    ZoneScoped;
+
     error_policy_ = error_policy;
     identifier_ = grammar.identifier();
     actions_.swap( grammar.actions() );
@@ -180,7 +182,7 @@ GrammarTransition* GrammarGenerator::reduce_transition( const GrammarSymbol* sym
 */
 std::set<const GrammarSymbol*, GrammarSymbolLess> GrammarGenerator::lookahead( const GrammarItem& item ) const
 {
-    set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols;
+    set<const GrammarSymbol*, GrammarSymbolLess> lookaheads;
 
     const GrammarProduction* production = item.production();
     LALR_ASSERT( production );
@@ -196,7 +198,7 @@ std::set<const GrammarSymbol*, GrammarSymbolLess> GrammarGenerator::lookahead( c
     {
         const GrammarSymbol* symbol = *i;
         LALR_ASSERT( symbol );
-        lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
+        lookaheads.insert( symbol->first().begin(), symbol->first().end() );
         ++i;
     }
     
@@ -204,14 +206,14 @@ std::set<const GrammarSymbol*, GrammarSymbolLess> GrammarGenerator::lookahead( c
     {
         const GrammarSymbol* symbol = *i;
         LALR_ASSERT( symbol );
-        lookahead_symbols.insert( symbol->first().begin(), symbol->first().end() );
+        lookaheads.insert( symbol->first().begin(), symbol->first().end() );
     }
     else
     {
-        lookahead_symbols.insert( item.lookahead_symbols().begin(), item.lookahead_symbols().end() );
+        lookaheads.insert( item.lookaheads().begin(), item.lookaheads().end() );
     }
 
-    return lookahead_symbols;    
+    return lookaheads;    
 }
 
 /**
@@ -296,7 +298,8 @@ std::shared_ptr<GrammarState> GrammarGenerator::goto_( const std::shared_ptr<Gra
 // Generate lookaheads from the closure of the items contained in \e state.
 //
 // Adds the lookahead symbols from each item to the items added during the
-// closure of \e state.
+// closure of \e state -- that is to the non-kernel items with the dot at the
+// start of the production.
 //
 // @param state
 //  The state to generate lookaheads from the closure of.
@@ -316,13 +319,13 @@ int GrammarGenerator::lookahead_closure( GrammarState* state ) const
         const GrammarSymbol* symbol = item->production()->symbol_by_position( item->position() );
         if ( symbol )
         {
-            set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols = lookahead( *item );
+            set<const GrammarSymbol*, GrammarSymbolLess> lookaheads = lookahead( *item );
             const vector<GrammarProduction*>& productions = symbol->productions();
             for ( vector<GrammarProduction*>::const_iterator j = productions.begin(); j != productions.end(); ++j )
             {
                 GrammarProduction* production = *j;
                 LALR_ASSERT( production );
-                added += state->add_lookahead_symbols( production, 0, lookahead_symbols );
+                added += state->add_lookaheads( production, 0, lookaheads );
             }
         }
     }
@@ -367,7 +370,7 @@ int GrammarGenerator::lookahead_goto( GrammarState* state ) const
                 if ( item->production()->symbol_by_position(position) == symbol )
                 {
                     GrammarState* goto_state = transition->state();
-                    added += goto_state->add_lookahead_symbols( item->production(), position + 1, item->lookahead_symbols() );
+                    added += goto_state->add_lookaheads( item->production(), position + 1, item->lookaheads() );
                 }
             }
         }
@@ -724,6 +727,8 @@ void GrammarGenerator::calculate_reachable_productions_for_symbol( const Grammar
 */
 void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const GrammarSymbol* end_symbol, const std::vector<std::unique_ptr<GrammarSymbol>>& symbols )
 {
+    ZoneScoped;
+
     LALR_ASSERT( start_symbol );
     LALR_ASSERT( end_symbol );
     LALR_ASSERT( states_.empty() );
@@ -736,35 +741,38 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         states_.insert( start_state );
         start_state_ = start_state.get();
 
-        set<const GrammarSymbol*, GrammarSymbolLess> lookahead_symbols;
-        lookahead_symbols.insert( (GrammarSymbol*) end_symbol );
-        start_state->add_lookahead_symbols( start_symbol->productions().front(), 0, lookahead_symbols );
+        set<const GrammarSymbol*, GrammarSymbolLess> lookaheads;
+        lookaheads.insert( (GrammarSymbol*) end_symbol );
+        start_state->add_lookaheads( start_symbol->productions().front(), 0, lookaheads );
         
         int added = 1;
-        while ( added > 0 )
         {
-            added = 0;
-            for ( set<shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            ZoneScopedN("states");
+            while ( added > 0 )
             {
-                const shared_ptr<GrammarState>& state = *i;
-                LALR_ASSERT( state );
-
-                if ( !state->processed() )
+                added = 0;
+                for ( set<shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
                 {
-                    state->set_processed( true );
-                    for ( vector<unique_ptr<GrammarSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                    const shared_ptr<GrammarState>& state = *i;
+                    LALR_ASSERT( state );
+
+                    if ( !state->processed() )
                     {
-                        GrammarSymbol* symbol = j->get();
-                        LALR_ASSERT( symbol );
-                        if ( symbol != end_symbol )
+                        state->set_processed( true );
+                        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                         {
-                            std::shared_ptr<GrammarState> goto_state = goto_( state, *symbol );
-                            if ( goto_state )
+                            GrammarSymbol* symbol = j->get();
+                            LALR_ASSERT( symbol );
+                            if ( symbol != end_symbol )
                             {
-                                LALR_ASSERT( !goto_state->items().empty() );
-                                std::shared_ptr<GrammarState> actual_goto_state = *states_.insert( goto_state ).first;
-                                added += goto_state == actual_goto_state ? 1 : 0;
-                                state->add_shift_transition( shift_transition(symbol, actual_goto_state.get()) );
+                                std::shared_ptr<GrammarState> goto_state = goto_( state, *symbol );
+                                if ( goto_state )
+                                {
+                                    LALR_ASSERT( !goto_state->items().empty() );
+                                    std::shared_ptr<GrammarState> actual_goto_state = *states_.insert( goto_state ).first;
+                                    added += goto_state == actual_goto_state ? 1 : 0;
+                                    state->add_shift_transition( shift_transition(symbol, actual_goto_state.get()) );
+                                }
                             }
                         }
                     }
@@ -773,31 +781,38 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         }
 
         vector<shared_ptr<GrammarState>> states;
-        states.reserve( states_.size() );
-        for ( const auto& state : states_ )
         {
-            states.push_back( state );
-        }
+            ZoneScopedN("closures");
 
-        states_.clear();
-        for ( const auto& state : states )
-        {
-            closure( state );
-            states_.insert( state );
+            states.reserve( states_.size() );
+            for ( const auto& state : states_ )
+            {
+                states.push_back( state );
+            }
+
+            states_.clear();
+            for ( const auto& state : states )
+            {
+                closure( state );
+                states_.insert( state );
+            }
         }
         
         generate_indices_for_states();
 
-        added = 1;
-        while ( added > 0 )
         {
-            added = 0;
-            for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+            ZoneScopedN("lookaheads");
+            added = 1;
+            while ( added > 0 )
             {
-                GrammarState* state = i->get();
-                LALR_ASSERT( state );
-                added += lookahead_closure( state );
-                added += lookahead_goto( state );
+                added = 0;
+                for ( std::set<std::shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
+                {
+                    GrammarState* state = i->get();
+                    LALR_ASSERT( state );
+                    added += lookahead_closure( state );
+                    added += lookahead_goto( state );
+                }
             }
         }
         
@@ -834,7 +849,7 @@ void GrammarGenerator::generate_reduce_transitions()
         {
             if ( item->dot_at_end() )
             {
-                const set<const GrammarSymbol*, GrammarSymbolLess>& symbols = item->lookahead_symbols();
+                const set<const GrammarSymbol*, GrammarSymbolLess>& symbols = item->lookaheads();
                 for ( set<const GrammarSymbol*>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                 {
                     const GrammarSymbol* symbol = *j;
