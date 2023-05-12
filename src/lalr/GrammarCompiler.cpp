@@ -97,7 +97,7 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
                     LALR_ASSERT( symbol );
                     int line = grammar_symbol->line();
                     RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-                    tokens.push_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
+                    tokens.emplace_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
                 }
             }
 
@@ -107,9 +107,20 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
                 parser_state_machine_->lexer_state_machine = lexer_->state_machine();
             }
 
-            const vector<RegexToken>& whitespace_tokens = grammar.whitespace_tokens();
-            if ( !whitespace_tokens.empty() )
+            const vector<RegexToken>& grammar_whitespace_tokens = grammar.whitespace_tokens();
+            if ( !grammar_whitespace_tokens.empty() )
             {
+                const int WHITESPACE_SYMBOL = 3;
+                const ParserSymbol* whitespace_symbol = &symbols_[WHITESPACE_SYMBOL];
+                LALR_ASSERT( whitespace_symbol );
+
+                vector<RegexToken> whitespace_tokens;
+                whitespace_tokens.reserve( grammar_whitespace_tokens.size() );
+                for ( const RegexToken& token : grammar_whitespace_tokens )
+                {
+                    whitespace_tokens.emplace_back( RegexToken(token, whitespace_symbol) );
+                }
+
                 errors += whitespace_lexer_->compile( whitespace_tokens, error_policy );
                 if ( errors == 0 )
                 {

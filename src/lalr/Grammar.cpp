@@ -236,7 +236,7 @@ Grammar& Grammar::literal( const char* literal, int line )
     LALR_ASSERT( active_whitespace_directive_ || associativity_ != ASSOCIATE_NULL || active_symbol_ );
     if ( active_whitespace_directive_ )
     {
-        whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, 0, nullptr, literal) );
+        whitespace_tokens_.push_back( RegexToken(TOKEN_LITERAL, 0, 0, whitespace_symbol_, literal) );
     }
     else if ( associativity_ != ASSOCIATE_NULL )
     {

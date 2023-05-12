@@ -58,6 +58,7 @@ public:
     const std::set<std::shared_ptr<GrammarState>, GrammarStateLess>& states() const;
     const std::vector<std::unique_ptr<GrammarTransition>>& transitions() const;
     const GrammarState* start_state() const;
+    const GrammarSymbol* whitespace_symbol() const;
     std::string label_state( const GrammarState& state ) const;
     std::string label_item( const GrammarItem& item ) const;
     int generate( Grammar& grammar, ErrorPolicy* error_policy );

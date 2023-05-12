@@ -99,6 +99,11 @@ const GrammarState* GrammarGenerator::start_state() const
     return start_state_;
 }
 
+const GrammarSymbol* GrammarGenerator::whitespace_symbol() const
+{
+    return whitespace_symbol_;
+}
+
 std::string GrammarGenerator::label_state( const GrammarState& state ) const
 {
     string label;

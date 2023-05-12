@@ -22,6 +22,7 @@ class RegexToken
 
 public:
     RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme );
+    RegexToken( const RegexToken& token, const void* symbol );
     RegexTokenType type() const;
     int line() const;
     int column() const;

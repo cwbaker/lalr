@@ -20,6 +20,16 @@ RegexToken::RegexToken( RegexTokenType type, int line, int column, const void* s
 {
 }
 
+RegexToken::RegexToken( const RegexToken& token, const void* symbol )
+: type_( token.type_ )
+, line_( token.line_ )
+, column_( token.column_ )
+, symbol_( symbol )
+, lexeme_( token.lexeme_ )
+, conflicted_with_()
+{
+}
+
 RegexTokenType RegexToken::type() const
 {
     return type_;
