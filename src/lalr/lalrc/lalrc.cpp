@@ -380,7 +380,6 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     write( "\n" );
 
     write( "const lalr::ParserStateMachine* %s_parser_state_machine = &parser_state_machine;\n", state_machine->identifier );
-    write( "\n" );
 }
 
 void generate_cxx_lexer_state_machine( const LexerStateMachine* state_machine, const char* prefix )
