@@ -5,6 +5,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "dot.hpp"
 #include <lalr/GrammarCompiler.hpp>
 #include <lalr/ParserStateMachine.hpp>
 #include <lalr/ParserState.hpp>
@@ -30,8 +31,6 @@ using std::string;
 using std::vector;
 using std::count;
 using namespace lalr;
-
-extern void write_graphviz_dot( const ParserStateMachine* state_machine );
 
 static FILE* file_ = nullptr;
 static int errors_ = 0;

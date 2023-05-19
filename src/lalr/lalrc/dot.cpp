@@ -10,6 +10,9 @@ using namespace lalr;
 
 extern void write( const char* format, ... );
 
+namespace lalr
+{
+
 void write_graphviz_dot( const ParserStateMachine* state_machine )
 {
     LALR_ASSERT( state_machine );
@@ -50,4 +53,6 @@ void write_graphviz_dot( const ParserStateMachine* state_machine )
     }
 
     write( "}\n" );
+}
+
 }
