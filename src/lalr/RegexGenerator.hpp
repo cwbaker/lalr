@@ -33,7 +33,7 @@ class RegexGenerator
     RegexSyntaxTree* syntax_tree_; ///< The syntax tree generated from parsing regular expression(s).
     std::vector<std::unique_ptr<RegexAction>> actions_; ///< The lexical analyzer actions.
     std::set<std::unique_ptr<RegexState>, RegexStateLess> states_; ///< The states generated for the lexical analyzer.
-    const RegexState* start_state_; ///< The starting state for the lexical analyzer.
+    RegexState* start_state_; ///< The starting state for the lexical analyzer.
     std::vector<std::pair<int, bool>> ranges_; ///< Ranges generated for the current transition while generating.
 
 public:
@@ -50,7 +50,7 @@ public:
 
 private:
     std::unique_ptr<RegexState> goto_( const RegexState* state, int begin, int end );
-    void generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state );
+    void generate_states( const RegexSyntaxTree& syntax_tree );
     void generate_indices_for_states();
     void generate_symbol_for_state( RegexState* state ) const;
     void clear();

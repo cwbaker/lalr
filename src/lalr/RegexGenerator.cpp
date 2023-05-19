@@ -25,6 +25,7 @@ using std::pair;
 using std::vector;
 using std::make_pair;
 using std::unique_ptr;
+using std::make_unique;
 using namespace lalr;
 
 /**
@@ -160,7 +161,7 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
 
     RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, 0, symbol, regular_expression );
     syntax_tree_->reset( token, this );
-    generate_states( *syntax_tree_, &states_, &start_state_ );
+    generate_states( *syntax_tree_ );
     error_policy_ = nullptr;
     return syntax_tree_->errors();
 }
@@ -174,7 +175,7 @@ int RegexGenerator::generate( const std::vector<RegexToken>& tokens, ErrorPolicy
     ranges_.clear();
  
     syntax_tree_->reset( tokens, this );
-    generate_states( *syntax_tree_, &states_, &start_state_ );
+    generate_states( *syntax_tree_ );
     error_policy_ = nullptr;
     return syntax_tree_->errors();
 }
@@ -229,87 +230,82 @@ std::unique_ptr<RegexState> RegexGenerator::goto_( const RegexState* state, int 
 //  A variable to receive the starting state for the lexical analyzer
 //  (assumed not null).
 */
-void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree, std::set<std::unique_ptr<RegexState>, RegexStateLess>* states, const RegexState** start_state )
+void RegexGenerator::generate_states( const RegexSyntaxTree& syntax_tree )
 {
-    LALR_ASSERT( states );
-    LALR_ASSERT( states->empty() );
-    LALR_ASSERT( start_state );
-    LALR_ASSERT( !*start_state );
+    LALR_ASSERT( states_.empty() );
+    LALR_ASSERT( !start_state_ );
 
     if ( !syntax_tree.empty() && syntax_tree.errors() == 0 )
     {
         std::unique_ptr<RegexState> state( new RegexState() );
         state->add_item( syntax_tree.node()->get_first_positions() );
         generate_symbol_for_state( state.get() );
-        *start_state = state.get();
-        states->insert( move(state) );
+        start_state_ = state.get();
+        states_.insert( move(state) );
 
-        int added = 1;
-        while ( added > 0 )
+        vector<RegexState*> next_states;
+        vector<RegexState*> states;
+        states.push_back( start_state_ );
+
+        while ( !states.empty() )
         {
-            added = 0;
-            for ( std::set<std::unique_ptr<RegexState>, RegexStateLess>::const_iterator i = states->begin(); i != states->end(); ++i )
+            for ( RegexState* state : states )
             {
-                RegexState* state = i->get();
-                LALR_ASSERT( state );
-
-                if ( !state->is_processed() )
+                // Create the distinct ranges of characters that can be 
+                // transitioned on from the current state.
+                clear();
+                const std::set<RegexItem>& items = state->get_items();
+                for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
                 {
-                    state->set_processed( true );
-
-                    // Create the distinct ranges of characters that can be 
-                    // transitioned on from the current state.
-                    clear();
-                    const std::set<RegexItem>& items = state->get_items();
-                    for ( std::set<RegexItem>::const_iterator item = items.begin(); item != items.end(); ++item )
+                    const std::set<RegexNode*, RegexNodeLess>& next_nodes = item->next_nodes();
+                    for ( std::set<RegexNode*, RegexNodeLess>::const_iterator j = next_nodes.begin(); j != next_nodes.end(); ++j )
                     {
-                        const std::set<RegexNode*, RegexNodeLess>& next_nodes = item->next_nodes();
-                        for ( std::set<RegexNode*, RegexNodeLess>::const_iterator j = next_nodes.begin(); j != next_nodes.end(); ++j )
+                        const RegexNode* next_node = *j;
+                        LALR_ASSERT( next_node );
+                        if ( !next_node->is_end() )
                         {
-                            const RegexNode* next_node = *j;
-                            LALR_ASSERT( next_node );
-                            if ( !next_node->is_end() )
-                            {
-                                insert( next_node->get_begin_character(), next_node->get_end_character() );
-                            }
-                        }
-                    }
-                    
-                    // Create a goto state and a transition from the current 
-                    // state for each distinct range.
-                    vector<pair<int, bool> >::const_iterator j = ranges_.begin();
-                    while ( j != ranges_.end() )
-                    {               
-                        int begin = (j + 0)->first;
-                        int end = (j + 1)->first;
-                        LALR_ASSERT( begin < end );
-                        
-                        std::unique_ptr<RegexState> goto_state = goto_( state, begin, end );
-                        if ( !goto_state->get_items().empty() )
-                        {
-                            auto existing_goto_state = states->find( goto_state );
-                            if ( existing_goto_state == states->end() )
-                            {
-                                state->add_transition( begin, end, goto_state.get() );
-                                generate_symbol_for_state( goto_state.get() );
-                                states->insert( move(goto_state) );
-                                added += 1;
-                            }
-                            else
-                            {
-                                state->add_transition( begin, end, existing_goto_state->get() );
-                            }
-                        }                    
-
-                        ++j;
-                        if ( !j->second )
-                        {
-                            ++j;
-                            LALR_ASSERT( j == ranges_.end() || j->second );
+                            insert( next_node->get_begin_character(), next_node->get_end_character() );
                         }
                     }
                 }
+                
+                // Create a goto state and a transition from the current 
+                // state for each distinct range.
+                vector<pair<int, bool>>::const_iterator j = ranges_.begin();
+                while ( j != ranges_.end() )
+                {               
+                    int begin = (j + 0)->first;
+                    int end = (j + 1)->first;
+                    LALR_ASSERT( begin < end );
+                    
+                    std::unique_ptr<RegexState> goto_state = goto_( state, begin, end );
+                    if ( !goto_state->get_items().empty() )
+                    {
+                        auto existing_goto_state = states_.find( goto_state );
+                        if ( existing_goto_state == states_.end() )
+                        {
+                            state->add_transition( begin, end, goto_state.get() );
+                            generate_symbol_for_state( goto_state.get() );
+                            next_states.push_back(goto_state.get() );
+                            states_.insert( move(goto_state) );
+                        }
+                        else
+                        {
+                            state->add_transition( begin, end, existing_goto_state->get() );
+                        }
+                    }                    
+
+                    ++j;
+                    if ( !j->second )
+                    {
+                        ++j;
+                        LALR_ASSERT( j == ranges_.end() || j->second );
+                    }
+                }
             }
+
+            states.clear();
+            states.swap( next_states );
         }
     }
 
