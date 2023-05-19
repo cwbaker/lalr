@@ -153,5 +153,5 @@ const RegexAction* RegexItem::find_action_by_interval( int begin, int end ) cons
 */
 bool RegexItem::operator<( const RegexItem& item ) const
 {
-    return next_nodes_ < item.next_nodes_;
+    return std::lexicographical_compare( next_nodes_.begin(), next_nodes_.end(), item.next_nodes_.begin(), item.next_nodes_.end(), RegexNodeLess() );
 }
