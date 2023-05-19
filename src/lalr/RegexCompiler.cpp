@@ -140,7 +140,7 @@ void RegexCompiler::populate_lexer_state_machine( const RegexGenerator& generato
             LexerTransition* transition = &transitions[transition_index];
             transition->begin = source_transition->begin();
             transition->end = source_transition->end();
-            transition->state = state_transitioned_to ? &states[state_transitioned_to->get_index()] : nullptr;
+            transition->state = state_transitioned_to ? &states[state_transitioned_to->index()] : nullptr;
             transition->action = action ? &actions[action->index()] : nullptr;
             ++transition_index;
         }

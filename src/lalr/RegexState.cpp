@@ -99,7 +99,7 @@ bool RegexState::is_processed() const
 // @return
 //  The index of this state.
 */
-int RegexState::get_index() const
+int RegexState::index() const
 {
     return index_;
 }

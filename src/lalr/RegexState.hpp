@@ -29,7 +29,7 @@ public:
     const std::set<RegexTransition>& get_transitions() const;
     const void* get_symbol() const;
     bool is_processed() const;
-    int get_index() const;
+    int index() const;
     bool operator<( const RegexState& state ) const;
     int add_item( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
     void add_transition( int begin, int end, RegexState* state );
