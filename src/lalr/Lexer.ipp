@@ -279,8 +279,12 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
                 {
                     ++position_;
                 }
+
                 state = transition->state;
-                transition = find_transition_by_character( state, *position_ );
+                if ( !position_.ended() )
+                {
+                    transition = find_transition_by_character( state, *position_ );
+                }
             }
 
             // If a whitespace token was matched then reset to the start
@@ -288,7 +292,10 @@ void Lexer<Iterator, Char, Traits, Allocator>::skip()
             // to the start of the failed match.
             if ( state->symbol )
             {
-                transition = find_transition_by_character( start_state, *position_ );
+                if ( !position_.ended() )
+                {
+                    transition = find_transition_by_character( start_state, *position_ );
+                }
             }
             else
             {
