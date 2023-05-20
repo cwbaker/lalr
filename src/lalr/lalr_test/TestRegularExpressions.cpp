@@ -1403,4 +1403,17 @@ SUITE( RegularExpressions )
         lexer.advance();
         CHECK( lexer.symbol() == nullptr );
     }
+
+
+    TEST( EmptyCharacterClass )
+    {
+        void* ab;
+        RegexCompiler compiler;
+        CHECK_EQUAL( 1, compiler.compile("[]ab", &ab) );
+
+        // An empty negative character class isn't an error because it
+        // does generate a valid regular expression - it's a long winded
+        // way to match any character.
+        CHECK_EQUAL( 0, compiler.compile("[^]ab", &ab) );
+    }
 }

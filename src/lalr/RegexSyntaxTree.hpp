@@ -49,7 +49,7 @@ public:
     void optional_expression();
     void begin_bracket_expression();
     void begin_negative_bracket_expression();
-    void end_bracket_expression();
+    bool end_bracket_expression();
     void action_expression( const std::string& identifier );
     void character( int character );
     void dot();

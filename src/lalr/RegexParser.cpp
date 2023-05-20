@@ -130,7 +130,11 @@ bool RegexParser::match_bracket_expression()
             syntax_tree_->item_character( '-' );
         }
         expect( "]" );
-        syntax_tree_->end_bracket_expression();
+        if ( !syntax_tree_->end_bracket_expression() )
+        {
+            successful_ = false;
+            return false;
+        }
         return true;
     }
     return false;

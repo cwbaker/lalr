@@ -216,20 +216,25 @@ void RegexSyntaxTree::begin_negative_bracket_expression()
 /**
 // End a bracket or negative bracket expression.
 */
-void RegexSyntaxTree::end_bracket_expression()
+bool RegexSyntaxTree::end_bracket_expression()
 {
-    set<RegexCharacter>::const_iterator character = bracket_expression_characters_.begin();
-    std::shared_ptr<RegexNode> node = regex_node( character->begin_character(), character->end_character() );
-    nodes_.push_back( node );
-    ++character;
-    
-    while ( character != bracket_expression_characters_.end() )
+    if ( !bracket_expression_characters_.empty() )
     {
-        node = regex_node( character->begin_character(), character->end_character() );
+        set<RegexCharacter>::const_iterator character = bracket_expression_characters_.begin();
+        std::shared_ptr<RegexNode> node = regex_node( character->begin_character(), character->end_character() );
         nodes_.push_back( node );
-        or_expression();
         ++character;
-    }    
+        
+        while ( character != bracket_expression_characters_.end() )
+        {
+            node = regex_node( character->begin_character(), character->end_character() );
+            nodes_.push_back( node );
+            or_expression();
+            ++character;
+        }
+        return true;
+    }
+    return false;
 }
 
 /**
