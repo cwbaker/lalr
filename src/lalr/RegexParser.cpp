@@ -241,7 +241,7 @@ bool RegexParser::match_item()
         syntax_tree_->item_xdigit();
         return true;
     }
-    else if ( match_character() )
+    else if ( match_character_in_character_class() )
     {
         int character = escape( lexeme_begin_, lexeme_end_ );
         if ( match_end_of_range() )
@@ -325,7 +325,7 @@ bool RegexParser::match_negative_item()
         syntax_tree_->negative_item_xdigit();
         return true;
     }
-    else if ( match_character() )
+    else if ( match_character_in_character_class() )
     {
         int character = escape( lexeme_begin_, lexeme_end_ );
         if ( match_end_of_range() )
@@ -344,6 +344,17 @@ bool RegexParser::match_negative_item()
 
 bool RegexParser::match_character()
 {
+    return match_character( "|*+?[]()-" );
+}
+
+bool RegexParser::match_character_in_character_class()
+{
+    return match_character( "^]-" );
+}
+
+bool RegexParser::match_character( const char* metacharacters )
+{
+    LALR_ASSERT( metacharacters );
     const char* position = position_;
     if ( position != end_ )
     {
@@ -375,7 +386,7 @@ bool RegexParser::match_character()
             position_ = position;
             return true;
         }
-        else if ( !strchr("|*+?[]()-", *position) )
+        else if ( !strchr(metacharacters, *position) )
         {
             ++position;
             lexeme_begin_ = position_;
@@ -390,7 +401,7 @@ bool RegexParser::match_character()
 bool RegexParser::match_end_of_range()
 {
     const char* position = position_;
-    if ( match("-") && match_character() )
+    if ( match("-") && match_character_in_character_class() )
     {
         return true;
     }

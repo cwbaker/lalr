@@ -32,6 +32,9 @@ private:
     bool match_item();
     bool match_negative_item();
     bool match_character();
+    bool match_character_in_character_class();
+    bool match_character( const char* metacharacters );
+    bool match_bracket_expression_character();
     bool match_end_of_range();
     bool match_identifier();
     bool match( const char* lexeme );

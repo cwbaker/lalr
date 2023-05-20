@@ -1378,4 +1378,29 @@ SUITE( RegularExpressions )
         CHECK_EQUAL( "NOT BETWEEN", lexer.lexeme() );
         CHECK( lexer.symbol() == &not_between );
     }
+
+
+    TEST( CharacterClassHyphens )
+    {
+        void* plus_or_minus;
+        RegexCompiler compiler;
+        compiler.compile( "[+-]", &plus_or_minus );
+        Lexer<const char*> lexer( compiler.state_machine() );
+        
+        const char* regex = "+";
+        lexer.reset( regex, regex + strlen(regex) );
+        lexer.advance();
+        CHECK( lexer.symbol() == &plus_or_minus );
+        CHECK( lexer.lexeme() == "+" );
+        lexer.advance();
+        CHECK( lexer.symbol() == nullptr );
+
+        regex = "-";
+        lexer.reset( regex, regex + strlen(regex) );
+        lexer.advance();
+        CHECK( lexer.symbol() == &plus_or_minus );
+        CHECK( lexer.lexeme() == "-" );
+        lexer.advance();
+        CHECK( lexer.symbol() == nullptr );
+    }
 }
