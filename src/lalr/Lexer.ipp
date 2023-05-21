@@ -89,43 +89,6 @@ Lexer<Iterator, Char, Traits, Allocator>::Lexer( const LexerStateMachine* state_
 }
 
 /**
-// Set the action handler for \e identifier to \e function.
-//
-// @param identifier
-//  The identifier of the action to set a handler for.
-//
-// @param function
-//  The function to set as the handler.
-*/
-template <class Iterator, class Char, class Traits, class Allocator>
-void Lexer<Iterator, Char, Traits, Allocator>::set_action_handler( const char* identifier, LexerActionFunction function )
-{
-    LALR_ASSERT( identifier );
-    
-    typename std::vector<LexerActionHandler>::iterator action_handler = action_handlers_.begin();
-    while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
-    {
-        ++action_handler;
-    }
-
-    if ( action_handler != action_handlers_.end() )
-    {
-        action_handler->function_ = function;
-    }
-
-    action_handler = whitespace_action_handlers_.begin();
-    while ( action_handler != whitespace_action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
-    {
-        ++action_handler;
-    }
-
-    if ( action_handler != whitespace_action_handlers_.end() )
-    {
-        action_handler->function_ = function;
-    }
-}
-
-/**
 // Get the most recently scanned lexeme.
 //
 // @return
@@ -195,6 +158,43 @@ template <class Iterator, class Char, class Traits, class Allocator>
 bool Lexer<Iterator, Char, Traits, Allocator>::full() const
 {
     return full_;
+}
+
+/**
+// Set the action handler for \e identifier to \e function.
+//
+// @param identifier
+//  The identifier of the action to set a handler for.
+//
+// @param function
+//  The function to set as the handler.
+*/
+template <class Iterator, class Char, class Traits, class Allocator>
+void Lexer<Iterator, Char, Traits, Allocator>::set_action_handler( const char* identifier, LexerActionFunction function )
+{
+    LALR_ASSERT( identifier );
+
+    typename std::vector<LexerActionHandler>::iterator action_handler = action_handlers_.begin();
+    while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
+    {
+        ++action_handler;
+    }
+
+    if ( action_handler != action_handlers_.end() )
+    {
+        action_handler->function_ = function;
+    }
+
+    action_handler = whitespace_action_handlers_.begin();
+    while ( action_handler != whitespace_action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
+    {
+        ++action_handler;
+    }
+
+    if ( action_handler != whitespace_action_handlers_.end() )
+    {
+        action_handler->function_ = function;
+    }
 }
 
 /**
