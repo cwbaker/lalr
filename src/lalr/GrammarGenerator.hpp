@@ -69,7 +69,7 @@ private:
     GrammarTransition* reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production );
     GrammarSymbolSet spontaneous_lookaheads( const GrammarItem& item ) const;
     void closure( const std::shared_ptr<GrammarState>& state );
-    std::shared_ptr<GrammarState> goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol );
+    std::shared_ptr<GrammarState> goto_( const GrammarState* state, const GrammarSymbol& symbol );
     void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
     void check_for_undefined_symbol_errors();
     void check_for_unreferenced_symbol_errors();

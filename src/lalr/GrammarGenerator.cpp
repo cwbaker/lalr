@@ -326,7 +326,7 @@ void GrammarGenerator::closure( const std::shared_ptr<GrammarState>& state )
 // @return
 //  The goto state generated when accepting \e symbol from \e state.
 */
-std::shared_ptr<GrammarState> GrammarGenerator::goto_( const std::shared_ptr<GrammarState>& state, const GrammarSymbol& symbol )
+std::shared_ptr<GrammarState> GrammarGenerator::goto_( const GrammarState* state, const GrammarSymbol& symbol )
 {
     LALR_ASSERT( state );
 
@@ -853,38 +853,39 @@ void GrammarGenerator::generate_states( const GrammarSymbol* start_symbol, const
         closure( start_state );
         states_.insert( start_state );
         start_state_ = start_state.get();
-        
-        int added = 1;
-        {
-            while ( added > 0 )
-            {
-                added = 0;
-                for ( set<shared_ptr<GrammarState>, GrammarStateLess>::const_iterator i = states_.begin(); i != states_.end(); ++i )
-                {
-                    const shared_ptr<GrammarState>& state = *i;
-                    LALR_ASSERT( state );
 
-                    if ( !state->processed() )
+        {
+            vector<GrammarState*> next_states;
+            vector<GrammarState*> states;
+            states.push_back( start_state_ );
+
+            while ( !states.empty() )
+            {
+                for ( GrammarState* state : states )
+                {
+                    for ( vector<unique_ptr<GrammarSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
                     {
-                        state->set_processed( true );
-                        for ( vector<unique_ptr<GrammarSymbol>>::const_iterator j = symbols.begin(); j != symbols.end(); ++j )
+                        GrammarSymbol* symbol = j->get();
+                        LALR_ASSERT( symbol );
+                        if ( symbol != end_symbol )
                         {
-                            GrammarSymbol* symbol = j->get();
-                            LALR_ASSERT( symbol );
-                            if ( symbol != end_symbol )
+                            std::shared_ptr<GrammarState> goto_state = goto_( state, *symbol );
+                            if ( goto_state )
                             {
-                                std::shared_ptr<GrammarState> goto_state = goto_( state, *symbol );
-                                if ( goto_state )
+                                LALR_ASSERT( !goto_state->items().empty() );
+                                std::shared_ptr<GrammarState> actual_goto_state = *states_.insert( goto_state ).first;
+                                if ( goto_state == actual_goto_state )
                                 {
-                                    LALR_ASSERT( !goto_state->items().empty() );
-                                    std::shared_ptr<GrammarState> actual_goto_state = *states_.insert( goto_state ).first;
-                                    added += goto_state == actual_goto_state ? 1 : 0;
-                                    state->add_shift_transition( shift_transition(symbol, actual_goto_state.get()) );
+                                    next_states.push_back( goto_state.get() );
                                 }
+                                state->add_shift_transition( shift_transition(symbol, actual_goto_state.get()) );
                             }
                         }
                     }
                 }
+
+                states.clear();
+                next_states.swap( states );
             }
         }
 

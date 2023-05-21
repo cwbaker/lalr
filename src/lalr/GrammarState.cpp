@@ -22,7 +22,6 @@ GrammarState::GrammarState()
 : items_()
 , transitions_by_symbol_index_()
 , transitions_()
-, processed_( false )
 , index_( INVALID_INDEX )
 {
 }
@@ -31,13 +30,11 @@ GrammarState::GrammarState( GrammarState&& state )
 : items_()
 , transitions_by_symbol_index_()
 , transitions_()
-, processed_( false )
 , index_( INVALID_INDEX )
 {
     std::swap( items_, state.items_ );
     std::swap( transitions_by_symbol_index_, state.transitions_by_symbol_index_ );
     std::swap( transitions_, state.transitions_ );
-    std::swap( processed_, state.processed_ );
     std::swap( index_, state.index_ );
 }
 
@@ -45,7 +42,6 @@ GrammarState::GrammarState( const GrammarState& state )
 : items_( state.items_ )
 , transitions_by_symbol_index_( state.transitions_by_symbol_index_ )
 , transitions_( state.transitions_ )
-, processed_( state.processed_ )
 , index_( state.index_ )
 {
 }
@@ -76,10 +72,10 @@ GrammarItem* GrammarState::find_item( GrammarProduction* production, int positio
 // @return
 //  The items.
 */
-// const std::set<GrammarItem>& GrammarState::items() const
-// {
-//     return items_;
-// }
+const std::set<GrammarItem>& GrammarState::items() const
+{
+    return items_;
+}
 
 /**
 // Find a transition on \e symbol from this state.
@@ -125,17 +121,6 @@ int GrammarState::count_valid_transitions() const
         valid_transitions += transition != nullptr;
     }
     return valid_transitions;
-}
-
-/**
-// Has this state been processed?
-//
-// @return
-//  True if this state has been processed otherwise false.
-*/
-bool GrammarState::processed() const
-{
-    return processed_;
 }
 
 /**
@@ -245,17 +230,6 @@ GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol*
         }
     }
     return nullptr;
-}
-
-/**
-// Set this state as having been processed.
-//
-// @param processed
-//  True to mark this state as processed or false to mark it as not processed.
-*/
-void GrammarState::set_processed( bool processed )
-{
-    processed_ = processed;
 }
 
 /**
