@@ -48,13 +48,14 @@ class Lexer
 
 public:
     Lexer( const LexerStateMachine* state_machine, const LexerStateMachine* whitespace_state_machine = nullptr, const void* end_symbol = nullptr, ErrorPolicy* error_policy = nullptr );
-    void set_action_handler( const char* identifier, LexerActionFunction function );
     const std::basic_string<Char, Traits, Allocator>& lexeme() const;
     int line() const;
     int column() const;
     const void* symbol() const;
     const Iterator& position() const;
     bool full() const;
+    bool valid() const;
+    void set_action_handler( const char* identifier, LexerActionFunction function );
     void reset( Iterator start, Iterator finish );
     void advance();
     

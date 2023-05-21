@@ -89,117 +89,6 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 }
 
 /**
-// Reset this Parser so that it can parse another sequence of input.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
-{
-    accepted_ = false;
-    full_ = false;
-    nodes_.clear();
-    user_data_.clear();
-    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
-    user_data_.push_back( UserData() );
-}
-
-/**
-// Parse [\e start, \e finish).
-//
-// After the parse the Parser::full() and Parser::accepted() functions can 
-// be used to determine whether or not the parse was successful and whether
-// or not it consumed all of the available input.
-//
-// In the case of a successful parse the Parser::user_data() function can
-// be used to retrieve the user data that resulted from the parse.
-//
-// @param start
-//  The first character in the sequence to parse.
-//
-// @param finish
-//  One past the last character in the sequence to parse.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start, Iterator finish )
-{
-    LALR_ASSERT( state_machine_ );
-
-    reset();
-    lexer_.reset( start, finish );    
-    lexer_.advance();
-    const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
-    while ( parse(symbol, lexer_.lexeme(), lexer_.line(), lexer_.column()) )
-    {
-        lexer_.advance();
-        symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
-    }
-
-    full_ = lexer_.full();
-}
-
-/**
-// Continue a parse by accepting \e symbol as the next token.
-//
-// @param symbol
-//  The next token from the lexical analyzer in the current parse (assumed to
-//  be a ParserSymbol).
-//
-// @param lexeme
-//  The lexeme of the next token from the lexical analyzer.
-//
-// @param line
-//  The line number at the start of the next token.
-//
-// @return
-//  True until parsing is complete or an error occurs.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
-{
-    return parse( reinterpret_cast<const ParserSymbol*>(symbol), lexeme, line, column );
-}
-
-/**
-// Continue a parse by accepting \e symbol as the next token.
-//
-// @param symbol
-//  The next token from the lexical analyzer in the current parse.
-//
-// @param lexeme
-//  The lexeme of the next token from the lexical analyzer.
-//
-// @param line
-//  The line number at the start of the next token.
-//
-// @return
-//  True until parsing is complete or an error occurs.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
-{
-    bool accepted = false;
-    bool rejected = false;
-    
-    const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
-    while ( !accepted && !rejected && transition && transition->reduced_symbol )
-    {
-        reduce( transition, &accepted, &rejected );
-        transition = find_transition( symbol, nodes_.back().state() );
-    }
-    
-    if ( transition && transition->state )
-    {
-        shift( transition, lexeme, line, column );
-    }
-    else
-    {
-        error( &accepted, &rejected, line, column);
-    }
-    
-    accepted_ = accepted;
-    return !accepted_ && !rejected;
-}
-
-/**
 // Did the most recent parse accept input successfully?
 //
 // @return
@@ -221,6 +110,22 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 bool Parser<Iterator, UserData, Char, Traits, Allocator>::full() const
 {
     return full_;
+}
+
+/**
+// Is this Parser valid?
+//
+// Reports errors for and returns false if the lexer is missing any action
+// handlers.
+//
+// @return
+//  True if this Parser is valid or false if there are any missing
+//  action handlers.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::valid() const
+{
+    return lexer_.valid();
 }
 
 /**
@@ -252,6 +157,69 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 const Lexer<Iterator, Char, Traits, Allocator>& Parser<Iterator, UserData, Char, Traits, Allocator>::lexer() const
 {
     return lexer_;
+}
+
+/**
+// Fire an %error event.
+//
+// @param line
+//  The line number to associate with the %error (or 0 if there is no line
+//  to associate with the %error).
+//
+// @param error
+//  The %Error that describes the %error that has occured.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int line, int column, int error, const char* format, ... ) const
+{
+    if ( error_policy_ )
+    {
+        va_list args;
+        va_start( args, format );
+        error_policy_->lalr_error( line, column, error, format, args );
+        va_end( args );
+    }
+}
+
+/**
+// Fire a printf event.
+//
+// @param format
+//  A printf style format string that describes the message to print.
+//
+// @param ...
+//  Parameters to fill in the message as specified by \e format.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const char* format, ... ) const
+{
+    if ( error_policy_ )
+    {
+        LALR_ASSERT( format );
+        va_list args;
+        va_start( args, format );
+        error_policy_->lalr_vprintf( format, args );
+        va_end( args );
+    }
+    else
+    {
+        va_list args;
+        va_start( args, format );
+        vfprintf( stdout, format, args );
+        va_end( args );
+    }
+}
+
+/**
+// Are shift and reduce operations printed?
+//
+// @return
+//  True if shift and reduce operations are printed otherwise false.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::is_debug_enabled() const
+{
+    return debug_enabled_;
 }
 
 /**
@@ -338,57 +306,6 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_lexer_action_handl
 }
 
 /**
-// Fire an %error event.
-//
-// @param line
-//  The line number to associate with the %error (or 0 if there is no line
-//  to associate with the %error).
-//
-// @param error
-//  The %Error that describes the %error that has occured.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int line, int column, int error, const char* format, ... ) const
-{
-    if ( error_policy_ )
-    {
-        va_list args;
-        va_start( args, format );
-        error_policy_->lalr_error( line, column, error, format, args );
-        va_end( args );
-    }
-}
-
-/**
-// Fire a printf event.
-//
-// @param format
-//  A printf style format string that describes the message to print.
-//
-// @param ...
-//  Parameters to fill in the message as specified by \e format.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const char* format, ... ) const
-{
-    if ( error_policy_ )
-    {
-        LALR_ASSERT( format );
-        va_list args;
-        va_start( args, format );
-        error_policy_->lalr_vprintf( format, args );
-        va_end( args );
-    }
-    else
-    {
-        va_list args;
-        va_start( args, format );
-        vfprintf( stdout, format, args );
-        va_end( args );
-    }
-}
-
-/**
 // Set whether or not shift operations are printed.
 //
 // @param debug_enabled
@@ -402,15 +319,116 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_debug_enabled( boo
 }
 
 /**
-// Are shift and reduce operations printed?
-//
-// @return
-//  True if shift and reduce operations are printed otherwise false.
+// Reset this Parser so that it can parse another sequence of input.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::is_debug_enabled() const
+void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
 {
-    return debug_enabled_;
+    accepted_ = false;
+    full_ = false;
+    nodes_.clear();
+    user_data_.clear();
+    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
+    user_data_.push_back( UserData() );
+}
+
+/**
+// Parse [\e start, \e finish).
+//
+// After the parse the Parser::full() and Parser::accepted() functions can 
+// be used to determine whether or not the parse was successful and whether
+// or not it consumed all of the available input.
+//
+// In the case of a successful parse the Parser::user_data() function can
+// be used to retrieve the user data that resulted from the parse.
+//
+// @param start
+//  The first character in the sequence to parse.
+//
+// @param finish
+//  One past the last character in the sequence to parse.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start, Iterator finish )
+{
+    LALR_ASSERT( state_machine_ );
+    if ( valid() )
+    {
+        reset();
+        lexer_.reset( start, finish );    
+        lexer_.advance();
+        const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
+        while ( parse(symbol, lexer_.lexeme(), lexer_.line(), lexer_.column()) )
+        {
+            lexer_.advance();
+            symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
+        }
+
+        full_ = lexer_.full();
+    }
+}
+
+/**
+// Continue a parse by accepting \e symbol as the next token.
+//
+// @param symbol
+//  The next token from the lexical analyzer in the current parse (assumed to
+//  be a ParserSymbol).
+//
+// @param lexeme
+//  The lexeme of the next token from the lexical analyzer.
+//
+// @param line
+//  The line number at the start of the next token.
+//
+// @return
+//  True until parsing is complete or an error occurs.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
+{
+    return parse( reinterpret_cast<const ParserSymbol*>(symbol), lexeme, line, column );
+}
+
+/**
+// Continue a parse by accepting \e symbol as the next token.
+//
+// @param symbol
+//  The next token from the lexical analyzer in the current parse.
+//
+// @param lexeme
+//  The lexeme of the next token from the lexical analyzer.
+//
+// @param line
+//  The line number at the start of the next token.
+//
+// @return
+//  True until parsing is complete or an error occurs.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column )
+{
+    bool accepted = false;
+    bool rejected = false;
+    
+    const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
+    while ( !accepted && !rejected && transition && transition->reduced_symbol )
+    {
+        reduce( transition, &accepted, &rejected );
+        transition = find_transition( symbol, nodes_.back().state() );
+    }
+    
+    if ( transition && transition->state )
+    {
+        shift( transition, lexeme, line, column );
+    }
+    else
+    {
+        error( &accepted, &rejected, line, column);
+    }
+    
+    accepted_ = accepted;
+    return !accepted_ && !rejected;
 }
 
 /**

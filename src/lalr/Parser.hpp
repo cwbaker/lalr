@@ -41,7 +41,7 @@ public:
 private:
     struct ParserActionHandler
     {        
-        const ParserAction*  action_;
+        const ParserAction* action_;
         ParserActionFunction function_;
         ParserActionHandler( const ParserAction* action, ParserActionFunction function );
     };
@@ -60,26 +60,25 @@ private:
 public:
     Parser( const ParserStateMachine* state_machine, ErrorPolicy* error_policy = nullptr );
 
-    void reset();
-    void parse( Iterator start, Iterator finish );
-    bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
-    bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
     bool accepted() const;
     bool full() const;
+    bool valid() const;
     const UserData& user_data() const;
     const Lexer<Iterator, Char, Traits, Allocator>& lexer() const;
+    void fire_error(int line, int column, int error, const char* format, ... ) const;
+    void fire_printf( const char* format, ... ) const;
+    bool is_debug_enabled() const;
 
     AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator> parser_action_handlers();
     AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
     void set_default_action_handler( ParserActionFunction function );
     void set_action_handler( const char* identifier, ParserActionFunction function );
-    void set_lexer_action_handler( const char* identifier, LexerActionFunction function );
-
-    void fire_error(int line, int column, int error, const char* format, ... ) const;
-    void fire_printf( const char* format, ... ) const;
-    
+    void set_lexer_action_handler( const char* identifier, LexerActionFunction function );    
     void set_debug_enabled( bool debug_enabled );
-    bool is_debug_enabled() const;
+    void reset();
+    void parse( Iterator start, Iterator finish );
+    bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
+    bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
     
 private:
     const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;

@@ -1255,4 +1255,32 @@ SUITE( Parsers )
         CHECK( parser.accepted() );
         CHECK( parser.full() );        
     }
+
+    TEST( MissingLexicalActionHandler )
+    {
+        const char* line_comment_grammar = 
+            "MissingLexicalActionHandler {\n"
+            "   %whitespace \"([ \\t\\r\\n]|\\/\\/:line_comment:)*\";\n"
+            "   unit: '1';\n"
+            "}"
+        ;
+
+        GrammarCompiler compiler;
+        compiler.compile( line_comment_grammar, line_comment_grammar + strlen(line_comment_grammar) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+
+        const char* input = "1";
+        parser.parse( input, input + strlen(input) );
+        CHECK( !parser.accepted() );
+        CHECK( !parser.full() );
+
+        parser.lexer_action_handlers()
+            ( "line_comment", &line_comment<const char*> )
+        ;
+
+        parser.parse( input, input + strlen(input) );
+        CHECK( parser.accepted() );
+        CHECK( parser.full() );
+    }
 }
