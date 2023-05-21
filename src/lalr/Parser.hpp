@@ -68,18 +68,16 @@ public:
     bool full() const;
     const UserData& user_data() const;
     const Lexer<Iterator, Char, Traits, Allocator>& lexer() const;
+    void fire_error(int line, int column, int error, const char* format, ... ) const;
+    void fire_printf( const char* format, ... ) const;
+    bool is_debug_enabled() const;
 
     AddParserActionHandler<Iterator, UserData, Char, Traits, Allocator> parser_action_handlers();
     AddLexerActionHandler<Iterator, Char, Traits, Allocator> lexer_action_handlers();
     void set_default_action_handler( ParserActionFunction function );
     void set_action_handler( const char* identifier, ParserActionFunction function );
-    void set_lexer_action_handler( const char* identifier, LexerActionFunction function );
-
-    void fire_error(int line, int column, int error, const char* format, ... ) const;
-    void fire_printf( const char* format, ... ) const;
-    
+    void set_lexer_action_handler( const char* identifier, LexerActionFunction function );    
     void set_debug_enabled( bool debug_enabled );
-    bool is_debug_enabled() const;
     
 private:
     const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;

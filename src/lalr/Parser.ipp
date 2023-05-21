@@ -255,6 +255,69 @@ const Lexer<Iterator, Char, Traits, Allocator>& Parser<Iterator, UserData, Char,
 }
 
 /**
+// Fire an %error event.
+//
+// @param line
+//  The line number to associate with the %error (or 0 if there is no line
+//  to associate with the %error).
+//
+// @param error
+//  The %Error that describes the %error that has occured.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int line, int column, int error, const char* format, ... ) const
+{
+    if ( error_policy_ )
+    {
+        va_list args;
+        va_start( args, format );
+        error_policy_->lalr_error( line, column, error, format, args );
+        va_end( args );
+    }
+}
+
+/**
+// Fire a printf event.
+//
+// @param format
+//  A printf style format string that describes the message to print.
+//
+// @param ...
+//  Parameters to fill in the message as specified by \e format.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const char* format, ... ) const
+{
+    if ( error_policy_ )
+    {
+        LALR_ASSERT( format );
+        va_list args;
+        va_start( args, format );
+        error_policy_->lalr_vprintf( format, args );
+        va_end( args );
+    }
+    else
+    {
+        va_list args;
+        va_start( args, format );
+        vfprintf( stdout, format, args );
+        va_end( args );
+    }
+}
+
+/**
+// Are shift and reduce operations printed?
+//
+// @return
+//  True if shift and reduce operations are printed otherwise false.
+*/
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::is_debug_enabled() const
+{
+    return debug_enabled_;
+}
+
+/**
 // Add action handlers to this %Parser.
 //
 // @return
@@ -338,57 +401,6 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_lexer_action_handl
 }
 
 /**
-// Fire an %error event.
-//
-// @param line
-//  The line number to associate with the %error (or 0 if there is no line
-//  to associate with the %error).
-//
-// @param error
-//  The %Error that describes the %error that has occured.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_error( int line, int column, int error, const char* format, ... ) const
-{
-    if ( error_policy_ )
-    {
-        va_list args;
-        va_start( args, format );
-        error_policy_->lalr_error( line, column, error, format, args );
-        va_end( args );
-    }
-}
-
-/**
-// Fire a printf event.
-//
-// @param format
-//  A printf style format string that describes the message to print.
-//
-// @param ...
-//  Parameters to fill in the message as specified by \e format.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-void Parser<Iterator, UserData, Char, Traits, Allocator>::fire_printf( const char* format, ... ) const
-{
-    if ( error_policy_ )
-    {
-        LALR_ASSERT( format );
-        va_list args;
-        va_start( args, format );
-        error_policy_->lalr_vprintf( format, args );
-        va_end( args );
-    }
-    else
-    {
-        va_list args;
-        va_start( args, format );
-        vfprintf( stdout, format, args );
-        va_end( args );
-    }
-}
-
-/**
 // Set whether or not shift operations are printed.
 //
 // @param debug_enabled
@@ -399,18 +411,6 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 void Parser<Iterator, UserData, Char, Traits, Allocator>::set_debug_enabled( bool debug_enabled )
 {
     debug_enabled_ = debug_enabled;
-}
-
-/**
-// Are shift and reduce operations printed?
-//
-// @return
-//  True if shift and reduce operations are printed otherwise false.
-*/
-template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-bool Parser<Iterator, UserData, Char, Traits, Allocator>::is_debug_enabled() const
-{
-    return debug_enabled_;
 }
 
 /**
