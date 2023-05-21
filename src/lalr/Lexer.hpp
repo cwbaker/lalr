@@ -54,6 +54,7 @@ public:
     const void* symbol() const;
     const Iterator& position() const;
     bool full() const;
+    bool valid() const;
     void set_action_handler( const char* identifier, LexerActionFunction function );
     void reset( Iterator start, Iterator finish );
     void advance();

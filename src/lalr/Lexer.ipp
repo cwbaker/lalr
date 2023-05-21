@@ -161,6 +161,45 @@ bool Lexer<Iterator, Char, Traits, Allocator>::full() const
 }
 
 /**
+// Is this Lexer valid?
+//
+// Reports errors for any action handlers that haven't been set.
+//
+// @return
+//  True if this Lexer is valid and can be used to split input into tokens
+//  otherwise false.
+*/
+template <class Iterator, class Char, class Traits, class Allocator>
+bool Lexer<Iterator, Char, Traits, Allocator>::valid() const
+{
+    bool valid = true;
+
+    for ( const LexerActionHandler& handler : action_handlers_ )
+    {
+        if ( !handler.function_ )
+        {
+            const LexerAction* action = handler.action_;
+            LALR_ASSERT( action );
+            fire_error( -1, -1, LEXER_ERROR_MISSING_ACTION_HANDLER, "Lexical action '%s' has no handler", action->identifier );
+            valid = false;
+        }
+    }
+
+    for ( const LexerActionHandler& handler : whitespace_action_handlers_ )
+    {
+        if ( !handler.function_ )
+        {
+            const LexerAction* action = handler.action_;
+            LALR_ASSERT( action );
+            fire_error( -1, -1, LEXER_ERROR_MISSING_ACTION_HANDLER, "Lexical action '%s' has no handler", action->identifier );
+            valid = false;
+        }
+    }
+
+    return valid;
+}
+
+/**
 // Set the action handler for \e identifier to \e function.
 //
 // @param identifier
