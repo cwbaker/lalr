@@ -1,12 +1,21 @@
 json {
    %whitespace "[ \t\r\n]*";
-   document: '{' element '}' [document];
-   element: name ':' '{' contents '}' [element];
-   contents: contents ',' content [add_to_element] | content [create_element];
-   content: attribute [content] | element [content];
+   document: '{' attributes '}' [document] | ;
+   attributes: attributes ',' attribute [add_to_object] | attribute [create_object] | ;
    attribute: name ':' value [attribute];
-   value: 'null' [value] | 'true' [value] | 'false' [value] | integer [value] | real [value] | string [value];
+   elements: elements ',' value [add_to_array] | value [create_array] | ;
+   value:
+      null [null] |
+      boolean [value] |
+      integer [value] |
+      real [value] |
+      string [value] |
+      '{' attributes '}' [object] |
+      '[' elements ']' [array]
+   ;
    name: "[\"']:string:";
+   null: 'null';
+   boolean: "true|false";
    integer: "(\+|\-)?[0-9]+";
    real: "(\+|\-)?[0-9]+(\.[0-9]+)?((e|E)(\+|\-)?[0-9]+)?";
    string: "[\"']:string:";

@@ -24,11 +24,7 @@ for _, cc in toolsets('^cc.*') do
             cc:Cxx '${obj}/%1' {
                 cc:Lalrc '${obj}/%1.cpp' {
                     'error_handling_calculator.g';
-                };
-                cc:Lalrc '${obj}/%1.cpp' {
                     'json.g';
-                };
-                cc:Lalrc '${obj}/%1.cpp' {
                     'xml.g';
                 };
             };

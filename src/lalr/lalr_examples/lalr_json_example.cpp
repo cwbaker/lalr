@@ -1,7 +1,6 @@
 
 #include <string>
 #include <vector>
-#include <list>
 #include <lalr/Parser.ipp>
 #include <lalr/PositionIterator.hpp>
 #include <lalr/string_literal.hpp>
@@ -10,52 +9,70 @@
 using namespace std;
 using namespace lalr;
 
+namespace 
+{
+
+struct Attribute;
+
+struct Value
+{
+    std::string value_;
+    std::vector<shared_ptr<Attribute>> attributes_;
+    std::vector<shared_ptr<Value>> elements_;
+
+    Value()
+    : value_()
+    , attributes_()
+    , elements_()
+    {        
+    }
+
+    Value( const std::string& value )
+    : value_( value )
+    , attributes_()
+    , elements_()
+    {
+    }
+};
+
 struct Attribute
 {
     std::string name_;
-    std::string value_;
-    
-    Attribute( const std::string& value )
-    : name_(),
-      value_( value )
-    {
-    }    
-};
+    shared_ptr<Value> value_;
 
-struct Element
-{
-    std::string name_;
-    std::list<shared_ptr<Attribute> > attributes_;
-    std::list<shared_ptr<Element> > elements_;
-    
-    Element()
-    : name_(),
-      attributes_(),
-      elements_()
+    Attribute()
+    : name_()
+    , value_()
     {
     }
+    
+    Attribute( const std::string& name, const shared_ptr<Value>& value )
+    : name_( name )
+    , value_( value )
+    {
+    }    
 };
 
 struct JsonUserData
 {
-    shared_ptr<Attribute> attribute_;
-    shared_ptr<Element> element_;
+    std::string name_;
+    shared_ptr<Value> value_;
     
     JsonUserData()
-    : attribute_(),
-      element_()
+    : name_()
+    , value_()
     {
     }
-    
-    JsonUserData( shared_ptr<Attribute> attribute )
-    : attribute_( attribute ),
-      element_()
+
+    JsonUserData( shared_ptr<Value> value )
+    : name_()
+    , value_( value )
     {
     }    
-    
-    JsonUserData( shared_ptr<Element> element )
-    : attribute_(),
-      element_( element )
+
+    JsonUserData( const std::string& name, shared_ptr<Value> value )
+    : name_( name )
+    , value_( value )
     {
     }    
 };
@@ -65,57 +82,59 @@ static JsonUserData document( const JsonUserData* start, const ParserNode<char>*
     return start[1];
 }
 
-static JsonUserData element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
-{
-    shared_ptr<Element> element = start[3].element_;
-    element->name_ = nodes[0].lexeme();
-    return JsonUserData( element );
-}
-
 static JsonUserData attribute( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {   
-    shared_ptr<Attribute> attribute = start[2].attribute_;
-    attribute->name_ = nodes[0].lexeme();
-    return JsonUserData( attribute );
+    const shared_ptr<Value>& attribute = start[2].value_;
+    return JsonUserData( nodes[0].lexeme(), attribute );
+}
+
+static JsonUserData null( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+{
+    shared_ptr<Value> null_value = make_shared<Value>();
+    return JsonUserData( null_value );
 }
 
 static JsonUserData value( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
-    shared_ptr<Attribute> attribute( new Attribute(nodes[0].lexeme()) );
-    return JsonUserData( attribute );
+    shared_ptr<Value> value = make_shared<Value>( nodes[0].lexeme() );
+    return JsonUserData( value );
 }
 
-static JsonUserData content( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+static JsonUserData object( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
-    return start[0];
+    return start[1];
 }
 
-static JsonUserData add_to_element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+static JsonUserData add_to_object( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
-    shared_ptr<Element> element = start[0].element_;   
-    if ( start[2].attribute_ )
-    {
-        element->attributes_.push_back( start[2].attribute_ );
-    }
-    else if ( start[2].element_ )
-    {
-        element->elements_.push_back( start[2].element_ );
-    }
-    return JsonUserData( element );    
+    const shared_ptr<Value>& object = start[0].value_;
+    shared_ptr<Attribute> attribute = make_shared<Attribute>( start[2].name_, start[2].value_ );
+    object->attributes_.push_back( attribute );
+    return JsonUserData( object );
 }
 
-static JsonUserData create_element( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+static JsonUserData create_object( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
 {
-    shared_ptr<Element> element( new Element() );
-    if ( start[0].attribute_ )
-    {
-        element->attributes_.push_back( start[0].attribute_ );
-    }
-    else if ( start[0].element_ )
-    {
-        element->elements_.push_back( start[0].element_ );
-    }
-    return JsonUserData( element );    
+    shared_ptr<Value> object = make_shared<Value>();
+    shared_ptr<Attribute> attribute = make_shared<Attribute>( start[0].name_, start[0].value_ );
+    object->attributes_.push_back( attribute );
+    return JsonUserData( object );
+}
+
+static JsonUserData add_to_array( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+{
+    const shared_ptr<Value>& array = start[0].value_;
+    const shared_ptr<Value>& element = start[2].value_;
+    array->elements_.push_back( element );
+    return JsonUserData( array );
+}
+
+static JsonUserData create_array( const JsonUserData* start, const ParserNode<char>* nodes, size_t length )
+{
+    shared_ptr<Value> array = make_shared<Value>();
+    const shared_ptr<Value>& element = start[0].value_;
+    array->elements_.push_back( element );
+    return JsonUserData( array );
 }
 
 static void indent( int level )
@@ -126,26 +145,46 @@ static void indent( int level )
     }    
 }
 
-static void print( const Element* element, int level )
+static void print( const Value& value, int level )
 {
-    LALR_ASSERT( element );
-    indent( level );
-    printf( "%s\n", element->name_.c_str() );
-    
-    for ( list<shared_ptr<Attribute> >::const_iterator i = element->attributes_.begin(); i != element->attributes_.end(); ++i )
+    for ( const shared_ptr<Attribute>& attribute : value.attributes_ )
     {
-        const Attribute* attribute = i->get();
         LALR_ASSERT( attribute );
-        indent( level + 1 );
-        printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_.c_str() );
+        const string& name = attribute->name_;
+        const Value& value = *attribute->value_;
+        if ( value.attributes_.empty() && value.elements_.empty() )
+        {
+            indent( level + 1 );
+            printf( "%s='%s'\n", attribute->name_.c_str(), attribute->value_->value_.c_str() );
+        }
+        else
+        {
+            indent( level + 1 );
+            printf( "%s:\n", attribute->name_.c_str() );
+            print( value, level + 1 );
+        }
     }
-    
-    for ( list<shared_ptr<Element> >::const_iterator i = element->elements_.begin(); i != element->elements_.end(); ++i )
+
+    int index = 0;
+    for ( const shared_ptr<Value>& element : value.elements_ )
     {
-        const Element* element = i->get();
         LALR_ASSERT( element );
-        print( element, level + 1 );
+        const Value& value = *element;
+        if ( value.attributes_.empty() && value.elements_.empty() )
+        {
+            indent( level + 1 );
+            printf( "%d: '%s'\n", index, value.value_.c_str() );
+        }
+        else
+        {
+            indent( level + 1 );
+            printf( "%d:\n", index );
+            print( value, level + 1 );
+        }
+        ++index;
     }
+}
+
 }
 
 void lalr_json_example()
@@ -155,12 +194,15 @@ void lalr_json_example()
     parser.set_lexer_action_handler( "string", &string_literal<const char*> );
     parser.parser_action_handlers()
         ( "document", &document )
-        ( "element", &element )
+        ( "add_to_object", &add_to_object )
+        ( "create_object", &create_object )
         ( "attribute", &attribute )
+        ( "add_to_array", &add_to_array )
+        ( "create_array", &create_array )
+        ( "null", &null )
         ( "value", &value )
-        ( "add_to_element", &add_to_element )
-        ( "create_element", &create_element )
-        ( "content", &content )
+        ( "object", &object )
+        ( "array", &object )
     ;
 
     const char* input =
@@ -170,13 +212,14 @@ void lalr_json_example()
     "        \"version\": 1,\n"
     "        \"address\": \"0017FAB0\",\n"
     "        \"items\": {\n"
-    "            \"name\": \"one\"\n"
-    "        }\n"
+    "            \"name\": \"Albert\"\n"
+    "        },\n"
+    "        \"more_items\": ['one', 2, 3]\n"
     "    }\n"
     "}\n";
 
     parser.parse( input, input + strlen(input) );
     LALR_ASSERT( parser.accepted() );
     LALR_ASSERT( parser.full() );
-    print( parser.user_data().element_.get(), 0 );
+    print( *parser.user_data().value_, 0 );
 }

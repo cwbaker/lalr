@@ -8,6 +8,9 @@
 using namespace std;
 using namespace lalr;
 
+namespace
+{
+
 struct Attribute
 {
     std::string name_;
@@ -156,6 +159,8 @@ static void print( const Element* element, int level )
         LALR_ASSERT( element );
         print( element, level + 1 );
     }
+}
+
 }
 
 void lalr_xml_example()
