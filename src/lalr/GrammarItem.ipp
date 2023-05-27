@@ -1,7 +1,8 @@
 //
-// GrammarItem.cpp
+// GrammarItem.ipp
 // Copyright (c) Charles Baker. All rights reserved.
 //    
+#pragma once
 
 #include "GrammarItem.hpp"
 #include "GrammarSymbol.hpp"
@@ -10,11 +11,8 @@
 #include <algorithm>
 #include <limits>
 
-using std::find;
-using std::string;
-using std::vector;
-using std::numeric_limits;
-using namespace lalr;
+namespace lalr
+{
 
 /**
 // Constructor.
@@ -40,11 +38,18 @@ GrammarItem::GrammarItem( GrammarProduction* production, int position )
 , position_( position )
 , index_( 0 )
 {
+    using std::numeric_limits;
     LALR_ASSERT( production_ >= 0 && production_ < numeric_limits<unsigned short>::max() );
     LALR_ASSERT( position_ >= 0 && position_ <  numeric_limits<unsigned short>::max() );
     LALR_ASSERT( position_ >= 0 && position_ < production->length() + 1 );
 }
 
+/**
+// Get the index of this item.
+//
+// @return
+//  The index of this item.
+*/
 int GrammarItem::index() const
 {
     return index_;
@@ -88,7 +93,7 @@ bool GrammarItem::dot_at_beginning() const
 //  The item to compare this item with.
 //
 // @return 
-//  True if this items production is less than \e item's or if this item's
+//  True if this item's production is less than \e item's or if this item's
 //  production is the same as \e item's then if this item's next nodes
 //  are lexically less than item's otherwise false.
 */
@@ -100,7 +105,15 @@ bool GrammarItem::operator<( const GrammarItem& item ) const
     ;
 }
 
+/**
+// Set the index of this item.
+//
+// @param index
+//  The index to set this item (assumed >= 0).
+*/
 void GrammarItem::set_index( int index ) const
 {
     index_ = index;
+}
+
 }

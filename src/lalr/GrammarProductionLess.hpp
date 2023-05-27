@@ -11,7 +11,9 @@ class GrammarProduction;
 class GrammarProductionLess
 {
 public:
-    bool operator()( const GrammarProduction* lhs, const GrammarProduction* rhs ) const;
+    inline bool operator()( const GrammarProduction* lhs, const GrammarProduction* rhs ) const;
 };
 
 }
+
+#include "GrammarProductionLess.ipp"

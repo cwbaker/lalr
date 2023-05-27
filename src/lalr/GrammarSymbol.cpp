@@ -2,16 +2,11 @@
 // GrammarSymbol.cpp
 // Copyright (c) Charles Baker. All rights reserved.
 //
-
 #include "GrammarSymbol.hpp"
 #include "GrammarProduction.hpp"
 #include "assert.hpp"
 #include <memory>
 
-using std::set;
-using std::vector;
-using std::shared_ptr;
-using std::make_pair;
 using namespace lalr;
 
 GrammarSymbol::GrammarSymbol( const std::string& lexeme )
@@ -29,81 +24,6 @@ GrammarSymbol::GrammarSymbol( const std::string& lexeme )
 , follow_{0}
 , productions_()
 {
-}
-
-const std::string& GrammarSymbol::lexeme() const
-{
-    return lexeme_;
-}
-
-const std::string& GrammarSymbol::identifier() const
-{
-    return identifier_;
-}
-
-SymbolType GrammarSymbol::symbol_type() const
-{
-    return symbol_type_;
-}
-
-LexemeType GrammarSymbol::lexeme_type() const
-{
-    return lexeme_type_;
-}
-
-bool GrammarSymbol::literal() const
-{
-    return lexeme_type_ == LEXEME_LITERAL;
-}
-
-Associativity GrammarSymbol::associativity() const
-{
-    return associativity_;
-}
-
-int GrammarSymbol::precedence() const
-{
-    return precedence_;
-}
-
-int GrammarSymbol::line() const
-{
-    return line_;
-}
-
-int GrammarSymbol::index() const
-{
-    return index_;
-}
-
-bool GrammarSymbol::nullable() const
-{
-    return nullable_;
-}
-
-bool GrammarSymbol::referenced_in_precedence_directive() const
-{
-    return referenced_in_precedence_directive_;
-}
-
-const GrammarSymbolSet& GrammarSymbol::first() const
-{
-    return first_;
-}
-
-const GrammarSymbolSet& GrammarSymbol::follow() const
-{
-    return follow_;
-}
-
-const std::vector<GrammarProduction*>& GrammarSymbol::productions() const
-{
-    return productions_;
-}
-
-const std::multimap<const GrammarSymbol*, GrammarProduction*>& GrammarSymbol::reachable_productions_by_first_symbol() const
-{
-    return reachable_productions_by_first_symbol_;
 }
 
 std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator GrammarSymbol::find_reachable_productions( const GrammarSymbol& first_symbol ) const
@@ -218,6 +138,7 @@ void GrammarSymbol::append_reachable_production( GrammarProduction* production )
     LALR_ASSERT( production );
     const GrammarSymbol* first_symbol = production->symbol_by_position( 0 );
     LALR_ASSERT( first_symbol );
+    using std::make_pair;
     reachable_productions_by_first_symbol_.insert( make_pair(first_symbol, production) );
 }
 
@@ -502,6 +423,7 @@ int GrammarSymbol::calculate_first()
     int added = 0;
     if ( symbol_type_ == SYMBOL_NON_TERMINAL )
     {
+        using std::vector;
         for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
         {
             const GrammarProduction* production = *i;
@@ -545,6 +467,7 @@ int GrammarSymbol::calculate_first()
 */
 int GrammarSymbol::calculate_follow()
 {
+    using std::vector;
     int added = 0;
     for ( vector<GrammarProduction*>::const_iterator i = productions_.begin(); i != productions_.end(); ++i )
     {

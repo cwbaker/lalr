@@ -1,6 +1,7 @@
-#ifndef LALR_GRAMMARPRODUCTION_HPP_INCLUDED
-#define LALR_GRAMMARPRODUCTION_HPP_INCLUDED
+#pragma once
 
+#include "GrammarSymbol.hpp"
+#include "GrammarAction.hpp"
 #include <string>
 #include <vector>
 #include <set>
@@ -26,31 +27,31 @@ class GrammarProduction
     const GrammarSymbol* precedence_symbol_; /// The symbol that defines precedence for this production or null to use the right most terminal.
 
 public:
-    GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action );
+    inline GrammarProduction( int index, GrammarSymbol* symbol, int line, int column, const GrammarAction* action );
 
-    int index() const;
-    GrammarSymbol* symbol() const;
-    int line() const;
-    int column() const;
-    int count_references_to_symbol( const GrammarSymbol* symbol ) const;
-    bool nullable_after( int position ) const;
-    const GrammarSymbol* find_rightmost_terminal_symbol() const;
-    const GrammarSymbol* symbol_by_position( int position ) const;
-    const std::vector<GrammarSymbol*>& symbols() const;
-    int length() const;
-    const GrammarAction* action() const;
-    int action_index() const;
-    const GrammarSymbol* precedence_symbol() const;
-    int precedence() const;
+    inline int index() const;
+    inline GrammarSymbol* symbol() const;
+    inline int line() const;
+    inline int column() const;
+    inline int count_references_to_symbol( const GrammarSymbol* symbol ) const;
+    inline bool nullable_after( int position ) const;
+    inline const GrammarSymbol* find_rightmost_terminal_symbol() const;
+    inline const GrammarSymbol* symbol_by_position( int position ) const;
+    inline const std::vector<GrammarSymbol*>& symbols() const;
+    inline int length() const;
+    inline const GrammarAction* action() const;
+    inline int action_index() const;
+    inline const GrammarSymbol* precedence_symbol() const;
+    inline int precedence() const;
 
-    void append_symbol( GrammarSymbol* symbol );        
-    void set_action( const GrammarAction* action );        
-    void set_precedence_symbol( const GrammarSymbol* symbol );        
-    void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
+    inline void append_symbol( GrammarSymbol* symbol );
+    inline void set_action( const GrammarAction* action );
+    inline void set_precedence_symbol( const GrammarSymbol* symbol );
+    inline void replace_references_to_symbol( GrammarSymbol* to_symbol, GrammarSymbol* with_symbol );
 
     static const int INVALID_INDEX = -1;
 };
 
 }
 
-#endif
+#include "GrammarProduction.ipp"

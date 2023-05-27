@@ -16,13 +16,8 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarAction.cpp',
                 'GrammarCompiler.cpp',
                 'GrammarGenerator.cpp',
-                'GrammarItem.cpp',
-                'GrammarLookahead.cpp',
                 'GrammarParser.cpp',
-                'GrammarProduction.cpp',
-                'GrammarProductionLess.cpp',
                 'GrammarState.cpp',
-                'GrammarStateLess.cpp',
                 'GrammarSymbol.cpp',
                 'GrammarSymbolSet.cpp',
                 'GrammarTransition.cpp'

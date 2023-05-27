@@ -16,14 +16,16 @@ class GrammarItem
     mutable int index_;
 
 public:
-    GrammarItem();
-    GrammarItem( GrammarProduction* production, int position );
-    int index() const;
-    int production() const;
-    int position() const;
-    bool dot_at_beginning() const;
-    bool operator<( const GrammarItem& item ) const;
-    void set_index( int index ) const;
+    inline GrammarItem();
+    inline GrammarItem( GrammarProduction* production, int position );
+    inline int index() const;
+    inline int production() const;
+    inline int position() const;
+    inline bool dot_at_beginning() const;
+    inline bool operator<( const GrammarItem& item ) const;
+    inline void set_index( int index ) const;
 };
 
 }
+
+#include "GrammarItem.ipp"

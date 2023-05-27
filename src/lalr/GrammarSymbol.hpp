@@ -1,5 +1,4 @@
-#ifndef LALR_GRAMMARSYMBOL_HPP_INCLUDED
-#define LALR_GRAMMARSYMBOL_HPP_INCLUDED
+#pragma once
 
 #include "GrammarSymbolSet.hpp"
 #include "SymbolType.hpp"
@@ -35,21 +34,21 @@ class GrammarSymbol
 public:
     GrammarSymbol( const std::string& lexeme );
 
-    const std::string& lexeme() const;
-    const std::string& identifier() const;
-    SymbolType symbol_type() const;
-    LexemeType lexeme_type() const;
-    bool literal() const;
-    Associativity associativity() const;
-    int precedence() const;
-    int line() const;
-    int index() const;
-    bool nullable() const;
-    bool referenced_in_precedence_directive() const;
-    const GrammarSymbolSet& first() const;
-    const GrammarSymbolSet& follow() const;
-    const std::vector<GrammarProduction*>& productions() const;
-    const std::multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions_by_first_symbol() const;
+    inline const std::string& lexeme() const;
+    inline const std::string& identifier() const;
+    inline SymbolType symbol_type() const;
+    inline LexemeType lexeme_type() const;
+    inline bool literal() const;
+    inline Associativity associativity() const;
+    inline int precedence() const;
+    inline int line() const;
+    inline int index() const;
+    inline bool nullable() const;
+    inline bool referenced_in_precedence_directive() const;
+    inline const GrammarSymbolSet& first() const;
+    inline const GrammarSymbolSet& follow() const;
+    inline const std::vector<GrammarProduction*>& productions() const;
+    inline const std::multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions_by_first_symbol() const;
     std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator find_reachable_productions( const GrammarSymbol& first_symbol ) const;
     GrammarSymbol* implicit_terminal() const;
     bool matches( const std::string& lexeme, SymbolType symbol_type ) const;
@@ -78,4 +77,4 @@ public:
 
 }
 
-#endif
+#include "GrammarSymbol.ipp"

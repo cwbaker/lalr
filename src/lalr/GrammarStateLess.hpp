@@ -1,6 +1,6 @@
-#ifndef LALR_GRAMMARSTATELESS_HPP_INCLUDED
-#define LALR_GRAMMARSTATELESS_HPP_INCLUDED
+#pragma once
 
+#include "GrammarState.hpp"
 #include <memory>
 
 namespace lalr
@@ -14,9 +14,9 @@ class GrammarState;
 class GrammarStateLess
 {
 public:
-    bool operator()( const std::shared_ptr<GrammarState>& lhs, const std::shared_ptr<GrammarState>& rhs ) const;
+    inline bool operator()( const std::shared_ptr<GrammarState>& lhs, const std::shared_ptr<GrammarState>& rhs ) const;
 };
 
 }
 
-#endif
+#include "GrammarStateLess.ipp"

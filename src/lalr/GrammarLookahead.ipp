@@ -1,15 +1,16 @@
 //
-// GrammarLookahead.cpp
+// GrammarLookahead.ipp
 // Copyright (c) Charles Baker.  All rights reserved.
 //
+#pragma once
 
 #include "GrammarLookahead.hpp"
 #include "GrammarItem.hpp"
 #include "assert.hpp"
 #include <utility>
 
-using std::vector;
-using namespace lalr;
+namespace lalr
+{
 
 GrammarLookahead::GrammarLookahead( GrammarItem* item, size_t symbols )
 : item_( item )
@@ -57,4 +58,6 @@ void GrammarLookahead::add_propagate_to( GrammarLookahead* propagate_to )
 size_t GrammarLookahead::add_lookaheads( const GrammarSymbolSet& lookaheads )
 {
     return lookaheads_.insert( lookaheads );
+}
+
 }

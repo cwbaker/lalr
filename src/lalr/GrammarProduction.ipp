@@ -1,15 +1,16 @@
 //
-// GrammarProduction.cpp
+// GrammarProduction.ipp
 // Copyright (c) Charles Baker. All rights reserved.
 //
+#pragma once
 
 #include "GrammarProduction.hpp"
 #include "GrammarSymbol.hpp"
 #include "GrammarAction.hpp"
 #include "assert.hpp"
 
-using std::vector;
-using namespace lalr;
+namespace lalr
+{
 
 /*
 // Constructor.
@@ -95,6 +96,7 @@ int GrammarProduction::column() const
 */
 int GrammarProduction::count_references_to_symbol( const GrammarSymbol* symbol ) const
 {
+    using std::vector;
     int references = 0;
     for ( vector<GrammarSymbol*>::const_iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
@@ -116,6 +118,7 @@ int GrammarProduction::count_references_to_symbol( const GrammarSymbol* symbol )
 */
 bool GrammarProduction::nullable_after( int position ) const
 {
+    using std::vector;
     LALR_ASSERT( position >= 0 && position <= length() );
     if ( position >= 0 && position < length() )
     {
@@ -146,6 +149,7 @@ bool GrammarProduction::nullable_after( int position ) const
 */
 const GrammarSymbol* GrammarProduction::find_rightmost_terminal_symbol() const
 {
+    using std::vector;
     vector<GrammarSymbol*>::const_reverse_iterator i = symbols_.rbegin();
     while ( i != symbols_.rend() && (*i)->symbol_type() != SYMBOL_TERMINAL )
     {
@@ -281,6 +285,7 @@ void GrammarProduction::replace_references_to_symbol( GrammarSymbol* to_symbol, 
         precedence_symbol_ = with_symbol;
     }
 
+    using std::vector;
     for ( vector<GrammarSymbol*>::iterator i = symbols_.begin(); i != symbols_.end(); ++i )
     {
         if ( *i == to_symbol )
@@ -288,4 +293,6 @@ void GrammarProduction::replace_references_to_symbol( GrammarSymbol* to_symbol, 
             *i = with_symbol;
         }
     }
+}
+
 }
