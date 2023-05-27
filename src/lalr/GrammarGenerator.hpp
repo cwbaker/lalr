@@ -2,7 +2,6 @@
 #define LALR_GRAMMARGENERATOR_HPP_INCLUDED
 
 #include "RegexToken.hpp"
-#include "GrammarSymbolLess.hpp"
 #include "GrammarStateLess.hpp"
 #include "GrammarProductionLess.hpp"
 #include "GrammarSymbolSet.hpp"

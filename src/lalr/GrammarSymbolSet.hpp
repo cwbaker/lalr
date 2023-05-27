@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GrammarSymbolLess.hpp"
 #include <stddef.h>
 #include <vector>
 #include <set>
@@ -28,7 +27,6 @@ public:
     std::vector<const GrammarSymbol*>::const_iterator end() const;
     const std::vector<const GrammarSymbol*>& symbols() const;
     bool insert( const GrammarSymbol* symbol );
-    int insert( std::set<const GrammarSymbol*, GrammarSymbolLess>::const_iterator begin, std::set<const GrammarSymbol*, GrammarSymbolLess>::const_iterator end );
     int insert( const GrammarSymbolSet& set );
     void swap( GrammarSymbolSet&& set );
 };
