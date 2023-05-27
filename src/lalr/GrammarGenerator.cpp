@@ -122,7 +122,7 @@ std::string GrammarGenerator::label_item( const GrammarItem& item ) const
 {
     string label;
 
-    const GrammarProduction* production = item.production();
+    const GrammarProduction* production = productions_[item.production()].get();
     LALR_ASSERT( production );
 
     label += production->symbol()->lexeme();
@@ -257,7 +257,7 @@ GrammarSymbolSet GrammarGenerator::spontaneous_lookaheads( const GrammarItem& it
 {
     GrammarSymbolSet lookaheads;
 
-    const GrammarProduction* production = item.production();
+    const GrammarProduction* production = productions_[item.production()].get();
     LALR_ASSERT( production );
         
     const vector<GrammarSymbol*>& symbols = production->symbols();    
@@ -301,7 +301,9 @@ void GrammarGenerator::closure( const std::shared_ptr<GrammarState>& state )
         added = 0;
         for ( const GrammarItem& item : state->items() )
         {
-            const GrammarSymbol* symbol = item.production()->symbol_by_position( item.position() );
+            const GrammarProduction* production = productions_[item.production()].get();
+            LALR_ASSERT( production );
+            const GrammarSymbol* symbol = production->symbol_by_position( item.position() );
             if ( symbol )
             {
                 for ( GrammarProduction* production : symbol->productions() )
@@ -333,12 +335,15 @@ std::shared_ptr<GrammarState> GrammarGenerator::goto_( const GrammarState* state
     GrammarState goto_state;
     for ( const GrammarItem& item : state->items() )
     {
-        const GrammarSymbol* next_symbol = item.next_symbol();
+        GrammarProduction* production = productions_[item.production()].get();
+        LALR_ASSERT( production );
+
+        const GrammarSymbol* next_symbol = production->symbol_by_position( item.position() );
         if ( next_symbol )
         {
             if ( next_symbol == &symbol )
             {
-                goto_state.add_item( item.production(), item.position() + 1 );
+                goto_state.add_item( production, item.position() + 1 );
             }
     
             const multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions = next_symbol->reachable_productions_by_first_symbol();
@@ -721,8 +726,11 @@ void GrammarGenerator::generate_spontaneous_lookaheads()
     for ( const shared_ptr<GrammarState>& state : states_ )
     {
         for ( const GrammarItem& item : state->items() )
-        {          
-            const GrammarSymbol* symbol = item.production()->symbol_by_position( item.position() );
+        {
+            const GrammarProduction* production = productions_[item.production()].get();
+            LALR_ASSERT( production );
+
+            const GrammarSymbol* symbol = production->symbol_by_position( item.position() );
             if ( symbol )
             {
                 GrammarSymbolSet lookaheads = spontaneous_lookaheads( item );
@@ -756,13 +764,13 @@ void GrammarGenerator::generate_goto_items()
                         for ( const GrammarItem& item : state->items() )
                         {
                             GrammarLookahead& destination_lookaheads = lookaheads_[item.index()];
-                            GrammarProduction* production = item.production();
+                            GrammarProduction* production = productions_[item.production()].get();
                             int position = item.position();
                             if ( production->symbol_by_position(position) == symbol )
                             {
                                 GrammarState* goto_state = transition->state();
                                 LALR_ASSERT( goto_state );
-                                GrammarItem* goto_item = goto_state->find_item( item.production(), position + 1 );
+                                GrammarItem* goto_item = goto_state->find_item( production, position + 1 );
                                 LALR_ASSERT( goto_item );
                                 destination_lookaheads.add_propagate_to( &lookaheads_[goto_item->index()] );
                             }
@@ -772,8 +780,10 @@ void GrammarGenerator::generate_goto_items()
 
                 for ( const GrammarItem& item : state->items() )
                 {
-                    const GrammarSymbol* symbol = item.next_symbol();
-                    if ( symbol && item.nullable_after_next() )
+                    const GrammarProduction* production = productions_[item.production()].get();
+                    LALR_ASSERT( production );
+                    const GrammarSymbol* symbol = production->symbol_by_position( item.position() );
+                    if ( symbol && production->nullable_after(item.position() + 1) )
                     {
                         GrammarLookahead& lookaheads = lookaheads_[item.index()];
                         for ( GrammarProduction* production : symbol->productions() )
@@ -939,14 +949,16 @@ void GrammarGenerator::generate_reduce_transitions()
             
         for ( set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
-            if ( item->dot_at_end() )
+            const GrammarProduction* production = productions_[item->production()].get();
+            LALR_ASSERT( production );
+            if ( item->position() >= production->length() )
             {
                 const GrammarSymbolSet& lookaheads = lookaheads_[item->index()].lookaheads();
                 for ( vector<const GrammarSymbol*>::const_iterator j = lookaheads.begin(); j != lookaheads.end(); ++j )
                 {
                     const GrammarSymbol* symbol = *j;
                     LALR_ASSERT( symbol );
-                    generate_reduce_transition( state, symbol, item->production() );
+                    generate_reduce_transition( state, symbol, production );
                 }
             }                
         }

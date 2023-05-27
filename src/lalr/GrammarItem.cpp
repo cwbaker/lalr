@@ -20,9 +20,8 @@ using namespace lalr;
 // Constructor.
 */
 GrammarItem::GrammarItem()
-: production_index_( 0 )
+: production_( 0 )
 , position_( 0 )
-, production_( nullptr )
 , index_( 0 )
 {
 }
@@ -37,15 +36,13 @@ GrammarItem::GrammarItem()
 //  The position of the dot in this item.
 */
 GrammarItem::GrammarItem( GrammarProduction* production, int position )
-: production_index_( production->index() )
+: production_( production->index() )
 , position_( position )
-, production_( production )
 , index_( 0 )
 {
-    LALR_ASSERT( production_ );
-    LALR_ASSERT( production_->index() >= 0 && production_->index() < numeric_limits<unsigned short>::max() );
+    LALR_ASSERT( production_ >= 0 && production_ < numeric_limits<unsigned short>::max() );
     LALR_ASSERT( position_ >= 0 && position_ <  numeric_limits<unsigned short>::max() );
-    LALR_ASSERT( position_ >= 0 && position_ < production_->length() + 1 );
+    LALR_ASSERT( position_ >= 0 && position_ < production->length() + 1 );
 }
 
 int GrammarItem::index() const
@@ -54,9 +51,9 @@ int GrammarItem::index() const
 }
 
 /**
-// Get the production for this item.
+// Get the index of the production for this item.
 */
-GrammarProduction* GrammarItem::production() const
+int GrammarItem::production() const
 {
     return production_;
 }
@@ -85,50 +82,6 @@ bool GrammarItem::dot_at_beginning() const
 }
 
 /**
-// Is the dot that marks the position of this item at the end of the 
-// production?
-//
-// @return
-//  True if the dot is at the end of the production otherwise false.
-*/
-bool GrammarItem::dot_at_end() const
-{
-    return position_ == production_->length();
-}
-
-/**
-// Is \e symbol one of the symbols that could be visited next from this item?
-//
-// @param symbol
-//  The symbol to check for being a next symbol of this item.
-//
-// @return
-//  True if \e symbol could be one of the next symbols to be visited from
-//  this item otherwise false.
-*/
-bool GrammarItem::next_node( const GrammarSymbol& symbol ) const
-{
-    return production_->symbol_by_position( position_ ) == &symbol;
-}
-
-/**
-// Get the symbol after the dot in this item.
-//
-// @return
-//  The next symbol, i.e. following the dot, in this item or null if there
-//  is no such symbol.
-*/
-const GrammarSymbol* GrammarItem::next_symbol() const
-{
-    return production_->symbol_by_position( position_ );
-}
-
-bool GrammarItem::nullable_after_next() const
-{
-    return production_->nullable_after( position_ + 1 );
-}
-
-/**
 // Less than operator.
 //
 // @param item
@@ -142,8 +95,8 @@ bool GrammarItem::nullable_after_next() const
 bool GrammarItem::operator<( const GrammarItem& item ) const
 {
     return 
-        production_index_ < item.production_index_ || 
-        (production_index_ == item.production_index_ && position_ < item.position_)
+        production_ < item.production_ || 
+        (production_ == item.production_ && position_ < item.position_)
     ;
 }
 
