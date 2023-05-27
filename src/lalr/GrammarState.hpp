@@ -3,7 +3,6 @@
 
 #include "GrammarItem.hpp"
 #include "GrammarTransition.hpp"
-#include "GrammarSymbolLess.hpp"
 #include <vector>
 #include <set>
 

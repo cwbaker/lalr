@@ -95,16 +95,6 @@ bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
     return false;
 }
 
-int GrammarSymbolSet::insert( std::set<const GrammarSymbol*, GrammarSymbolLess>::const_iterator begin, std::set<const GrammarSymbol*, GrammarSymbolLess>::const_iterator end )
-{
-    int added = 0;
-    for ( auto i = begin; i != end; ++i )
-    {
-        added += insert( *i ) ? 1 : 0;
-    }
-    return added;
-}
-
 int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
 {
     int added = 0;

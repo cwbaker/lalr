@@ -24,7 +24,6 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarState.cpp',
                 'GrammarStateLess.cpp',
                 'GrammarSymbol.cpp',
-                'GrammarSymbolLess.cpp',
                 'GrammarSymbolSet.cpp',
                 'GrammarTransition.cpp'
             };
