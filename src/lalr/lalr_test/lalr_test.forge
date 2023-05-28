@@ -1,10 +1,17 @@
 
 for _, cc in toolsets('^cc.*') do
+    local libraries;
+    if cc:platform_matches('linux') then
+        libraries = {
+            'pthread';
+        };
+    end
+
     cc:all {
         cc:Executable '${bin}/lalr_test' {
+            libraries = libraries;
             '${lib}/lalr_${platform}_${architecture}';
             '${lib}/UnitTest++_${platform}_${architecture}';
-
             cc:Cxx '${obj}/%1' {
                 'main.cpp',
                 'TestParsers.cpp',
