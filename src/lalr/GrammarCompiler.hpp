@@ -30,6 +30,7 @@ class GrammarCompiler
     std::unique_ptr<RegexCompiler> lexer_; ///< Allocated lexer state machine.
     std::unique_ptr<RegexCompiler> whitespace_lexer_; ///< Allocated whitespace lexer state machine.
     std::unique_ptr<ParserStateMachine> parser_state_machine_; ///< Allocated parser state machine.
+    bool labels_enabled_; ///< True to generate labels for states and symbols.
 
 public:
     GrammarCompiler();
@@ -37,6 +38,7 @@ public:
     const RegexCompiler* lexer() const;
     const RegexCompiler* whitespace_lexer() const;
     const ParserStateMachine* parser_state_machine() const;
+    void labels_enabled( bool enabled );
     int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr );
 
 private:

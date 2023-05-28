@@ -41,6 +41,7 @@ GrammarCompiler::GrammarCompiler()
 , lexer_()
 , whitespace_lexer_()
 , parser_state_machine_()
+, labels_enabled_{ false }
 {
     lexer_.reset( new RegexCompiler );
     whitespace_lexer_.reset( new RegexCompiler );
@@ -65,6 +66,11 @@ const RegexCompiler* GrammarCompiler::whitespace_lexer() const
 const ParserStateMachine* GrammarCompiler::parser_state_machine() const
 {
     return parser_state_machine_.get();
+}
+
+void GrammarCompiler::labels_enabled( bool enabled )
+{
+    labels_enabled_ = enabled;
 }
 
 int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
@@ -239,7 +245,7 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
         state->index = state_index;
         state->length = grammar_state->count_valid_transitions();
         state->transitions = &transitions[transition_index];
-        state->label = add_string( generator.label_state(*grammar_state) );
+        state->label = labels_enabled_ ? add_string( generator.label_state(*grammar_state) ) : nullptr;
         if ( grammar_state == generator.start_state() )
         {
             start_state = state;

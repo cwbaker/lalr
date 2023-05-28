@@ -135,7 +135,14 @@ int main( int argc, char** argv )
             return EXIT_FAILURE;
         }
 
+        // Enable state labels only when generating Graphviz DOT graphs
+        // because generating so many strings takes lots of time and memory.
         GrammarCompiler compiler;
+        if ( dot )
+        {
+            compiler.labels_enabled( true );
+        }
+
         ErrorPolicy error_policy;
         int errors = compiler.compile( &grammar_source[0], &grammar_source[0] + grammar_source.size(), &error_policy );
         if ( errors != 0 )
@@ -344,7 +351,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
             state->index,
             state->length,
             state->transitions->index,
-            sanitize( state->label ).c_str()
+            state->label ? sanitize( state->label ).c_str() : nullptr
         );
     }
     write( "    {-1, 0, nullptr}\n" );
