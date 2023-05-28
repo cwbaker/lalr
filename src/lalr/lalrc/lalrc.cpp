@@ -344,7 +344,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
             state->index,
             state->length,
             state->transitions->index,
-            state->label
+            sanitize( state->label ).c_str()
         );
     }
     write( "    {-1, 0, nullptr}\n" );
