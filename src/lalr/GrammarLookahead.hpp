@@ -15,7 +15,7 @@ class GrammarLookahead
     GrammarSymbolSet lookaheads_;
 
 public:
-    GrammarLookahead( GrammarItem* item );
+    GrammarLookahead( GrammarItem* item, size_t symbols );
     GrammarLookahead( GrammarLookahead&& item );
 
     GrammarItem* item() const;

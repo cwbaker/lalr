@@ -25,8 +25,8 @@ GrammarSymbol::GrammarSymbol( const std::string& lexeme )
 , index_( -1 )
 , nullable_( false )
 , referenced_in_precedence_directive_( false )
-, first_()
-, follow_()
+, first_{0}
+, follow_{0}
 , productions_()
 {
 }

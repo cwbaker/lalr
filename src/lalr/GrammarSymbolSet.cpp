@@ -10,23 +10,19 @@
 using std::vector;
 using namespace lalr;
 
-GrammarSymbolSet::GrammarSymbolSet()
+GrammarSymbolSet::GrammarSymbolSet( size_t symbols )
 : set_()
-, symbols_()
 {
+    set_.resize( symbols / 8 );
 }
 
 GrammarSymbolSet::GrammarSymbolSet( GrammarSymbolSet&& set )
-: set_()
-, symbols_()
+: set_( std::move(set.set_) )
 {
-    std::swap( set_, set.set_ );
-    std::swap( symbols_, set.symbols_ );
 }
 
 GrammarSymbolSet::GrammarSymbolSet( const GrammarSymbolSet& set )
 : set_( set.set_ )
-, symbols_( set.symbols_ )
 {
 }
 
@@ -35,7 +31,6 @@ GrammarSymbolSet& GrammarSymbolSet::operator=( GrammarSymbolSet&& set )
     if ( this != &set )
     {
         std::swap( set_, set.set_ );
-        std::swap( symbols_, set.symbols_ );
     }
     return *this;
 }
@@ -45,34 +40,19 @@ GrammarSymbolSet& GrammarSymbolSet::operator=( const GrammarSymbolSet& set )
     if ( this != &set )
     {
         set_ = set.set_;
-        symbols_ = set.symbols_;
     }
     return *this;    
 }
 
-size_t GrammarSymbolSet::empty() const
+bool GrammarSymbolSet::contains( int symbol_index ) const
 {
-    return symbols_.empty();
-}
-
-size_t GrammarSymbolSet::size() const
-{
-    return symbols_.size();
-}
-
-std::vector<const GrammarSymbol*>::const_iterator GrammarSymbolSet::begin() const
-{
-    return symbols_.begin();
-}
-
-std::vector<const GrammarSymbol*>::const_iterator GrammarSymbolSet::end() const
-{
-    return symbols_.end();
-}
-
-const std::vector<const GrammarSymbol*>& GrammarSymbolSet::symbols() const
-{
-    return symbols_;
+    size_t index = symbol_index / 8;
+    if ( index < set_.size() )
+    {
+        unsigned char mask = 1 << (symbol_index % 8);
+        return (set_[index] & mask) != 0;
+    }
+    return false;
 }
 
 bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
@@ -88,7 +68,7 @@ bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
         if ( !(set_[index] & mask) )
         {
             set_[index] |= mask;
-            symbols_.push_back( symbol );
+            // symbols_.push_back( symbol );
             return true;
         }
     }
@@ -97,12 +77,21 @@ bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
 
 int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
 {
-    int added = 0;
-    const vector<const GrammarSymbol*>& symbols = set.symbols_;
-    for ( const GrammarSymbol* symbol : symbols )
+    if ( set_.size() < set.set_.size() )
     {
-        LALR_ASSERT( symbol );
-        added += insert( symbol ) ? 1 : 0;
+        set_.insert( set_.end(), set.set_.size() - set_.size(), 0 );
+    }
+
+    int added = 0;
+    for ( size_t i = 0; i < set.set_.size(); ++i )
+    {
+        unsigned char mask = set_[i];
+        unsigned char new_mask = mask | set.set_[i];
+        if ( mask != new_mask )
+        {
+            set_[i] = new_mask;
+            ++added;
+        }
     }
     return added;
 }
@@ -110,5 +99,4 @@ int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
 void GrammarSymbolSet::swap( GrammarSymbolSet&& set )
 {
     std::swap( set_, set.set_ );
-    std::swap( symbols_, set.symbols_ );
 }

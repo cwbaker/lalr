@@ -150,18 +150,19 @@ std::string GrammarGenerator::label_item( const GrammarItem& item ) const
 
     LALR_ASSERT( item.index() >= 0 && item.index() < int(lookaheads_.size()) );
     const GrammarSymbolSet& lookaheads = lookaheads_[item.index()].lookaheads();
-    if ( !lookaheads.empty() )
+    const char* delimiter = " {";
+    for ( int i = 0; i < int(symbols_.size()); ++i )
     {
-        const char* delimiter = " {";
-        for ( const GrammarSymbol* lookahead : lookaheads )
+        if ( lookaheads.contains(i) )
         {
-            LALR_ASSERT( lookahead );
+            const GrammarSymbol* symbol = symbols_[i].get();
+            LALR_ASSERT( symbol );
             label += delimiter;
             delimiter = ", ";
-            label += lookahead->lexeme();
+            label += symbol->lexeme();
         }
-        label += "}";
     }
+    label += "}";
 
     return label;
 }
@@ -255,7 +256,7 @@ GrammarTransition* GrammarGenerator::reduce_transition( const GrammarSymbol* sym
 */
 GrammarSymbolSet GrammarGenerator::spontaneous_lookaheads( const GrammarItem& item ) const
 {
-    GrammarSymbolSet lookaheads;
+    GrammarSymbolSet lookaheads(symbols_.size());
 
     const GrammarProduction* production = productions_[item.production()].get();
     LALR_ASSERT( production );
@@ -703,20 +704,21 @@ void GrammarGenerator::calculate_reachable_productions_for_symbol( const Grammar
 */
 void GrammarGenerator::generate_spontaneous_lookaheads()
 {
-    lookaheads_.clear();
+    const size_t symbols = symbols_.size();
+    lookaheads_.clear();        
     for ( const shared_ptr<GrammarState>& state : states_ )
     {
         for ( const GrammarItem& item : state->items() )
         {
             int index = int(lookaheads_.size());
             item.set_index( index );
-            lookaheads_.emplace_back( const_cast<GrammarItem*>(&item) );
+            lookaheads_.emplace_back( const_cast<GrammarItem*>(&item), symbols );
             ++index;
         }
     }
 
     {
-        GrammarSymbolSet lookaheads;
+        GrammarSymbolSet lookaheads{ symbols };
         lookaheads.insert( end_symbol_ );
         GrammarItem* start_item = start_state_->find_item( start_symbol_->productions().front(), 0 );
         LALR_ASSERT( start_item );
@@ -946,7 +948,7 @@ void GrammarGenerator::generate_reduce_transitions()
     {
         GrammarState* state = i->get();
         LALR_ASSERT( state );
-            
+
         for ( set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
             const GrammarProduction* production = productions_[item->production()].get();
@@ -954,11 +956,14 @@ void GrammarGenerator::generate_reduce_transitions()
             if ( item->position() >= production->length() )
             {
                 const GrammarSymbolSet& lookaheads = lookaheads_[item->index()].lookaheads();
-                for ( vector<const GrammarSymbol*>::const_iterator j = lookaheads.begin(); j != lookaheads.end(); ++j )
+                for ( int index = 0; index < int(symbols_.size()); ++index )
                 {
-                    const GrammarSymbol* symbol = *j;
-                    LALR_ASSERT( symbol );
-                    generate_reduce_transition( state, symbol, production );
+                    if ( lookaheads.contains(index) )
+                    {
+                        const GrammarSymbol* symbol = symbols_[index].get();
+                        LALR_ASSERT( symbol );
+                        generate_reduce_transition( state, symbol, production );
+                    }
                 }
             }                
         }
