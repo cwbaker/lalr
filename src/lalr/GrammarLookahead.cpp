@@ -6,26 +6,24 @@
 #include "GrammarLookahead.hpp"
 #include "GrammarItem.hpp"
 #include "assert.hpp"
+#include <utility>
 
 using std::vector;
 using namespace lalr;
 
-GrammarLookahead::GrammarLookahead( GrammarItem* item )
+GrammarLookahead::GrammarLookahead( GrammarItem* item, size_t symbols )
 : item_( item )
 , propagate_to_()
-, lookaheads_{}
+, lookaheads_{ symbols }
 {
     LALR_ASSERT( item_ );
 }
 
 GrammarLookahead::GrammarLookahead( GrammarLookahead&& item )
-: item_( nullptr )
-, propagate_to_()
-, lookaheads_()
+: item_{ std::exchange(item.item_, nullptr) }
+, propagate_to_{ std::move(item.propagate_to_) }
+, lookaheads_{ std::move(item.lookaheads_) }
 {
-    std::swap( item_, item.item_ );
-    std::swap( propagate_to_, item.propagate_to_ );
-    std::swap( lookaheads_, item.lookaheads_ );
 }
 
 GrammarItem* GrammarLookahead::item() const
