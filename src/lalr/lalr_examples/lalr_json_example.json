@@ -1,0 +1,11 @@
+{
+    "model": {
+        "format": "Model",
+        "version": 1,
+        "address": "0017FAB0",
+        "items": {
+            "name": "Albert"
+        },
+        "more_items": ["one", 2, 3, "to prove that it's really UTF-8... 😁 😄!"]
+    }
+}

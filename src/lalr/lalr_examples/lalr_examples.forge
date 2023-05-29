@@ -15,6 +15,9 @@ for _, cc in toolsets('^cc.*') do
         libraries = libraries;
         '${lib}/lalr_${platform}_${architecture}';
         cc:Cxx '${obj}/%1' {
+            defines = {
+                ([[LALR_EXAMPLES=\"%s/\"]]):format( pwd() );
+            };
             "lalr_examples.cpp",
             "lalr_error_handling_calculator_example.cpp",
             "lalr_hello_world_example.cpp",
