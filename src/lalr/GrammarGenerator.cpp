@@ -956,7 +956,9 @@ void GrammarGenerator::generate_reduce_transitions()
             if ( item->position() >= production->length() )
             {
                 const GrammarSymbolSet& lookaheads = lookaheads_[item->index()].lookaheads();
-                for ( int index = 0; index < int(symbols_.size()); ++index )
+                int start = lookaheads.minimum_index();
+                int finish = lookaheads.maximum_index();
+                for ( int index = start; index < finish; ++index )
                 {
                     if ( lookaheads.contains(index) )
                     {
