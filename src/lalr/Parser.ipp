@@ -494,7 +494,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_shift( const Par
     if ( debug_enabled_ )
     {
         const ParserSymbol* symbol = node.symbol();
-        const std::string& lexeme = node.lexeme();
+        const std::basic_string<Char, Traits, Allocator>& lexeme = node.lexeme();
         int line = node.line();
         int column = node.column();
         fire_printf( "SHIFT: (%s %s %d:%d)\n", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
@@ -521,14 +521,14 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
 
     if ( debug_enabled_ )
     {
-        fire_printf( "REDUCE: %s <- ", reduced_symbol->identifier );        
+        fire_printf( "REDUCE: %s <- ", reduced_symbol->identifier );
 
         const ParserNode* node = nodes_.data() + start;
         const ParserNode* node_end = nodes_.data() + finish;
         if ( node != node_end )
         {
             const ParserSymbol* symbol = node->symbol();
-            const std::string& lexeme = node->lexeme();
+            const std::basic_string<Char, Traits, Allocator>& lexeme = node->lexeme();
             int line = node->line();
             int column = node->column();
             fire_printf( "(%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
@@ -538,7 +538,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
         while ( node != node_end )
         {
             const ParserSymbol* symbol = node->symbol();
-            const std::string& lexeme = node->lexeme();
+            const std::basic_string<Char, Traits, Allocator>& lexeme = node->lexeme();
             int line = node->line();
             int column = node->column();
             fire_printf( " (%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
