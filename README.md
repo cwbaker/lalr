@@ -183,9 +183,9 @@ Parser<const char*, XmlUserData> parser( xml_parser_state_machine );
 
 Reference a parse table as an `extern` variable for offline generated parse tables.  See [lalr_calculator_example.cpp](#lalr_calculator_example.cpp) for an example of compiling a grammar to parse tables at runtime.
 
-Create a `Parser` object with the parse table as the sole argument to the constructor.  The `Parser` class template requires an iterator type template argument and optionally allows for user data, character type, character traits, and allocator to be overridden.
+Create a `Parser` object with the parse table as the sole argument to the constructor.  The `Parser` class template requires an iterator type template argument and optionally allows for user data; and character type, traits, and allocator to be overridden.  In the above example the iterator type is `const char*`, user data is the custom `XmlUserData` type, and the character parameters default to those implied by the iterator.
 
-In the above example the iterator type is `const char*` and the user data is the custom `XmlUserData` type.
+Change the `Iterator` template parameter to read input from different sources and convert character encodings, e.g. from UTF-8 in a file to UTF-32 in memory.  See [lalr_json_example.cpp](lalr/lalr_examples/lalr_json_example.cpp) for an example of reading a UTF-8 encoded file to UTF-32, `char32_t` in memory.  To parse UTF-8 input to UTF-8 encoding in memory it is usually sufficient to use a iterator templated to `unsigned char` or `uint8_t`, see [lalr_xml_example.cpp](lalr/lalr_examples/lalr_xml_example.cpp) for an example of doing so in practice.
 
 **3. Bind lexer action handlers**
 
