@@ -32,7 +32,7 @@ class GrammarSymbol
     std::multimap<const GrammarSymbol*, GrammarProduction*> reachable_productions_by_first_symbol_; ///< The productions reachable by right-most derivation from this symbol by their first symbol.
 
 public:
-    GrammarSymbol( const std::string& lexeme );
+    GrammarSymbol( const char* lexeme );
 
     inline const std::string& lexeme() const;
     inline const std::string& identifier() const;
@@ -51,7 +51,7 @@ public:
     inline const std::multimap<const GrammarSymbol*, GrammarProduction*>& reachable_productions_by_first_symbol() const;
     std::multimap<const GrammarSymbol*, GrammarProduction*>::const_iterator find_reachable_productions( const GrammarSymbol& first_symbol ) const;
     GrammarSymbol* implicit_terminal() const;
-    bool matches( const std::string& lexeme, SymbolType symbol_type ) const;
+    bool matches( const char* lexeme, SymbolType symbol_type ) const;
 
     void set_lexeme( const std::string& lexeme );
     void set_identifier( const std::string& identifier );

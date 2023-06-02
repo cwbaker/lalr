@@ -9,7 +9,7 @@
 
 using namespace lalr;
 
-GrammarSymbol::GrammarSymbol( const std::string& lexeme )
+GrammarSymbol::GrammarSymbol( const char* lexeme )
 : lexeme_( lexeme )
 , identifier_()
 , symbol_type_( SYMBOL_NULL )
@@ -66,8 +66,9 @@ GrammarSymbol* GrammarSymbol::implicit_terminal() const
 }
 
 
-bool GrammarSymbol::matches( const std::string& lexeme, SymbolType symbol_type ) const
+bool GrammarSymbol::matches( const char* lexeme, SymbolType symbol_type ) const
 {
+    LALR_ASSERT( lexeme );
     return lexeme_ == lexeme && symbol_type_ == symbol_type;
 }
 
