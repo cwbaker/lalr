@@ -11,7 +11,7 @@ class GrammarSymbol;
 
 class GrammarSymbolSet
 {
-    std::vector<unsigned char> set_;
+    std::vector<size_t> set_;
 
 public:
     GrammarSymbolSet( size_t symbols );
