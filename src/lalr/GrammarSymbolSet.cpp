@@ -123,6 +123,6 @@ int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
         }
     }
     minimum_ = min( minimum_, set.minimum_ );
-    maximum_ = min( maximum_, set.maximum_ );
+    maximum_ = max( maximum_, set.maximum_ );
     return added;
 }
