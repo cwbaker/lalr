@@ -327,7 +327,9 @@ Grammar& Grammar::identifier( const char* identifier, int line )
         }
         else
         {
-            active_production_->append_symbol( non_terminal_symbol(identifier, line) );
+            GrammarSymbol* symbol = non_terminal_symbol(identifier, line );
+            symbol->set_referenced_in_rule(true);
+            active_production_->append_symbol( symbol );
         }
     }
     return *this;

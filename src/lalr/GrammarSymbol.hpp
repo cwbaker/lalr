@@ -26,6 +26,7 @@ class GrammarSymbol
     int index_; ///< The index of this symbol among all symbols.
     bool nullable_; ///< True if this symbol is nullable otherwise false.
     bool referenced_in_precedence_directive_; ///< True if this symbol is referenced by a %precedence directive.
+    bool referenced_in_rule_; ///< True if this symbol is referenced by a rule.
     GrammarSymbolSet first_; ///< The symbols that can start this symbol in a production or regular expression.
     GrammarSymbolSet follow_; ///< The symbols that can follow this symbol in a production or regular expression.
     std::vector<GrammarProduction*> productions_; ///< The productions that reduce to this symbol.
@@ -45,6 +46,7 @@ public:
     inline int index() const;
     inline bool nullable() const;
     inline bool referenced_in_precedence_directive() const;
+    inline bool referenced_in_rule() const;
     inline const GrammarSymbolSet& first() const;
     inline const GrammarSymbolSet& follow() const;
     inline const std::vector<GrammarProduction*>& productions() const;
@@ -63,6 +65,7 @@ public:
     void set_index( int index );
     void set_nullable( bool nullable );
     void set_referenced_in_precedence_directive( bool referenced_in_precedence_directive );
+    void set_referenced_in_rule( bool referenced_in_rule );
     void append_production( GrammarProduction* production );
     void append_reachable_production( GrammarProduction* production );
     void calculate_identifier();
