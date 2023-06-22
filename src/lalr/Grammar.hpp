@@ -65,6 +65,7 @@ public:
     Grammar& literal( const char* literal, int line );
     Grammar& regex( const char* regex, int line );
     Grammar& identifier( const char* identifier, int line );
+    void genEBNF();
 
 private:
     GrammarSymbol* literal_symbol( const char* lexeme, int line );
