@@ -79,6 +79,7 @@ public:
     void parse( Iterator start, Iterator finish );
     bool parse( const void* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
     bool parse( const ParserSymbol* symbol, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
+    void dumpLex( Iterator start, Iterator finish );
     
 private:
     const ParserTransition* find_transition( const ParserSymbol* symbol, const ParserState* state ) const;
