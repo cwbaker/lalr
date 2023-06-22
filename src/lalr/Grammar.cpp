@@ -369,7 +369,7 @@ GrammarSymbol* Grammar::add_symbol( const char* lexeme, int line, LexemeType lex
         symbol->set_line( line );
         symbol->set_lexeme_type( lexeme_type );
         symbol->set_symbol_type( symbol_type );
-        symbols_.push_back( move(symbol) );
+        symbols_.push_back( std::move(symbol) );
         return symbols_.back().get();
     }
 
@@ -389,12 +389,12 @@ GrammarProduction* Grammar::add_production( GrammarSymbol* symbol, int line )
         unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), start_symbol_, 0, 0, NULL) );
         production->append_symbol( symbol );
         start_symbol_->append_production( production.get() );
-        productions_.push_back( move(production) );
+        productions_.push_back( std::move(production) );
     }
 
     unique_ptr<GrammarProduction> production( new GrammarProduction(int(productions_.size()), symbol, line, -1, nullptr) );
     symbol->append_production( production.get() );
-    productions_.push_back( move(production) );
+    productions_.push_back( std::move(production) );
     return productions_.back().get();
 }
 
@@ -410,7 +410,7 @@ GrammarAction* Grammar::add_action( const char* identifier )
     {
         int index = int(actions_.size());
         unique_ptr<GrammarAction> action( new GrammarAction(index, identifier) );
-        actions_.push_back( move(action) );
+        actions_.push_back( std::move(action) );
         return actions_.back().get();
     }
     return i->get();
