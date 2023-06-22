@@ -72,6 +72,11 @@ bool GrammarSymbol::referenced_in_precedence_directive() const
     return referenced_in_precedence_directive_;
 }
 
+bool GrammarSymbol::referenced_in_rule() const
+{
+    return referenced_in_rule_;
+}
+
 const GrammarSymbolSet& GrammarSymbol::first() const
 {
     return first_;

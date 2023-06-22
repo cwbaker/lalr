@@ -328,6 +328,7 @@ Grammar& Grammar::identifier( const char* identifier, int line, int column )
         else
         {
             GrammarSymbol* symbol = non_terminal_symbol( identifier, line, column );
+            symbol->set_referenced_in_rule( true );
             active_production_->append_symbol( symbol );
         }
     }
