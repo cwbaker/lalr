@@ -42,6 +42,10 @@ int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* er
     {
         error( 1, LALR_ERROR_SYNTAX, "parsing grammar failed" );
     }
+    if( grammar_->whitespace_tokens().empty() )
+    {
+        error(line_, PARSER_ERROR_UNDEFINED_SYMBOL, "no '%%whitespace' directive defined" );
+    }
     return errors_;
 }
 
