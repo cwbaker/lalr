@@ -8,7 +8,7 @@
 
 using namespace lalr;
 
-extern void write( const char* format, ... );
+extern void writeToOutput( const char* format, ... );
 
 namespace lalr
 {
@@ -17,23 +17,23 @@ void write_graphviz_dot( const ParserStateMachine* state_machine )
 {
     LALR_ASSERT( state_machine );
 
-    write( "digraph %s {\n", state_machine->identifier );
-    write( "  rankdir = LR;\n" );
-    write( "  size = \"8, 5\";\n" );
-    write( "  bgcolor = transparent;\n" );
-    write( "\n" );
-    write( "  node [shape = circle];\n" );
+    writeToOutput( "digraph %s {\n", state_machine->identifier );
+    writeToOutput( "  rankdir = LR;\n" );
+    writeToOutput( "  size = \"8, 5\";\n" );
+    writeToOutput( "  bgcolor = transparent;\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "  node [shape = circle];\n" );
 
     const ParserState* states = state_machine->states;
     const ParserState* states_end = states + state_machine->states_size;
     for ( const ParserState* state = states; state != states_end; ++state )
     {
-        write( "  node [label =\"%s\"] i%d;\n",
+        writeToOutput( "  node [label =\"%s\"] i%d;\n",
             state->label,
             state->index
         );
     }
-    write( "\n" );
+    writeToOutput( "\n" );
 
     for ( const ParserState* state = states; state != states_end; ++state )
     {
@@ -43,7 +43,7 @@ void write_graphviz_dot( const ParserStateMachine* state_machine )
         {
             if ( transition->state )
             {
-                write( "  i%d -> i%d [label =\"%s\"];\n",
+                writeToOutput( "  i%d -> i%d [label =\"%s\"];\n",
                     state->index,
                     transition->state->index,
                     transition->symbol->label
@@ -52,7 +52,7 @@ void write_graphviz_dot( const ParserStateMachine* state_machine )
         }
     }
 
-    write( "}\n" );
+    writeToOutput( "}\n" );
 }
 
 }
