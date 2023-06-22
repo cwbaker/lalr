@@ -346,6 +346,84 @@ Grammar& Grammar::identifier( const char* identifier, int line, int column )
     return *this;
 }
 
+static void ouptputTerminal(const GrammarSymbol *sym)
+{
+    if(sym->symbol_type() == SYMBOL_TERMINAL) {
+        if(sym->lexeme_type() == LEXEME_LITERAL)
+            printf("'%s'", sym->lexeme().c_str());
+        else
+            printf("\"%s\"", sym->lexeme().c_str());
+    }
+    else
+        printf("%s", sym->lexeme().c_str());
+}
+
+static bool isTerminalRegex(const GrammarSymbol *symbol)
+{
+    return symbol->symbol_type() == SymbolType::SYMBOL_TERMINAL
+            && symbol->lexeme_type() == LexemeType::LEXEME_REGULAR_EXPRESSION;
+}
+
+void Grammar::genEBNF()
+{
+    printf(
+            "//\n"
+            "// EBNF to be viewd at https://www.bottlecaps.de/rr/ui\n"
+            "//\n"
+            "// Copy and paste this at https://www.bottlecaps.de/rr/ui in the 'Edit Grammar' tab \n"
+            "// then click the 'View Diagram' tab.\n"
+            "//\n"
+            );
+    GrammarSymbol* last_production_symbol = NULL;
+    bool production_continuation = false;
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions().begin(); i != productions().end(); ++i )
+    {
+        GrammarProduction* production = i->get();
+        LALR_ASSERT( production );
+        GrammarSymbol *curr_symbol = production->symbol();
+        bool same_production = last_production_symbol && last_production_symbol == curr_symbol;
+        const char *prefix = (isTerminalRegex(curr_symbol) 
+                    || (production->length() == 1 && isTerminalRegex(production->symbol_by_position(0)))) 
+                    ? "//" : "";
+        if(same_production) {
+            production_continuation = true;
+            //printf(" //%s ::= %d", production->symbol()->lexeme().c_str(), production->length());
+        }
+        else {
+            production_continuation = false;
+            const char *sym_prefix = "";
+            const char *sym_name = curr_symbol->lexeme().c_str();
+            if(sym_name[0] == '.')
+            {
+                ++sym_name;
+                sym_prefix = "ebnf_x_";
+            }
+            //printf("\n\n%s%s ::= // %d\n\t", sym_prefix, sym_name, production->length());
+            printf("\n\n%s%s%s ::=\n%s\t", prefix, sym_prefix, sym_name, prefix);
+        }
+        if(production->length() > 0) {
+            for(int elm=0; elm < production->length(); ++elm) {
+                const GrammarSymbol *sym = production->symbol_by_position(elm);
+                if(production_continuation) {
+                    production_continuation = false;
+                    printf("\n%s\t| ", prefix);
+                }
+                else printf(" ");
+                ouptputTerminal(sym);
+            }
+        }
+        else {
+            printf("/*empty*/");
+        }
+        if(production->precedence_symbol()) {
+            printf(" //%%precedence ");
+            ouptputTerminal(production->precedence_symbol());
+        }
+        last_production_symbol = curr_symbol;
+    }
+    printf("\n\n// end EBNF\n");
+}
+
 GrammarSymbol* Grammar::literal_symbol( const char* lexeme, int line, int column )
 {
     LALR_ASSERT( lexeme );

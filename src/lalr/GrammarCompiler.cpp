@@ -73,7 +73,7 @@ void GrammarCompiler::labels_enabled( bool enabled )
     labels_enabled_ = enabled;
 }
 
-int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
+int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF )
 {
     Grammar grammar;
 
@@ -81,6 +81,11 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
     int errors = parser.parse( begin, end, error_policy, &grammar );
     if ( errors == 0 )
     {
+        if(genEBNF)
+        {
+            grammar.genEBNF();
+            return errors;
+        }
         GrammarGenerator generator;
         errors = generator.generate( grammar, error_policy );
 
