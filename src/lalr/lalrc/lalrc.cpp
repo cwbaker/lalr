@@ -368,6 +368,8 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     write( "    %d, // #symbols\n", state_machine->symbols_size );
     write( "    %d, // #transitions\n", state_machine->transitions_size );
     write( "    %d, // #states\n", state_machine->states_size );
+    write( "    %d, // #shift_reduce_count\n", state_machine->shift_reduce_count_ );
+    write( "    %d, // #reduce_reduce_count\n", state_machine->reduce_reduce_count_ );
     write( "    actions,\n" );
     write( "    symbols,\n" );
     write( "    transitions,\n" );

@@ -52,6 +52,8 @@ class GrammarGenerator
     GrammarSymbol* whitespace_symbol_; ///< The whitespace symbol.
     GrammarState* start_state_; ///< The start state.
     int errors_; ///< The number of errors that occured during parsing and generation.
+    int shift_reduce_count_; ///< The number of shift/reduce resolved conflicts that occured during parsing and generation.
+    int reduce_reduce_count_; ///< The number of reduce/reduce resolved conflicts that occured during parsing and generation.
 
 public:
     GrammarGenerator();
@@ -65,7 +67,9 @@ public:
     std::string label_state( const GrammarState& state ) const;
     std::string label_item( const GrammarItem& item ) const;
     int generate( Grammar& grammar, ErrorPolicy* error_policy );
-            
+    int shift_reduce_count() const {return shift_reduce_count_;}
+    int reduce_reduce_count() const {return reduce_reduce_count_;}
+
 private:
     void error( int line, int error, const char* format, ... );
     GrammarTransition* shift_transition( const GrammarSymbol* symbol, GrammarState* state );
@@ -79,7 +83,7 @@ private:
     void check_for_error_symbol_on_left_hand_side_errors();
     void check_for_implicit_terminal_duplicate_associativity();
     void calculate_identifiers();
-    void calculate_terminal_and_non_terminal_symbols();    
+    void calculate_terminal_and_non_terminal_symbols();
     void calculate_implicit_terminal_symbols();
     void calculate_precedence_of_productions();
     void calculate_symbol_indices();

@@ -40,6 +40,7 @@ public:
     const ParserStateMachine* parser_state_machine() const;
     void labels_enabled( bool enabled );
     int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr, bool genEBNF = false );
+    void showStats();
 
 private:
     const char* add_string( const std::string& string );

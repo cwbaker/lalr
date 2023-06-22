@@ -28,6 +28,8 @@ public:
     int symbols_size; ///< The number of symbols.
     int transitions_size; ///< The total number of transitions.
     int states_size; ///< The number of states.
+    int shift_reduce_count_; ///< The number of shift/reduce resolved conflicts that occured during parsing and generation.
+    int reduce_reduce_count_; ///< The number of reduce/reduce resolved conflicts that occured during parsing and generation.
     const ParserAction* actions; ///< The parser actions for this ParserStateMachine.
     const ParserSymbol* symbols; ///< The symbols in the grammar for this ParserStateMachine.
     const ParserTransition* transitions; ///< The transitions in the state machine for this ParserStateMachine.
