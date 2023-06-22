@@ -146,6 +146,33 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
     return user_data_.front();
 }
 
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::dumpLex( Iterator start, Iterator finish )
+{
+    LALR_ASSERT( state_machine_ );
+
+    reset();
+    lexer_.reset( start, finish );
+    lexer_.advance();
+    printf("=line:column:type:index:identifier:lexeme:value\n");
+    while ( !lexer_.full() )
+    {
+        const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
+        //printf("%d:%d:%d:%d:[%s]:[%s]:[%s]\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index, symbol->identifier, symbol->lexeme, lexer_.lexeme().c_str());
+        //printf("%d:%d:%d:%d:[%s]\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index, symbol->identifier);
+        //printf("%d:%d:%d:%d\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index);
+        //printf("%d:%d:%p\n", lexer_.line(), lexer_.column(), symbol);
+        printf("%d:%d:", lexer_.line(), lexer_.column());
+        if(symbol) printf("%d:%d:[%s]:[%s]", symbol->type, symbol->index, symbol->identifier, symbol->lexeme);
+        else printf("-1:-1:[]:[]");
+        printf(":[%s]\n", lexer_.lexeme().c_str());
+        //fflush(stdout);
+        lexer_.advance();
+    }
+
+    full_ = lexer_.full();
+}
+
 
 /**
 // Get the Lexer that is being used by this Parser.
