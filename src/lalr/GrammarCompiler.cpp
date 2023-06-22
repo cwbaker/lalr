@@ -149,7 +149,7 @@ void GrammarCompiler::set_actions( std::unique_ptr<ParserAction[]>& actions, int
     LALR_ASSERT( parser_state_machine_ );
     LALR_ASSERT( actions || actions_size == 0 );
     LALR_ASSERT( actions_size >= 0 );
-    actions_ = move( actions );
+    actions_ = std::move( actions );
     parser_state_machine_->actions_size = actions_size;
     parser_state_machine_->actions = actions_.get();
 }
@@ -159,7 +159,7 @@ void GrammarCompiler::set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int
     LALR_ASSERT( parser_state_machine_ );
     LALR_ASSERT( symbols );
     LALR_ASSERT( symbols_size >= 3 );
-    symbols_ = move( symbols );
+    symbols_ = std::move( symbols );
     parser_state_machine_->symbols_size = symbols_size;
     parser_state_machine_->symbols = symbols_.get();
     parser_state_machine_->start_symbol = &symbols_[0];
@@ -172,7 +172,7 @@ void GrammarCompiler::set_transitions( std::unique_ptr<ParserTransition[]>& tran
 {
     LALR_ASSERT( transitions );
     LALR_ASSERT( transitions_size >= 0 );
-    transitions_ = move( transitions );
+    transitions_ = std::move( transitions );
     parser_state_machine_->transitions_size = transitions_size;
     parser_state_machine_->transitions = transitions_.get();
 }
@@ -182,7 +182,7 @@ void GrammarCompiler::set_states( std::unique_ptr<ParserState[]>& states, int st
     LALR_ASSERT( states );
     LALR_ASSERT( states_size >= 0 );
     LALR_ASSERT( start_state );
-    states_ = move( states );
+    states_ = std::move( states );
     parser_state_machine_->states_size = states_size;
     parser_state_machine_->states = states_.get();
     parser_state_machine_->start_state = start_state;
