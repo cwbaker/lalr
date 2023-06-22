@@ -143,6 +143,17 @@ Grammar& Grammar::whitespace()
     return *this;
 }
 
+Grammar& Grammar::assoc_prec( int /*line*/ )
+{
+    associativity_ = ASSOCIATE_PREC;
+    ++precedence_;
+    active_whitespace_directive_ = false;
+    active_precedence_directive_ = false;
+    active_production_ = nullptr;
+    active_symbol_ = nullptr;
+    return *this;
+}
+
 Grammar& Grammar::precedence()
 {
     LALR_ASSERT( active_symbol_ );

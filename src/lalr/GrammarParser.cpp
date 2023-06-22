@@ -161,9 +161,14 @@ bool GrammarParser::match_associativity()
         grammar_->right( line_ );
         return true;
     }
-    else if ( match("%none") )
+    else if ( match("%none") || match("%nonassoc"))
     {
         grammar_->none( line_ );
+        return true;
+    }
+    else if ( match("%precedence") )
+    {
+        grammar_->assoc_prec( line_ );
         return true;
     }
     return false;
@@ -188,7 +193,7 @@ bool GrammarParser::match_expression()
 
 bool GrammarParser::match_precedence()
 {
-    if ( match("%precedence") )
+    if ( match("%precedence") || match("%prec") )
     {
         grammar_->precedence();
         match_symbol();
