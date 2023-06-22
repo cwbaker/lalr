@@ -15,7 +15,9 @@ namespace lalr
 {
 
 class ErrorPolicy;
+#ifndef LALR_NO_THREADS
 class ThreadPool;
+#endif
 class LexerStateMachine;
 class GrammarCompiler;
 class GrammarAction;
@@ -34,7 +36,9 @@ class Grammar;
 class GrammarGenerator
 {
     ErrorPolicy* error_policy_; ///< The event sink to report errors to and print with or null to ignore errors and prints.
+#ifndef LALR_NO_THREADS
     ThreadPool* thread_pool_; ///< The pool of threads to use to generate the parser.
+#endif
     std::string identifier_; ///< The identifier of the parser.
     std::vector<std::unique_ptr<GrammarAction>> actions_; ///< The actions in the parser.
     std::vector<std::unique_ptr<GrammarProduction>> productions_; ///< The productions in the parser.

@@ -21,7 +21,9 @@
 #include "ParserStateMachine.hpp"
 #include "RegexGenerator.hpp"
 #include "RegexCompiler.hpp"
+#ifndef LALR_NO_THREADS
 #include "ThreadPool.hpp"
+#endif
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
@@ -49,7 +51,9 @@ using namespace lalr;
 */
 GrammarGenerator::GrammarGenerator()
 : error_policy_( nullptr )
+#ifndef LALR_NO_THREADS
 , thread_pool_( nullptr )
+#endif
 , identifier_()
 , actions_()
 , productions_()
@@ -64,14 +68,18 @@ GrammarGenerator::GrammarGenerator()
 , start_state_( nullptr )
 , errors_( 0 )
 {
+#ifndef LALR_NO_THREADS
     thread_pool_ = new ThreadPool;
     thread_pool_->start( 8 );
+#endif
 }
 
 GrammarGenerator::~GrammarGenerator()
 {
+#ifndef LALR_NO_THREADS
     delete thread_pool_;
     thread_pool_ = nullptr;
+#endif
 }
 
 const std::vector<std::unique_ptr<GrammarAction>>& GrammarGenerator::actions() const
@@ -756,7 +764,9 @@ void GrammarGenerator::generate_goto_items()
 {
     for ( const shared_ptr<GrammarState>& state : states_ )
     {
+#ifndef LALR_NO_THREADS        
         thread_pool_->push_job( [this, state]()
+#endif            
             {
                 for ( GrammarTransition* transition : state->transitions() )
                 {
@@ -799,9 +809,13 @@ void GrammarGenerator::generate_goto_items()
                     }
                 }
             }
+#ifndef LALR_NO_THREADS    
         );
+#endif
     }
-    thread_pool_->wait_idle();    
+#ifndef LALR_NO_THREADS    
+    thread_pool_->wait_idle();
+#endif
 }
 
 /**
