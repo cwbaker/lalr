@@ -93,7 +93,7 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
         {
             populate_parser_state_machine( grammar, generator );
 
-            // Generate tokens for generating the lexical analyzer from each of 
+            // Generate tokens for generating the lexical analyzer from each of
             // the terminal symbols in the grammar.
             vector<RegexToken> tokens;
             int column = 1;
@@ -171,7 +171,7 @@ void GrammarCompiler::set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int
     parser_state_machine_->end_symbol = &symbols_[1];
     parser_state_machine_->error_symbol = &symbols_[2];
     parser_state_machine_->whitespace_symbol = &symbols_[3];
-} 
+}
 
 void GrammarCompiler::set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size )
 {
@@ -283,4 +283,26 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     set_symbols( symbols, symbols_size );
     set_transitions( transitions, transitions_size );
     set_states( states, states_size, start_state );
+    parser_state_machine_->shift_reduce_count_ = generator.shift_reduce_count();
+    parser_state_machine_->reduce_reduce_count_ = generator.reduce_reduce_count();
+}
+
+#include "LexerStateMachine.hpp"
+
+void GrammarCompiler::showStats()
+{
+    const ParserStateMachine *psm = parser_state_machine_.get();
+    printf("Parser state machine stats:\n");
+    printf("    Symbols          : %d\n", psm->symbols_size);
+    printf("    Actions          : %d\n", psm->actions_size);
+    printf("    States           : %d\n", psm->states_size);
+    printf("    Transitions      : %d\n", psm->transitions_size);
+    printf("    Solved conflicts : shift/reduce = %d, reduce/reduce = %d\n", psm->shift_reduce_count_, psm->reduce_reduce_count_);
+    const LexerStateMachine* lsm = lexer_->state_machine();
+    if(!lsm) return;
+    printf("Lexer state machine stats:\n");
+    printf("    Strings          : %zd\n", lexer_->strings_size());
+    printf("    Actions          : %d\n", lsm->actions_size);
+    printf("    States           : %d\n", lsm->states_size);
+    printf("    Transitions      : %d\n", lsm->transitions_size);
 }

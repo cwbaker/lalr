@@ -67,6 +67,8 @@ GrammarGenerator::GrammarGenerator()
 , whitespace_symbol_( nullptr )
 , start_state_( nullptr )
 , errors_( 0 )
+, shift_reduce_count_( 0 )
+, reduce_reduce_count_( 0 )
 {
 #ifndef LALR_NO_THREADS
     thread_pool_ = new ThreadPool;
@@ -1020,6 +1022,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
             {
                 transition->override_shift_to_reduce( production );
+                ++shift_reduce_count_;
             }
         }
         else
@@ -1032,6 +1035,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             else if ( production->precedence() > transition->precedence() )
             {
                 transition->override_reduce_to_reduce( production );
+                ++reduce_reduce_count_;
             }
         }
     }

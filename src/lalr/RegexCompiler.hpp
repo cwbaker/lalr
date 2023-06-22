@@ -39,6 +39,7 @@ public:
     void set_transitions( std::unique_ptr<LexerTransition[]>& transitions, int transitions_size );
     void set_states( std::unique_ptr<LexerState[]>& states, int states_size, const LexerState* start_state );
     void populate_lexer_state_machine( const RegexGenerator& generator );
+    size_t strings_size() {return strings_.size();};
 };
 
 }
