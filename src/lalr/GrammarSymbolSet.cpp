@@ -15,8 +15,8 @@ using std::vector;
 using std::numeric_limits;
 using namespace lalr;
 
-static const size_t ONE = 1;
-static const size_t BITS_PER_ELEMENT = sizeof(size_t) * 8;
+#define VECTOR_SET_T_ONE ((vector_set_t)1)
+#define BITS_PER_ELEMENT (sizeof(vector_set_t) * 8)
 
 GrammarSymbolSet::GrammarSymbolSet( size_t symbols )
 : set_()
@@ -72,12 +72,12 @@ int GrammarSymbolSet::maximum_index() const
     return int((maximum_ + 1) * BITS_PER_ELEMENT);
 }
 
-bool GrammarSymbolSet::contains( int symbol_index ) const
+bool GrammarSymbolSet::contains( size_t symbol_index ) const
 {
     size_t index = symbol_index / BITS_PER_ELEMENT;
     if ( index >= minimum_ && index <= maximum_ )
     {
-        size_t mask = ONE << (symbol_index % BITS_PER_ELEMENT);
+        vector_set_t mask = VECTOR_SET_T_ONE << (symbol_index % BITS_PER_ELEMENT);
         return (set_[index] & mask) != 0;
     }
     return false;
@@ -92,7 +92,7 @@ bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
         {
             set_.insert( set_.end(), index - set_.size() + 1, 0 );
         }
-        size_t mask = ONE << (symbol->index() % BITS_PER_ELEMENT);
+        vector_set_t mask = VECTOR_SET_T_ONE << (symbol->index() % BITS_PER_ELEMENT);
         if ( !(set_[index] & mask) )
         {
             set_[index] |= mask;
@@ -114,8 +114,8 @@ int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
     int added = 0;
     for ( size_t i = set.minimum_; i < set.maximum_ + 1; ++i )
     {
-        size_t mask = set_[i];
-        size_t new_mask = mask | set.set_[i];
+        vector_set_t mask = set_[i];
+        vector_set_t new_mask = mask | set.set_[i];
         if ( mask != new_mask )
         {
             set_[i] = new_mask;
