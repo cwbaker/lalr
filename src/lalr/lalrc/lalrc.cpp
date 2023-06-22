@@ -296,15 +296,15 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
     const ParserSymbol* symbols_end = symbols + state_machine->symbols_size;
     for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
     {
-        write( "    {%d, \"%s\", \"%s\", \"%s\", (SymbolType) %d},\n", 
-            symbol->index, 
-            symbol->identifier, 
+        write( "    {%d, (SymbolType) %d, \"%s\", \"%s\", \"%s\"},\n",
+            symbol->index,
+            symbol->type,
+            symbol->identifier,
             sanitize(symbol->lexeme).c_str(),
-            sanitize(symbol->label).c_str(),
-            symbol->type
+            sanitize(symbol->label).c_str()
         );
     }
-    write( "    {-1, nullptr, nullptr, nullptr, (SymbolType) 0}\n" );
+    write( "    {-1, (SymbolType) 0, nullptr, nullptr, nullptr}\n" );
     write( "};\n" );
     write( "\n" );
 
