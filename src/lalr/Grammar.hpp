@@ -54,6 +54,7 @@ public:
     Grammar& left( int line );
     Grammar& right( int line );
     Grammar& none( int line );
+    Grammar& assoc_prec( int line );
     Grammar& whitespace();
     Grammar& precedence();
     Grammar& production( const char* identifier, int line );
