@@ -387,6 +387,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start,
         const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
         while ( parse(symbol, lexer_.lexeme(), lexer_.line(), lexer_.column()) )
         {
+            if(lexer_.full()) break;
             lexer_.advance();
             symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
         }
