@@ -15,7 +15,7 @@ using std::vector;
 using std::numeric_limits;
 using namespace lalr;
 
-#define VECTOR_SET_T_ONE ((vector_set_t)1)
+#define VECTOTR_SET_T_ONE ((vector_set_t)1)
 #define BITS_PER_ELEMENT (sizeof(vector_set_t) * 8)
 
 GrammarSymbolSet::GrammarSymbolSet( size_t symbols )
@@ -59,25 +59,25 @@ GrammarSymbolSet& GrammarSymbolSet::operator=( const GrammarSymbolSet& set )
         minimum_ = set.minimum_;
         maximum_ = set.maximum_;
     }
-    return *this;    
+    return *this;
 }
 
-int GrammarSymbolSet::minimum_index() const
+size_t GrammarSymbolSet::minimum_index() const
 {
-    return int(minimum_ * BITS_PER_ELEMENT);
+    return minimum_;
 }
 
-int GrammarSymbolSet::maximum_index() const
+size_t GrammarSymbolSet::maximum_index() const
 {
-    return int((maximum_ + 1) * BITS_PER_ELEMENT);
+    return maximum_ ;
 }
 
 bool GrammarSymbolSet::contains( size_t symbol_index ) const
 {
-    size_t index = symbol_index / BITS_PER_ELEMENT;
-    if ( index >= minimum_ && index <= maximum_ )
+    if ( symbol_index >= minimum_ && symbol_index <= maximum_ )
     {
-        vector_set_t mask = VECTOR_SET_T_ONE << (symbol_index % BITS_PER_ELEMENT);
+        size_t index = symbol_index / BITS_PER_ELEMENT;
+        vector_set_t mask = VECTOTR_SET_T_ONE << (symbol_index % BITS_PER_ELEMENT);
         return (set_[index] & mask) != 0;
     }
     return false;
@@ -87,17 +87,18 @@ bool GrammarSymbolSet::insert( const GrammarSymbol* symbol )
 {
     if ( symbol )
     {
-        size_t index = symbol->index() / BITS_PER_ELEMENT;
+        size_t symbol_index = symbol->index();
+        size_t index = symbol_index / BITS_PER_ELEMENT;
         if ( index >= set_.size() )
         {
             set_.insert( set_.end(), index - set_.size() + 1, 0 );
         }
-        vector_set_t mask = VECTOR_SET_T_ONE << (symbol->index() % BITS_PER_ELEMENT);
+        vector_set_t mask = VECTOTR_SET_T_ONE << (symbol_index % BITS_PER_ELEMENT);
         if ( !(set_[index] & mask) )
         {
             set_[index] |= mask;
-            minimum_ = min( minimum_, index );
-            maximum_ = max( maximum_, index );
+            minimum_ = min( minimum_, symbol_index );
+            maximum_ = max( maximum_, symbol_index );
             return true;
         }
     }
@@ -112,7 +113,7 @@ int GrammarSymbolSet::insert( const GrammarSymbolSet& set )
     }
 
     int added = 0;
-    for ( size_t i = set.minimum_; i < set.maximum_ + 1; ++i )
+    for ( size_t i = 0, imax = set.set_.size(); i < imax; ++i )
     {
         vector_set_t mask = set_[i];
         vector_set_t new_mask = mask | set.set_[i];

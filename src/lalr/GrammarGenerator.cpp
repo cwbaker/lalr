@@ -972,9 +972,9 @@ void GrammarGenerator::generate_reduce_transitions()
             if ( item->position() >= production->length() )
             {
                 const GrammarSymbolSet& lookaheads = lookaheads_[item->index()].lookaheads();
-                int start = lookaheads.minimum_index();
-                int finish = lookaheads.maximum_index();
-                for ( int index = start; index < finish; ++index )
+                size_t start = lookaheads.minimum_index();
+                size_t finish = lookaheads.maximum_index();
+                for ( size_t index = start; index <= finish; ++index )
                 {
                     if ( lookaheads.contains(index) )
                     {
@@ -983,7 +983,7 @@ void GrammarGenerator::generate_reduce_transitions()
                         generate_reduce_transition( state, symbol, production );
                     }
                 }
-            }                
+            }
         }
     }
 }

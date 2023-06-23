@@ -23,8 +23,8 @@ public:
     GrammarSymbolSet& operator=( GrammarSymbolSet&& set );
     GrammarSymbolSet& operator=( const GrammarSymbolSet& set );
 
-    int minimum_index() const;
-    int maximum_index() const;
+    size_t minimum_index() const;
+    size_t maximum_index() const;
     bool contains( size_t symbol_index ) const;
     bool insert( const GrammarSymbol* symbol );
     int insert( const GrammarSymbolSet& set );
