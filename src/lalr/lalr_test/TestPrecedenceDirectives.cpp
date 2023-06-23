@@ -76,6 +76,7 @@ SUITE( PrecedenceDirectives )
     TEST( MissingGrammarHeader )
     {
         const char* grammar =
+            "   %whitespace \"[ \\t\\r\\n]*\"; \n"
             "   %left 'int' float' 'void'; \n"
             "} \n"
         ;
@@ -88,6 +89,7 @@ SUITE( PrecedenceDirectives )
     {
         const char* grammar =
             "missing_footer { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\"; \n"
             "   %left 'int' 'float' 'void'; \n"
         ;
         EventSink event_sink( LALR_ERROR_SYNTAX );
@@ -99,6 +101,7 @@ SUITE( PrecedenceDirectives )
     {
         const char* grammar =
             "unterminated_directive_literals { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\"; \n"
                 "%left 'int' float' 'void'; \n"
                 "%left 'return' 'break' 'continue' 'if' 'while' 'for' identifier '{'; \n"
             "} \n"
