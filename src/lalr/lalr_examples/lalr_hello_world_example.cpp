@@ -11,6 +11,7 @@ void lalr_hello_world_example()
 {
     const char* hello_world_grammar = 
         "hello_world {\n"
+        "   %whitespace \"[ \\t\\r\\n]\" ;\n"
         "   hello_world: 'Hello World!' [hello_world];\n"
         "}\n"
     ;

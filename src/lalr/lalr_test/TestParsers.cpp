@@ -106,6 +106,7 @@ SUITE( Parsers )
     {
         const char* or_grammar = 
             "OrOperator {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   unit: one | two | three;\n"
             "   one: '1';\n"
             "   two: '2';\n"
@@ -146,6 +147,7 @@ SUITE( Parsers )
     {
         const char* alternate_grammar =
             "Alternate {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   unit: one two_three;\n"
             "   two_three: two | three;\n"
             "   one: '1';\n"
@@ -183,6 +185,7 @@ SUITE( Parsers )
     {
         const char* zero_to_many_repeats_grammar = 
             "ZeroToManyRepeats {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   %left two; \n"
             "   unit: one twos three;\n"
             "   twos: twos two | two | %precedence two;\n"
@@ -229,6 +232,7 @@ SUITE( Parsers )
     {
         const char* one_to_many_repeats_grammar =
             "OneToManyRepeats {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   unit: one twos three;\n"
             "   twos: twos two | two;\n"
             "   one: '1';\n"
@@ -270,6 +274,7 @@ SUITE( Parsers )
     {
         const char* optional_grammar =         
             "Optional {\n"            
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    unit: one two_opt three;\n"
             "    two_opt: two | ;\n"
             "    one: '1';\n"
@@ -315,6 +320,7 @@ SUITE( Parsers )
     {
         const char* compound_grammar =
             "Compound {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    compound: one one_two three;\n"
             "    one_two: one two | two one;\n"
             "    one: '1';\n"
@@ -360,6 +366,7 @@ SUITE( Parsers )
     {
         const char* binary_operator_grammar =
             "BinaryOperator {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    E: E '+' T | T;\n"
             "    T: T '*' F | F;\n"
             "    F: '(' E ')' | i;\n"
@@ -414,6 +421,7 @@ SUITE( Parsers )
     {
         const char* nested_productions_grammar =
             "NestedProductions {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    %left 'b' 'c';\n"
             "    A: 'a' bcs 'd';\n"
             "    bcs: bcs bc | bc | %precedence 'b';\n"
@@ -450,6 +458,7 @@ SUITE( Parsers )
     {
         const char* follow_generator_grammar =
             "FollowGeneration {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    unit: one two four | one three four;\n"
             "    one: '1';\n"
             "    two: '2';\n"
@@ -491,6 +500,7 @@ SUITE( Parsers )
     {
         const char* canonical_grammar =
             "Canonical {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    S: C C;\n"
             "    C: 'c' C | 'd';\n"
             "}"
@@ -522,6 +532,7 @@ SUITE( Parsers )
     {
         const char* multiple_dot_nodes_grammar =
             "MultipleDotNodesParser {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    unit: lt | lt question;\n"
             "    lt: '<';\n"
             "    question: '?';\n"
@@ -553,6 +564,7 @@ SUITE( Parsers )
     {
         const char* productions_on_collapsed_symbols_grammar =
             "ProductionsOnCollapsedSymbols {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    unit: 'a' [unit];\n"
             "}"
         ;
@@ -569,6 +581,7 @@ SUITE( Parsers )
     {   
         const char* reduce_star_node_grammar =
             "ReduceStarNode {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   %left one;\n"
             "   unit: ones;\n"
             "   ones: ones one | one | %precedence one;\n"
@@ -593,6 +606,7 @@ SUITE( Parsers )
     {
         const char* reduce_parenthesis_grammar =
             "ReduceParenthesis {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    expr: '(' expr ')' | '1';\n"
             "}"
         ;
@@ -626,6 +640,7 @@ SUITE( Parsers )
     {
         const char* reduce_star_and_parenthesis_grammar =
             "ReduceStarAndParenthesis {\n"
+            "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   %left '(' '1';\n"
             "   expr: '(' exprs ')' | '1';\n"
             "   exprs: exprs expr | expr | %precedence '(';\n"
@@ -877,8 +892,8 @@ SUITE( Parsers )
     {
         const char* unreferenced_symbol_error_grammar = 
             "UnreferencedSymbolError {\n"
-            "   one: 'one';\n"
-            "   unreferenced_symbol: 'two';\n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
+            "   one: 'one';\n"           "   unreferenced_symbol: 'two';\n"
             "}"
         ;
 
@@ -896,6 +911,7 @@ SUITE( Parsers )
     {
         const char* precedence_directive_symbols_grammar = 
             "SymbolsOnlyAppearingInPrecedenceDirectivesAreCountedAsReferenced { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left unary_minus; \n"
             "   %left '+' '-'; \n"
             "   %left '/' '*'; \n"
@@ -994,6 +1010,7 @@ SUITE( Parsers )
     {
         const char* associativity_grammar = 
             "AssociativityDirectives {\n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left '+' '-';\n"
             "   %left '*' '/';\n"
             "   %none integer;\n"
@@ -1032,6 +1049,7 @@ SUITE( Parsers )
     {
         const char* precedence_grammar = 
             "PrecedenceDirectives {\n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left '+';\n"
             "   %left '-';\n"
             "   %none integer;\n"
@@ -1080,6 +1098,7 @@ SUITE( Parsers )
     {
         const char* error_processing_grammar =
             "ErrorProcessing {"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left error;\n"
             "   %left '+';\n"
             "   expr: expr '+' expr [add] | expr error expr [error] | integer;\n"
@@ -1105,6 +1124,7 @@ SUITE( Parsers )
     {
         const char* empty_production_grammar =
             "EmptyProduction { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left integer; \n"
             "   unit: statements; \n"
             "   statements: statements statement | statement %precedence integer | %precedence integer; \n"
@@ -1142,6 +1162,7 @@ SUITE( Parsers )
             "// Line comment LF CR \n\r"
             "// Line comment CR LF \r\n"
             "LineComment { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: line_comment_example; \n"
             "   line_comment_example: 'LineCommentExample'; // Line comment at the end of a valid line \n"
             "} \n"
@@ -1161,6 +1182,7 @@ SUITE( Parsers )
             "...that spans several lines... \n"
             "*/ \n"
             "BlockComment /* Block comment between tokens */ { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: block_comment_example; /* Block comment at the end of a line */ \n"
             "   block_comment_example: /* Another block comment between tokens */ 'BlockCommentExample'; // Line comment at the end of a valid line \n"
             "} \n"
@@ -1174,6 +1196,7 @@ SUITE( Parsers )
 
         const char* unterminated_block_comment_grammar = 
             "BlockComment { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: 'BlockCommentExample'; \n"
             "} \n"
             "/* Unterminated block comment... \n"
@@ -1186,6 +1209,7 @@ SUITE( Parsers )
     {
         const char* integers_grammar = 
             "integers { \n"
+            "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %none error; \n"
             "   %none integer; \n"
             "   statements: statements statement | statement | %precedence integer; \n"
