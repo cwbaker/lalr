@@ -30,6 +30,7 @@ Grammar::Grammar()
 , whitespace_tokens_()
 , active_whitespace_directive_( false )
 , active_precedence_directive_( false )
+, active_case_insensitive_(false)
 , associativity_( ASSOCIATE_NULL )
 , precedence_( 0 )
 , active_production_( nullptr )
@@ -151,6 +152,12 @@ Grammar& Grammar::assoc_prec( int /*line*/ )
     active_precedence_directive_ = false;
     active_production_ = nullptr;
     active_symbol_ = nullptr;
+    return *this;
+}
+
+Grammar& Grammar::case_insensitive()
+{
+    active_case_insensitive_ = true;
     return *this;
 }
 

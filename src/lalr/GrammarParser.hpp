@@ -31,6 +31,7 @@ private:
     bool match_statement();
     bool match_associativity_statement();
     bool match_whitespace_statement();
+    bool match_case_insensitive_statement();
     bool match_production_statement();
     bool match_symbols();
     bool match_symbol();

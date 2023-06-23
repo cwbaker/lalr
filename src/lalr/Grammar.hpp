@@ -29,6 +29,7 @@ class Grammar
     std::vector<RegexToken> whitespace_tokens_; ///< Regular expressions that define whitespace in this grammar.
     bool active_whitespace_directive_; ///< True iff a whitespace directive is active.
     bool active_precedence_directive_; ///< True iff a precedence directive is active.
+    bool active_case_insensitive_; ///< True iff a case insensitive directive is active.
     Associativity associativity_; ///< Most recently set associativity.
     int precedence_; ///< Current precedence.
     GrammarProduction* active_production_; ///< Currently active production.
@@ -56,6 +57,7 @@ public:
     Grammar& none( int line );
     Grammar& assoc_prec( int line );
     Grammar& whitespace();
+    Grammar& case_insensitive();
     Grammar& precedence();
     Grammar& production( const char* identifier, int line, int column );
     Grammar& end_production();
@@ -65,6 +67,7 @@ public:
     Grammar& literal( const char* literal, int line, int column );
     Grammar& regex( const char* regex, int line, int column );
     Grammar& identifier( const char* identifier, int line, int column );
+    bool is_case_insensitive() const {return active_case_insensitive_;};
     void genEBNF();
 
 private:

@@ -159,7 +159,7 @@ int RegexGenerator::generate( const std::string& regular_expression, void* symbo
     start_state_ = nullptr;
     ranges_.clear();
 
-    RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, 0, symbol, regular_expression );
+    RegexToken token( TOKEN_REGULAR_EXPRESSION, 0, 0, symbol, regular_expression.c_str() );
     syntax_tree_->reset( token, this );
     generate_states( *syntax_tree_ );
     error_policy_ = nullptr;

@@ -86,6 +86,7 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
             grammar.genEBNF();
             return errors;
         }
+        bool isCaseInsensitive = grammar.is_case_insensitive();
         GrammarGenerator generator;
         errors = generator.generate( grammar, error_policy );
 
@@ -97,6 +98,9 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
             // the terminal symbols in the grammar.
             vector<RegexToken> tokens;
             int column = 1;
+            const char *symbol_lexeme;
+            std::string regex;
+            if(isCaseInsensitive) regex.reserve(255);
             const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
             for ( size_t i = 0; i < grammar_symbols.size(); ++i, ++column )
             {
@@ -107,8 +111,50 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
                     const ParserSymbol* symbol = &symbols_[i];
                     LALR_ASSERT( symbol );
                     int line = grammar_symbol->line();
-                    RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-                    tokens.emplace_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
+                    RegexTokenType token_type;
+                    symbol_lexeme = symbol->lexeme;
+                    switch(grammar_symbol->lexeme_type())
+                    {
+                        case LEXEME_REGULAR_EXPRESSION: token_type = TOKEN_REGULAR_EXPRESSION; break;
+                        case LEXEME_NULL: token_type = TOKEN_LITERAL; break;
+                        default:
+                            if(isCaseInsensitive)
+                            {
+                                bool needRegex = false;
+                                const char *p = symbol->lexeme;
+                                regex.clear();
+                                for(; *p; ++p)
+                                {
+                                    bool isLower = *p >= 'a' && *p <= 'z';
+                                    bool isUpper = *p >= 'A' && *p <= 'Z';
+                                    if(isLower || isUpper)
+                                    {
+                                        needRegex = true;
+                                        regex.push_back('[');
+                                        regex.push_back(*p);
+                                        if(isLower)
+                                        {
+                                            regex.push_back(*p -32);
+                                        }
+                                        else
+                                        {
+                                            regex.push_back(*p +32);
+                                        }
+                                        regex.push_back(']');
+                                    }
+                                    else regex.push_back(*p);
+                                }
+                                if(needRegex)
+                                {
+                                    token_type = TOKEN_REGULAR_EXPRESSION;
+                                    symbol_lexeme = regex.c_str();
+                                    //printf("Literal2Regex : %s : %s\n", symbol->lexeme, symbol_lexeme);
+                                    break;
+                                }
+                            }
+                            token_type = TOKEN_LITERAL;
+                    }
+                    tokens.emplace_back( RegexToken(token_type, line, column, symbol, symbol_lexeme) );
                 }
             }
 
