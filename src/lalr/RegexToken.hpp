@@ -21,7 +21,7 @@ class RegexToken
     mutable std::vector<const RegexToken*> conflicted_with_; ///< The RegexTokens that this RegexToken has conflicted with.
 
 public:
-    RegexToken( RegexTokenType type, int line, int column, const void* symbol, const std::string& lexeme );
+    RegexToken( RegexTokenType type, int line, int column, const void* symbol, const char* lexeme );
     RegexToken( const RegexToken& token, const void* symbol );
     RegexTokenType type() const;
     int line() const;

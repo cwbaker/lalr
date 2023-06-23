@@ -75,6 +75,7 @@ bool GrammarParser::match_statement()
     return 
         match_associativity_statement() ||
         match_whitespace_statement() ||
+        match_case_insensitive_statement() ||
         match_production_statement()
     ;
 }
@@ -99,6 +100,17 @@ bool GrammarParser::match_whitespace_statement()
         {
             grammar_->regex( lexeme_.c_str(), line_ );
         }
+        expect( ";" );
+        return true;
+    }
+    return false;
+}
+
+bool GrammarParser::match_case_insensitive_statement()
+{
+    if ( match("%case_insensitive") )
+    {
+        grammar_->case_insensitive();
         expect( ";" );
         return true;
     }
