@@ -84,6 +84,7 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
         if(genEBNF)
         {
             grammar.genEBNF();
+            //grammar.genNakedGrammar();
             return errors;
         }
         bool isCaseInsensitive = grammar.is_case_insensitive();
@@ -142,7 +143,25 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
                                         }
                                         regex.push_back(']');
                                     }
-                                    else regex.push_back(*p);
+                                    else
+                                    {
+                                        switch(*p)
+                                        {
+                                            case '+':
+                                            case '-':
+                                            case '*':
+                                            case '?':
+                                            case '[':
+                                            case ']':
+                                            case '(':
+                                            case ')':
+                                            case '|':
+                                            case '\\':
+                                                regex.push_back('\\');
+                                                break;
+                                        }
+                                        regex.push_back(*p);
+                                    }
                                 }
                                 if(needRegex)
                                 {
