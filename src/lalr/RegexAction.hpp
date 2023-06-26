@@ -15,9 +15,13 @@ class RegexAction
     std::string identifier_; ///< The identifier of this action.
 
 public:
-    RegexAction( int index, const std::string& identifier );
-    int index() const;
-    const std::string& identifier() const;
+    RegexAction( int index, const std::string& identifier )
+        : index_( index )
+        , identifier_( identifier )
+    {
+    }
+    int index() const {return index_;}
+    const std::string& identifier() const {return identifier_;}
 
     static const int INVALID_INDEX = -1;
 };

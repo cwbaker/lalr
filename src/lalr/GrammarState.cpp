@@ -67,17 +67,6 @@ GrammarItem* GrammarState::find_item( GrammarProduction* production, int positio
 }
 
 /**
-// Get the items in this state.
-//
-// @return
-//  The items.
-*/
-const std::set<GrammarItem>& GrammarState::items() const
-{
-    return items_;
-}
-
-/**
 // Find a transition on \e symbol from this state.
 //
 // @param symbol
@@ -102,17 +91,6 @@ const GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarS
     return nullptr;
 }
 
-/**
-// Get the transitions from this state.
-//
-// @return
-//  The transitions.
-*/
-const std::vector<GrammarTransition*>& GrammarState::transitions() const
-{
-    return transitions_;
-}
-
 int GrammarState::count_valid_transitions() const
 {
     int valid_transitions = 0;
@@ -121,17 +99,6 @@ int GrammarState::count_valid_transitions() const
         valid_transitions += transition != nullptr;
     }
     return valid_transitions;
-}
-
-/**
-// Get the index of this state.
-//
-// @return
-//  The index of this state.
-*/
-int GrammarState::index() const
-{
-    return index_;
 }
 
 /**
@@ -230,17 +197,6 @@ GrammarTransition* GrammarState::find_transition_by_symbol( const GrammarSymbol*
         }
     }
     return nullptr;
-}
-
-/**
-// Set the index of this state.
-//
-// @param index
-//  The value to set the index of this state to.
-*/
-void GrammarState::set_index( int index )
-{
-    index_ = index;
 }
 
 void GrammarState::add_transition( GrammarTransition* transition )

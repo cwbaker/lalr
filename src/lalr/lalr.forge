@@ -13,30 +13,23 @@ for _, cc in toolsets('^cc.*') do
 
             cc:Cxx '${obj}/%1' {
                 'Grammar.cpp',
-                'GrammarAction.cpp',
                 'GrammarCompiler.cpp',
                 'GrammarGenerator.cpp',
                 'GrammarParser.cpp',
                 'GrammarState.cpp',
                 'GrammarSymbol.cpp',
                 'GrammarSymbolSet.cpp',
-                'GrammarTransition.cpp'
             };
 
             cc:Cxx '${obj}/%1' {
-                'RegexAction.cpp',
-                'RegexCharacter.cpp',
                 'RegexCompiler.cpp',
                 'RegexGenerator.cpp',
                 'RegexItem.cpp',
                 'RegexNode.cpp',
-                'RegexNodeLess.cpp',
                 'RegexParser.cpp',
                 'RegexState.cpp',
-                'RegexStateLess.cpp',
                 'RegexSyntaxTree.cpp',
                 'RegexToken.cpp',
-                'RegexTransition.cpp'
             };
         };
     };

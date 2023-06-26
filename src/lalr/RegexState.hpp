@@ -5,6 +5,7 @@
 #include "RegexTransition.hpp"
 #include <string>
 #include <set>
+#include "assert.hpp"
 
 namespace lalr
 {
@@ -24,18 +25,45 @@ class RegexState
 
 public:
     RegexState();
-    const std::set<RegexItem>& get_items() const;
+    const std::set<RegexItem>& get_items() const {return items_;};
     const RegexTransition* find_transition_by_character( int character ) const;
-    const std::set<RegexTransition>& get_transitions() const;
-    const void* get_symbol() const;
-    bool is_processed() const;
-    int index() const;
+    const std::set<RegexTransition>& get_transitions() const {return transitions_;}
+    const void* get_symbol() const {return symbol_;}
+    bool is_processed() const {return processed_;}
+    int index() const {return index_;}
     bool operator<( const RegexState& state ) const;
     int add_item( const std::set<RegexNode*, RegexNodeLess>& next_nodes );
     void add_transition( int begin, int end, RegexState* state );
-    void set_symbol( const void* symbol );
-    void set_processed( bool processed );
-    void set_index( int index );
+/**
+// Set the symbol that this state matches.
+//
+// @param symbol
+//  The symbol to set this state as matching (assumed not null).
+*/
+    void set_symbol( const void* symbol )
+    {
+        LALR_ASSERT( !symbol_ );
+        symbol_ = symbol;
+    }
+/**
+// Set whether or not this state has been processed.
+//
+// @param processed
+//  True to set this state as processed.
+*/
+    void set_processed( bool processed ) {processed_ = processed;}
+    void set_index( int index ) {index_ = index;}
+};
+
+/**
+// Indirectly compare objects through two `std::unique_ptr<>` objects.
+*/
+struct RegexStateLess
+{
+    bool operator()( const std::unique_ptr<RegexState>& lhs, const std::unique_ptr<RegexState>& rhs ) const
+    {
+        return *lhs < *rhs;
+    }
 };
 
 }

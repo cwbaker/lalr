@@ -13,7 +13,6 @@ emsdk-env em++  \
 	-I../src -DLALR_NO_THREADS \
 	../src/lalr/ErrorPolicy.cpp \
 	../src/lalr/Grammar.cpp \
-	../src/lalr/GrammarAction.cpp \
 	../src/lalr/GrammarCompiler.cpp \
 	../src/lalr/GrammarGenerator.cpp \
 	../src/lalr/GrammarParser.cpp \
@@ -21,19 +20,14 @@ emsdk-env em++  \
 	../src/lalr/GrammarSymbol.cpp \
 	../src/lalr/GrammarSymbolSet.cpp \
 	../src/lalr/GrammarTransition.cpp \
-	../src/lalr/RegexAction.cpp \
-	../src/lalr/RegexCharacter.cpp \
 	../src/lalr/RegexCompiler.cpp \
 	../src/lalr/RegexGenerator.cpp \
 	../src/lalr/RegexItem.cpp \
 	../src/lalr/RegexNode.cpp \
-	../src/lalr/RegexNodeLess.cpp \
 	../src/lalr/RegexParser.cpp \
 	../src/lalr/RegexState.cpp \
-	../src/lalr/RegexStateLess.cpp \
 	../src/lalr/RegexSyntaxTree.cpp \
 	../src/lalr/RegexToken.cpp \
-	../src/lalr/RegexTransition.cpp \
 	lalr_playground.cpp \
 	-o lalr_playground.js
 

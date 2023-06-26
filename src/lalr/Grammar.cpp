@@ -50,51 +50,6 @@ Grammar::~Grammar()
 {
 }
 
-const std::string& Grammar::identifier() const
-{
-    return identifier_;
-}
-
-std::vector<std::unique_ptr<GrammarSymbol>>& Grammar::symbols()
-{
-    return symbols_;
-}
-
-std::vector<std::unique_ptr<GrammarProduction>>& Grammar::productions()
-{
-    return productions_;
-}
-
-std::vector<std::unique_ptr<GrammarAction>>& Grammar::actions()
-{
-    return actions_;
-}
-
-const std::vector<RegexToken>& Grammar::whitespace_tokens() const
-{
-    return whitespace_tokens_;
-}
-
-GrammarSymbol* Grammar::start_symbol() const
-{
-    return start_symbol_;
-}
-
-GrammarSymbol* Grammar::end_symbol() const
-{
-    return end_symbol_;
-}
-
-GrammarSymbol* Grammar::error_symbol() const
-{
-    return error_symbol_;
-}
-
-GrammarSymbol* Grammar::whitespace_symbol() const
-{
-    return whitespace_symbol_;
-}
-
 Grammar& Grammar::grammar( const std::string& identifier )
 {
     identifier_ = identifier;

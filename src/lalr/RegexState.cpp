@@ -28,17 +28,6 @@ RegexState::RegexState()
 }
 
 /**
-// Get the items that make up this state.
-//
-// @return
-//  The items that make up this state.
-*/
-const std::set<RegexItem>& RegexState::get_items() const
-{
-    return items_;
-}
-
-/**
 // Find the transition from this state on \e character.
 //
 // @param character
@@ -57,51 +46,6 @@ const RegexTransition* RegexState::find_transition_by_character( int character )
     }
 
     return transition != transitions_.end() ? &(*transition) : nullptr;
-}
-
-/**
-// Get the transitions from this state.
-//
-// @return
-//  The transitions from this state.
-*/
-const std::set<RegexTransition>& RegexState::get_transitions() const
-{
-    return transitions_;
-}
-
-/**
-// Get the symbol that this state matches.
-//
-// @return
-//  The symbol that this state matches or null if this state doesn't match a
-//  symbol.
-*/
-const void* RegexState::get_symbol() const
-{
-    return symbol_;
-}
-
-/**
-// Has this state been processed?
-//
-// @return
-//  True if this state has been processed otherwise false.
-*/
-bool RegexState::is_processed() const
-{
-    return processed_;
-}
-
-/**
-// Get the index of this state.
-//
-// @return
-//  The index of this state.
-*/
-int RegexState::index() const
-{
-    return index_;
 }
 
 /**
@@ -159,38 +103,4 @@ void RegexState::add_transition( int begin, int end, RegexState* state )
     bool inserted = transitions_.insert( RegexTransition(begin, end, state, action) ).second;
     LALR_ASSERT( inserted );
     (void) inserted;
-}
-
-/**
-// Set the symbol that this state matches.
-//
-// @param symbol
-//  The symbol to set this state as matching (assumed not null).
-*/
-void RegexState::set_symbol( const void* symbol )
-{
-    LALR_ASSERT( !symbol_ );
-    symbol_ = symbol;
-}
-
-/**
-// Set whether or not this state has been processed.
-//
-// @param processed
-//  True to set this state as processed.
-*/
-void RegexState::set_processed( bool processed )
-{
-    processed_ = processed;
-}
-
-/**
-// Set the index of this state.
-//
-// @param index
-//  The value to set the index of this state to.
-*/
-void RegexState::set_index( int index )
-{
-    index_ = index;
 }

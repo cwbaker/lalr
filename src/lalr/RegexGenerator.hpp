@@ -2,7 +2,7 @@
 #define LALR_LEXERGENERATOR_HPP_INCLUDED
 
 #include "RegexToken.hpp"
-#include "RegexStateLess.hpp"
+#include "RegexState.hpp"
 #include <memory>
 #include <vector>
 #include <set>
@@ -18,7 +18,6 @@ namespace lalr
 {
 
 class ErrorPolicy;
-class RegexState;
 class RegexAction;
 class RegexSyntaxTree;
 
@@ -39,9 +38,9 @@ class RegexGenerator
 public:
     RegexGenerator();
     ~RegexGenerator();
-    const std::vector<std::unique_ptr<RegexAction>>& actions() const;
-    const std::set<std::unique_ptr<RegexState>, RegexStateLess>& states() const;
-    const RegexState* start_state() const;
+    const std::vector<std::unique_ptr<RegexAction>>& actions() const {return actions_;}
+    const std::set<std::unique_ptr<RegexState>, RegexStateLess>& states() const {return states_;}
+    const RegexState* start_state() const {return start_state_;}
     void fire_error( int line, int column, int error, const char* format, ... ) const;
     void fire_printf( const char* format, ... ) const;
     const RegexAction* add_lexer_action( const std::string& identifier );

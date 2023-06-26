@@ -6,7 +6,6 @@
 #include "RegexSyntaxTree.hpp"
 #include "RegexParser.hpp"
 #include "RegexNode.hpp"
-#include "RegexNodeLess.hpp"
 #include "RegexCharacter.hpp"
 #include "RegexGenerator.hpp"
 #include "ErrorCode.hpp"
