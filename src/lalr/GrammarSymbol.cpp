@@ -17,6 +17,7 @@ GrammarSymbol::GrammarSymbol( const char* lexeme )
 , associativity_( ASSOCIATE_NULL )
 , precedence_( 0 )
 , line_( 0 )
+, column_( 0 )
 , index_( -1 )
 , nullable_( false )
 , referenced_in_precedence_directive_( false )
@@ -110,6 +111,12 @@ void GrammarSymbol::set_line( int line )
 {
     LALR_ASSERT( line >= 0 );
     line_ = line;
+}
+
+void GrammarSymbol::set_column( int column )
+{
+    LALR_ASSERT( column >= 0 );
+    column_ = column;
 }
 
 void GrammarSymbol::set_index( int index )
