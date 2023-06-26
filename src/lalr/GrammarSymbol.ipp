@@ -52,6 +52,11 @@ int GrammarSymbol::line() const
     return line_;
 }
 
+int GrammarSymbol::column() const
+{
+    return column_;
+}
+
 int GrammarSymbol::index() const
 {
     return index_;

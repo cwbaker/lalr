@@ -23,6 +23,7 @@ class GrammarSymbol
     Associativity associativity_; ///< The associativity of this symbol.
     int precedence_; ///< The precedence of this symbol.
     int line_; ///< The line that this symbol is defined on.
+    int column_; ///< The line column that this symbol is defined on.
     int index_; ///< The index of this symbol among all symbols.
     bool nullable_; ///< True if this symbol is nullable otherwise false.
     bool referenced_in_precedence_directive_; ///< True if this symbol is referenced by a %precedence directive.
@@ -43,6 +44,7 @@ public:
     inline Associativity associativity() const;
     inline int precedence() const;
     inline int line() const;
+    inline int column() const;
     inline int index() const;
     inline bool nullable() const;
     inline bool referenced_in_precedence_directive() const;
@@ -62,6 +64,7 @@ public:
     void set_associativity( Associativity associativity );
     void set_precedence( int precedence );
     void set_line( int line );
+    void set_column( int column );
     void set_index( int index );
     void set_nullable( bool nullable );
     void set_referenced_in_precedence_directive( bool referenced_in_precedence_directive );

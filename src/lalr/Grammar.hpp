@@ -59,23 +59,23 @@ public:
     Grammar& whitespace();
     Grammar& case_insensitive();
     Grammar& precedence();
-    Grammar& production( const char* identifier, int line );
+    Grammar& production( const char* identifier, int line, int column );
     Grammar& end_production();
-    Grammar& end_expression( int line );
-    Grammar& error( int line );
-    Grammar& action( const char* identifier, int line );
-    Grammar& literal( const char* literal, int line );
-    Grammar& regex( const char* regex, int line );
-    Grammar& identifier( const char* identifier, int line );
+    Grammar& end_expression( int line, int column);
+    Grammar& error( int line, int column );
+    Grammar& action( const char* identifier, int line, int column );
+    Grammar& literal( const char* literal, int line, int column );
+    Grammar& regex( const char* regex, int line, int column );
+    Grammar& identifier( const char* identifier, int line, int column );
     bool is_case_insensitive() const {return active_case_insensitive_;}
     void genEBNF();
 
 private:
-    GrammarSymbol* literal_symbol( const char* lexeme, int line );
-    GrammarSymbol* regex_symbol( const char* lexeme, int line );
-    GrammarSymbol* non_terminal_symbol( const char* lexeme, int line );
-    GrammarSymbol* add_symbol( const char* lexeme, int line, LexemeType lexeme_type, SymbolType symbol_type );
-    GrammarProduction* add_production( GrammarSymbol* symbol, int line );
+    GrammarSymbol* literal_symbol(const char* lexeme, int line , int column);
+    GrammarSymbol* regex_symbol(const char* lexeme, int line , int column);
+    GrammarSymbol* non_terminal_symbol(const char* lexeme, int line , int column);
+    GrammarSymbol* add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type );
+    GrammarProduction* add_production(GrammarSymbol* symbol, int line , int column);
     GrammarAction* add_action( const char* id );
 };
 
