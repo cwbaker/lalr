@@ -47,21 +47,6 @@ RegexGenerator::~RegexGenerator()
     delete syntax_tree_;
 }
 
-const std::vector<std::unique_ptr<RegexAction>>& RegexGenerator::actions() const
-{
-    return actions_;
-}
-
-const std::set<std::unique_ptr<RegexState>, RegexStateLess>& RegexGenerator::states() const
-{
-    return states_;
-}
-
-const RegexState* RegexGenerator::start_state() const
-{
-    return start_state_;
-}
-
 /**
 // Fire an error from this generator.
 //

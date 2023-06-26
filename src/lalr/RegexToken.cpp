@@ -30,30 +30,6 @@ RegexToken::RegexToken( const RegexToken& token, const void* symbol )
 {
 }
 
-RegexTokenType RegexToken::type() const
-{
-    return type_;
-}
-
-int RegexToken::line() const
-{
-    return line_;
-}
-
-int RegexToken::column() const
-{
-    return column_;
-}
-
-const void* RegexToken::symbol() const
-{
-    return symbol_;
-}
-
-const std::string& RegexToken::lexeme() const
-{
-    return lexeme_;
-}
 
 bool RegexToken::conflicted_with( const RegexToken* token ) const
 {

@@ -133,22 +133,6 @@ RegexNode::RegexNode( int index, const RegexAction* action )
 }
 
 /**
-// Get the index of this node.
-*/
-int RegexNode::get_index() const
-{
-    return index_;
-}
-
-/**
-// Get the type of this node.
-*/
-RegexNodeType RegexNode::get_type() const
-{
-    return type_;
-}
-
-/**
 // Get the lexeme of this node.
 */
 const char* RegexNode::get_lexeme() const
@@ -199,51 +183,6 @@ const char* RegexNode::get_lexeme() const
 }
 
 /**
-// Get the first character in the interval of this node.
-//
-// @return
-//  The begin character.
-*/
-int RegexNode::get_begin_character() const
-{
-    return begin_character_;
-}
-
-/**
-// Get the character that is one past the last character in the interval of
-// this node.
-//
-// @return
-//  The end character.
-*/
-int RegexNode::get_end_character() const
-{
-    return end_character_;
-}
-
-/**
-// Get the RegexToken that is recognized at this node.
-//
-// @return
-//  The token or null if this node doesn't recognize a token.
-*/
-const RegexToken* RegexNode::get_token() const
-{
-    return token_;
-}
-
-/**
-// Get the action at this node.
-//
-// @return
-//  The action.
-*/
-const RegexAction* RegexNode::get_action() const
-{
-    return action_;
-}
-
-/**
 // Does this node match [\e begin, \e end)?
 //
 // The range [\e begin, \e end) is assumed to fall entirely inside or entirely
@@ -277,17 +216,6 @@ bool RegexNode::is_end() const
 }
 
 /**
-// Is this node an action node?
-//
-// @return
-//  True if this node is an action otherwise false.
-*/
-bool RegexNode::is_action() const
-{
-    return type_ == LEXER_NODE_ACTION;
-}
-
-/**
 // Add \e node as a child of this node.
 //
 // @param node
@@ -315,61 +243,6 @@ RegexNode* RegexNode::get_node( int n ) const
 {
     LALR_ASSERT( n >= 0 && n < (int) nodes_.size() );
     return nodes_[n].get();
-}
-
-/**
-// Get the nodes that are children of this node.
-//
-// @return
-//  The child nodes.
-*/
-const std::vector<std::shared_ptr<RegexNode> >& RegexNode::get_nodes() const
-{
-    return nodes_;
-}
-
-/**
-// Is this node nullable?
-//
-// @return
-//  True if this node is nullable otherwise false.
-*/
-bool RegexNode::is_nullable() const
-{
-    return nullable_;
-}
-
-/**
-// Get the first positions at this node.
-//
-// @return
-//  The first positions.
-*/
-const std::set<RegexNode*, RegexNodeLess>& RegexNode::get_first_positions() const
-{
-    return first_positions_;
-}
-
-/**
-// Get the last positions at this node.
-//
-// @return
-//  The last positions.
-*/
-const std::set<RegexNode*, RegexNodeLess>& RegexNode::get_last_positions() const
-{
-    return last_positions_;
-}
-
-/**
-// Get the follow positions at this node.
-//
-// @return
-//  The follow positions.
-*/
-const std::set<RegexNode*, RegexNodeLess>& RegexNode::get_follow_positions() const
-{
-    return follow_positions_;
 }
 
 /**

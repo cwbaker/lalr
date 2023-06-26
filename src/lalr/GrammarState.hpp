@@ -28,19 +28,19 @@ public:
     GrammarState( const GrammarState& state );
 
     GrammarItem* find_item( GrammarProduction* production, int position ) const;
-    const std::set<GrammarItem>& items() const;
+    const std::set<GrammarItem>& items() const {return items_;}
     const GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol ) const;
-    const std::vector<GrammarTransition*>& transitions() const;
+    const std::vector<GrammarTransition*>& transitions() const  {return transitions_;}
     int count_valid_transitions() const;
     std::string label() const;
-    int index() const;
+    int index() const { return index_;}
     bool operator<( const GrammarState& state ) const;
 
     int add_item( GrammarProduction* production, int position );
     void add_shift_transition( GrammarTransition* transition );
     void add_reduce_transition( GrammarTransition* transition );
     GrammarTransition* find_transition_by_symbol( const GrammarSymbol* symbol );
-    void set_index( int index );
+    void set_index( int index ) {index_ = index;}
 
     static const int INVALID_INDEX = -1;
 

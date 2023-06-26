@@ -42,15 +42,15 @@ class Grammar
 public:
     Grammar();
     ~Grammar();
-    const std::string& identifier() const;
-    std::vector<std::unique_ptr<GrammarSymbol>>& symbols();
-    std::vector<std::unique_ptr<GrammarProduction>>& productions();
-    std::vector<std::unique_ptr<GrammarAction>>& actions();
-    const std::vector<RegexToken>& whitespace_tokens() const;
-    GrammarSymbol* start_symbol() const;
-    GrammarSymbol* end_symbol() const;
-    GrammarSymbol* error_symbol() const;
-    GrammarSymbol* whitespace_symbol() const;
+    const std::string& identifier() const { return identifier_;}
+    std::vector<std::unique_ptr<GrammarSymbol>>& symbols() { return symbols_;}
+    std::vector<std::unique_ptr<GrammarProduction>>& productions() { return productions_;}
+    std::vector<std::unique_ptr<GrammarAction>>& actions() { return actions_;}
+    const std::vector<RegexToken>& whitespace_tokens() const { return whitespace_tokens_;}
+    GrammarSymbol* start_symbol() const { return start_symbol_;}
+    GrammarSymbol* end_symbol() const { return end_symbol_;}
+    GrammarSymbol* error_symbol() const { return error_symbol_;}
+    GrammarSymbol* whitespace_symbol() const { return whitespace_symbol_;}
     Grammar& grammar( const std::string& identifier );
     Grammar& left( int line );
     Grammar& right( int line );
@@ -67,7 +67,7 @@ public:
     Grammar& literal( const char* literal, int line );
     Grammar& regex( const char* regex, int line );
     Grammar& identifier( const char* identifier, int line );
-    bool is_case_insensitive() const {return active_case_insensitive_;};
+    bool is_case_insensitive() const {return active_case_insensitive_;}
     void genEBNF();
 
 private:

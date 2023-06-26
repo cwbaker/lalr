@@ -2,7 +2,7 @@
 #define LALR_REGEXSYNTAXTREE_HPP_INCLUDED
 
 #include "RegexCharacter.hpp"
-#include "RegexNodeLess.hpp"
+#include "RegexNode.hpp"
 #include "RegexNodeType.hpp"
 #include "RegexToken.hpp"
 #include <memory>
@@ -15,7 +15,6 @@ namespace lalr
 
 class RegexGenerator;
 class RegexAction;
-class RegexNode;
 
 /**
 // @internal
