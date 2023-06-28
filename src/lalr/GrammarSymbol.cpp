@@ -17,9 +17,11 @@ GrammarSymbol::GrammarSymbol( const char* lexeme )
 , associativity_( ASSOCIATE_NULL )
 , precedence_( 0 )
 , line_( 0 )
+, column_( 0 )
 , index_( -1 )
 , nullable_( false )
 , referenced_in_precedence_directive_( false )
+, referenced_in_rule_( false )
 , first_{0}
 , follow_{0}
 , productions_()
@@ -112,6 +114,12 @@ void GrammarSymbol::set_line( int line )
     line_ = line;
 }
 
+void GrammarSymbol::set_column( int column )
+{
+    LALR_ASSERT( column >= 0 );
+    column_ = column;
+}
+
 void GrammarSymbol::set_index( int index )
 {
     LALR_ASSERT( index >= 0 );
@@ -126,6 +134,11 @@ void GrammarSymbol::set_nullable( bool nullable )
 void GrammarSymbol::set_referenced_in_precedence_directive( bool referenced_in_precedence_directive )
 {
     referenced_in_precedence_directive_ = referenced_in_precedence_directive;
+}
+
+void GrammarSymbol::set_referenced_in_rule( bool referenced_in_rule )
+{
+    referenced_in_rule_ = referenced_in_rule;
 }
 
 void GrammarSymbol::append_production( GrammarProduction* production )

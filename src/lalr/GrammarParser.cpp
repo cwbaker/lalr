@@ -19,6 +19,7 @@ GrammarParser::GrammarParser()
 , grammar_( nullptr )
 , position_( nullptr )
 , end_( nullptr )
+, line_position_( nullptr )
 , line_( 1 )
 , lexeme_()
 , errors_( 0 )
@@ -34,13 +35,17 @@ int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* er
     LALR_ASSERT( grammar );
     error_policy_ = error_policy;
     grammar_ = grammar;
-    position_ = start;
+    line_position_ = position_ = start;
     end_ = finish;
     line_ = 1;
     errors_ = 0;
     if ( !match_grammar() )
     {
-        error( 1, LALR_ERROR_SYNTAX, "parsing grammar failed" );
+        error(line_, get_line_column(position_), LALR_ERROR_SYNTAX, "parsing grammar failed" );
+    }
+    if( grammar_->whitespace_tokens().empty() )
+    {
+        error(line_, get_line_column(position_), PARSER_ERROR_UNDEFINED_SYMBOL, "no '%%whitespace' directive defined" );
     }
     return errors_;
 }
@@ -63,14 +68,15 @@ bool GrammarParser::match_statements()
     while ( match_statement() )
     {
     }
-    return true; 
+    return true;
 }
 
 bool GrammarParser::match_statement()
 {
-    return 
+    return
         match_associativity_statement() ||
         match_whitespace_statement() ||
+        match_case_insensitive_statement() ||
         match_production_statement()
     ;
 }
@@ -93,8 +99,19 @@ bool GrammarParser::match_whitespace_statement()
         grammar_->whitespace();
         if ( match_regex() )
         {
-            grammar_->regex( lexeme_.c_str(), line_ );
+            grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
         }
+        expect( ";" );
+        return true;
+    }
+    return false;
+}
+
+bool GrammarParser::match_case_insensitive_statement()
+{
+    if ( match("%case_insensitive") )
+    {
+        grammar_->case_insensitive();
         expect( ";" );
         return true;
     }
@@ -105,7 +122,7 @@ bool GrammarParser::match_production_statement()
 {
     if ( match_identifier() )
     {
-        grammar_->production( lexeme_.c_str(), line_ );
+        grammar_->production( lexeme_.c_str(), line_, get_line_column(position_) );
         expect( ":" );
         match_expressions();
         expect( ";" );
@@ -127,22 +144,22 @@ bool GrammarParser::match_symbol()
 {
     if ( match_error() )
     {
-        grammar_->error( line_ );
+        grammar_->error( line_, get_line_column(position_) );
         return true;
     }
     else if ( match_literal() )
     {
-        grammar_->literal( lexeme_.c_str(), line_ );
+        grammar_->literal( lexeme_.c_str(), line_, get_line_column(position_) );
         return true;
     }
     else if ( match_regex() )
     {
-        grammar_->regex( lexeme_.c_str(), line_ );
+        grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
         return true;
     }
     else if ( match_identifier() )
     {
-        grammar_->identifier( lexeme_.c_str(), line_ );
+        grammar_->identifier( lexeme_.c_str(), line_, get_line_column(position_) );
         return true;
     }
     return false;
@@ -160,9 +177,14 @@ bool GrammarParser::match_associativity()
         grammar_->right( line_ );
         return true;
     }
-    else if ( match("%none") )
+    else if ( match("%none") || match("%nonassoc"))
     {
         grammar_->none( line_ );
+        return true;
+    }
+    else if ( match("%precedence") )
+    {
+        grammar_->assoc_prec( line_ );
         return true;
     }
     return false;
@@ -187,7 +209,7 @@ bool GrammarParser::match_expression()
 
 bool GrammarParser::match_precedence()
 {
-    if ( match("%precedence") )
+    if ( match("%precedence") || match("%prec") )
     {
         grammar_->precedence();
         match_symbol();
@@ -202,12 +224,12 @@ bool GrammarParser::match_action()
     {
         if ( match_identifier() )
         {
-            grammar_->action( lexeme_.c_str(), line_ );
+            grammar_->action( lexeme_.c_str(), line_, get_line_column(position_) );
         }
         expect( "]" );
         return true;
     }
-    grammar_->end_expression( line_ );
+    grammar_->end_expression(line_, get_line_column(position_));
     return false;
 }
 
@@ -227,15 +249,25 @@ bool GrammarParser::match_literal()
         {
             escaped = *position == '\\';
             ++position;
+            if(*position == '\\' && escaped)
+            {
+                ++position;
+                escaped = false;
+            }
         }
         if ( position == end_ || !is_new_line(position) )
         {
             lexeme_.assign( position_, position );
             position_ = position;
             expect( "'" );
+            if(lexeme_.size() == 0)
+            {
+                error(line_, get_line_column(position), LALR_ERROR_EMPTY_LITERAL, "empty literal" );
+                return false;
+            }
             return true;
         }
-        error( line_, LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        error(line_, get_line_column(position), LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
         return false;
     }
     return false;
@@ -252,10 +284,20 @@ bool GrammarParser::match_regex()
         {
             escaped = *position == '\\';
             ++position;
+            if(*position == '\\' && escaped)
+            {
+                ++position;
+                escaped = false;
+            }
         }
         lexeme_.assign( position_, position );
         position_ = position;
         expect( "\"" );
+        if(lexeme_.size() == 0)
+        {
+            error(line_, get_line_column(position), LALR_ERROR_EMPTY_LITERAL, "empty regex" );
+            return false;
+        }
         return true;
     }
     return false;
@@ -297,11 +339,12 @@ bool GrammarParser::match_whitespace()
             if ( is_new_line(position) )
             {
                 ++line_;
+                line_position_ = position;
             }
             ++position;
         }
         position_ = position;
-        return true;        
+        return true;
     }
     return false;
 }
@@ -348,7 +391,7 @@ bool GrammarParser::match_block_comment()
             }
         }
         position_ = position;
-        return true;        
+        return true;
     }
     return false;
 }
@@ -388,11 +431,11 @@ bool GrammarParser::expect( const char* lexeme )
         return true;
     }
     position_ = end_;
-    error( line_, LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
+    error(line_, get_line_column(position_), LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
     return false;
 }
 
-void GrammarParser::error( int line, int error, const char* format, ... )
+void GrammarParser::error(int line, int column, int error, const char* format, ... )
 {
     LALR_ASSERT( format );
     ++errors_;
@@ -400,7 +443,7 @@ void GrammarParser::error( int line, int error, const char* format, ... )
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, 0, error, format, args );
+        error_policy_->lalr_error( line, column, error, format, args );
         va_end( args );
     }
 }
@@ -417,6 +460,7 @@ const char* GrammarParser::new_line( const char* position )
                 ++position;
             }
             ++line_;
+            line_position_ = position;
         }
         else if ( *position == '\r' )
         {
@@ -426,6 +470,7 @@ const char* GrammarParser::new_line( const char* position )
                 ++position;
             }
             ++line_;
+            line_position_ = position;
         }
     }
     return position;
@@ -434,4 +479,10 @@ const char* GrammarParser::new_line( const char* position )
 bool GrammarParser::is_new_line( const char* position )
 {
     return *position == '\n' || *position == '\r';
+}
+
+int GrammarParser::get_line_column(const char* position)
+{
+    return position - line_position_;
+
 }

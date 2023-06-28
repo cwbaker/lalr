@@ -33,9 +33,9 @@ ErrorPolicy::~ErrorPolicy()
 // @param ...
 //  Arguments as described by *format*.
 */
-void ErrorPolicy::lalr_error( int line, int /*column*/, int /*error*/, const char* format, va_list args )
+void ErrorPolicy::lalr_error( int line, int column, int /*error*/, const char* format, va_list args )
 {
-    fprintf( stderr, "lalr (%d): ERROR: ", line );
+    fprintf( stderr, "lalr (%d:%d): ERROR: ", line, column );
     vfprintf( stderr, format, args );
     fprintf( stderr, "\n" );
 }

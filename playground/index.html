@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>LALR Playground</title>
+<link rel="stylesheet" href="style.css" media="all">
+</head>
+<body>
+<div id="main">
+  <div class="editor-container">
+    <ul class="editor-header">
+      <li><span><span id="grammar-validation" class="validation"></span></span></li>
+      <li><span>Grammar</span></li>
+      <li class="editor-options">
+        <ul class="editor-header-options">
+          <li class="option"><label>Examples </label>
+            <select id="opt-samples" onchange="loadLalr_sample(this)">
+              <option>choose</option>
+              <option>Json parser</option>
+              <option>Lua parser</option>
+              <option>Carbon parser</option>
+              <option>Postgresql parser (be patient)</option>
+              <option>Postgresql parser case insensitive (be patient)</option>
+              <option>Linden Script parser</option>
+              <option>JavascriptCore parser</option>
+              <option>Ansi C parser</option>
+              <option>Ispc parser</option>
+              <option>Java11 parser</option>
+              <option>Rust parser</option>
+              <option>Gringo/Clingo non grounded parser</option>
+              <option>Ada parser</option>
+              <option>Ada parser case insensitive</option>
+              <option>C++ parser (bug)</option>
+              <option>Bison parser (not working)</option>
+              <option>DParser parser (not working)</option>
+              <option>Parse_gen parser (not working)</option>
+              <option>Tameparse parser (not working)</option>
+              <option>Javascript parser (not working)</option>
+              <option>Go parser (not working)</option>
+              <option>PHP-8.2 parser (not working)</option>
+            </select>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <pre id="grammar-editor" class="editor-area">{{syntax}}</pre>
+    <div id="grammar-info" class="editor-info"></div>
+  </div>
+  <div class="editor-container">
+    <ul class="editor-header">
+      <li><span><span id="code-validation" class="validation"></span></span></li>
+      <li><span>Input source</span></li>
+      <li class="editor-options">
+        <ul class="editor-header-options">
+          <li class="option"><label><input id="gen-ebnf" type="checkbox">Gen. EBNF</label></li>
+          <li class="option"><label><input id="auto-refresh" type="checkbox">Auto Refresh</label></li>
+          <li class="option"><button id="parse" class="parse">Parse</button></li>
+        </ul>
+      </li>
+    </ul>
+    <pre id="code-editor" class="editor-area">{{source}}</pre>
+    <div class="editor-sub-header"><label><input id="show-ast" class="show-toggle" type="checkbox">AST</label>&nbsp;&nbsp;&nbsp;&nbsp;
+      mode:&nbsp;<select id="opt-mode" type="checkbox"><option value="0">Raw parse tree</option><option value="1">Unwrap</option><option value="2">Simplify</option></select>
+    </div>
+    <pre id="code-ast" class="editor-area"></pre>
+    <div class="editor-sub-header"><label><input id="show-lexer" class="show-toggle" type="checkbox">Lexer</label></div>
+    <div id="code-lexer" class="editor-area"></div>
+
+    <div id="code-info" class="editor-info"></div>
+  </div>
+</div>
+<div id="overlay"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="index.js"></script>
+<script src="lalr_playground.js"></script>
+</body>
+</html>

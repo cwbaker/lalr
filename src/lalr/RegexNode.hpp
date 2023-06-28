@@ -1,14 +1,25 @@
 #ifndef LALR_REGEXNODE_HPP_INCLUDED
 #define LALR_REGEXNODE_HPP_INCLUDED
 
-#include "RegexNodeLess.hpp"
 #include "RegexNodeType.hpp"
 #include <memory>
 #include <set>
 #include <vector>
+#include "assert.hpp"
 
 namespace lalr
 {
+
+class RegexNode;
+/**
+// @internal
+//
+// Indirectly compare two RegexNodes.
+*/
+struct RegexNodeLess
+{
+    inline bool operator()( const RegexNode* lhs, const RegexNode* rhs ) const;
+};
 
 /**
 // @internal
@@ -74,25 +85,31 @@ public:
     RegexNode( int index, int begin_character, int end_character, const RegexToken* token );
     RegexNode( int index, const RegexAction* action );
 
-    int get_index() const;
-    RegexNodeType get_type() const;
+    int get_index() const {return index_;}
+    RegexNodeType get_type() const {return type_;}
     const char* get_lexeme() const;
-    int get_begin_character() const;
-    int get_end_character() const;
-    const RegexToken* get_token() const;
-    const RegexAction* get_action() const;
+    int get_begin_character() const {return begin_character_;}
+    int get_end_character() const {return end_character_;}
+    const RegexToken* get_token() const {return token_;}
+    const RegexAction* get_action() const {return action_;}
     bool is_match( int begin, int end ) const;
     bool is_end() const;
-    bool is_action() const;
+    bool is_action() const {return type_ == LEXER_NODE_ACTION;}
 
     void add_node( const std::shared_ptr<RegexNode>& node );
     RegexNode* get_node( int index ) const;
-    const std::vector<std::shared_ptr<RegexNode> >& get_nodes() const;
+/**
+// Get the nodes that are children of this node.
+//
+// @return
+//  The child nodes.
+*/
+    const std::vector<std::shared_ptr<RegexNode> >& get_nodes() const {return nodes_;}
 
-    bool is_nullable() const;
-    const std::set<RegexNode*, RegexNodeLess>& get_first_positions() const;
-    const std::set<RegexNode*, RegexNodeLess>& get_last_positions() const;
-    const std::set<RegexNode*, RegexNodeLess>& get_follow_positions() const;
+    bool is_nullable() const {return nullable_;}
+    const std::set<RegexNode*, RegexNodeLess>& get_first_positions() const {return first_positions_;}
+    const std::set<RegexNode*, RegexNodeLess>& get_last_positions() const {return last_positions_;}
+    const std::set<RegexNode*, RegexNodeLess>& get_follow_positions() const {return follow_positions_;}
     const std::set<RegexNode*, RegexNodeLess>& get_next_positions() const;
 
     void calculate_nullable();
@@ -104,6 +121,26 @@ public:
 
     void print( const std::set<RegexNode*>& dot_nodes ) const;
 };
+
+/**
+// Compare two RegexNodes.
+//
+// @param lhs
+//  The first RegexNode to compare.
+//
+// @param rhs
+//  The second RegexNode to compare.
+//
+// @return
+//  True if the index of \e lhs is less than the index of \e rhs otherwise
+//  false.
+*/
+bool RegexNodeLess::operator()( const RegexNode* lhs, const RegexNode* rhs ) const
+{
+    LALR_ASSERT( lhs );
+    LALR_ASSERT( rhs );
+    return *lhs < *rhs;
+}
 
 }
 

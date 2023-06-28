@@ -78,14 +78,14 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
     const ParserAction* actions_end = action + state_machine_->actions_size;
     while ( action != actions_end )
     {
-        action_handlers_.push_back( ParserActionHandler(action, nullptr) );
+        action_handlers_.emplace_back( action, nullptr );
         ++action;
     }
 
     nodes_.reserve( 64 );       
     user_data_.reserve( 64 );       
-    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
-    user_data_.push_back( UserData() );
+    nodes_.emplace_back( state_machine_->start_state, nullptr, 0, 1 );
+    user_data_.emplace_back( );
 }
 
 /**
@@ -144,6 +144,33 @@ const UserData& Parser<Iterator, UserData, Char, Traits, Allocator>::user_data()
     LALR_ASSERT( nodes_.size() == 1 );
     LALR_ASSERT( user_data_.size() == 1 );
     return user_data_.front();
+}
+
+template <class Iterator, class UserData, class Char, class Traits, class Allocator>
+void Parser<Iterator, UserData, Char, Traits, Allocator>::dumpLex( Iterator start, Iterator finish )
+{
+    LALR_ASSERT( state_machine_ );
+
+    reset();
+    lexer_.reset( start, finish );
+    lexer_.advance();
+    printf("=line:column:type:index:identifier:lexeme:value\n");
+    while ( !lexer_.full() )
+    {
+        const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
+        //printf("%d:%d:%d:%d:[%s]:[%s]:[%s]\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index, symbol->identifier, symbol->lexeme, lexer_.lexeme().c_str());
+        //printf("%d:%d:%d:%d:[%s]\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index, symbol->identifier);
+        //printf("%d:%d:%d:%d\n", lexer_.line(), lexer_.column(), symbol->type, symbol->index);
+        //printf("%d:%d:%p\n", lexer_.line(), lexer_.column(), symbol);
+        printf("%d:%d:", lexer_.line(), lexer_.column());
+        if(symbol) printf("%d:%d:[%s]:[%s]", symbol->type, symbol->index, symbol->identifier, symbol->lexeme);
+        else printf("-1:-1:[]:[]");
+        printf(":[%s]\n", lexer_.lexeme().c_str());
+        //fflush(stdout);
+        lexer_.advance();
+    }
+
+    full_ = lexer_.full();
 }
 
 
@@ -328,8 +355,8 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
     full_ = false;
     nodes_.clear();
     user_data_.clear();
-    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
-    user_data_.push_back( UserData() );
+    nodes_.emplace_back( state_machine_->start_state, nullptr, 0, 1 );
+    user_data_.emplace_back( );
 }
 
 /**
@@ -360,6 +387,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start,
         const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
         while ( parse(symbol, lexer_.lexeme(), lexer_.line(), lexer_.column()) )
         {
+            if(lexer_.full()) break;
             lexer_.advance();
             symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
         }
@@ -566,7 +594,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
 //  The user data that results from the reduction.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
-UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const
+bool Parser<Iterator, UserData, Char, Traits, Allocator>::handle(UserData& result, const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const
 {
     LALR_ASSERT( start >= 0 && size_t(start) <= nodes_.size() );
     LALR_ASSERT( start >= 0 && size_t(start) <= user_data_.size() );
@@ -585,16 +613,16 @@ UserData Parser<Iterator, UserData, Char, Traits, Allocator>::handle( const Pars
         LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
         if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[action].function_( user_data, nodes, length );
+            return action_handlers_[action].function_( result, user_data, nodes, length );
         }
     }
 
     if ( default_action_handler_ )
     {
-        return default_action_handler_( user_data, nodes, length );
+        return default_action_handler_( result, user_data, nodes, length );
     }
 
-    return UserData();
+    return false;
 }
 
 /**
@@ -650,10 +678,9 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::shift( const ParserTra
     LALR_ASSERT( transition );
     LALR_ASSERT( line >= 0 );
     LALR_ASSERT( column >= 1 );
-    ParserNode node( transition->state, transition->symbol, lexeme, line, column );
+    ParserNode &node = nodes_.emplace_back( transition->state, transition->symbol, lexeme, line, column );
     debug_shift( node );
-    nodes_.push_back( node );
-    user_data_.push_back( UserData() );
+    user_data_.emplace_back( );
 }
 
 /**
@@ -685,14 +712,14 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         debug_reduce( transition->reduced_symbol, start, finish );
         int line = i != nodes_.end() ? nodes_[start].line() : 0;
         int column = i != nodes_.end() ? nodes_[start].column() : 1;
-        UserData user_data = handle( transition, start, finish );
+        UserData user_data;
+        handle(user_data, transition, start, finish );
         nodes_.erase( nodes_.begin() + start, nodes_.end() );
         user_data_.erase( user_data_.begin() + start, user_data_.end() );
         const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
         LALR_ASSERT( transition );
-        ParserNode node( transition->state, symbol, line, column );
-        nodes_.push_back( node );
-        user_data_.push_back( user_data );
+        nodes_.emplace_back( transition->state, symbol, line, column );
+        user_data_.emplace_back( user_data );
     }
     else
     {    

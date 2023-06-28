@@ -3,7 +3,7 @@ buildfile 'lalrc/lalrc.forge';
 buildfile 'lalr_examples/lalr_examples.forge';
 buildfile 'lalr_test/lalr_test.forge';
 
-for _, cc in toolsets('^cc.*') do    
+for _, cc in toolsets('^cc.*') do
     cc:all {
         cc:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
             cc:Cxx '${obj}/%1' {
@@ -13,7 +13,6 @@ for _, cc in toolsets('^cc.*') do
 
             cc:Cxx '${obj}/%1' {
                 'Grammar.cpp',
-                'GrammarAction.cpp',
                 'GrammarCompiler.cpp',
                 'GrammarGenerator.cpp',
                 'GrammarParser.cpp',
@@ -24,19 +23,14 @@ for _, cc in toolsets('^cc.*') do
             };
 
             cc:Cxx '${obj}/%1' {
-                'RegexAction.cpp',
-                'RegexCharacter.cpp',
                 'RegexCompiler.cpp',
                 'RegexGenerator.cpp',
                 'RegexItem.cpp',
                 'RegexNode.cpp',
-                'RegexNodeLess.cpp',
                 'RegexParser.cpp',
                 'RegexState.cpp',
-                'RegexStateLess.cpp',
                 'RegexSyntaxTree.cpp',
                 'RegexToken.cpp',
-                'RegexTransition.cpp'
             };
         };
     };

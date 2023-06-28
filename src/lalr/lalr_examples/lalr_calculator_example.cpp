@@ -32,35 +32,41 @@ void lalr_calculator_example()
     compiler.compile( calculator_grammar, calculator_grammar + strlen(calculator_grammar) );
     Parser<const char*, int> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "add", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "add", [] ( int &result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return data[0] + data[2];
-            } 
-        )
-        ( "subtract", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[0] - data[2];
+                result = data[0] + data[2];
+		return true;
             }
         )
-        ( "multiply", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "subtract", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return data[0] * data[2];
-            } 
-        )
-        ( "divide", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[0] / data[2];
-            } 
-        )
-        ( "compound", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[1];
+                result = data[0] - data[2];
+		return true;
             }
         )
-        ( "integer", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "multiply", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return ::atoi( nodes[0].lexeme().c_str() );
-            } 
+                result = data[0] * data[2];
+		return true;
+            }
+        )
+        ( "divide", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = data[0] / data[2];
+		return true;
+            }
+        )
+        ( "compound", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = data[1];
+		return true;
+            }
+        )
+        ( "integer", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = ::atoi( nodes[0].lexeme().c_str() );
+		return true;
+            }
         )
     ;
 

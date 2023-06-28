@@ -73,7 +73,7 @@ void GrammarCompiler::labels_enabled( bool enabled )
     labels_enabled_ = enabled;
 }
 
-int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy )
+int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF )
 {
     Grammar grammar;
 
@@ -81,6 +81,13 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
     int errors = parser.parse( begin, end, error_policy, &grammar );
     if ( errors == 0 )
     {
+        if(genEBNF)
+        {
+            grammar.genEBNF();
+            //grammar.genNakedGrammar();
+            return errors;
+        }
+        bool isCaseInsensitive = grammar.is_case_insensitive();
         GrammarGenerator generator;
         errors = generator.generate( grammar, error_policy );
 
@@ -88,10 +95,13 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
         {
             populate_parser_state_machine( grammar, generator );
 
-            // Generate tokens for generating the lexical analyzer from each of 
+            // Generate tokens for generating the lexical analyzer from each of
             // the terminal symbols in the grammar.
             vector<RegexToken> tokens;
             int column = 1;
+            const char *symbol_lexeme;
+            std::string regex;
+            if(isCaseInsensitive) regex.reserve(255);
             const vector<unique_ptr<GrammarSymbol>>& grammar_symbols = generator.symbols();
             for ( size_t i = 0; i < grammar_symbols.size(); ++i, ++column )
             {
@@ -102,8 +112,68 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
                     const ParserSymbol* symbol = &symbols_[i];
                     LALR_ASSERT( symbol );
                     int line = grammar_symbol->line();
-                    RegexTokenType token_type = grammar_symbol->lexeme_type() == LEXEME_REGULAR_EXPRESSION ? TOKEN_REGULAR_EXPRESSION : TOKEN_LITERAL;
-                    tokens.emplace_back( RegexToken(token_type, line, column, symbol, symbol->lexeme) );
+                    RegexTokenType token_type;
+                    symbol_lexeme = symbol->lexeme;
+                    switch(grammar_symbol->lexeme_type())
+                    {
+                        case LEXEME_REGULAR_EXPRESSION: token_type = TOKEN_REGULAR_EXPRESSION; break;
+                        case LEXEME_NULL: token_type = TOKEN_LITERAL; break;
+                        default:
+                            if(isCaseInsensitive)
+                            {
+                                bool needRegex = false;
+                                const char *p = symbol->lexeme;
+                                regex.clear();
+                                for(; *p; ++p)
+                                {
+                                    bool isLower = *p >= 'a' && *p <= 'z';
+                                    bool isUpper = *p >= 'A' && *p <= 'Z';
+                                    if(isLower || isUpper)
+                                    {
+                                        needRegex = true;
+                                        regex.push_back('[');
+                                        regex.push_back(*p);
+                                        if(isLower)
+                                        {
+                                            regex.push_back(*p -32);
+                                        }
+                                        else
+                                        {
+                                            regex.push_back(*p +32);
+                                        }
+                                        regex.push_back(']');
+                                    }
+                                    else
+                                    {
+                                        switch(*p)
+                                        {
+                                            case '+':
+                                            case '-':
+                                            case '*':
+                                            case '?':
+                                            case '[':
+                                            case ']':
+                                            case '(':
+                                            case ')':
+                                            case '|':
+                                            case '\\':
+                                                regex.push_back('\\');
+                                                break;
+                                        }
+                                        regex.push_back(*p);
+                                    }
+                                }
+                                if(needRegex)
+                                {
+                                    token_type = TOKEN_REGULAR_EXPRESSION;
+                                    symbol_lexeme = regex.c_str();
+                                    //printf("Literal2Regex : %s : %s\n", symbol->lexeme, symbol_lexeme);
+                                    break;
+                                }
+                            }
+                            token_type = TOKEN_LITERAL;
+                    }
+                    tokens.emplace_back( RegexToken(token_type, line, column, symbol, symbol_lexeme) );
                 }
             }
 
@@ -149,7 +219,7 @@ void GrammarCompiler::set_actions( std::unique_ptr<ParserAction[]>& actions, int
     LALR_ASSERT( parser_state_machine_ );
     LALR_ASSERT( actions || actions_size == 0 );
     LALR_ASSERT( actions_size >= 0 );
-    actions_ = move( actions );
+    actions_ = std::move( actions );
     parser_state_machine_->actions_size = actions_size;
     parser_state_machine_->actions = actions_.get();
 }
@@ -159,20 +229,20 @@ void GrammarCompiler::set_symbols( std::unique_ptr<ParserSymbol[]>& symbols, int
     LALR_ASSERT( parser_state_machine_ );
     LALR_ASSERT( symbols );
     LALR_ASSERT( symbols_size >= 3 );
-    symbols_ = move( symbols );
+    symbols_ = std::move( symbols );
     parser_state_machine_->symbols_size = symbols_size;
     parser_state_machine_->symbols = symbols_.get();
     parser_state_machine_->start_symbol = &symbols_[0];
     parser_state_machine_->end_symbol = &symbols_[1];
     parser_state_machine_->error_symbol = &symbols_[2];
     parser_state_machine_->whitespace_symbol = &symbols_[3];
-} 
+}
 
 void GrammarCompiler::set_transitions( std::unique_ptr<ParserTransition[]>& transitions, int transitions_size )
 {
     LALR_ASSERT( transitions );
     LALR_ASSERT( transitions_size >= 0 );
-    transitions_ = move( transitions );
+    transitions_ = std::move( transitions );
     parser_state_machine_->transitions_size = transitions_size;
     parser_state_machine_->transitions = transitions_.get();
 }
@@ -182,7 +252,7 @@ void GrammarCompiler::set_states( std::unique_ptr<ParserState[]>& states, int st
     LALR_ASSERT( states );
     LALR_ASSERT( states_size >= 0 );
     LALR_ASSERT( start_state );
-    states_ = move( states );
+    states_ = std::move( states );
     parser_state_machine_->states_size = states_size;
     parser_state_machine_->states = states_.get();
     parser_state_machine_->start_state = start_state;
@@ -278,4 +348,26 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     set_symbols( symbols, symbols_size );
     set_transitions( transitions, transitions_size );
     set_states( states, states_size, start_state );
+    parser_state_machine_->shift_reduce_count_ = generator.shift_reduce_count();
+    parser_state_machine_->reduce_reduce_count_ = generator.reduce_reduce_count();
+}
+
+#include "LexerStateMachine.hpp"
+
+void GrammarCompiler::showStats()
+{
+    const ParserStateMachine *psm = parser_state_machine_.get();
+    printf("Parser state machine stats:\n");
+    printf("    Symbols          : %d\n", psm->symbols_size);
+    printf("    Actions          : %d\n", psm->actions_size);
+    printf("    States           : %d\n", psm->states_size);
+    printf("    Transitions      : %d\n", psm->transitions_size);
+    printf("    Solved conflicts : shift/reduce = %d, reduce/reduce = %d\n", psm->shift_reduce_count_, psm->reduce_reduce_count_);
+    const LexerStateMachine* lsm = lexer_->state_machine();
+    if(!lsm) return;
+    printf("Lexer state machine stats:\n");
+    printf("    Strings          : %zd\n", lexer_->strings_size());
+    printf("    Actions          : %d\n", lsm->actions_size);
+    printf("    States           : %d\n", lsm->states_size);
+    printf("    Transitions      : %d\n", lsm->transitions_size);
 }

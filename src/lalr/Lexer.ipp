@@ -282,7 +282,7 @@ void Lexer<Iterator, Char, Traits, Allocator>::advance()
     full_ = position_.ended();
     matched_lexeme_.clear();
     matched_symbol_ = nullptr;
-    symbol_ = !position_.ended() ? run() : end_symbol_;
+    symbol_ = !full_ ? run() : end_symbol_;
 }
 
 /**

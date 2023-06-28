@@ -18,7 +18,7 @@
 using namespace std;
 using namespace lalr;
 
-namespace 
+namespace
 {
 
 typedef std::basic_string<char32_t> String;
@@ -56,19 +56,19 @@ struct Attribute
     , value_()
     {
     }
-    
+
     Attribute( const String& name, const shared_ptr<Value>& value )
     : name_( name )
     , value_( value )
     {
-    }    
+    }
 };
 
 struct JsonUserData
 {
     String name_;
     shared_ptr<Value> value_;
-    
+
     JsonUserData()
     : name_()
     , value_()
@@ -79,73 +79,82 @@ struct JsonUserData
     : name_()
     , value_( value )
     {
-    }    
+    }
 
     JsonUserData( const String& name, shared_ptr<Value> value )
     : name_( name )
     , value_( value )
     {
-    }    
+    }
 };
 
-static JsonUserData document( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool document( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
-    return start[1];
+    result = start[1];
+    return true;
 }
 
-static JsonUserData attribute( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
-{   
-    const shared_ptr<Value>& attribute = start[2].value_;
-    return JsonUserData( nodes[0].lexeme(), attribute );
+static bool attribute( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+{
+    result.value_ = start[2].value_;
+    result.name_ = nodes[0].lexeme();
+    return true;
 }
 
-static JsonUserData null( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool null( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     shared_ptr<Value> null_value = make_shared<Value>();
-    return JsonUserData( null_value );
+    result.value_ = null_value;
+    return true;
 }
 
-static JsonUserData value( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool value( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     shared_ptr<Value> value = make_shared<Value>( nodes[0].lexeme() );
-    return JsonUserData( value );
+    result.value_ = value;
+    return true;
 }
 
-static JsonUserData object( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool object( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
-    return start[1];
+    result = start[1];
+    return true;
 }
 
-static JsonUserData add_to_object( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool add_to_object( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     const shared_ptr<Value>& object = start[0].value_;
     shared_ptr<Attribute> attribute = make_shared<Attribute>( start[2].name_, start[2].value_ );
     object->attributes_.push_back( attribute );
-    return JsonUserData( object );
+    result.value_ = object;
+    return true;
 }
 
-static JsonUserData create_object( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool create_object( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     shared_ptr<Value> object = make_shared<Value>();
     shared_ptr<Attribute> attribute = make_shared<Attribute>( start[0].name_, start[0].value_ );
     object->attributes_.push_back( attribute );
-    return JsonUserData( object );
+    result.value_ = object;
+    return true;
 }
 
-static JsonUserData add_to_array( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool add_to_array( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     const shared_ptr<Value>& array = start[0].value_;
     const shared_ptr<Value>& element = start[2].value_;
     array->elements_.push_back( element );
-    return JsonUserData( array );
+    result.value_ = array;
+    return true;
 }
 
-static JsonUserData create_array( const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
+static bool create_array( JsonUserData& result, const JsonUserData* start, const ParserNode<char32_t>* nodes, size_t length )
 {
     shared_ptr<Value> array = make_shared<Value>();
     const shared_ptr<Value>& element = start[0].value_;
     array->elements_.push_back( element );
-    return JsonUserData( array );
+    result.value_ = array;
+    return true;
 }
 
 static void indent( int level )
@@ -153,7 +162,7 @@ static void indent( int level )
     for ( int i = 0; i < level; ++i )
     {
         printf( "  " );
-    }    
+    }
 }
 
 static void print( const Value& value, int level )
@@ -169,7 +178,7 @@ static void print( const Value& value, int level )
         if ( value.attributes_.empty() && value.elements_.empty() )
         {
             indent( level + 1 );
-            printf( "%s='%s'\n", 
+            printf( "%s='%s'\n",
                 utf8.to_bytes(attribute->name_).c_str(),
                 utf8.to_bytes(attribute->value_->value_).c_str()
             );

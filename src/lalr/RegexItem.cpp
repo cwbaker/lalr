@@ -11,36 +11,6 @@
 using namespace lalr;
 
 /**
-// Constructor.
-*/
-RegexItem::RegexItem()
-: next_nodes_()
-{
-}
-
-/**
-// Constructor.
-//
-// @param next_nodes
-//  The nodes that appear after the dot in this item.
-*/
-RegexItem::RegexItem( const std::set<RegexNode*, RegexNodeLess>& next_nodes )
-: next_nodes_( next_nodes )
-{
-}
-
-/**
-// Get the nodes that appear after the dot in this item.
-//
-// @return
-//  The next nodes.
-*/
-const std::set<RegexNode*, RegexNodeLess>& RegexItem::next_nodes() const
-{
-    return next_nodes_;
-}
-
-/**
 // Calculate the nodes that can be visited after [\e begin, \e end) is 
 // transitioned on from this item.
 //

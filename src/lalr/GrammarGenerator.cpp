@@ -21,7 +21,9 @@
 #include "ParserStateMachine.hpp"
 #include "RegexGenerator.hpp"
 #include "RegexCompiler.hpp"
+#ifndef LALR_NO_THREADS
 #include "ThreadPool.hpp"
+#endif
 #include "ErrorPolicy.hpp"
 #include "ErrorCode.hpp"
 #include "assert.hpp"
@@ -49,7 +51,9 @@ using namespace lalr;
 */
 GrammarGenerator::GrammarGenerator()
 : error_policy_( nullptr )
+#ifndef LALR_NO_THREADS
 , thread_pool_( nullptr )
+#endif
 , identifier_()
 , actions_()
 , productions_()
@@ -63,15 +67,21 @@ GrammarGenerator::GrammarGenerator()
 , whitespace_symbol_( nullptr )
 , start_state_( nullptr )
 , errors_( 0 )
+, shift_reduce_count_( 0 )
+, reduce_reduce_count_( 0 )
 {
+#ifndef LALR_NO_THREADS
     thread_pool_ = new ThreadPool;
     thread_pool_->start( 8 );
+#endif
 }
 
 GrammarGenerator::~GrammarGenerator()
 {
+#ifndef LALR_NO_THREADS
     delete thread_pool_;
     thread_pool_ = nullptr;
+#endif
 }
 
 const std::vector<std::unique_ptr<GrammarAction>>& GrammarGenerator::actions() const
@@ -235,13 +245,13 @@ void GrammarGenerator::error( int line, int error, const char* format, ... )
 
 GrammarTransition* GrammarGenerator::shift_transition( const GrammarSymbol* symbol, GrammarState* state )
 {
-    transitions_.push_back( make_unique<GrammarTransition>(symbol, state) );
+    transitions_.emplace_back( make_unique<GrammarTransition>(symbol, state) );
     return transitions_.back().get();
 }
 
 GrammarTransition* GrammarGenerator::reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production )
 {
-    transitions_.push_back( make_unique<GrammarTransition>(symbol, production) );
+    transitions_.emplace_back( make_unique<GrammarTransition>(symbol, production) );
     return transitions_.back().get();
 }
 
@@ -396,7 +406,7 @@ void GrammarGenerator::check_for_undefined_symbol_errors()
         {
             const GrammarSymbol* symbol = i->get();
             LALR_ASSERT( symbol );
-            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && !symbol->referenced_in_precedence_directive() )
+            if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && (symbol->referenced_in_rule() || !symbol->referenced_in_precedence_directive()) )
             {
                 error( symbol->line(), PARSER_ERROR_UNDEFINED_SYMBOL, "undefined symbol '%s'", symbol->identifier().c_str(), identifier_.c_str() );
             }
@@ -756,7 +766,9 @@ void GrammarGenerator::generate_goto_items()
 {
     for ( const shared_ptr<GrammarState>& state : states_ )
     {
+#ifndef LALR_NO_THREADS        
         thread_pool_->push_job( [this, state]()
+#endif            
             {
                 for ( GrammarTransition* transition : state->transitions() )
                 {
@@ -799,9 +811,13 @@ void GrammarGenerator::generate_goto_items()
                     }
                 }
             }
+#ifndef LALR_NO_THREADS    
         );
+#endif
     }
-    thread_pool_->wait_idle();    
+#ifndef LALR_NO_THREADS    
+    thread_pool_->wait_idle();
+#endif
 }
 
 /**
@@ -956,9 +972,9 @@ void GrammarGenerator::generate_reduce_transitions()
             if ( item->position() >= production->length() )
             {
                 const GrammarSymbolSet& lookaheads = lookaheads_[item->index()].lookaheads();
-                int start = lookaheads.minimum_index();
-                int finish = lookaheads.maximum_index();
-                for ( int index = start; index < finish; ++index )
+                size_t start = lookaheads.minimum_index();
+                size_t finish = lookaheads.maximum_index();
+                for ( size_t index = start; index <= finish; ++index )
                 {
                     if ( lookaheads.contains(index) )
                     {
@@ -967,7 +983,7 @@ void GrammarGenerator::generate_reduce_transitions()
                         generate_reduce_transition( state, symbol, production );
                     }
                 }
-            }                
+            }
         }
     }
 }
@@ -1006,6 +1022,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
             {
                 transition->override_shift_to_reduce( production );
+                ++shift_reduce_count_;
             }
         }
         else
@@ -1018,6 +1035,7 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             else if ( production->precedence() > transition->precedence() )
             {
                 transition->override_reduce_to_reduce( production );
+                ++reduce_reduce_count_;
             }
         }
     }

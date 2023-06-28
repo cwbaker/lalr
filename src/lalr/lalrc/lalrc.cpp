@@ -205,7 +205,7 @@ static void close()
     file_ = nullptr;
 }
 
-void write( const char* format, ... )
+void writeToOutput( const char* format, ... )
 {
     if ( file_ )
     {
@@ -227,96 +227,96 @@ void print_cxx_parser_state_machine( const ParserStateMachine* state_machine )
     const ParserState* states_end = states + state_machine->states_size;
     for ( const ParserState* state = states; state != states_end; ++state )
     {
-        write( "state %d:\n", state->index );
+        writeToOutput( "state %d:\n", state->index );
         const ParserTransition* transitions = state->transitions;
         const ParserTransition* transitions_end = transitions + state->length;
         for ( const ParserTransition* transition = transitions; transition != transitions_end; ++transition )
         {
             if ( transition->state )
             {
-                write( "  %s -> state %d\n", transition->symbol->lexeme, transition->state->index );                
+                writeToOutput( "  %s -> state %d\n", transition->symbol->lexeme, transition->state->index );
             }
             else
             {
-                write( "  %s <- %s\n", transition->symbol->lexeme, transition->reduced_symbol->lexeme );
+                writeToOutput( "  %s <- %s\n", transition->symbol->lexeme, transition->reduced_symbol->lexeme );
             }
         }
-        write( "\n" );
+        writeToOutput( "\n" );
     }
 }
 
 void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine )
 {
-    write( "\n" );
-    write( "#include <lalr/ParserStateMachine.hpp>\n" );
-    write( "#include <lalr/ParserState.hpp>\n" );
-    write( "#include <lalr/ParserTransition.hpp>\n" );
-    write( "#include <lalr/ParserSymbol.hpp>\n" );
-    write( "#include <lalr/ParserAction.hpp>\n" );
-    write( "#include <lalr/LexerStateMachine.hpp>\n" );
-    write( "#include <lalr/LexerState.hpp>\n" );
-    write( "#include <lalr/LexerTransition.hpp>\n" );
-    write( "#include <lalr/LexerAction.hpp>\n" );
-    write( "\n" );
-    write( "namespace\n" );
-    write( "{\n" );
-    write( "\n" );
-    write( "using namespace lalr;\n" );
-    write( "\n" );
-    write( "extern const LexerAction lexer_actions [];\n" );
-    write( "extern const LexerTransition lexer_transitions [];\n" );
-    write( "extern const LexerState lexer_states [];\n" );
-    write( "extern const LexerAction whitespace_lexer_actions [];\n" );
-    write( "extern const LexerTransition whitespace_lexer_transitions [];\n" );
-    write( "extern const LexerState whitespace_lexer_states [];\n" );
-    write( "extern const ParserAction actions [];\n" );
-    write( "extern const ParserSymbol symbols [];\n" );
-    write( "extern const ParserTransition transitions [];\n" );
-    write( "extern const ParserState states [];\n" );
-    write( "\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "#include <lalr/ParserStateMachine.hpp>\n" );
+    writeToOutput( "#include <lalr/ParserState.hpp>\n" );
+    writeToOutput( "#include <lalr/ParserTransition.hpp>\n" );
+    writeToOutput( "#include <lalr/ParserSymbol.hpp>\n" );
+    writeToOutput( "#include <lalr/ParserAction.hpp>\n" );
+    writeToOutput( "#include <lalr/LexerStateMachine.hpp>\n" );
+    writeToOutput( "#include <lalr/LexerState.hpp>\n" );
+    writeToOutput( "#include <lalr/LexerTransition.hpp>\n" );
+    writeToOutput( "#include <lalr/LexerAction.hpp>\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "namespace\n" );
+    writeToOutput( "{\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "using namespace lalr;\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "extern const LexerAction lexer_actions [];\n" );
+    writeToOutput( "extern const LexerTransition lexer_transitions [];\n" );
+    writeToOutput( "extern const LexerState lexer_states [];\n" );
+    writeToOutput( "extern const LexerAction whitespace_lexer_actions [];\n" );
+    writeToOutput( "extern const LexerTransition whitespace_lexer_transitions [];\n" );
+    writeToOutput( "extern const LexerState whitespace_lexer_states [];\n" );
+    writeToOutput( "extern const ParserAction actions [];\n" );
+    writeToOutput( "extern const ParserSymbol symbols [];\n" );
+    writeToOutput( "extern const ParserTransition transitions [];\n" );
+    writeToOutput( "extern const ParserState states [];\n" );
+    writeToOutput( "\n" );
 
-    write( "const ParserAction actions [] = \n" );
-    write( "{\n" );
+    writeToOutput( "const ParserAction actions [] = \n" );
+    writeToOutput( "{\n" );
     const ParserAction* actions = state_machine->actions;
     const ParserAction* actions_end = actions + state_machine->actions_size;
     for ( const ParserAction* action = actions; action != actions_end; ++action )
     {
-        write( "    {%d, \"%s\"},\n", 
-            action->index, 
+        writeToOutput( "    {%d, \"%s\"},\n",
+            action->index,
             action->identifier
         );
     }
-    write( "    {-1, nullptr}\n" );
-    write( "};\n" );
-    write( "\n" );
+    writeToOutput( "    {-1, nullptr}\n" );
+    writeToOutput( "};\n" );
+    writeToOutput( "\n" );
 
-    write( "const ParserSymbol symbols [] = \n" );
-    write( "{\n" );
+    writeToOutput( "const ParserSymbol symbols [] = \n" );
+    writeToOutput( "{\n" );
     const ParserSymbol* symbols = state_machine->symbols;
     const ParserSymbol* symbols_end = symbols + state_machine->symbols_size;
     for ( const ParserSymbol* symbol = symbols; symbol != symbols_end; ++symbol )
     {
-        write( "    {%d, \"%s\", \"%s\", \"%s\", (SymbolType) %d},\n", 
-            symbol->index, 
-            symbol->identifier, 
+        writeToOutput( "    {%d, (SymbolType) %d, \"%s\", \"%s\", \"%s\"},\n",
+            symbol->index,
+            symbol->type,
+            symbol->identifier,
             sanitize(symbol->lexeme).c_str(),
-            sanitize(symbol->label).c_str(),
-            symbol->type
+            sanitize(symbol->label).c_str()
         );
     }
-    write( "    {-1, nullptr, nullptr, nullptr, (SymbolType) 0}\n" );
-    write( "};\n" );
-    write( "\n" );
+    writeToOutput( "    {-1, (SymbolType) 0, nullptr, nullptr, nullptr}\n" );
+    writeToOutput( "};\n" );
+    writeToOutput( "\n" );
 
-    write( "const ParserTransition transitions [] = \n" );
-    write( "{\n" );
+    writeToOutput( "const ParserTransition transitions [] = \n" );
+    writeToOutput( "{\n" );
     const ParserTransition* transitions = state_machine->transitions;
     const ParserTransition* transitions_end = transitions + state_machine->transitions_size;
     for ( const ParserTransition* transition = transitions; transition != transitions_end; ++transition )
     {
         if ( transition->reduced_symbol )
         {
-            write( "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, %d},\n",
+            writeToOutput( "    {&symbols[%d], nullptr, &symbols[%d], %d, %d, %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->reduced_symbol->index,
                 transition->reduced_length,
@@ -327,7 +327,7 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
         }
         else
         {
-            write( "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, %d},\n",
+            writeToOutput( "    {&symbols[%d], &states[%d], nullptr, %d, %d, %d, %d},\n",
                 transition->symbol ? transition->symbol->index : -1,
                 transition->state ? transition->state->index : -1,
                 transition->reduced_length,
@@ -337,83 +337,85 @@ void generate_cxx_parser_state_machine( const ParserStateMachine* state_machine 
             );
         }
     }
-    write( "    {nullptr, nullptr, nullptr, 0, 0, 0, -1}\n" );
-    write( "};\n" );
-    write( "\n" );
+    writeToOutput( "    {nullptr, nullptr, nullptr, 0, 0, 0, -1}\n" );
+    writeToOutput( "};\n" );
+    writeToOutput( "\n" );
 
-    write( "const ParserState states [] = \n" );
-    write( "{\n" );
+    writeToOutput( "const ParserState states [] = \n" );
+    writeToOutput( "{\n" );
     const ParserState* states = state_machine->states;
     const ParserState* states_end = states + state_machine->states_size;
     for ( const ParserState* state = states; state != states_end; ++state )
     {
-        write( "    {%d, %d, &transitions[%d], \"%s\"},\n",
+        writeToOutput( "    {%d, %d, &transitions[%d], \"%s\"},\n",
             state->index,
             state->length,
             state->transitions->index,
             state->label ? sanitize( state->label ).c_str() : nullptr
         );
     }
-    write( "    {-1, 0, nullptr}\n" );
-    write( "};\n" );
-    write( "\n" );
+    writeToOutput( "    {-1, 0, nullptr}\n" );
+    writeToOutput( "};\n" );
+    writeToOutput( "\n" );
 
     generate_cxx_lexer_state_machine( state_machine->lexer_state_machine, "lexer" );
     generate_cxx_lexer_state_machine( state_machine->whitespace_lexer_state_machine, "whitespace_lexer" );
 
-    write( "const ParserStateMachine parser_state_machine = \n" );
-    write( "{\n" );
-    write( "    \"%s\",\n", state_machine->identifier );
-    write( "    %d, // #actions\n", state_machine->actions_size );
-    write( "    %d, // #symbols\n", state_machine->symbols_size );
-    write( "    %d, // #transitions\n", state_machine->transitions_size );
-    write( "    %d, // #states\n", state_machine->states_size );
-    write( "    actions,\n" );
-    write( "    symbols,\n" );
-    write( "    transitions,\n" );
-    write( "    states,\n" );
-    write( "    &symbols[%d], // start symbol\n", state_machine->start_symbol->index );
-    write( "    &symbols[%d], // end symbol\n", state_machine->end_symbol->index );
-    write( "    &symbols[%d], // error symbol\n", state_machine->error_symbol->index );
-    write( "    &symbols[%d], // whitespace symbol\n", state_machine->whitespace_symbol->index );
-    write( "    &states[%d], // start state\n", state_machine->start_state->index );
-    write( "    %s, // lexer state machine\n", state_machine->lexer_state_machine ? "&lexer_state_machine" : "null" );
-    write( "    %s // whitespace lexer state machine\n", state_machine->whitespace_lexer_state_machine ? "&whitespace_lexer_state_machine" : "null" );
-    write( "};\n" );
+    writeToOutput( "const ParserStateMachine parser_state_machine = \n" );
+    writeToOutput( "{\n" );
+    writeToOutput( "    \"%s\",\n", state_machine->identifier );
+    writeToOutput( "    %d, // #actions\n", state_machine->actions_size );
+    writeToOutput( "    %d, // #symbols\n", state_machine->symbols_size );
+    writeToOutput( "    %d, // #transitions\n", state_machine->transitions_size );
+    writeToOutput( "    %d, // #states\n", state_machine->states_size );
+    writeToOutput( "    %d, // #shift_reduce_count\n", state_machine->shift_reduce_count_ );
+    writeToOutput( "    %d, // #reduce_reduce_count\n", state_machine->reduce_reduce_count_ );
+    writeToOutput( "    actions,\n" );
+    writeToOutput( "    symbols,\n" );
+    writeToOutput( "    transitions,\n" );
+    writeToOutput( "    states,\n" );
+    writeToOutput( "    &symbols[%d], // start symbol\n", state_machine->start_symbol->index );
+    writeToOutput( "    &symbols[%d], // end symbol\n", state_machine->end_symbol->index );
+    writeToOutput( "    &symbols[%d], // error symbol\n", state_machine->error_symbol->index );
+    writeToOutput( "    &symbols[%d], // whitespace symbol\n", state_machine->whitespace_symbol->index );
+    writeToOutput( "    &states[%d], // start state\n", state_machine->start_state->index );
+    writeToOutput( "    %s, // lexer state machine\n", state_machine->lexer_state_machine ? "&lexer_state_machine" : "null" );
+    writeToOutput( "    %s // whitespace lexer state machine\n", state_machine->whitespace_lexer_state_machine ? "&whitespace_lexer_state_machine" : "null" );
+    writeToOutput( "};\n" );
 
-    write( "\n" );
-    write( "}\n" );
-    write( "\n" );
+    writeToOutput( "\n" );
+    writeToOutput( "}\n" );
+    writeToOutput( "\n" );
 
-    write( "const lalr::ParserStateMachine* %s_parser_state_machine = &parser_state_machine;\n", state_machine->identifier );
+    writeToOutput( "const lalr::ParserStateMachine* %s_parser_state_machine = &parser_state_machine;\n", state_machine->identifier );
 }
 
 void generate_cxx_lexer_state_machine( const LexerStateMachine* state_machine, const char* prefix )
 {
     if ( state_machine )
     {
-        write( "const LexerAction %s_actions [] = \n", prefix );
-        write( "{\n" );
+        writeToOutput( "const LexerAction %s_actions [] = \n", prefix );
+        writeToOutput( "{\n" );
         const LexerAction* actions = state_machine->actions;
         const LexerAction* actions_end = actions + state_machine->actions_size;
         for ( const LexerAction* action = actions; action != actions_end; ++action )
         {
-            write( "    {%d, \"%s\"},\n", 
-                action->index, 
+            writeToOutput( "    {%d, \"%s\"},\n",
+                action->index,
                 action->identifier
             );
         }
-        write( "    {-1, nullptr}\n" );
-        write( "};\n" );
-        write( "\n" );
+        writeToOutput( "    {-1, nullptr}\n" );
+        writeToOutput( "};\n" );
+        writeToOutput( "\n" );
 
-        write( "const LexerTransition %s_transitions [] = \n", prefix );
-        write( "{\n" );
+        writeToOutput( "const LexerTransition %s_transitions [] = \n", prefix );
+        writeToOutput( "{\n" );
         const LexerTransition* transitions = state_machine->transitions;
         const LexerTransition* transitions_end = transitions + state_machine->transitions_size;
         for ( const LexerTransition* transition = transitions; transition != transitions_end; ++transition )
         {
-            write( "    {%d, %d, &%s_states[%d], ",
+            writeToOutput( "    {%d, %d, &%s_states[%d], ",
                 transition->begin,
                 transition->end,
                 prefix,
@@ -421,24 +423,24 @@ void generate_cxx_lexer_state_machine( const LexerStateMachine* state_machine, c
             );
             if ( transition->action )
             {
-                write( "&%s_actions[%d]},\n", prefix, transition->action->index );
+                writeToOutput( "&%s_actions[%d]},\n", prefix, transition->action->index );
             }
             else
             {
-                write( "nullptr},\n" );
+                writeToOutput( "nullptr},\n" );
             }
         }
-        write( "    {-1, -1, nullptr, nullptr}\n" );
-        write( "};\n" );
-        write( "\n" );
+        writeToOutput( "    {-1, -1, nullptr, nullptr}\n" );
+        writeToOutput( "};\n" );
+        writeToOutput( "\n" );
 
-        write( "const LexerState %s_states [] = \n", prefix );
-        write( "{\n" );
+        writeToOutput( "const LexerState %s_states [] = \n", prefix );
+        writeToOutput( "{\n" );
         const LexerState* states = state_machine->states;
         const LexerState* states_end = states + state_machine->states_size;
         for ( const LexerState* state = states; state != states_end; ++state )
         {
-            write( "    {%d, %d, &%s_transitions[%d], ",
+            writeToOutput( "    {%d, %d, &%s_transitions[%d], ",
                 state->index,
                 state->length,
                 prefix,
@@ -447,28 +449,28 @@ void generate_cxx_lexer_state_machine( const LexerStateMachine* state_machine, c
             const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( state->symbol );
             if ( symbol )
             {
-                write( "&symbols[%d]},\n", symbol->index );
+                writeToOutput( "&symbols[%d]},\n", symbol->index );
             }
             else
             {
-                write( "nullptr},\n" );
+                writeToOutput( "nullptr},\n" );
             }
         }
-        write( "    {-1, 0, nullptr, nullptr}\n" );
-        write( "};\n" );
-        write( "\n" );
+        writeToOutput( "    {-1, 0, nullptr, nullptr}\n" );
+        writeToOutput( "};\n" );
+        writeToOutput( "\n" );
 
-        write( "const LexerStateMachine %s_state_machine = \n", prefix );
-        write( "{\n" );
-        write( "    %d, // #actions\n", state_machine->actions_size );
-        write( "    %d, // #transitions\n", state_machine->transitions_size );
-        write( "    %d, // #states\n", state_machine->states_size );
-        write( "    %s_actions, // actions\n", prefix );
-        write( "    %s_transitions, // transitions\n", prefix );
-        write( "    %s_states, // states\n", prefix );
-        write( "    &%s_states[%d] // start state\n", prefix, state_machine->start_state->index );
-        write( "};\n" );
-        write( "\n" );
+        writeToOutput( "const LexerStateMachine %s_state_machine = \n", prefix );
+        writeToOutput( "{\n" );
+        writeToOutput( "    %d, // #actions\n", state_machine->actions_size );
+        writeToOutput( "    %d, // #transitions\n", state_machine->transitions_size );
+        writeToOutput( "    %d, // #states\n", state_machine->states_size );
+        writeToOutput( "    %s_actions, // actions\n", prefix );
+        writeToOutput( "    %s_transitions, // transitions\n", prefix );
+        writeToOutput( "    %s_states, // states\n", prefix );
+        writeToOutput( "    &%s_states[%d] // start state\n", prefix, state_machine->start_state->index );
+        writeToOutput( "};\n" );
+        writeToOutput( "\n" );
     }
 }
 

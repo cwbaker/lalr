@@ -11,7 +11,8 @@ class GrammarSymbol;
 
 class GrammarSymbolSet
 {
-    std::vector<size_t> set_;
+    typedef size_t vector_set_t;
+    std::vector<vector_set_t> set_;
     size_t minimum_;
     size_t maximum_;
 
@@ -22,9 +23,9 @@ public:
     GrammarSymbolSet& operator=( GrammarSymbolSet&& set );
     GrammarSymbolSet& operator=( const GrammarSymbolSet& set );
 
-    int minimum_index() const;
-    int maximum_index() const;
-    bool contains( int symbol_index ) const;
+    size_t minimum_index() const;
+    size_t maximum_index() const;
+    bool contains( size_t symbol_index ) const;
     bool insert( const GrammarSymbol* symbol );
     int insert( const GrammarSymbolSet& set );
 };

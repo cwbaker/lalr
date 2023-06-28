@@ -12,6 +12,7 @@ enum ErrorCode
     PARSER_ERROR_NONE, ///< No %error.
     LALR_ERROR_SYNTAX, ///< Syntax %error occured while parsing input.
     LALR_ERROR_UNTERMINATED_LITERAL, ///< Unterminated literal in an lalr grammar.
+    LALR_ERROR_EMPTY_LITERAL, ///< Empty literal in an lalr grammar.
     LEXER_ERROR_MISSING_ACTION_HANDLER, ///< A lexer action hasn't been bound to a function.
     LEXER_ERROR_SYNTAX, ///< Syntax %error occured while parsing some input.
     LEXER_ERROR_SYMBOL_CONFLICT, ///< A lexer state matches more than one symbol.

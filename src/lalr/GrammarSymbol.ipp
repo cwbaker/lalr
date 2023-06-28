@@ -52,6 +52,11 @@ int GrammarSymbol::line() const
     return line_;
 }
 
+int GrammarSymbol::column() const
+{
+    return column_;
+}
+
 int GrammarSymbol::index() const
 {
     return index_;
@@ -65,6 +70,11 @@ bool GrammarSymbol::nullable() const
 bool GrammarSymbol::referenced_in_precedence_directive() const
 {
     return referenced_in_precedence_directive_;
+}
+
+bool GrammarSymbol::referenced_in_rule() const
+{
+    return referenced_in_rule_;
 }
 
 const GrammarSymbolSet& GrammarSymbol::first() const
