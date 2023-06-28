@@ -218,7 +218,7 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
         else parser.parse(  input, input + strlen((const char*)input) );
 
 	parse_result = parser.accepted() == 1 && parser.full() == 1;
-	if(generate_parsetree)
+	if(generate_parsetree && parse_result)
 	{
 		switch_output("ast");
 		print_parsetree( parser.user_data(), 0 );
