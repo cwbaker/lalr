@@ -36,7 +36,7 @@ public:
     typedef lalr::ParserNode<Char, Traits, Allocator> ParserNode;
     typedef typename std::vector<ParserNode>::const_iterator ParserNodeConstIterator;
     typedef std::function<PositionIterator<Iterator> (const PositionIterator<Iterator>& begin, const PositionIterator<Iterator>& end, std::basic_string<Char, Traits, Allocator>* lexeme, const void** symbol)> LexerActionFunction;
-    typedef std::function<UserData (const UserData* data, const ParserNode* nodes, size_t length)> ParserActionFunction;
+    typedef std::function<bool (UserData &result, const UserData* data, const ParserNode* nodes, size_t length)> ParserActionFunction;
 
 private:
     struct ParserActionHandler
@@ -86,7 +86,7 @@ private:
     typename std::vector<ParserNode>::iterator find_node_to_reduce_to( const ParserTransition* transition, std::vector<ParserNode>& nodes );
     void debug_shift( const ParserNode& node ) const;
     void debug_reduce( const ParserSymbol* reduced_symbol, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
-    UserData handle( const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
+    bool handle(UserData& result, const ParserTransition* transition, std::ptrdiff_t start, std::ptrdiff_t finish ) const;
     std::string expected_symbols( const ParserState* state ) const;
     void shift( const ParserTransition* transition, const std::basic_string<Char, Traits, Allocator>& lexeme, int line, int column );
     void reduce( const ParserTransition* transition, bool* accepted, bool* rejected );

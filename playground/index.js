@@ -65,6 +65,15 @@ function loadLalr_sample(self) {
 	codeEditor.getSession().setMode("ace/mode/sql");
       });
       break;
+      case "Postgresql parser case insensitive (be patient)":
+      $.get(base_url + "postgresql-16-nc.g", function( data ) {
+        grammarEditor.setValue( data );
+      });
+      $.get(base_url + "test.sql", function( data ) {
+        codeEditor.setValue( data );
+	codeEditor.getSession().setMode("ace/mode/sql");
+      });
+      break;
       case "C++ parser (bug)":
       $.get(base_url + "cxx-parser.g", function( data ) {
         grammarEditor.setValue( data );
@@ -200,6 +209,15 @@ function loadLalr_sample(self) {
 	codeEditor.getSession().setMode("ace/mode/ada");
       });
       break;
+      case "Ada parser case insensitive":
+      $.get(base_url + "ada-adayacc-nc.g", function( data ) {
+        grammarEditor.setValue( data );
+      });
+      $.get(base_url + "test.adb", function( data ) {
+        codeEditor.setValue( data );
+	codeEditor.getSession().setMode("ace/mode/ada");
+      });
+      break;
   }
 }
 
@@ -276,6 +294,7 @@ function parse() {
   const optimizationMode = $('#opt-mode').val();
   const generate_ebnf = $('#gen-ebnf').prop('checked');
   const lexer = $('#show-lexer').prop('checked');
+  const generate_ast = $('#show-ast').prop('checked');
 
   $grammarInfo.html('');
   $grammarValidation.hide();
@@ -303,7 +322,7 @@ function parse() {
 
   window.setTimeout(() => {
     parse_start_time = new Date().getTime();
-    lalr_parse(grammarText, codeText, lexer, generate_ebnf, 0);
+    lalr_parse(grammarText, codeText, lexer, generate_ebnf, generate_ast);
 
     $('#overlay').css({
       'z-index': '-1',
@@ -348,6 +367,10 @@ function parse() {
       const errors = textToErrors(outputs.compile_status);
       const html = generateErrorListHTML(errors);
       $grammarInfo.html(html);
+    }
+
+    if (outputs.ast.length > 0) {
+      $codeAst.setValue(outputs.ast);
     }
   }, 0);
 }

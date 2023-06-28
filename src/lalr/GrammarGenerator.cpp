@@ -245,13 +245,13 @@ void GrammarGenerator::error( int line, int error, const char* format, ... )
 
 GrammarTransition* GrammarGenerator::shift_transition( const GrammarSymbol* symbol, GrammarState* state )
 {
-    transitions_.push_back( make_unique<GrammarTransition>(symbol, state) );
+    transitions_.emplace_back( make_unique<GrammarTransition>(symbol, state) );
     return transitions_.back().get();
 }
 
 GrammarTransition* GrammarGenerator::reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production )
 {
-    transitions_.push_back( make_unique<GrammarTransition>(symbol, production) );
+    transitions_.emplace_back( make_unique<GrammarTransition>(symbol, production) );
     return transitions_.back().get();
 }
 
