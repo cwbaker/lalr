@@ -50,11 +50,11 @@ local cc = forge.Toolset 'cc_${platform}' {
 
 cc:install( 'forge.cc' );
 
--- Bump the C++ standard to c++14 when building on Windows as that is the 
+-- Bump the C++ standard to c++14 when building on Windows as that is the
 -- lowest standard supported by Microsoft Visual C++.
-if cc.platform == 'windows' then
-    cc.standard = 'c++14';
-end
+--if cc.platform == 'windows' then
+    cc.standard = 'c++17';
+--end
 
 local lalr = require 'forge.lalr';
 cc:install( lalr );

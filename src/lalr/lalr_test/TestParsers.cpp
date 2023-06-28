@@ -29,7 +29,7 @@ SUITE( Parsers )
         while ( symbol != symbols_end && strcmp(symbol->identifier, identifier) != 0 )
         {
             ++symbol;
-        }    
+        }
         return symbol != symbols_end ? symbol : nullptr ;
     }
 
@@ -41,7 +41,7 @@ SUITE( Parsers )
             }
     };
 
-    struct PrintParserErrorPolicy : public ErrorPolicy     
+    struct PrintParserErrorPolicy : public ErrorPolicy
     {
         int errors;
 
@@ -54,7 +54,7 @@ SUITE( Parsers )
         {
             vprintf( format, args );
         }
-    
+
         void lalr_error( int line, int column, int /*error*/, const char* format, va_list args )
         {
             char message [1024];
@@ -65,10 +65,10 @@ SUITE( Parsers )
     };
 
     struct CheckParserErrorPolicy : public ErrorPolicy
-    {    
+    {
         int expected_error;
-        int errors;            
-        
+        int errors;
+
         CheckParserErrorPolicy( int expected_error )
         : expected_error( expected_error )
         , errors( 0 )
@@ -82,12 +82,12 @@ SUITE( Parsers )
             CHECK( error == expected_error );
         }
     };
-    
+
     struct CheckLexerErrorPolicy : public ErrorPolicy
-    {    
+    {
         int expected_error;
         int errors;
-        
+
         CheckLexerErrorPolicy( int expected_error )
         : expected_error( expected_error )
         , errors( 0 )
@@ -101,10 +101,10 @@ SUITE( Parsers )
             CHECK( error == expected_error );
         }
     };
-        
+
     TEST( OrOperator )
     {
-        const char* or_grammar = 
+        const char* or_grammar =
             "OrOperator {\n"
             "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   unit: one | two | three;\n"
@@ -115,9 +115,9 @@ SUITE( Parsers )
         ;
 
         GrammarCompiler compiler;
-        compiler.compile( or_grammar, or_grammar + strlen(or_grammar) );        
+        compiler.compile( or_grammar, or_grammar + strlen(or_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-    
+
         const char* input = "1";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
@@ -183,7 +183,7 @@ SUITE( Parsers )
 
     TEST( ZeroToManyRepeats )
     {
-        const char* zero_to_many_repeats_grammar = 
+        const char* zero_to_many_repeats_grammar =
             "ZeroToManyRepeats {\n"
             "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "   %left two; \n"
@@ -272,8 +272,8 @@ SUITE( Parsers )
 
     TEST( Optional )
     {
-        const char* optional_grammar =         
-            "Optional {\n"            
+        const char* optional_grammar =
+            "Optional {\n"
             "   %whitespace \"[ \\t\\r\\n]\" ;\n"
             "    unit: one two_opt three;\n"
             "    two_opt: two | ;\n"
@@ -397,16 +397,16 @@ SUITE( Parsers )
 
         input = "(1+2)*3";
         parser.parse( input, input + strlen(input) );
-        CHECK( parser.accepted() );               
-        
+        CHECK( parser.accepted() );
+
         input = "1+2+3*(2+3)";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        
+
         input = "((1+2)*3";
         parser.parse( input, input + strlen(input) );
         CHECK( !parser.accepted() );
-        
+
         input = "1+";
         parser.parse( input, input + strlen(input) );
         CHECK( !parser.accepted() );
@@ -495,7 +495,7 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( !parser.accepted() );
     }
- 
+
     TEST( Canonical )
     {
         const char* canonical_grammar =
@@ -559,7 +559,7 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( !parser.accepted() );
     }
-       
+
     TEST( ProductionsOnCollapsedSymbols )
     {
         const char* productions_on_collapsed_symbols_grammar =
@@ -571,14 +571,14 @@ SUITE( Parsers )
         GrammarCompiler compiler;
         compiler.compile( productions_on_collapsed_symbols_grammar, productions_on_collapsed_symbols_grammar + strlen(productions_on_collapsed_symbols_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-        
+
         const char* input = "a";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
     }
-    
+
     TEST( ReduceStarNode )
-    {   
+    {
         const char* reduce_star_node_grammar =
             "ReduceStarNode {\n"
             "   %whitespace \"[ \\t\\r\\n]\" ;\n"
@@ -592,11 +592,11 @@ SUITE( Parsers )
         GrammarCompiler compiler;
         compiler.compile( reduce_star_node_grammar, reduce_star_node_grammar + strlen(reduce_star_node_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-        
+
         const char* input = "1";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        
+
         input = "111";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
@@ -614,12 +614,12 @@ SUITE( Parsers )
         GrammarCompiler compiler;
         compiler.compile( reduce_parenthesis_grammar, reduce_parenthesis_grammar + strlen(reduce_parenthesis_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-        
+
         const char* input = "1";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
-        
+
         input = "(1)";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
@@ -650,7 +650,7 @@ SUITE( Parsers )
         GrammarCompiler compiler;
         compiler.compile( reduce_star_and_parenthesis_grammar, reduce_star_and_parenthesis_grammar + strlen(reduce_star_and_parenthesis_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-        
+
         const char* input = "(1)";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
@@ -661,7 +661,7 @@ SUITE( Parsers )
         CHECK( parser.accepted() );
         CHECK( parser.full() );
     }
-    
+
     TEST( Whitespace )
     {
         const char* whitespace_grammar =
@@ -678,7 +678,7 @@ SUITE( Parsers )
         GrammarCompiler compiler;
         compiler.compile( whitespace_grammar, whitespace_grammar + strlen(whitespace_grammar) );
         Parser<const char*> parser( compiler.parser_state_machine() );
-        
+
         const char* input = "a b";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
@@ -703,8 +703,8 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
-    }    
-    
+    }
+
     TEST( String )
     {
         struct StringLexer
@@ -720,17 +720,17 @@ SUITE( Parsers )
                 {
                     *lexeme += *i;
                     ++i;
-                }                
+                }
                 if ( i != end )
                 {
                     LALR_ASSERT( *i == '\'' );
                     ++i;
-                }                
+                }
                 return i;
             }
         };
-    
-        const char* string_grammar = 
+
+        const char* string_grammar =
             "String { \n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: strings;\n"
@@ -744,7 +744,7 @@ SUITE( Parsers )
         Parser<const char*> parser( compiler.parser_state_machine() );
         parser.lexer_action_handlers()
             ( "string", &StringLexer::string_lexer )
-        ;            
+        ;
 
         const char* input = "'first' 'second' 'third'";
         parser.parse( input, input + strlen(input) );
@@ -757,10 +757,10 @@ SUITE( Parsers )
         CHECK( parser.accepted() );
         CHECK( parser.full() );
     }
-        
+
     TEST( LineCommentInWhitespaceDirective )
     {
-        const char* line_comment_grammar = 
+        const char* line_comment_grammar =
             "LineComment {\n"
             "   %whitespace \"([ \\t\\r\\n]|\\/\\/:line_comment:)*\";\n"
             "   unit: digits;\n"
@@ -776,12 +776,12 @@ SUITE( Parsers )
             ( "line_comment", &line_comment<const char*> )
         ;
 
-        const char* input = 
+        const char* input =
             "1 2 // This is a comment\n"
             "3 4 // This is another comment\r"
             "// 5 6 \n\r"
         ;
-        
+
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
@@ -789,7 +789,7 @@ SUITE( Parsers )
 
     TEST( BlockCommentInWhitespaceDirective )
     {
-        const char* block_comment_grammar = 
+        const char* block_comment_grammar =
             "BlockComment {\n"
             "   %whitespace \"([ \\t\\r\\n]|\\/\\*:block_comment:)*\";\n"
             "   unit: digits;\n"
@@ -805,12 +805,12 @@ SUITE( Parsers )
             ( "block_comment", &block_comment<const char*> )
         ;
 
-        const char* input = 
+        const char* input =
             "1 2 /* This is a comment\n"
             "3 */ 4 /* This is another comment\r"
             "*/ 5 6 /* This is a third comment */ \n\r"
         ;
-        
+
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
@@ -819,8 +819,8 @@ SUITE( Parsers )
     /*
     TEST( SyntaxErrorsInGrammar )
     {
-        {    
-            const char* missing_open_brace = 
+        {
+            const char* missing_open_brace =
                 "MissingOpenBrace \n"
                 "   %whitespace \"[ \\t\\r\\n]*\";\n"
                 "   unit: string;\n"
@@ -836,7 +836,7 @@ SUITE( Parsers )
         }
 
         {
-            const char* missing_close_quotes = 
+            const char* missing_close_quotes =
                 "MissingCloseQuotes { \n"
                 "   %whitespace \"[ \\t\\r\\n]*;\n"
                 "   unit: strings;\n"
@@ -851,12 +851,12 @@ SUITE( Parsers )
             CHECK( parser_state_machine.start_state() == NULL );
             CHECK( parser_state_machine.states().empty() );
         }
-    }    
+    }
     */
 
     TEST( SyntaxErrorsInRegularExpressions )
     {
-        const char* syntax_errors_in_regular_expressions_grammar = 
+        const char* syntax_errors_in_regular_expressions_grammar =
             "SyntaxErrorsInRegularExpressions {\n"
             "   %whitespace \"[ \\t\\r\\n*\";\n"
             "   one: \"[A-z*\";\n"
@@ -865,8 +865,8 @@ SUITE( Parsers )
 
         CheckLexerErrorPolicy error_policy( LEXER_ERROR_SYNTAX );
         GrammarCompiler compiler;
-        compiler.compile( 
-            syntax_errors_in_regular_expressions_grammar, 
+        compiler.compile(
+            syntax_errors_in_regular_expressions_grammar,
             syntax_errors_in_regular_expressions_grammar + strlen(syntax_errors_in_regular_expressions_grammar),
             &error_policy
         );
@@ -875,7 +875,7 @@ SUITE( Parsers )
 
     TEST( UndefinedSymbolError )
     {
-        const char* undefined_symbol_grammar = 
+        const char* undefined_symbol_grammar =
             "UndefinedSymbolError {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   one: undefined_symbol;\n"
@@ -885,12 +885,12 @@ SUITE( Parsers )
         CheckParserErrorPolicy error_policy( PARSER_ERROR_UNDEFINED_SYMBOL );
         GrammarCompiler compiler;
         compiler.compile( undefined_symbol_grammar, undefined_symbol_grammar + strlen(undefined_symbol_grammar), &error_policy );
-        CHECK( error_policy.errors == 1 );        
+        CHECK( error_policy.errors == 1 );
     }
 
     TEST( UnreferencedSymbolError )
     {
-        const char* unreferenced_symbol_error_grammar = 
+        const char* unreferenced_symbol_error_grammar =
             "UnreferencedSymbolError {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   one: 'one';\n"           "   unreferenced_symbol: 'two';\n"
@@ -899,17 +899,17 @@ SUITE( Parsers )
 
         CheckParserErrorPolicy error_policy( PARSER_ERROR_UNREFERENCED_SYMBOL );
         GrammarCompiler compiler;
-        compiler.compile( 
-            unreferenced_symbol_error_grammar, 
+        compiler.compile(
+            unreferenced_symbol_error_grammar,
             unreferenced_symbol_error_grammar + strlen(unreferenced_symbol_error_grammar),
             &error_policy
         );
         CHECK( error_policy.errors == 1 );
     }
-    
+
     TEST( SymbolsOnlyAppearingInPrecedenceDirectivesAreCountedAsReferenced )
     {
-        const char* precedence_directive_symbols_grammar = 
+        const char* precedence_directive_symbols_grammar =
             "SymbolsOnlyAppearingInPrecedenceDirectivesAreCountedAsReferenced { \n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left unary_minus; \n"
@@ -933,10 +933,10 @@ SUITE( Parsers )
         compiler.compile( precedence_directive_symbols_grammar, precedence_directive_symbols_grammar + strlen(precedence_directive_symbols_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
     }
-        
+
     TEST( LexerConflict )
     {
-        const char* lexer_conflict_grammar = 
+        const char* lexer_conflict_grammar =
             "LexerConflictError {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left prototype value;\n"
@@ -972,10 +972,10 @@ SUITE( Parsers )
             return begin;
         }
     };
-    
+
     TEST( LexerConflictResolution )
     {
-        const char* lexer_conflict_grammar = 
+        const char* lexer_conflict_grammar =
             "LexerSymbolConflictResolvedByAction {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left prototype value;\n"
@@ -1005,10 +1005,10 @@ SUITE( Parsers )
             CHECK( parser.full() );
         }
     }
-        
+
     TEST( AssociativityDirectives )
     {
-        const char* associativity_grammar = 
+        const char* associativity_grammar =
             "AssociativityDirectives {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left '+' '-';\n"
@@ -1032,12 +1032,12 @@ SUITE( Parsers )
             parser.parse( input, input + strlen(input) );
             CHECK( parser.accepted() );
             CHECK( parser.full() );
-            
+
             input = "1+2*3";
             parser.parse( input, input + strlen(input) );
             CHECK( parser.accepted() );
             CHECK( parser.full() );
-            
+
             input = "1*2+3";
             parser.parse( input, input + strlen(input) );
             CHECK( parser.accepted() );
@@ -1047,7 +1047,7 @@ SUITE( Parsers )
 
     TEST( PrecedenceDirectives )
     {
-        const char* precedence_grammar = 
+        const char* precedence_grammar =
             "PrecedenceDirectives {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %left '+';\n"
@@ -1060,7 +1060,7 @@ SUITE( Parsers )
             "       ;\n"
             "   integer: \"[0-9]+\";\n"
             "}"
-        ;        
+        ;
 
         GrammarCompiler compiler;
         CheckParserErrorPolicy error_policy( PARSER_ERROR_PARSE_TABLE_CONFLICT );
@@ -1076,10 +1076,10 @@ SUITE( Parsers )
             // CHECK( expr->get_productions()[2]->get_precedence() == 3 );
         }
     }
-    
+
     TEST( ErrorSymbolOnLeftHandSideError )
     {
-        const char* grammar = 
+        const char* grammar =
             "ErrorSymbolOnLeftHandSideError {\n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: prototype '{' error '}';\n"
@@ -1087,13 +1087,13 @@ SUITE( Parsers )
             "   error: ;\n"
             "}"
         ;
-        
+
         GrammarCompiler compiler;
         CheckParserErrorPolicy error_policy( PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE );
         compiler.compile( grammar, grammar + strlen(grammar), &error_policy );
-        CHECK( error_policy.errors == 1 );             
+        CHECK( error_policy.errors == 1 );
     }
-        
+
     TEST( ErrorProcessing )
     {
         const char* error_processing_grammar =
@@ -1112,14 +1112,14 @@ SUITE( Parsers )
         Parser<const char*> parser( compiler.parser_state_machine() );
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        CHECK( parser.full() );        
+        CHECK( parser.full() );
 
         input = "1-2";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        CHECK( parser.full() );       
+        CHECK( parser.full() );
     }
-        
+
     TEST( EmptyProduction )
     {
         const char* empty_production_grammar =
@@ -1132,7 +1132,7 @@ SUITE( Parsers )
             "   integer: \"[0-9]+\"; \n"
             "}"
         ;
-        
+
         PrintParserErrorPolicy error_policy;
         GrammarCompiler compiler;
         compiler.compile( empty_production_grammar, empty_production_grammar + strlen(empty_production_grammar), &error_policy );
@@ -1146,7 +1146,7 @@ SUITE( Parsers )
         input = "1;";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        CHECK( parser.full() );        
+        CHECK( parser.full() );
 
         input = "";
         parser.parse( input, input + strlen(input) );
@@ -1168,7 +1168,7 @@ SUITE( Parsers )
             "} \n"
             "// Unterminated line comment"
         ;
-        
+
         PrintParserErrorPolicy error_policy;
         GrammarCompiler compiler;
         compiler.compile( line_comment_grammar, line_comment_grammar + strlen(line_comment_grammar), &error_policy );
@@ -1188,13 +1188,13 @@ SUITE( Parsers )
             "} \n"
             "/* Block comment at the end of input */"
         ;
-        
+
         PrintParserErrorPolicy error_policy;
         GrammarCompiler compiler;
         compiler.compile( block_comment_grammar, block_comment_grammar + strlen(block_comment_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
 
-        const char* unterminated_block_comment_grammar = 
+        const char* unterminated_block_comment_grammar =
             "BlockComment { \n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   unit: 'BlockCommentExample'; \n"
@@ -1207,7 +1207,7 @@ SUITE( Parsers )
 
     TEST( IntegersErrorHandlingExample )
     {
-        const char* integers_grammar = 
+        const char* integers_grammar =
             "integers { \n"
             "   %whitespace \"[ \\t\\r\\n]*\";\n"
             "   %none error; \n"
@@ -1229,7 +1229,7 @@ SUITE( Parsers )
 
     TEST( LineNumbering )
     {
-        const char* line_numbering_grammar = 
+        const char* line_numbering_grammar =
             "line_numbering { \n"
             "   %whitespace \"[ \\t\\n\\r]*\";"
             "   %none error; \n"
@@ -1251,11 +1251,12 @@ SUITE( Parsers )
 
         Parser<const char*, int> parser( compiler.parser_state_machine() );
         parser.parser_action_handlers()
-            ( "result", [] ( const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
+            ( "result", [] ( int& result, const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
                 {
                     int value = ::atoi( nodes[0].lexeme().c_str() );
                     CHECK( value == nodes[0].line() );
-                    return value;
+		    result = value;
+                    return true;
                 }
             )
         ;
@@ -1263,13 +1264,13 @@ SUITE( Parsers )
         const char* input =  "1;\n2;\n3;\n";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        CHECK( parser.full() );        
+        CHECK( parser.full() );
 
         parser.parser_action_handlers()
-            ( "unexpected_error", [] ( const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
+            ( "unexpected_error", [] ( int& /*result*/, const int* /*data*/, const ParserNode<>* nodes, size_t /*length*/ )
                 {
                     CHECK( nodes[0].line() == 3 );
-                    return 0;
+                    return false;
                 }
             )
         ;
@@ -1277,12 +1278,12 @@ SUITE( Parsers )
         input =  "1;\n2;\na;\n4;\n";
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
-        CHECK( parser.full() );        
+        CHECK( parser.full() );
     }
 
     TEST( MissingLexicalActionHandler )
     {
-        const char* line_comment_grammar = 
+        const char* line_comment_grammar =
             "MissingLexicalActionHandler {\n"
             "   %whitespace \"([ \\t\\r\\n]|\\/\\/:line_comment:)*\";\n"
             "   unit: '1';\n"

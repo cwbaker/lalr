@@ -3,7 +3,7 @@ buildfile 'lalrc/lalrc.forge';
 buildfile 'lalr_examples/lalr_examples.forge';
 buildfile 'lalr_test/lalr_test.forge';
 
-for _, cc in toolsets('^cc.*') do    
+for _, cc in toolsets('^cc.*') do
     cc:all {
         cc:StaticLibrary '${lib}/lalr_${platform}_${architecture}' {
             cc:Cxx '${obj}/%1' {
@@ -19,6 +19,7 @@ for _, cc in toolsets('^cc.*') do
                 'GrammarState.cpp',
                 'GrammarSymbol.cpp',
                 'GrammarSymbolSet.cpp',
+                'GrammarTransition.cpp'
             };
 
             cc:Cxx '${obj}/%1' {

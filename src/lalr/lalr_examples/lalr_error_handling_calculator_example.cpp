@@ -14,58 +14,67 @@ void lalr_error_handling_calculator_example()
     extern const lalr::ParserStateMachine* error_handling_calculator_parser_state_machine;
     Parser<const char*, int> parser( error_handling_calculator_parser_state_machine );
     parser.parser_action_handlers()
-        ( "add", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "add", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return data[0] + data[2];
-            } 
-        )
-        ( "subtract", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[0] - data[2];
+                result = data[0] + data[2];
+		return true;
             }
         )
-        ( "multiply", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "subtract", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return data[0] * data[2];
-            } 
-        )
-        ( "divide", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[0] / data[2];
-            } 
-        )
-        ( "compound", [] ( const int* data, const ParserNode<>* nodes, size_t length )
-            {
-                return data[1];
+                result = data[0] - data[2];
+		return true;
             }
         )
-        ( "integer", [] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "multiply", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
-                return ::atoi( nodes[0].lexeme().c_str() );
-            } 
+                result = data[0] * data[2];
+		return true;
+            }
         )
-        ( "result", [&error] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "divide", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = data[0] / data[2];
+		return true;
+            }
+        )
+        ( "compound", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = data[1];
+		return true;
+            }
+        )
+        ( "integer", [] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
+            {
+                result = ::atoi( nodes[0].lexeme().c_str() );
+		return true;
+            }
+        )
+        ( "result", [&error] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
                 if ( !error )
                 {
                     printf( "%d\n", data[0] );
                 }
                 error = false;
-                return data[0];
+                result = data[0];
+		return true;
             }
         )
-        ( "unexpected_error", [&error] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "unexpected_error", [&error] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
                 error = true;
                 printf( "Unexpected error!\n" );
-                return 0;
+                result = 0;
+		return true;
             }
         )
-        ( "unknown_operator_error", [&error] ( const int* data, const ParserNode<>* nodes, size_t length )
+        ( "unknown_operator_error", [&error] ( int& result, const int* data, const ParserNode<>* nodes, size_t length )
             {
                 error = true;
                 printf( "Unknown operator error!\n" );
-                return 0;
+                result = 0;
+		return true;
             }
         )
     ;
