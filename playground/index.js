@@ -155,6 +155,15 @@ function loadLalr_sample(self) {
 	codeEditor.getSession().setMode("ace/mode/c_cpp");
       });
       break;
+      case "Ispc parser":
+      $.get(base_url + "ispc.g", function( data ) {
+        grammarEditor.setValue( data );
+      });
+      $.get(base_url + "test.ispc", function( data ) {
+        codeEditor.setValue( data );
+	codeEditor.getSession().setMode("ace/mode/c_cpp");
+      });
+      break;
       case "Java11 parser":
       $.get(base_url + "java11.g", function( data ) {
         grammarEditor.setValue( data );
@@ -334,7 +343,6 @@ function parse() {
     if (result.compile == 0 || isGenEBNF) {
       $grammarValidation.removeClass('validation-invalid').show();
 
-      codeAst.insert(outputs.ast);
       codeLexer.insert(outputs.lexer);
 
       if (result.parse == 0) {
@@ -370,7 +378,7 @@ function parse() {
     }
 
     if (outputs.ast.length > 0) {
-      $codeAst.setValue(outputs.ast);
+      codeAst.setValue(outputs.ast);
     }
   }, 0);
 }
