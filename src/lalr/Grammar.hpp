@@ -66,11 +66,11 @@ public:
     Grammar& identifier( const char* identifier, int line, int column );
 
 private:
-    GrammarSymbol* literal_symbol(const char* lexeme, int line , int column);
-    GrammarSymbol* regex_symbol(const char* lexeme, int line , int column);
-    GrammarSymbol* non_terminal_symbol(const char* lexeme, int line , int column);
-    GrammarSymbol* add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type );
-    GrammarProduction* add_production(GrammarSymbol* symbol, int line , int column);
+    GrammarSymbol* literal_symbol( const char* lexeme, int line , int column );
+    GrammarSymbol* regex_symbol( const char* lexeme, int line , int column );
+    GrammarSymbol* non_terminal_symbol( const char* lexeme, int line , int column );
+    GrammarSymbol* add_symbol( const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type );
+    GrammarProduction* add_production( GrammarSymbol* symbol, int line , int column );
     GrammarAction* add_action( const char* id );
 };
 
