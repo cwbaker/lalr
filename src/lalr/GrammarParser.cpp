@@ -246,6 +246,7 @@ bool GrammarParser::match_literal()
             return true;
         }
         error( LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        position_ = position;
         return false;
     }
     return false;
