@@ -41,7 +41,7 @@ int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* er
     errors_ = 0;
     if ( !match_grammar() )
     {
-        error(line_, get_line_column(position_), LALR_ERROR_SYNTAX, "parsing grammar failed" );
+        error( LALR_ERROR_SYNTAX, "parsing grammar failed" );
     }
     return errors_;
 }
@@ -94,7 +94,7 @@ bool GrammarParser::match_whitespace_statement()
         grammar_->whitespace();
         if ( match_regex() )
         {
-            grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
+            grammar_->regex( lexeme_.c_str(), line_, column() );
         }
         expect( ";" );
         return true;
@@ -106,7 +106,7 @@ bool GrammarParser::match_production_statement()
 {
     if ( match_identifier() )
     {
-        grammar_->production( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->production( lexeme_.c_str(), line_, column() );
         expect( ":" );
         match_expressions();
         expect( ";" );
@@ -128,22 +128,22 @@ bool GrammarParser::match_symbol()
 {
     if ( match_error() )
     {
-        grammar_->error( line_, get_line_column(position_) );
+        grammar_->error( line_, column() );
         return true;
     }
     else if ( match_literal() )
     {
-        grammar_->literal( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->literal( lexeme_.c_str(), line_, column() );
         return true;
     }
     else if ( match_regex() )
     {
-        grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->regex( lexeme_.c_str(), line_, column() );
         return true;
     }
     else if ( match_identifier() )
     {
-        grammar_->identifier( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->identifier( lexeme_.c_str(), line_, column() );
         return true;
     }
     return false;
@@ -203,12 +203,12 @@ bool GrammarParser::match_action()
     {
         if ( match_identifier() )
         {
-            grammar_->action( lexeme_.c_str(), line_, get_line_column(position_) );
+            grammar_->action( lexeme_.c_str(), line_, column() );
         }
         expect( "]" );
         return true;
     }
-    grammar_->end_expression(line_, get_line_column(position_));
+    grammar_->end_expression( line_, column() );
     return false;
 }
 
@@ -236,7 +236,7 @@ bool GrammarParser::match_literal()
             expect( "'" );
             return true;
         }
-        error(line_, get_line_column(position), LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        error( LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
         return false;
     }
     return false;
@@ -390,11 +390,11 @@ bool GrammarParser::expect( const char* lexeme )
         return true;
     }
     position_ = end_;
-    error(line_, get_line_column(position_), LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
+    error( LALR_ERROR_SYNTAX, "expected '%s' not found", lexeme );
     return false;
 }
 
-void GrammarParser::error(int line, int column, int error, const char* format, ... )
+void GrammarParser::error( int error, const char* format, ... )
 {
     LALR_ASSERT( format );
     ++errors_;
@@ -402,7 +402,7 @@ void GrammarParser::error(int line, int column, int error, const char* format, .
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, column, error, format, args );
+        error_policy_->lalr_error( line_, column(), error, format, args );
         va_end( args );
     }
 }
@@ -440,8 +440,9 @@ bool GrammarParser::is_new_line( const char* position )
     return *position == '\n' || *position == '\r';
 }
 
-int GrammarParser::get_line_column(const char* position)
+int GrammarParser::column()
 {
-    return position - line_position_;
-
+    LALR_ASSERT( position_ );
+    LALR_ASSERT( position_ >= line_position_ );
+    return int(position_ - line_position_);
 }
