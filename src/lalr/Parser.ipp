@@ -128,7 +128,7 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::full() const
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 bool Parser<Iterator, UserData, Char, Traits, Allocator>::valid() const
 {
-    return lexer_.valid();
+    return state_machine_ && state_machine_->start_state && lexer_.valid();
 }
 
 /**
