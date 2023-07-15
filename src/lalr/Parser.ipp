@@ -82,10 +82,13 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
         ++action;
     }
 
-    nodes_.reserve( 64 );       
-    user_data_.reserve( 64 );       
-    nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
-    user_data_.push_back( UserData() );
+    if ( state_machine_->start_state )
+    {
+        nodes_.reserve( 64 );
+        user_data_.reserve( 64 );
+        nodes_.push_back( ParserNode(state_machine_->start_state, nullptr, 0, 1) );
+        user_data_.push_back( UserData() );
+    }
 }
 
 /**
