@@ -93,6 +93,26 @@ SUITE( Parsers )
         }
     };
     
+    struct CollectErrorPolicy : public ErrorPolicy
+    {    
+        std::vector<int> errors;
+        
+        CollectErrorPolicy()
+        : errors{}
+        {
+        }
+
+        int error( int index ) const
+        {
+            return index >= 0 && index < int(errors.size()) ? errors[index] : PARSER_ERROR_NONE;
+        }
+
+        void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
+        {
+            errors.push_back( error );
+        }
+    };
+    
     TEST( OrOperator )
     {
         const char* or_grammar = 
@@ -1273,5 +1293,104 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
+    }
+
+    TEST( UnterminatedLiteral )
+    {
+        const char* unterminated_literal = 
+            "UnterminatedLiteral {\n"
+            "    unterminated: 'abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminated_literal, unterminated_literal + strlen(unterminated_literal), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( UnterminatedRegularExpression )
+    {
+        const char* unterminated_regex = 
+            "UnterminatedRegularExpression {\n"
+            "    unterminated: \"abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminated_regex, unterminated_regex + strlen(unterminated_regex), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( UnterminatedWhitespace )
+    {
+        const char* unterminate_whitespace = 
+            "UnterminatedWhitespace {\n"
+            "    %whitespace \"abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminate_whitespace, unterminate_whitespace + strlen(unterminate_whitespace), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyLiteral )
+    {
+        const char* empty_literal = 
+            "EmptyLiteral {\n"
+            "    empty: '';\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_literal, empty_literal + strlen(empty_literal), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyRegularExpression )
+    {
+        const char* empty_regex = 
+            "EmptyRegularExpression {\n"
+            "    empty: \"\";\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_regex, empty_regex + strlen(empty_regex), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyWhitespace )
+    {
+        const char* empty_whitespace = 
+            "EmptyWhitespace {\n"
+            "    %whitespace \"\";\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_whitespace, empty_whitespace + strlen(empty_whitespace), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
     }
 }
