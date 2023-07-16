@@ -375,6 +375,10 @@ void Grammar::genEBNF()
             }
         }
         else {
+            if(production_continuation) {
+                production_continuation = false;
+                printf("\n%s\t| ", prefix);
+            }
             printf("/*empty*/");
         }
         if(production->precedence_symbol()) {
