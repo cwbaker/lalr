@@ -133,7 +133,12 @@ static bool parsetreeMaker( ParseTreeUserData& result, const ParseTreeUserData* 
                 {
                     ParseTreeUserData& udt = result.children.emplace_back();
                     udt.symbol = the_node.symbol();
-                    udt.children.push_back(std::move(start[i_node]));
+                    if(udt.symbol == start[i_node].symbol)
+                    {
+                        udt.children = start[i_node].children;
+                    }
+                    else
+                        udt.children.push_back(std::move(start[i_node]));
                 }
                 //printf("NON_TERMINAL: %s\n", result.symbol->identifier);
             }
