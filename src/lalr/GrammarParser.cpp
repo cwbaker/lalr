@@ -45,7 +45,7 @@ int GrammarParser::parse( const char* start, const char* finish, ErrorPolicy* er
     }
     else if( grammar_->whitespace_tokens().empty() )
     {
-        error(line_, PARSER_ERROR_UNDEFINED_SYMBOL, "no '%%whitespace' directive defined" );
+        error( PARSER_ERROR_UNDEFINED_SYMBOL, "no '%%whitespace' directive defined" );
     }
     return errors_;
 }
