@@ -573,6 +573,10 @@ void GrammarGenerator::calculate_implicit_terminal_symbols()
                 replace_references_to_symbol( non_terminal_symbol, terminal_symbol );
                 i->reset();
             }
+            else if(non_terminal_symbol->associativity() != ASSOCIATE_NULL && non_terminal_symbol->productions().size())
+            {
+                error( non_terminal_symbol->line(), PARSER_ERROR_ASSOCIATIVITY_ASSIGNED_ON_NON_TERMINAL, "associativity has been assigned to a non-terminal: %s",  non_terminal_symbol->identifier().c_str());
+            }
         }
     }
     

@@ -25,7 +25,8 @@ enum ErrorCode
     PARSER_ERROR_UNDEFINED_SYMBOL, ///< A grammar symbol is referenced but not defined.
     PARSER_ERROR_UNREFERENCED_SYMBOL, ///< A grammar symbol is defined but not referenced.
     PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, ///< The 'error' symbol has been used on the left hand side of a production.
-    PARSER_ERROR_DUPLICATE_ASSOCIATION_ON_IMPLICIT_TERMINAL ///< Both implicit terminal forms specify associativity and precedence.
+    PARSER_ERROR_DUPLICATE_ASSOCIATION_ON_IMPLICIT_TERMINAL, ///< Both implicit terminal forms specify associativity and precedence.
+    PARSER_ERROR_ASSOCIATIVITY_ASSIGNED_ON_NON_TERMINAL ///< Associativity has been assigned to a non-terminal.
 };
 
 }
