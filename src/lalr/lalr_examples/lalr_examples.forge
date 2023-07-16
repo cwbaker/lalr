@@ -23,7 +23,7 @@ for _, cc in toolsets('^cc.*') do
             "lalr_hello_world_example.cpp",
             "lalr_json_example.cpp",
             "lalr_calculator_example.cpp",
-            "lalr_xml_example.cpp"        
+            "lalr_xml_example.cpp"
         };
     };
 
