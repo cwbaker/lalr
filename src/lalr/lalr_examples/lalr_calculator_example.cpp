@@ -15,7 +15,7 @@ void lalr_calculator_example()
         "   %left '+' '-'; \n"
         "   %left '*' '/'; \n"
         "   %none integer; \n"
-        "   %whitespace \"[ \t\r\n]*\"; \n"
+        "   %whitespace \"[ \\t\\r\\n]*\"; \n"
         "   expr: \n"
         "      expr '+' expr [add] | \n"
         "      expr '-' expr [subtract] | \n"
