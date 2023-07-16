@@ -29,6 +29,7 @@
               <option>Gringo/Clingo non grounded parser</option>
               <option>Ada parser</option>
               <option>Ada parser case insensitive</option>
+              <option>XML parser</option>
               <option>C++ parser (bug)</option>
               <option>Bison parser (not working)</option>
               <option>DParser parser (not working)</option>
@@ -52,14 +53,14 @@
       <li class="editor-options">
         <ul class="editor-header-options">
           <li class="option"><label><input id="gen-ebnf" type="checkbox">Gen. EBNF</label></li>
-          <li class="option"><label><input id="auto-refresh" type="checkbox">Auto Refresh</label></li>
+          <!--<li class="option"><label><input id="auto-refresh" type="checkbox">Auto Refresh</label></li>-->
           <li class="option"><button id="parse" class="parse">Parse</button></li>
         </ul>
       </li>
     </ul>
     <pre id="code-editor" class="editor-area">{{source}}</pre>
     <div class="editor-sub-header"><label><input id="show-ast" class="show-toggle" type="checkbox">AST</label>&nbsp;&nbsp;&nbsp;&nbsp;
-      mode:&nbsp;<select id="opt-mode" type="checkbox"><option value="0">Raw parse tree</option><option value="1">Unwrap</option><option value="2">Simplify</option></select>
+      mode:&nbsp;<select id="ast-mode" type="checkbox"><option value="1">Parse tree</option><option value="2">Debug parse tree</option></select>
     </div>
     <pre id="code-ast" class="editor-area"></pre>
     <div class="editor-sub-header"><label><input id="show-lexer" class="show-toggle" type="checkbox">Lexer</label></div>
@@ -71,6 +72,10 @@
 <div id="overlay"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!--
+<script src="ajax/libs/ace/1.4.2/ace.js"></script>
+<script src="ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+-->
 <script src="index.js"></script>
 <script src="lalr_playground.js"></script>
 </body>

@@ -59,6 +59,41 @@ struct C_MultLineCommentLexer
 	}
 };
 
+
+struct ParseTreeUserDataDbg {
+    int index;
+    int stack_index;
+    static int next_index;
+    static int total;
+    ParseTreeUserDataDbg():index(total++), stack_index(next_index++) {};
+};
+int ParseTreeUserDataDbg::next_index = 0;
+int ParseTreeUserDataDbg::total = 0;
+
+
+static bool parseTreeMakerDbg( ParseTreeUserDataDbg& result, const ParseTreeUserDataDbg* start, const lalr::ParserNode<mychar_t>* nodes, size_t length )
+{
+   switch_output("ast");
+//    //printf("astMaker: %s\n", nodes[0].lexeme().c_str());
+//    const char *lexstr = (length > 0 ? (const char *)nodes[0].lexeme().c_str() : "::lnull");
+//    const char *idstr = (length > 0 ? nodes[0].symbol()->identifier : "::inull");
+//    int line = (length > 0 ? nodes[0].line() : 0);
+//    int column = (length > 0 ? nodes[0].column() : 0);
+//    //const char *stateLabel = (length > 0 ? nodes[0].state()->label : "::inull");
+//    printf("astMaker: %p\t%zd:%d:%d\t%p\t%zd\t->\t%s : %s :%d:%d\n", start, length,
+//                length ? start->index : -1, length ? start->stack_index : -1,
+//                nodes, length, idstr, lexstr, line, column);
+    printf("----\n");
+    for(size_t i=0; i< length; ++i)
+        printf("%zd:%d\t%p\t%d:%d\t%p <:> %s <:> %s <:> %s <:> %d:%d\n", i, nodes[i].symbol()->type,
+                start+i, start[i].index, start[i].stack_index, nodes+i,
+                nodes[i].symbol()->identifier, nodes[i].symbol()->lexeme,
+                nodes[i].lexeme().c_str(), nodes[i].line(), nodes[i].column());
+    switch_output("parse_status");
+    return true;
+}
+
+
 struct ParseTreeUserData {
     std::vector<ParseTreeUserData> children;
     const lalr::ParserSymbol *symbol;
@@ -69,48 +104,48 @@ struct ParseTreeUserData {
 
 static bool parsetreeMaker( ParseTreeUserData& result, const ParseTreeUserData* start, const lalr::ParserNode<mychar_t>* nodes, size_t length )
 {
-    if(length == 2 && nodes[0].symbol()->type == lalr::SymbolType::SYMBOL_NON_TERMINAL && nodes[1].symbol()->type == lalr::SymbolType::SYMBOL_NON_TERMINAL)
+    if(length == 0) return false;
+    result.symbol = nodes[length-1].state()->transitions->reduced_symbol;
+    for(size_t i_node = 0; i_node < length; ++i_node)
     {
-        if(start[0].symbol == nodes[0].symbol())
+        const lalr::ParserNode<mychar_t>& the_node = nodes[i_node];
+        switch(the_node.symbol()->type)
         {
-            result = start[0];
-        }
-        else
-        {
-            result.symbol = nodes[0].symbol();
-        }
-        ParseTreeUserData& udt = result.children.emplace_back();
-        udt.symbol = nodes[1].symbol();
-        udt.children.push_back(start[1]);
-    }
-    else
-    {
-        for(size_t i_node = 0; i_node < length; ++i_node)
-        {
-            const lalr::ParserNode<mychar_t>& the_node = nodes[i_node];
-            switch(the_node.symbol()->type)
+            case lalr::SymbolType::SYMBOL_TERMINAL:
             {
-                case lalr::SymbolType::SYMBOL_TERMINAL:
-                {
-                    ParseTreeUserData& udt = (length == 1) ? result : result.children.emplace_back();
-                    udt.symbol = the_node.symbol();
-                    udt.symbol = the_node.symbol();
-                    udt.lexeme = the_node.lexeme();
-                    //printf("TERMINAL: %s : %s\n", udt.symbol->identifier, udt.lexeme.c_str());
-                }
-                    break;
-                case lalr::SymbolType::SYMBOL_NON_TERMINAL:
-                {
-                    ParseTreeUserData& udt = (length == 1) ? result : result.children.emplace_back();
-                    udt.symbol = the_node.symbol();
-                    udt.children.push_back(start[i_node]);
-                    //printf("NON_TERMINAL: %s\n", result.symbol->identifier);
-                }
-                    break;
-                default:
-                    //LALR_ASSERT( ?? );
-                    printf("Unexpected symbol %p\n", the_node.symbol());
+                ParseTreeUserData& udt = result.children.emplace_back();
+                udt.symbol = the_node.symbol();
+                udt.lexeme = the_node.lexeme();
+                //printf("TERMINAL: %s : %s\n", udt.symbol->identifier, udt.lexeme.c_str());
             }
+            break;
+            case lalr::SymbolType::SYMBOL_NON_TERMINAL:
+            {
+                if(the_node.symbol() == result.symbol)
+                {
+                    const ParseTreeUserData& startx = start[i_node];
+                    for (std::vector<ParseTreeUserData>::const_iterator child = startx.children.begin(); child != startx.children.end(); ++child)
+                    {
+                        result.children.push_back( std::move(*child) );
+                    }
+                }
+                else
+                {
+                    ParseTreeUserData& udt = result.children.emplace_back();
+                    udt.symbol = the_node.symbol();
+                    if(udt.symbol == start[i_node].symbol)
+                    {
+                        udt.children = start[i_node].children;
+                    }
+                    else
+                        udt.children.push_back(std::move(start[i_node]));
+                }
+                //printf("NON_TERMINAL: %s\n", result.symbol->identifier);
+            }
+            break;
+            default:
+                //LALR_ASSERT( ?? );
+                printf("Unexpected symbol %p\n", the_node.symbol());
         }
     }
     return true;
@@ -205,30 +240,64 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
 
     if(input) {
         lalr::ErrorPolicy error_policy_input;
-        //lalr::Parser<const mychar_t*, int> parser( compiler.parser_state_machine(), &error_policy_input );
-	lalr::Parser<const mychar_t*, ParseTreeUserData> parser( compiler.parser_state_machine(), &error_policy_input );
-	parser.set_default_action_handler(parsetreeMaker);
-	parser.lexer_action_handlers()
-            ( "C_MultilineComment", &C_MultLineCommentLexer::string_lexer )
-        ;
-        if(dumpLexer) {
-		switch_output("lexer");
-		parser.dumpLex( input, input + strlen((const char*)input) );
-	}
-        else parser.parse(  input, input + strlen((const char*)input) );
-
-	parse_result = parser.accepted() == 1 && parser.full() == 1;
-	if(generate_parsetree && parse_result)
+	if(generate_parsetree == 1)
 	{
-		switch_output("ast");
-		print_parsetree( parser.user_data(), 0 );
-		switch_output("parse_status");
+		lalr::Parser<const mychar_t*, ParseTreeUserData> parser( compiler.parser_state_machine(), &error_policy_input );
+		parser.set_default_action_handler(parsetreeMaker);
+		parser.lexer_action_handlers()
+		    ( "C_MultilineComment", &C_MultLineCommentLexer::string_lexer )
+		;
+		if(dumpLexer) {
+			switch_output("lexer");
+			parser.dumpLex( input, input + strlen((const char*)input) );
+		}
+		else parser.parse(  input, input + strlen((const char*)input) );
+
+		parse_result = parser.accepted() == 1 && parser.full() == 1;
+		if(generate_parsetree && parse_result)
+		{
+			showDiffTime("Parse input");
+			switch_output("ast");
+			print_parsetree( parser.user_data(), 0 );
+			switch_output("parse_status");
+			showDiffTime("Print parse tree");
+		}
+	}
+	if(generate_parsetree > 1)
+	{
+		lalr::Parser<const mychar_t*, ParseTreeUserDataDbg> parser( compiler.parser_state_machine(), &error_policy_input );
+		parser.set_default_action_handler(parseTreeMakerDbg);
+		parser.lexer_action_handlers()
+		    ( "C_MultilineComment", &C_MultLineCommentLexer::string_lexer )
+		;
+		if(dumpLexer) {
+			switch_output("lexer");
+			parser.dumpLex( input, input + strlen((const char*)input) );
+		}
+		else parser.parse(  input, input + strlen((const char*)input) );
+
+		parse_result = parser.accepted() == 1 && parser.full() == 1;
+	}
+	else
+	{
+		lalr::Parser<const mychar_t*, int> parser( compiler.parser_state_machine(), &error_policy_input );
+		parser.lexer_action_handlers()
+		    ( "C_MultilineComment", &C_MultLineCommentLexer::string_lexer )
+		;
+		if(dumpLexer) {
+			switch_output("lexer");
+			parser.dumpLex( input, input + strlen((const char*)input) );
+		}
+		else parser.parse(  input, input + strlen((const char*)input) );
+
+		parse_result = parser.accepted() == 1 && parser.full() == 1;
 	}
         if (parse_result) {
             if (parse_verbose) {
                 fprintf(stderr, "Parse successful.\n");
             }
-	     showDiffTime("Parse input");
+	     if(generate_parsetree != 1)
+                 showDiffTime("Parse input");
         }
         else {
      	    err = -2;

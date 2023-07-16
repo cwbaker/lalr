@@ -132,7 +132,7 @@ function loadLalr_sample(self) {
       $.get(base_url + "javascript.g", function( data ) {
         grammarEditor.setValue( data );
       });
-      $.get(base_url + "test.js", function( data ) {
+      $.get(base_url + "test.js.txt", function( data ) {
         codeEditor.setValue( data );
 	codeEditor.getSession().setMode("ace/mode/javascript");
       });
@@ -141,7 +141,7 @@ function loadLalr_sample(self) {
       $.get(base_url + "javascript-core.g", function( data ) {
         grammarEditor.setValue( data );
       });
-      $.get(base_url + "test.js", function( data ) {
+      $.get(base_url + "test.js.txt", function( data ) {
         codeEditor.setValue( data );
 	codeEditor.getSession().setMode("ace/mode/javascript");
       });
@@ -227,10 +227,19 @@ function loadLalr_sample(self) {
 	codeEditor.getSession().setMode("ace/mode/ada");
       });
       break;
+      case "XML parser":
+      $.get(base_url + "xml.g", function( data ) {
+        grammarEditor.setValue( data );
+      });
+      $.get(base_url + "test.xml.txt", function( data ) {
+        codeEditor.setValue( data );
+	codeEditor.getSession().setMode("ace/mode/xml");
+      });
+      break;
   }
 }
 
-$('#opt-mode').val(localStorage.getItem('optimizationMode') || '2');
+//$('#ast-mode').val(localStorage.getItem('optimizationMode') || '2');
 $('#gen-ebnf').prop('checked', localStorage.getItem('gen-ebnf') === 'true');
 $('#auto-refresh').prop('checked', localStorage.getItem('autoRefresh') === 'true');
 $('#parse').prop('disabled', $('#auto-refresh').prop('checked'));
@@ -284,7 +293,7 @@ function generateErrorListHTML(errors) {
 function updateLocalStorage() {
   localStorage.setItem('grammarText', grammarEditor.getValue());
   localStorage.setItem('codeText', codeEditor.getValue());
-  localStorage.setItem('optimizationMode', $('#opt-mode').val());
+  //localStorage.setItem('optimizationMode', $('#opt-mode').val());
   localStorage.setItem('gen-ebnf', $('#gen-ebnf').prop('checked'));
   localStorage.setItem('autoRefresh', $('#auto-refresh').prop('checked'));
 }
@@ -300,10 +309,12 @@ function parse() {
   const $codeInfo = $('#code-info');
   const codeText = codeEditor.getValue();
 
-  const optimizationMode = $('#opt-mode').val();
+  const astMode = $('#ast-mode').val();
   const generate_ebnf = $('#gen-ebnf').prop('checked');
   const lexer = $('#show-lexer').prop('checked');
-  const generate_ast = $('#show-ast').prop('checked');
+  let generate_ast = $('#show-ast').prop('checked');
+  if(generate_ast && astMode == 2)
+	generate_ast = 2;
 
   $grammarInfo.html('');
   $grammarValidation.hide();
