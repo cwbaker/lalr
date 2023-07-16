@@ -8,6 +8,8 @@
 #include <lalr/ErrorPolicy.hpp>
 #include <lalr/ErrorCode.hpp>
 #include <UnitTest++/UnitTest++.h>
+#include <vector>
+#include <initializer_list>
 #include <stdio.h>
 #include <string.h>
 
@@ -17,22 +19,31 @@ SUITE( PrecedenceDirectives )
 {
     struct EventSink : public ErrorPolicy
     {   
-        int expected_error_; 
+        std::vector<int> expected_errors_;
         int errors_;
         
         EventSink( int expected_error )
-        : expected_error_( expected_error )
+        : expected_errors_()
         , errors_( 0 )
         {
+            expected_errors_.push_back(  expected_error );
+        }
+
+        EventSink( std::initializer_list<int> expected_errors )
+        : expected_errors_()
+        , errors_( 0 )
+        {
+            expected_errors_.insert( expected_errors_.end(), expected_errors.begin(), expected_errors.end() );
         }
 
         void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
         {
+            CHECK( errors_ < int(expected_errors_.size()) );
+            if ( errors_ < int(expected_errors_.size()) )
+            {
+                CHECK_EQUAL( expected_errors_[errors_], error );
+            }
             ++errors_;
-            // char message [1024];
-            // vsnprintf( message, sizeof(message), format, args );
-            // printf( "%s\n", message );
-            CHECK( error == expected_error_ );
         }
     };
 
@@ -92,8 +103,9 @@ SUITE( PrecedenceDirectives )
                 "%left 'return' 'break' 'continue' 'if' 'while' 'for' identifier '{'; \n"
             "} \n"
         ;
-        EventSink event_sink( LALR_ERROR_UNTERMINATED_LITERAL );
+        EventSink event_sink{ LALR_ERROR_UNTERMINATED_LITERAL, LALR_ERROR_SYNTAX, LALR_ERROR_SYNTAX };
         GrammarCompiler compiler;
-        compiler.compile( grammar, grammar + strlen(grammar), &event_sink );
+        int errors = compiler.compile( grammar, grammar + strlen(grammar), &event_sink );
+        CHECK( errors > 0 );
     }
 }

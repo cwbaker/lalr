@@ -64,44 +64,55 @@ SUITE( Parsers )
         }
     };
 
-    struct CheckParserErrorPolicy : public ErrorPolicy
+    struct CheckErrorPolicy : public ErrorPolicy
     {    
-        int expected_error;
-        int errors;            
+        std::vector<int> expected_errors_;
+        int errors;
         
-        CheckParserErrorPolicy( int expected_error )
-        : expected_error( expected_error )
+        CheckErrorPolicy( int expected_error )
+        : expected_errors_()
         , errors( 0 )
         {
+            expected_errors_.push_back(  expected_error );
+        }
+
+        CheckErrorPolicy( std::initializer_list<int> expected_errors )
+        : expected_errors_()
+        , errors( 0 )
+        {
+            expected_errors_.insert( expected_errors_.end(), expected_errors.begin(), expected_errors.end() );
         }
 
         void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
         {
-            (void) error;
+            if ( errors < int(expected_errors_.size()) )
+            {
+                CHECK_EQUAL( expected_errors_[errors], error );
+            }
             ++errors;
-            CHECK( error == expected_error );
         }
     };
     
-    struct CheckLexerErrorPolicy : public ErrorPolicy
+    struct CollectErrorPolicy : public ErrorPolicy
     {    
-        int expected_error;
-        int errors;
+        std::vector<int> errors;
         
-        CheckLexerErrorPolicy( int expected_error )
-        : expected_error( expected_error )
-        , errors( 0 )
+        CollectErrorPolicy()
+        : errors{}
         {
+        }
+
+        int error( int index ) const
+        {
+            return index >= 0 && index < int(errors.size()) ? errors[index] : PARSER_ERROR_NONE;
         }
 
         void lalr_error( int /*line*/, int /*column*/, int error, const char* /*format*/, va_list /*args*/ )
         {
-            (void) error;
-            ++errors;
-            CHECK( error == expected_error );
+            errors.push_back( error );
         }
     };
-        
+    
     TEST( OrOperator )
     {
         const char* or_grammar = 
@@ -813,7 +824,7 @@ SUITE( Parsers )
                 "}"
             ;
 
-            CheckParserErrorPolicy error_policy( PARSER_ERROR_SYNTAX );
+            CheckErrorPolicy error_policy( PARSER_ERROR_SYNTAX );
             ParserStateMachine parser_state_machine( missing_open_brace, missing_open_brace + strlen(missing_open_brace), &error_policy );
             CHECK( error_policy.errors == 1 );
             CHECK( parser_state_machine.start_state() == NULL );
@@ -830,7 +841,7 @@ SUITE( Parsers )
                 "}"
             ;
 
-            CheckParserErrorPolicy error_policy( PARSER_ERROR_SYNTAX );
+            CheckErrorPolicy error_policy( PARSER_ERROR_SYNTAX );
             ParserStateMachine parser_state_machine( missing_close_quotes, missing_close_quotes + strlen(missing_close_quotes), &error_policy );
             CHECK( error_policy.errors == 2 );
             CHECK( parser_state_machine.start_state() == NULL );
@@ -848,7 +859,7 @@ SUITE( Parsers )
             "}"
         ;
 
-        CheckLexerErrorPolicy error_policy( LEXER_ERROR_SYNTAX );
+        CheckErrorPolicy error_policy( LEXER_ERROR_SYNTAX );
         GrammarCompiler compiler;
         compiler.compile( 
             syntax_errors_in_regular_expressions_grammar, 
@@ -867,7 +878,7 @@ SUITE( Parsers )
             "}"
         ;
 
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_UNDEFINED_SYMBOL );
+        CheckErrorPolicy error_policy( PARSER_ERROR_UNDEFINED_SYMBOL );
         GrammarCompiler compiler;
         compiler.compile( undefined_symbol_grammar, undefined_symbol_grammar + strlen(undefined_symbol_grammar), &error_policy );
         CHECK( error_policy.errors == 1 );        
@@ -882,7 +893,7 @@ SUITE( Parsers )
             "}"
         ;
 
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_UNREFERENCED_SYMBOL );
+        CheckErrorPolicy error_policy( PARSER_ERROR_UNREFERENCED_SYMBOL );
         GrammarCompiler compiler;
         compiler.compile( 
             unreferenced_symbol_error_grammar, 
@@ -913,7 +924,7 @@ SUITE( Parsers )
         ;
 
         GrammarCompiler compiler;
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_NONE );
+        CheckErrorPolicy error_policy( PARSER_ERROR_NONE );
         compiler.compile( precedence_directive_symbols_grammar, precedence_directive_symbols_grammar + strlen(precedence_directive_symbols_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
     }
@@ -929,7 +940,7 @@ SUITE( Parsers )
             "   prototype: \"[A-Za-z_][A-Za-z_0-9]*\"; value: \"[A-Za-z_0-9\\./@:-]+\";\n"
             "}"
         ;
-        CheckLexerErrorPolicy error_policy( LEXER_ERROR_SYMBOL_CONFLICT );
+        CheckErrorPolicy error_policy( LEXER_ERROR_SYMBOL_CONFLICT );
         GrammarCompiler compiler;
         compiler.compile( lexer_conflict_grammar, lexer_conflict_grammar + strlen(lexer_conflict_grammar), &error_policy );
         CHECK( error_policy.errors == 1 );
@@ -971,7 +982,7 @@ SUITE( Parsers )
         ;
 
         GrammarCompiler compiler;
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_NONE );
+        CheckErrorPolicy error_policy( PARSER_ERROR_NONE );
         compiler.compile( lexer_conflict_grammar, lexer_conflict_grammar + strlen(lexer_conflict_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
 
@@ -1003,7 +1014,7 @@ SUITE( Parsers )
             "}"
         ;
 
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_PARSE_TABLE_CONFLICT );
+        CheckErrorPolicy error_policy( PARSER_ERROR_PARSE_TABLE_CONFLICT );
         GrammarCompiler compiler;
         compiler.compile( associativity_grammar, associativity_grammar + strlen(associativity_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
@@ -1045,7 +1056,7 @@ SUITE( Parsers )
         ;        
 
         GrammarCompiler compiler;
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_PARSE_TABLE_CONFLICT );
+        CheckErrorPolicy error_policy( PARSER_ERROR_PARSE_TABLE_CONFLICT );
         compiler.compile( precedence_grammar, precedence_grammar + strlen(precedence_grammar), &error_policy );
         CHECK( error_policy.errors == 0 );
 
@@ -1071,7 +1082,7 @@ SUITE( Parsers )
         ;
         
         GrammarCompiler compiler;
-        CheckParserErrorPolicy error_policy( PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE );
+        CheckErrorPolicy error_policy( PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE );
         compiler.compile( grammar, grammar + strlen(grammar), &error_policy );
         CHECK( error_policy.errors == 1 );             
     }
@@ -1282,5 +1293,104 @@ SUITE( Parsers )
         parser.parse( input, input + strlen(input) );
         CHECK( parser.accepted() );
         CHECK( parser.full() );
+    }
+
+    TEST( UnterminatedLiteral )
+    {
+        const char* unterminated_literal = 
+            "UnterminatedLiteral {\n"
+            "    unterminated: 'abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminated_literal, unterminated_literal + strlen(unterminated_literal), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( UnterminatedRegularExpression )
+    {
+        const char* unterminated_regex = 
+            "UnterminatedRegularExpression {\n"
+            "    unterminated: \"abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminated_regex, unterminated_regex + strlen(unterminated_regex), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( UnterminatedWhitespace )
+    {
+        const char* unterminate_whitespace = 
+            "UnterminatedWhitespace {\n"
+            "    %whitespace \"abc;\n"
+            "}\n"
+        ;
+
+        CheckErrorPolicy error_policy{ LALR_ERROR_UNTERMINATED_LITERAL };
+        GrammarCompiler compiler;
+        int errors = compiler.compile( unterminate_whitespace, unterminate_whitespace + strlen(unterminate_whitespace), &error_policy );
+        CHECK( errors > 0 );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyLiteral )
+    {
+        const char* empty_literal = 
+            "EmptyLiteral {\n"
+            "    empty: '';\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_literal, empty_literal + strlen(empty_literal), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyRegularExpression )
+    {
+        const char* empty_regex = 
+            "EmptyRegularExpression {\n"
+            "    empty: \"\";\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_regex, empty_regex + strlen(empty_regex), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
+    }
+
+    TEST( EmptyWhitespace )
+    {
+        const char* empty_whitespace = 
+            "EmptyWhitespace {\n"
+            "    %whitespace \"\";\n"
+            "}\n"
+        ;
+
+        CollectErrorPolicy error_policy;
+        GrammarCompiler compiler;
+        int errors = compiler.compile( empty_whitespace, empty_whitespace + strlen(empty_whitespace), &error_policy );
+        CHECK( errors > 0 );
+        CHECK_EQUAL( LALR_ERROR_EMPTY_LITERAL, error_policy.error(0) );
+        Parser<const char*> parser( compiler.parser_state_machine() );
+        CHECK( !parser.valid() );
     }
 }

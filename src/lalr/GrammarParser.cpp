@@ -228,15 +228,27 @@ bool GrammarParser::match_literal()
         {
             escaped = *position == '\\';
             ++position;
+            if ( *position == '\\' && escaped )
+            {
+                ++position;
+                escaped = false;
+            }
         }
+
         if ( position == end_ || !is_new_line(position) )
         {
             lexeme_.assign( position_, position );
             position_ = position;
             expect( "'" );
+            if ( lexeme_.empty() )
+            {
+                error( LALR_ERROR_EMPTY_LITERAL, "empty literal" );
+            }
             return true;
         }
+
         error( LALR_ERROR_UNTERMINATED_LITERAL, "unterminated literal" );
+        position_ = position;
         return false;
     }
     return false;
@@ -249,15 +261,32 @@ bool GrammarParser::match_regex()
     {
         bool escaped = false;
         const char* position = position_;
-        while ( position != end_ && (*position != '"' || escaped) )
+        while ( position != end_ && (*position != '"' || escaped) && !is_new_line(position) )
         {
             escaped = *position == '\\';
             ++position;
+            if ( *position == '\\' && escaped )
+            {
+                ++position;
+                escaped = false;
+            }
         }
-        lexeme_.assign( position_, position );
+
+        if ( position == end_ || !is_new_line(position) )
+        {
+            lexeme_.assign( position_, position );
+            position_ = position;
+            expect( "\"" );
+            if ( lexeme_.empty() )
+            {
+                error( LALR_ERROR_EMPTY_LITERAL, "empty regex" );
+            }
+            return true;
+        }
+
+        error( LALR_ERROR_UNTERMINATED_LITERAL, "unterminated regex" );
         position_ = position;
-        expect( "\"" );
-        return true;
+        return false;
     }
     return false;
 }
