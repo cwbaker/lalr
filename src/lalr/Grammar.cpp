@@ -326,6 +326,11 @@ static bool isTerminalRegex(const GrammarSymbol *symbol)
             && symbol->lexeme_type() == LexemeType::LEXEME_REGULAR_EXPRESSION;
 }
 
+static bool isTerminal(const GrammarSymbol *symbol)
+{
+    return symbol->symbol_type() == SymbolType::SYMBOL_TERMINAL;
+}
+
 void Grammar::genEBNF()
 {
     printf(
@@ -388,6 +393,165 @@ void Grammar::genEBNF()
         last_production_symbol = curr_symbol;
     }
     printf("\n\n// end EBNF\n");
+}
+
+void Grammar::genYACC()
+{
+    const char *prefix = "";
+    printf(
+            "//\n"
+            "// YACC grammar for %s\n"
+            "//\n"
+            , identifier().c_str()
+            );
+    printf("\n/*Tokens*/\n");
+    GrammarSymbol* last_production_symbol = NULL;
+    bool production_continuation = false;
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions().begin(); i != productions().end(); ++i )
+    {
+        GrammarProduction* production = i->get();
+        LALR_ASSERT( production );
+        GrammarSymbol *curr_symbol = production->symbol();
+        bool same_production = last_production_symbol && last_production_symbol == curr_symbol;
+        vector<unique_ptr<GrammarProduction>>::const_iterator production_next = (i+1);
+        bool hasMoreProductions = same_production || (production_next != productions().end() && production_next->get()->symbol() == curr_symbol);
+        if(!same_production)
+        {
+            if( isTerminalRegex(curr_symbol)
+                        || (!hasMoreProductions && production->length() == 1 && isTerminal(production->symbol_by_position(0))) )
+            {
+                printf("%%token %s ;\n", curr_symbol->lexeme().c_str());
+            }
+        }
+        last_production_symbol = curr_symbol;
+    }
+
+    int max_prec = 0;
+    for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols().begin(); i != symbols().end(); ++i )
+    {
+        GrammarSymbol* curr_symbol = i->get();
+        LALR_ASSERT( curr_symbol );
+
+        if(curr_symbol->precedence() > max_prec)
+        {
+            max_prec = curr_symbol->precedence();
+        }
+    }
+
+    if(max_prec > 0)
+    {
+        printf("\n/*Asociativity/Precedence*/\n");
+        for(int ip = 1; ip <= max_prec; ++ip)
+        {
+            production_continuation = false;
+            int last_prec = 0;
+            for ( vector<unique_ptr<GrammarSymbol>>::const_iterator i = symbols().begin(); i != symbols().end(); ++i )
+            {
+                GrammarSymbol* curr_symbol = i->get();
+                LALR_ASSERT( curr_symbol );
+
+                if(curr_symbol->precedence() == ip)
+                {
+                    if(curr_symbol->precedence() > max_prec)
+                    {
+                        max_prec = curr_symbol->precedence();
+                    }
+                    if(last_prec != ip )
+                    {
+                        switch(curr_symbol->associativity())
+                        {
+                            case lalr::Associativity::ASSOCIATE_NONE:
+                                printf("\n%%nonassoc  ");
+                                break;
+                            case lalr::Associativity::ASSOCIATE_LEFT:
+                                printf("\n%%left  ");
+                                break;
+                            case lalr::Associativity::ASSOCIATE_RIGHT:
+                                printf("\n%%right  ");
+                                break;
+                            case lalr::Associativity::ASSOCIATE_PREC:
+                                printf("\n%%precedence  ");
+                                break;
+                        }
+                        last_prec = ip;
+                        printf(" /*%d*/  ", ip);
+                    }
+                    if(last_prec == curr_symbol->precedence())
+                    {
+                        ouptputTerminal(curr_symbol);
+                        printf(" ");
+                    }
+                }
+            }
+            if(last_prec > 0)
+                printf(";");
+        }
+    }
+
+    printf("\n\n%%%%\n");
+    last_production_symbol = NULL;
+    production_continuation = false;
+    for ( vector<unique_ptr<GrammarProduction>>::const_iterator i = productions().begin(); i != productions().end(); ++i )
+    {
+        GrammarProduction* production = i->get();
+        LALR_ASSERT( production );
+        GrammarSymbol *curr_symbol = production->symbol();
+        bool same_production = last_production_symbol && last_production_symbol == curr_symbol;
+        vector<unique_ptr<GrammarProduction>>::const_iterator production_next = (i+1);
+        bool hasMoreProductions = same_production || (production_next != productions().end() && production_next->get()->symbol() == curr_symbol);
+        if (isTerminalRegex(curr_symbol)
+                    || (!hasMoreProductions && production->length() == 1 && isTerminal(production->symbol_by_position(0))))
+        {
+            continue;
+        }
+        if(same_production) {
+            production_continuation = true;
+            //printf(" //%s ::= %d", production->symbol()->lexeme().c_str(), production->length());
+        }
+        else {
+            production_continuation = false;
+            const char *sym_prefix = "";
+            const char *sym_name = curr_symbol->lexeme().c_str();
+            if(sym_name[0] == '.')
+            {
+                continue;
+            }
+            //printf("\n\n%s%s ::= // %d\n\t", sym_prefix, sym_name, production->length());
+            if(last_production_symbol)
+            {
+                printf("\n%s\t;", prefix);
+            }
+            printf("\n\n%s%s%s :\n%s\t", prefix, sym_prefix, sym_name, prefix);
+        }
+        if(production->length() > 0) {
+            for(int elm=0; elm < production->length(); ++elm) {
+                const GrammarSymbol *sym = production->symbol_by_position(elm);
+                if(production_continuation) {
+                    production_continuation = false;
+                    printf("\n%s\t| ", prefix);
+                }
+                else printf(" ");
+                ouptputTerminal(sym);
+            }
+        }
+        else {
+            if(production_continuation) {
+                production_continuation = false;
+                printf("\n%s\t| ", prefix);
+            }
+            printf("/*empty*/");
+        }
+        if(production->precedence_symbol()) {
+            printf(" %%prec /*%d*/ ", production->precedence_symbol()->precedence());
+            ouptputTerminal(production->precedence_symbol());
+        }
+        last_production_symbol = curr_symbol;
+    }
+    if(last_production_symbol)
+    {
+        printf("\n%s\t;", prefix);
+    }
+    printf("\n\n// end YACC\n");
 }
 
 void Grammar::genNakedGrammar()

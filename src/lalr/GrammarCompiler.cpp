@@ -73,7 +73,7 @@ void GrammarCompiler::labels_enabled( bool enabled )
     labels_enabled_ = enabled;
 }
 
-int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF )
+int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF, bool genYACC )
 {
     Grammar grammar;
 
@@ -85,6 +85,11 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
         {
             grammar.genEBNF();
             //grammar.genNakedGrammar();
+            return errors;
+        }
+        if(genYACC)
+        {
+            grammar.genYACC();
             return errors;
         }
         bool isCaseInsensitive = grammar.is_case_insensitive();

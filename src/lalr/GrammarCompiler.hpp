@@ -39,7 +39,7 @@ public:
     const RegexCompiler* whitespace_lexer() const;
     const ParserStateMachine* parser_state_machine() const;
     void labels_enabled( bool enabled );
-    int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr, bool genEBNF = false );
+    int compile( const char* begin, const char* end, ErrorPolicy* error_policy = nullptr, bool genEBNF = false, bool genYACC = false );
     void showStats();
 
 private:

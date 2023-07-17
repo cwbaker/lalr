@@ -31,6 +31,7 @@
               <option>Ada parser case insensitive</option>
               <option>XML parser</option>
               <option>C++ parser (bug)</option>
+              <option>LALR parser (not working)</option>
               <option>Bison parser (not working)</option>
               <option>DParser parser (not working)</option>
               <option>Parse_gen parser (not working)</option>
@@ -52,7 +53,12 @@
       <li><span>Input source</span></li>
       <li class="editor-options">
         <ul class="editor-header-options">
-          <li class="option"><label><input id="gen-ebnf" type="checkbox">Gen. EBNF</label></li>
+          <li class="option"><label>Generate </label>
+            <select id="generate-action">
+              <option>none</option>
+              <option value="ebnf">EBNF grammar</option>
+              <option value="yacc">YACC grammar</option>
+	  </select></li>
           <!--<li class="option"><label><input id="auto-refresh" type="checkbox">Auto Refresh</label></li>-->
           <li class="option"><button id="parse" class="parse">Parse</button></li>
         </ul>

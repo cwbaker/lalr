@@ -69,6 +69,7 @@ public:
     Grammar& identifier( const char* identifier, int line, int column );
     bool is_case_insensitive() const {return active_case_insensitive_;}
     void genEBNF();
+    void genYACC();
     void genNakedGrammar();
 
 private:

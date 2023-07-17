@@ -186,7 +186,7 @@ static void print_parsetree( const ParseTreeUserData& ast, int level )
     }
 }
 
-extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLexer, int generate_ebnf, int generate_parsetree)
+extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLexer, int generate_ebnf, int generate_yacc, int generate_parsetree)
 {
     int err = 0; // currently, zero is always returned; result codes for each part
                  // are sent to JS via set_result()
@@ -209,7 +209,7 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
 
     lalr::GrammarCompiler compiler;
     lalr::ErrorPolicy error_policy;
-    int errors = compiler.compile( grammar, grammar + strlen(grammar), &error_policy,  generate_ebnf != 0);
+    int errors = compiler.compile( grammar, grammar + strlen(grammar), &error_policy,  generate_ebnf, generate_yacc);
 
     if (errors != 0) {
         fprintf(stderr, "Error compiling grammar. "
@@ -218,7 +218,7 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
         goto done;
     }
     else {
-	if(generate_ebnf) {
+	if(generate_ebnf || generate_yacc) {
 	    err = -3;
 	    parse_result = 0;
 	    goto done;

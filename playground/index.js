@@ -92,6 +92,15 @@ function loadLalr_sample(self) {
 	codeEditor.getSession().setMode("ace/mode/text");
       });
       break;
+      case "LALR parser (not working)":
+      $.get(base_url + "lalr.g", function( data ) {
+        grammarEditor.setValue( data );
+      });
+      $.get(base_url + "lalr.g", function( data ) {
+        codeEditor.setValue( data );
+	codeEditor.getSession().setMode("ace/mode/yaml");
+      });
+      break;
       case "Bison parser (not working)":
       $.get(base_url + "bison.g", function( data ) {
         grammarEditor.setValue( data );
@@ -240,7 +249,6 @@ function loadLalr_sample(self) {
 }
 
 //$('#ast-mode').val(localStorage.getItem('optimizationMode') || '2');
-$('#gen-ebnf').prop('checked', localStorage.getItem('gen-ebnf') === 'true');
 $('#auto-refresh').prop('checked', localStorage.getItem('autoRefresh') === 'true');
 $('#parse').prop('disabled', $('#auto-refresh').prop('checked'));
 
@@ -294,7 +302,6 @@ function updateLocalStorage() {
   localStorage.setItem('grammarText', grammarEditor.getValue());
   localStorage.setItem('codeText', codeEditor.getValue());
   //localStorage.setItem('optimizationMode', $('#opt-mode').val());
-  localStorage.setItem('gen-ebnf', $('#gen-ebnf').prop('checked'));
   localStorage.setItem('autoRefresh', $('#auto-refresh').prop('checked'));
 }
 
@@ -310,7 +317,8 @@ function parse() {
   const codeText = codeEditor.getValue();
 
   const astMode = $('#ast-mode').val();
-  const generate_ebnf = $('#gen-ebnf').prop('checked');
+  const generate_ebnf = $('#generate-action').val() == 'ebnf';
+  const generate_yacc = $('#generate-action').val() == 'yacc';
   const lexer = $('#show-lexer').prop('checked');
   let generate_ast = $('#show-ast').prop('checked');
   if(generate_ast && astMode == 2)
@@ -342,7 +350,7 @@ function parse() {
 
   window.setTimeout(() => {
     parse_start_time = new Date().getTime();
-    lalr_parse(grammarText, codeText, lexer, generate_ebnf, generate_ast);
+    lalr_parse(grammarText, codeText, lexer, generate_ebnf, generate_yacc, generate_ast);
 
     $('#overlay').css({
       'z-index': '-1',
@@ -424,7 +432,7 @@ $('#code-info').on('click', 'li[data-ln]', makeOnClickInInfo(codeEditor));
 
 // Event handing in the AST optimization
 $('#opt-mode').on('change', setupTimer);
-$('#gen-ebnf').on('change', setupTimer);
+$('#generate-action').on('change', setupTimer);
 $('#show-lexer').on('change', setupTimer);
 $('#auto-refresh').on('change', () => {
   updateLocalStorage();
