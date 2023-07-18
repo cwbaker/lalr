@@ -94,7 +94,7 @@ bool GrammarParser::match_associativity_statement()
 
 bool GrammarParser::match_whitespace_statement()
 {
-    if ( match("%whitespace") )
+    if ( match_word("%whitespace") )
     {
         grammar_->whitespace();
         if ( match_regex() )
@@ -109,7 +109,7 @@ bool GrammarParser::match_whitespace_statement()
 
 bool GrammarParser::match_case_insensitive_statement()
 {
-    if ( match("%case_insensitive") )
+    if ( match_word("%case_insensitive") )
     {
         grammar_->case_insensitive();
         expect( ";" );
@@ -167,22 +167,22 @@ bool GrammarParser::match_symbol()
 
 bool GrammarParser::match_associativity()
 {
-    if ( match("%left") )
+    if ( match_word("%left") )
     {
         grammar_->left( line_ );
         return true;
     }
-    else if ( match("%right") )
+    else if ( match_word("%right") )
     {
         grammar_->right( line_ );
         return true;
     }
-    else if ( match("%none") || match("%nonassoc"))
+    else if ( match_word("%none") || match_word("%nonassoc"))
     {
         grammar_->none( line_ );
         return true;
     }
-    else if ( match("%precedence") )
+    else if ( match_word("%precedence") )
     {
         grammar_->assoc_prec( line_ );
         return true;
@@ -209,7 +209,7 @@ bool GrammarParser::match_expression()
 
 bool GrammarParser::match_precedence()
 {
-    if ( match("%precedence") || match("%prec") )
+    if ( match_word("%precedence") || match_word("%prec") )
     {
         grammar_->precedence();
         match_symbol();
@@ -235,7 +235,7 @@ bool GrammarParser::match_action()
 
 bool GrammarParser::match_error()
 {
-    return match( "error" );
+    return match_word( "error" );
 }
 
 bool GrammarParser::match_literal()
@@ -406,6 +406,21 @@ bool GrammarParser::match( const char* keyword )
 {
     match_whitespace_and_comments();
     return match_without_skipping_whitespace( keyword );
+}
+
+bool GrammarParser::match_word( const char* keyword )
+{
+    match_whitespace_and_comments();
+    const char *saved_position = position_;
+    bool result = match_without_skipping_whitespace( keyword );
+    //check for fully word match
+    if(result && position_ != end_ && (isalnum(*position_) || isdigit(*position_) || *position_ == '_'))
+    {
+        position_ = saved_position;
+        return false;
+    }
+
+    return result;
 }
 
 bool GrammarParser::match_without_skipping_whitespace( const char* lexeme )
