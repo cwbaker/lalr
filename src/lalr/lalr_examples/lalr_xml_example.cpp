@@ -64,7 +64,7 @@ struct XmlUserData
     }
 };
 
-static bool document( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool document( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     const XmlUserData* end = start + length;
     while ( start != end && !start[0].element_ )
@@ -79,7 +79,7 @@ static bool document( XmlUserData& result, const XmlUserData* start, const Parse
     return false;
 }
 
-static bool add_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool add_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     shared_ptr<Element> element = start[0].element_;
     element->elements_.push_back( start[1].element_ );
@@ -87,7 +87,7 @@ static bool add_element( XmlUserData& result, const XmlUserData* start, const Pa
     return true;
 }
 
-static bool create_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool create_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     shared_ptr<Element> element( new Element() );
     element->elements_.push_back( start[0].element_ );
@@ -95,7 +95,7 @@ static bool create_element( XmlUserData& result, const XmlUserData* start, const
     return true;
 }
 
-static bool short_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool short_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     shared_ptr<Element> element = start[2].element_;
     element->name_ = nodes[1].lexeme();
@@ -103,7 +103,7 @@ static bool short_element( XmlUserData& result, const XmlUserData* start, const 
     return true;
 }
 
-static bool long_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool long_element( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     shared_ptr<Element> element = start[2].element_;
     if ( !element )
@@ -120,7 +120,7 @@ static bool long_element( XmlUserData& result, const XmlUserData* start, const P
     return true;
 }
 
-static bool add_attribute( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool add_attribute( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     LALR_ASSERT( start[0].element_ );
     shared_ptr<Element> element = start[0].element_;
@@ -130,7 +130,7 @@ static bool add_attribute( XmlUserData& result, const XmlUserData* start, const 
     return true;
 }
 
-static bool create_attribute( XmlUserData &result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool create_attribute( XmlUserData &result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     LALR_ASSERT( start[0].attribute_ );
     shared_ptr<Element> element( new Element() );
@@ -139,7 +139,7 @@ static bool create_attribute( XmlUserData &result, const XmlUserData* start, con
     return true;
 }
 
-static bool attribute( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length )
+static bool attribute( XmlUserData& result, const XmlUserData* start, const ParserNode<uint8_t>* nodes, size_t length, const ParserTransition */*transition*/ )
 {
     shared_ptr<Attribute> attribute( new Attribute(nodes[0].lexeme(), nodes[2].lexeme()) );
     result.attribute_ = attribute;

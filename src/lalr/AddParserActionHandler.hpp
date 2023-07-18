@@ -2,6 +2,7 @@
 #define LALR_ADDPARSERACTIONHANDLER_HPP_INCLUDED
 
 #include "ParserNode.hpp"
+#include "ParserTransition.hpp"
 #include <functional>
 
 namespace lalr
@@ -16,7 +17,7 @@ template <class Iterator, class UserData, class Char, class Traits, class Alloca
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 class AddParserActionHandler
 {
-    typedef std::function<bool (UserData &result, const UserData* data, const ParserNode<Char, Traits, Allocator>* nodes, size_t length)> ParserActionFunction;
+    typedef std::function<bool (UserData &result, const UserData* data, const ParserNode<Char, Traits, Allocator>* nodes, size_t length, const ParserTransition *transition)> ParserActionFunction;
     Parser<Iterator, UserData, Char, Traits, Allocator>* parser_; ///< The Parser to add handlers to.
 
 public:

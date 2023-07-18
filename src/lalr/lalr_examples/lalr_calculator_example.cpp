@@ -32,37 +32,37 @@ void lalr_calculator_example()
     compiler.compile( calculator_grammar, calculator_grammar + strlen(calculator_grammar) );
     Parser<const char*, int> parser( compiler.parser_state_machine() );
     parser.parser_action_handlers()
-        ( "add", [] ( int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "add", [] ( int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = data[0] + data[2];
 		return true;
             }
         )
-        ( "subtract", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "subtract", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = data[0] - data[2];
 		return true;
             }
         )
-        ( "multiply", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "multiply", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = data[0] * data[2];
 		return true;
             }
         )
-        ( "divide", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "divide", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = data[0] / data[2];
 		return true;
             }
         )
-        ( "compound", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "compound", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = data[1];
 		return true;
             }
         )
-        ( "integer", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length )
+        ( "integer", [] (  int &result, const int* data, const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/ )
             {
                 result = ::atoi( nodes[0].lexeme().c_str() );
 		return true;

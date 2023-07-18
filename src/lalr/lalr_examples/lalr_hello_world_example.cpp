@@ -22,7 +22,7 @@ void lalr_hello_world_example()
     parser.parser_action_handlers()
         ( "hello_world", [] (shared_ptr<ParserUserData<char>>& result,
 					const shared_ptr<ParserUserData<char>>* data,
-					const ParserNode<>* nodes, size_t length)
+					const ParserNode<>* nodes, size_t length, const ParserTransition */*transition*/)
             {
                 printf( "Hello World!\n" );
                 return true;

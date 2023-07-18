@@ -50,6 +50,7 @@ private:
     bool match_block_comment();
     bool match_end();
     bool match( const char* lexeme );
+    bool match_word( const char* lexeme );
     bool match_without_skipping_whitespace( const char* lexeme );
     bool expect( const char* lexeme );
     void error(int line, int column, int error, const char* format, ... );
