@@ -71,7 +71,7 @@ int ParseTreeUserDataDbg::next_index = 0;
 int ParseTreeUserDataDbg::total = 0;
 
 
-static bool parseTreeMakerDbg( ParseTreeUserDataDbg& result, const ParseTreeUserDataDbg* start, const lalr::ParserNode<mychar_t>* nodes, size_t length )
+static bool parseTreeMakerDbg( ParseTreeUserDataDbg& result, const ParseTreeUserDataDbg* start, const lalr::ParserNode<mychar_t>* nodes, size_t length, const lalr::ParserTransition* transition )
 {
    switch_output("ast");
 //    //printf("astMaker: %s\n", nodes[0].lexeme().c_str());
@@ -84,11 +84,18 @@ static bool parseTreeMakerDbg( ParseTreeUserDataDbg& result, const ParseTreeUser
 //                length ? start->index : -1, length ? start->stack_index : -1,
 //                nodes, length, idstr, lexstr, line, column);
     printf("----\n");
-    for(size_t i=0; i< length; ++i)
-        printf("%zd:%d\t%p\t%d:%d\t%p <:> %s <:> %s <:> %s <:> %d:%d\n", i, nodes[i].symbol()->type,
-                start+i, start[i].index, start[i].stack_index, nodes+i,
-                nodes[i].symbol()->identifier, nodes[i].symbol()->lexeme,
-                nodes[i].lexeme().c_str(), nodes[i].line(), nodes[i].column());
+    if(length == 0)
+    {
+        printf("*:%d reducing empty %s : %s\n", transition->reduced_symbol->type, transition->reduced_symbol->identifier, transition->reduced_symbol->lexeme);
+    }
+    else
+    {
+        for(size_t i=0; i < length; ++i)
+            printf("%zd:%d\t%p\t%d:%d\t%p <:> %s <:> %s <:> %s <:> %d:%d\n", i, nodes[i].symbol()->type,
+                    start+i, start[i].index, start[i].stack_index, nodes+i,
+                    nodes[i].symbol()->identifier, nodes[i].symbol()->lexeme,
+                    nodes[i].lexeme().c_str(), nodes[i].line(), nodes[i].column());
+    }
     switch_output("parse_status");
     return true;
 }
@@ -102,10 +109,10 @@ struct ParseTreeUserData {
 };
 
 
-static bool parsetreeMaker( ParseTreeUserData& result, const ParseTreeUserData* start, const lalr::ParserNode<mychar_t>* nodes, size_t length )
+static bool parsetreeMaker( ParseTreeUserData& result, const ParseTreeUserData* start, const lalr::ParserNode<mychar_t>* nodes, size_t length, const lalr::ParserTransition* transition )
 {
     if(length == 0) return false;
-    result.symbol = nodes[length-1].state()->transitions->reduced_symbol;
+    result.symbol = transition->reduced_symbol;
     for(size_t i_node = 0; i_node < length; ++i_node)
     {
         const lalr::ParserNode<mychar_t>& the_node = nodes[i_node];

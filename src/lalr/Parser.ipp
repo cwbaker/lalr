@@ -47,11 +47,11 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::ParserActionHandler::Parser
 // Constructor.
 //
 // @param state_machine
-//  The state machine and actions that this %Parser will use (assumed not 
+//  The state machine and actions that this %Parser will use (assumed not
 //  null).
 //
 // @param error_policy
-//  The error policy to notify syntax errors and debug information to or null 
+//  The error policy to notify syntax errors and debug information to or null
 //  to silently swallow syntax errors and print debug information to stdout.
 //
 // @param lexer_error_policy
@@ -72,7 +72,7 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
 , full_( false )
 {
     LALR_ASSERT( state_machine_ );
-    
+
     action_handlers_.reserve( state_machine_->actions_size );
     const ParserAction* action = state_machine_->actions;
     const ParserAction* actions_end = action + state_machine_->actions_size;
@@ -82,10 +82,13 @@ Parser<Iterator, UserData, Char, Traits, Allocator>::Parser( const ParserStateMa
         ++action;
     }
 
-    nodes_.reserve( 64 );       
-    user_data_.reserve( 64 );       
-    nodes_.emplace_back( state_machine_->start_state, nullptr, 0, 1 );
-    user_data_.emplace_back( );
+    if ( state_machine_->start_state )
+    {
+        nodes_.reserve( 64 );
+        user_data_.reserve( 64 );
+        nodes_.emplace_back( state_machine_->start_state, nullptr, 0, 1 );
+        user_data_.emplace_back( );
+    }
 }
 
 /**
@@ -125,11 +128,11 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::full() const
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 bool Parser<Iterator, UserData, Char, Traits, Allocator>::valid() const
 {
-    return lexer_.valid();
+    return state_machine_ && state_machine_->start_state && lexer_.valid();
 }
 
 /**
-// Get the user data that resulted from the most recent call to 
+// Get the user data that resulted from the most recent call to
 // Parser::parser() on this %Parser.
 //
 // Assumes that the most recent parse was accepted.
@@ -295,20 +298,20 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_default_action_han
 //  The identifier of the action handler to set the function for.
 //
 // @param function
-//  The function to set the action handler to or null to set the action 
+//  The function to set the action handler to or null to set the action
 //  handler to have no function.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
 void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( const char* identifier, ParserActionFunction function )
 {
     LALR_ASSERT( identifier );
-    
+
     typename std::vector<ParserActionHandler>::iterator action_handler = action_handlers_.begin();
     while ( action_handler != action_handlers_.end() && strcmp(action_handler->action_->identifier, identifier) != 0 )
     {
         ++action_handler;
     }
-    
+
     if ( action_handler != action_handlers_.end() )
     {
         action_handler->function_ = function;
@@ -322,7 +325,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_action_handler( co
 //  The identifier of the action handler to set the function for.
 //
 // @param function
-//  The function to set the action handler to or null to set the action 
+//  The function to set the action handler to or null to set the action
 //  handler to have no function.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
@@ -336,7 +339,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::set_lexer_action_handl
 // Set whether or not shift operations are printed.
 //
 // @param debug_enabled
-//  True to cause any shift or reduce operations to be printed or false to 
+//  True to cause any shift or reduce operations to be printed or false to
 //  suppress this behaviour.
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
@@ -362,7 +365,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reset()
 /**
 // Parse [\e start, \e finish).
 //
-// After the parse the Parser::full() and Parser::accepted() functions can 
+// After the parse the Parser::full() and Parser::accepted() functions can
 // be used to determine whether or not the parse was successful and whether
 // or not it consumed all of the available input.
 //
@@ -382,7 +385,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::parse( Iterator start,
     if ( valid() )
     {
         reset();
-        lexer_.reset( start, finish );    
+        lexer_.reset( start, finish );
         lexer_.advance();
         const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
         while ( parse(symbol, lexer_.lexeme(), lexer_.line(), lexer_.column()) )
@@ -438,14 +441,14 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
 {
     bool accepted = false;
     bool rejected = false;
-    
+
     const ParserTransition* transition = find_transition( symbol, nodes_.back().state() );
     while ( !accepted && !rejected && transition && transition->reduced_symbol )
     {
         reduce( transition, &accepted, &rejected );
         transition = find_transition( symbol, nodes_.back().state() );
     }
-    
+
     if ( transition && transition->state )
     {
         shift( transition, lexeme, line, column );
@@ -454,7 +457,7 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::parse( const ParserSym
     {
         error( &accepted, &rejected, line, column);
     }
-    
+
     accepted_ = accepted;
     return !accepted_ && !rejected;
 }
@@ -562,7 +565,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
             fire_printf( "(%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
             ++node;
         }
-        
+
         while ( node != node_end )
         {
             const ParserSymbol* symbol = node->symbol();
@@ -572,7 +575,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::debug_reduce( const Pa
             fire_printf( " (%s %s %d:%d)", symbol ? symbol->identifier : "", lexeme.c_str(), line, column );
             ++node;
         }
-        
+
         fire_printf( "\n" );
     }
 }
@@ -610,16 +613,16 @@ bool Parser<Iterator, UserData, Char, Traits, Allocator>::handle(UserData& resul
     int action = transition->action;
     if ( action != ParserAction::INVALID_INDEX )
     {
-        LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );            
+        LALR_ASSERT( action >= 0 && action < static_cast<int>(action_handlers_.size()) );
         if ( action_handlers_[action].function_ )
         {
-            return action_handlers_[action].function_( result, user_data, nodes, length );
+            return action_handlers_[action].function_( result, user_data, nodes, length, transition );
         }
     }
 
     if ( default_action_handler_ )
     {
-        return default_action_handler_( result, user_data, nodes, length );
+        return default_action_handler_( result, user_data, nodes, length, transition );
     }
 
     return false;
@@ -668,7 +671,7 @@ std::string Parser<Iterator, UserData, Char, Traits, Allocator>::expected_symbol
 //  The lexeme of the token that is being shifted onto the stack.
 //
 // @param line
-//  The line number at the start of the token that is being shifted onto the 
+//  The line number at the start of the token that is being shifted onto the
 //  stack (assumed >= 0).
 */
 template <class Iterator, class UserData, class Char, class Traits, class Allocator>
@@ -701,7 +704,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
     LALR_ASSERT( state_machine_ );
     LALR_ASSERT( transition );
     LALR_ASSERT( accepted );
-    
+
     const ParserSymbol* symbol = transition->reduced_symbol;
     if ( symbol != state_machine_->start_symbol )
     {
@@ -722,20 +725,20 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::reduce( const ParserTr
         user_data_.emplace_back( user_data );
     }
     else
-    {    
+    {
         LALR_ASSERT( nodes_.size() == 2 );
         LALR_ASSERT( user_data_.size() == 2 );
         nodes_.erase( nodes_.begin() );
         user_data_.erase( user_data_.begin() );
         *accepted = true;
-    }              
+    }
 }
 
 /**
 // Handle an error.
 //
 // Pops states from the stack until the 'error' token can be shifted and then
-// shifts the error token.  Any transitions that call for a reduce on the 
+// shifts the error token.  Any transitions that call for a reduce on the
 // 'error' token are taken.
 //
 // @param accepted
@@ -771,7 +774,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
             else
             {
                 LALR_ASSERT( transition->reduced_symbol );
-                reduce( transition, accepted, rejected );                
+                reduce( transition, accepted, rejected );
             }
         }
         else
@@ -780,7 +783,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
             user_data_.pop_back();
         }
     }
-    
+
     if ( nodes_.empty() )
     {
         if ( symbol )
