@@ -472,6 +472,9 @@ void Grammar::genYACC()
                             case lalr::Associativity::ASSOCIATE_PREC:
                                 printf("\n%%precedence  ");
                                 break;
+                            case lalr::Associativity::ASSOCIATE_NULL:
+                                printf("\n%%<NULL>?  ");
+                                break;
                         }
                         last_prec = ip;
                         printf(" /*%d*/  ", ip);
