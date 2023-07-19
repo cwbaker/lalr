@@ -77,6 +77,7 @@ bool GrammarParser::match_statement()
         match_associativity_statement() ||
         match_whitespace_statement() ||
         match_case_insensitive_statement() ||
+        match_error_recovery_debug_statement() ||
         match_production_statement()
     ;
 }
@@ -116,6 +117,24 @@ bool GrammarParser::match_case_insensitive_statement()
         return true;
     }
     return false;
+}
+
+bool GrammarParser::match_error_recovery_debug_statement()
+{
+    bool rc = false;
+    if ( match_word("%error_recovery_off") )
+    {
+        grammar_->error_recovery_off();
+        expect( ";" );
+        rc = true;
+    }
+    else if ( match_word("%error_recovery_show") )
+    {
+        grammar_->error_recovery_show();
+        expect( ";" );
+        rc = true;
+    }
+    return rc;
 }
 
 bool GrammarParser::match_production_statement()
@@ -338,10 +357,9 @@ bool GrammarParser::match_whitespace()
         {
             if ( is_new_line(position) )
             {
-                ++line_;
-                line_position_ = position;
+                position = new_line( position );
             }
-            ++position;
+            else ++position;
         }
         position_ = position;
         return true;
@@ -369,6 +387,7 @@ bool GrammarParser::match_block_comment()
     if ( match_without_skipping_whitespace("/*") )
     {
         bool done = false;
+        int nested = 1;
         const char* position = position_;
         while ( position != end_ && !done )
         {
@@ -377,13 +396,22 @@ bool GrammarParser::match_block_comment()
                 ++position;
                 if ( position != end_ && *position == '/' )
                 {
-                    done = true;
+                    if(--nested == 0) done = true;
                     ++position;
                 }
             }
             else if ( is_new_line(position) )
             {
                 position = new_line( position );
+            }
+            else if ( *position == '/' )
+            {
+                ++position;
+                if ( position != end_ && *position == '*' )
+                {
+                    ++nested;
+                    ++position;
+                }
             }
             else
             {

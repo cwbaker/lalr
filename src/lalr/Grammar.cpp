@@ -31,6 +31,8 @@ Grammar::Grammar()
 , active_whitespace_directive_( false )
 , active_precedence_directive_( false )
 , active_case_insensitive_(false)
+, error_recovery_off_(false)
+, error_recovery_show_(false)
 , associativity_( ASSOCIATE_NULL )
 , precedence_( 0 )
 , active_production_( nullptr )
@@ -113,6 +115,18 @@ Grammar& Grammar::assoc_prec( int /*line*/ )
 Grammar& Grammar::case_insensitive()
 {
     active_case_insensitive_ = true;
+    return *this;
+}
+
+Grammar& Grammar::error_recovery_off()
+{
+    error_recovery_off_ = true;
+    return *this;
+}
+
+Grammar& Grammar::error_recovery_show()
+{
+    error_recovery_show_ = true;
     return *this;
 }
 

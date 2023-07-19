@@ -30,6 +30,8 @@ class Grammar
     bool active_whitespace_directive_; ///< True iff a whitespace directive is active.
     bool active_precedence_directive_; ///< True iff a precedence directive is active.
     bool active_case_insensitive_; ///< True iff a case insensitive directive is active.
+    bool error_recovery_off_; ///< True iff we want to turn off error recovery for debug.
+    bool error_recovery_show_; ///< True iff we want to show error recovery for debug.
     Associativity associativity_; ///< Most recently set associativity.
     int precedence_; ///< Current precedence.
     GrammarProduction* active_production_; ///< Currently active production.
@@ -58,6 +60,8 @@ public:
     Grammar& assoc_prec( int line );
     Grammar& whitespace();
     Grammar& case_insensitive();
+    Grammar& error_recovery_off();
+    Grammar& error_recovery_show();
     Grammar& precedence();
     Grammar& production( const char* identifier, int line, int column );
     Grammar& end_production();
@@ -68,6 +72,8 @@ public:
     Grammar& regex( const char* regex, int line, int column );
     Grammar& identifier( const char* identifier, int line, int column );
     bool is_case_insensitive() const {return active_case_insensitive_;}
+    bool is_error_recovery_off() const {return error_recovery_off_;}
+    bool is_error_recovery_show() const {return error_recovery_show_;}
     void genEBNF();
     void genYACC();
     void genNakedGrammar();
