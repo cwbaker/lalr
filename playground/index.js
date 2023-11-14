@@ -19,232 +19,96 @@ function setupEditorArea(id, lsKey) {
   return e;
 }
 
+let userContentHasChanged = false;
+let grammarContentHasChanged = false;
+let inputContentHasChanged = false;
+function grammarOnChange(delta) {
+	if(!grammarContentHasChanged) {
+		grammarContentHasChanged = true;
+		userContentHasChanged = true;
+	}
+}
+function inputOnChange(delta) {
+	if(!inputContentHasChanged) {
+		inputContentHasChanged = true;
+		userContentHasChanged = true;
+	}
+}
+
 const grammarEditor = setupEditorArea("grammar-editor", "grammarText");
+grammarEditor.on("change", grammarOnChange);
 grammarEditor.getSession().setMode("ace/mode/yaml");
 const codeEditor = setupEditorArea("code-editor", "codeText");
+codeEditor.on("change", inputOnChange);
+userContentHasChanged = localStorage.getItem("userContentHasChanged");
 
 const codeAst = setupInfoArea("code-ast");
 const codeLexer = setupInfoArea("code-lexer");
 
+const sampleList = [
+	//title, grammar, input, input ace syntax
+	["XML parser", "xml.g", "test.xml.txt", "ace/mode/xml"],
+	["LALR parser", "lalr.g", "lalr.g", "ace/mode/yaml"],
+	["Calculator error handling parser", "error_handling_calculator.g", "error_handling_calculator.txt", "ace/mode/text"],
+	["Json parser", "json3.g", "test.json.txt", "ace/mode/json"],
+	["Json5 parser", "json5.g", "test.json5.txt", "ace/mode/json"],
+	["Lua parser", "lua.g", "test.lua", "ace/mode/lua"],
+	["JavascriptCore parser", "javascript-core.g", "test.js.txt", "ace/mode/javascript"],
+	["Carbon parser", "carbon-lang.g", "prelude.carbon", "ace/mode/typescript"],
+	["Linden Script parser", "lsl_ext.g", "test.lsl", "ace/mode/text"],
+	["Ansi C parser", "cparser.g", "test.c", "ace/mode/c_cpp"],
+	["Ispc parser", "ispc.g", "test.ispc", "ace/mode/c_cpp"],
+	["Java11 parser", "java11.g", "test.java", "ace/mode/java"],
+	["Rust parser", "rust.g", "test.rs", "ace/mode/rust"],
+	["CQL parser (be patient)", "cql.g", "test.cql", "ace/mode/sql"],
+	["Postgresql parser (be patient)", "postgresql-16.g", "test.sql", "ace/mode/sql"],
+	["Postgresql parser case insensitive (be patient)", "postgresql-16-nc.g", "test.sql", "ace/mode/sql"],
+	["Gringo/Clingo non grounded parser", "gringo-ng.g", "test.clingo", "ace/mode/text"],
+	["Ada parser", "ada-adayacc.g", "test.adb", "ace/mode/ada"],
+	["Ada parser case insensitive", "ada-adayacc-n.g", "test.adb", "ace/mode/ada"],
+	["Textmapper parser", "textmapper.g", "test.tm", "ace/mode/yaml"],
+	["C++ parser (bug)", "cxx-parser.g", "test.cpp", "ace/mode/c_cpp"],
+	["Bison parser (not working)", "bison.g", "carbon-lang.y", "ace/mode/yaml"],
+	["DParser parser (not working)", "dparser.g", "test.dparser", "ace/mode/yaml"],
+	["Parse_gen parser (not working)", "parse_gen.g", "test.parse_gen", "ace/mode/yaml"],
+	["Tameparse parser (not working)", "tameparser.g", "test.tameparser", "ace/mode/yaml"],
+	["Javascript parser (not working)", "javascript.g", "test.js.txt", "ace/mode/javascript"],
+	["Go parser (not working)", "go.g", "test.go", "ace/mode/golang"],
+	["PHP-8.2 parser (not working)", "php-8.2.g", "test.php", "ace/mode/php"],
+	["BC calculator parser", "bc.g", "test.bc", "ace/mode/text"],
+	["CFront3 parser (notworking)", "cfront3.g", "test.cpp", "ace/mode/c_cpp"],
+	["C++98 parser (notworking)", "cpp-98-parser.g", "test.cpp", "ace/mode/c_cpp"],
+	["Cyclone parser (notworking)", "cyclone.g", "test.c", "ace/mode/c_cpp"],
+	["Cobalt CSS parser (notworking)", "cobalt-css.g", "style.css", "ace/mode/css"],
+	["Flex parser (notworking)", "flex-parser.g", "test.flex", "ace/mode/yaml"],
+	["Frege parser (notworking)", "frege-parser.g", "test.c", "ace/mode/c_cpp"],
+	["GHC parser (notworking)", "ghc-parser.g", "test.c", "ace/mode/c_cpp"],
+	["Graphql-ruby parser (be patient)", "graphql-ruby.g", "test.cql", "ace/mode/sql"],
+	["HTML parser (be patient)", "html-parser.g", "index.html", "ace/mode/html"],
+	["HTTPD parser (be patient)", "httpd-parser.g", "index.html", "ace/mode/html"],
+	["IVerilog parser (be patient)", "iverilog-parser.g", "test.vl", "ace/mode/verilog"],
+];
+
 function loadLalr_sample(self) {
+  if(userContentHasChanged)
+  {
+	let ok = confirm("Your changes will be lost !\nIf the changes you've made are important save then before proceed.\nCopy and paste to your prefered editor and save it.\nEither OK or Cancel.");
+	if(!ok) return false;
+  }
   let base_url = "./"
-  switch(self.options[self.selectedIndex].value) {
-    case "Json parser":
-      $.get(base_url + "json3.g", function( data ) {
+  if(self.selectedIndex > 0) {
+      let sample_to_use = sampleList[self.selectedIndex-1];
+      $.get(base_url + sample_to_use[1], function( data ) {
         grammarEditor.setValue( data );
+	grammarContentHasChanged = false;
+	userContentHasChanged = false;
       });
-      $.get(base_url + "test.json.txt", function( data ) {
+      $.get(base_url + sample_to_use[2], function( data ) {
         codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/json");
+	codeEditor.getSession().setMode(sample_to_use[3]);
+	inputContentHasChanged = false;
+	userContentHasChanged = false;
       });
-      break;
-    case "Lua parser":
-      $.get(base_url + "lua.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.lua", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/lua");
-      });
-      break;
-      case "Carbon parser":
-      $.get(base_url + "carbon-lang.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "prelude.carbon", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/typescript");
-      });
-      break;
-      case "Postgresql parser (be patient)":
-      $.get(base_url + "postgresql-16.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.sql", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/sql");
-      });
-      break;
-      case "Postgresql parser case insensitive (be patient)":
-      $.get(base_url + "postgresql-16-nc.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.sql", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/sql");
-      });
-      break;
-      case "C++ parser (bug)":
-      $.get(base_url + "cxx-parser.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.cpp", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/c_cpp");
-      });
-      break;
-      case "Linden Script parser":
-      $.get(base_url + "lsl_ext.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.lsl", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/text");
-      });
-      break;
-      case "LALR parser (not working)":
-      $.get(base_url + "lalr.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "lalr.g", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/yaml");
-      });
-      break;
-      case "Bison parser (not working)":
-      $.get(base_url + "bison.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "carbon-lang.y", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/yaml");
-      });
-      break;
-      case "DParser parser (not working)":
-      $.get(base_url + "dparser.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.dparser", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/yaml");
-      });
-      break;
-      case "Parse_gen parser (not working)":
-      $.get(base_url + "parse_gen.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.parse_gen", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/yaml");
-      });
-      break;
-      case "Tameparse parser (not working)":
-      $.get(base_url + "tameparser.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.tameparser", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/yaml");
-      });
-      break;
-      case "Javascript parser (not working)":
-      $.get(base_url + "javascript.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.js.txt", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/javascript");
-      });
-      break;
-      case "JavascriptCore parser":
-      $.get(base_url + "javascript-core.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.js.txt", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/javascript");
-      });
-      break;
-      case "Ansi C parser":
-      $.get(base_url + "cparser.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.c", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/c_cpp");
-      });
-      break;
-      case "Ispc parser":
-      $.get(base_url + "ispc.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.ispc", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/c_cpp");
-      });
-      break;
-      case "Java11 parser":
-      $.get(base_url + "java11.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.java", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/java");
-      });
-      break;
-      case "Rust parser":
-      $.get(base_url + "rust.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.rs", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/rust");
-      });
-      break;
-      case "Go parser (not working)":
-      $.get(base_url + "go.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.go", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/golang");
-      });
-      break;
-      case "PHP-8.2 parser (not working)":
-      $.get(base_url + "php-8.2.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.php", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/php");
-      });
-      break;
-      case "Gringo/Clingo non grounded parser":
-      $.get(base_url + "gringo-ng.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.clingo", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/text");
-      });
-      break;
-      case "Ada parser":
-      $.get(base_url + "ada-adayacc.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.adb", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/ada");
-      });
-      break;
-      case "Ada parser case insensitive":
-      $.get(base_url + "ada-adayacc-nc.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.adb", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/ada");
-      });
-      break;
-      case "XML parser":
-      $.get(base_url + "xml.g", function( data ) {
-        grammarEditor.setValue( data );
-      });
-      $.get(base_url + "test.xml.txt", function( data ) {
-        codeEditor.setValue( data );
-	codeEditor.getSession().setMode("ace/mode/xml");
-      });
-      break;
   }
 }
 
@@ -271,7 +135,7 @@ function textToErrors(str) {
   var regExp = /([^\n]+?)\n/g, match;
   while (match = regExp.exec(str)) {
     let msg = match[1];
-    let line_col = msg.match(/^lalr \((\d+):(\d+)\):/);
+    let line_col = msg.match(/lalr \((\d+):(\d+)\):/);
     if (line_col) {
       errors.push({"ln": line_col[1], "col":line_col[2], "msg": msg});
     } else {
@@ -299,10 +163,16 @@ function generateErrorListHTML(errors) {
 }
 
 function updateLocalStorage() {
-  localStorage.setItem('grammarText', grammarEditor.getValue());
-  localStorage.setItem('codeText', codeEditor.getValue());
+  if(grammarContentHasChanged || inputContentHasChanged)
+  {
+    localStorage.setItem('grammarText', grammarEditor.getValue());
+    localStorage.setItem('codeText', codeEditor.getValue());
+    grammarContentHasChanged = false;
+    inputContentHasChanged = false;
+    localStorage.setItem('userContentHasChanged', userContentHasChanged);
+  }
   //localStorage.setItem('optimizationMode', $('#opt-mode').val());
-  localStorage.setItem('autoRefresh', $('#auto-refresh').prop('checked'));
+  //localStorage.setItem('autoRefresh', $('#auto-refresh').prop('checked'));
 }
 
 var parse_start_time = 0;
@@ -319,6 +189,7 @@ function parse() {
   const astMode = $('#ast-mode').val();
   const generate_ebnf = $('#generate-action').val() == 'ebnf';
   const generate_yacc = $('#generate-action').val() == 'yacc';
+  const generate_yacc_html = $('#generate-action').val() == 'yacc_html';
   const lexer = $('#show-lexer').prop('checked');
   let generate_ast = $('#show-ast').prop('checked');
   if(generate_ast && astMode == 2)
@@ -350,7 +221,7 @@ function parse() {
 
   window.setTimeout(() => {
     parse_start_time = new Date().getTime();
-    lalr_parse(grammarText, codeText, lexer, generate_ebnf, generate_yacc, generate_ast);
+    lalr_parse(grammarText, codeText, lexer, generate_ebnf, generate_yacc, generate_yacc_html, generate_ast);
 
     $('#overlay').css({
       'z-index': '-1',
@@ -371,7 +242,15 @@ function parse() {
       }
 
       if(isGenEBNF) {
-        $grammarInfo.html("<pre>" + escapeHtml(outputs.compile_status.replaceAll("'\\''", '"\'"')) + "</pre>");
+	//if(generate_yacc_html)
+	//{
+	//	const win = window.open('', 'Yacc_HTML_linked');
+	//	win.document.write(outputs.compile_status);
+	//	win.document.close();
+	//	win.focus();
+	//}
+	//else
+		$grammarInfo.html("<pre>" + escapeHtml(outputs.compile_status.replaceAll("'\\''", '"\'"')) + "</pre>");
         return;
       }
 
@@ -525,5 +404,15 @@ var Module = {
     }
   },
 };
+
+function doFinalSettings() {
+	let select_samples = document.getElementById('opt-samples');
+	sampleList.map( (lang, i) => {
+           let opt = document.createElement("option");
+           opt.value = i; // the index
+           opt.innerHTML = lang[0];
+           select_samples.append(opt);
+        });
+}
 
 // vim: sw=2:sts=2
