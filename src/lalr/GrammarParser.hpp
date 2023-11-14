@@ -58,6 +58,7 @@ private:
     const char* new_line( const char* position );
     static bool is_new_line( const char* position );
     int get_line_column(const char* position);
+    int get_line_column(const char* position, const std::string &subtract_str_size);
 };
 
 }

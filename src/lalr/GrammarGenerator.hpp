@@ -54,6 +54,8 @@ class GrammarGenerator
     int errors_; ///< The number of errors that occured during parsing and generation.
     int shift_reduce_count_; ///< The number of shift/reduce resolved conflicts that occured during parsing and generation.
     int reduce_reduce_count_; ///< The number of reduce/reduce resolved conflicts that occured during parsing and generation.
+    bool error_recovery_off_; ///< True iff we want to turn off error recovery for debug.
+    bool error_recovery_show_; ///< True iff we want to show error recovery for debug.
 
 public:
     GrammarGenerator();
@@ -69,9 +71,11 @@ public:
     int generate( Grammar& grammar, ErrorPolicy* error_policy );
     int shift_reduce_count() const {return shift_reduce_count_;}
     int reduce_reduce_count() const {return reduce_reduce_count_;}
+    bool is_error_recovery_off() const {return error_recovery_off_;}
+    bool is_error_recovery_show() const {return error_recovery_show_;}
 
 private:
-    void error( int line, int error, const char* format, ... );
+    void error( int line, int column, int error, const char* format, ... );
     GrammarTransition* shift_transition( const GrammarSymbol* symbol, GrammarState* state );
     GrammarTransition* reduce_transition( const GrammarSymbol* symbol, const GrammarProduction* production );
     GrammarSymbolSet spontaneous_lookaheads( const GrammarItem& item ) const;
@@ -97,7 +101,7 @@ private:
     void generate_states( const GrammarSymbol* start_symbol, const GrammarSymbol* end_symbol, const std::vector<std::unique_ptr<GrammarSymbol>>& symbols );
     void generate_indices_for_states();
     void generate_reduce_transitions();
-    void generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production );
+    void generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production, const GrammarProduction* curr_production );
     void generate_indices_for_transitions();
 };
 

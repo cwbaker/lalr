@@ -100,7 +100,7 @@ bool GrammarParser::match_whitespace_statement()
         grammar_->whitespace();
         if ( match_regex() )
         {
-            grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
+            grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_, lexeme_) );
         }
         expect( ";" );
         return true;
@@ -141,7 +141,7 @@ bool GrammarParser::match_production_statement()
 {
     if ( match_identifier() )
     {
-        grammar_->production( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->production( lexeme_.c_str(), line_, get_line_column(position_, lexeme_));
         expect( ":" );
         match_expressions();
         expect( ";" );
@@ -168,17 +168,17 @@ bool GrammarParser::match_symbol()
     }
     else if ( match_literal() )
     {
-        grammar_->literal( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->literal( lexeme_.c_str(), line_, get_line_column(position_, lexeme_) );
         return true;
     }
     else if ( match_regex() )
     {
-        grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->regex( lexeme_.c_str(), line_, get_line_column(position_, lexeme_) );
         return true;
     }
     else if ( match_identifier() )
     {
-        grammar_->identifier( lexeme_.c_str(), line_, get_line_column(position_) );
+        grammar_->identifier( lexeme_.c_str(), line_, get_line_column(position_, lexeme_) );
         return true;
     }
     return false;
@@ -243,7 +243,7 @@ bool GrammarParser::match_action()
     {
         if ( match_identifier() )
         {
-            grammar_->action( lexeme_.c_str(), line_, get_line_column(position_) );
+            grammar_->action( lexeme_.c_str(), line_, get_line_column(position_, lexeme_) );
         }
         expect( "]" );
         return true;
@@ -527,5 +527,9 @@ bool GrammarParser::is_new_line( const char* position )
 int GrammarParser::get_line_column(const char* position)
 {
     return position - line_position_;
+}
 
+int GrammarParser::get_line_column(const char* position, const std::string &subtract_str_size)
+{
+    return get_line_column(position) - subtract_str_size.size();
 }

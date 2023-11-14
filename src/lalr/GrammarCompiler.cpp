@@ -73,7 +73,7 @@ void GrammarCompiler::labels_enabled( bool enabled )
     labels_enabled_ = enabled;
 }
 
-int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF, bool genYACC )
+int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* error_policy, bool genEBNF, bool genYACC, bool genYACC_HTML )
 {
     Grammar grammar;
 
@@ -90,6 +90,11 @@ int GrammarCompiler::compile( const char* begin, const char* end, ErrorPolicy* e
         if(genYACC)
         {
             grammar.genYACC();
+            return errors;
+        }
+        if(genYACC_HTML)
+        {
+            grammar.genYACC(true);
             return errors;
         }
         bool isCaseInsensitive = grammar.is_case_insensitive();
@@ -353,8 +358,10 @@ void GrammarCompiler::populate_parser_state_machine( const Grammar& grammar, con
     set_symbols( symbols, symbols_size );
     set_transitions( transitions, transitions_size );
     set_states( states, states_size, start_state );
-    parser_state_machine_->shift_reduce_count_ = generator.shift_reduce_count();
-    parser_state_machine_->reduce_reduce_count_ = generator.reduce_reduce_count();
+    parser_state_machine_->shift_reduce_count = generator.shift_reduce_count();
+    parser_state_machine_->reduce_reduce_count = generator.reduce_reduce_count();
+    parser_state_machine_->error_recovery_off = generator.is_error_recovery_off();
+    parser_state_machine_->error_recovery_show = generator.is_error_recovery_show();
 }
 
 #include "LexerStateMachine.hpp"
@@ -367,7 +374,8 @@ void GrammarCompiler::showStats()
     printf("    Actions          : %d\n", psm->actions_size);
     printf("    States           : %d\n", psm->states_size);
     printf("    Transitions      : %d\n", psm->transitions_size);
-    printf("    Solved conflicts : shift/reduce = %d, reduce/reduce = %d\n", psm->shift_reduce_count_, psm->reduce_reduce_count_);
+    printf("    Solved conflicts : shift/reduce = %d, reduce/reduce = %d\n", psm->shift_reduce_count, psm->reduce_reduce_count);
+    printf("    Error recovery   : %d\n", psm->error_recovery_off);
     const LexerStateMachine* lsm = lexer_->state_machine();
     if(!lsm) return;
     printf("Lexer state machine stats:\n");

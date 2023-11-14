@@ -69,6 +69,8 @@ GrammarGenerator::GrammarGenerator()
 , errors_( 0 )
 , shift_reduce_count_( 0 )
 , reduce_reduce_count_( 0 )
+, error_recovery_off_( false )
+, error_recovery_show_( false )
 {
 #ifndef LALR_NO_THREADS
     thread_pool_ = new ThreadPool;
@@ -192,7 +194,9 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
     whitespace_symbol_ = grammar.whitespace_symbol();
     start_state_ = nullptr;
     errors_ = 0;
-
+    error_recovery_off_ = grammar.is_error_recovery_off();
+    error_recovery_show_ = grammar.is_error_recovery_show();
+    
     calculate_identifiers();
     check_for_undefined_symbol_errors();
     check_for_unreferenced_symbol_errors();
@@ -231,14 +235,14 @@ int GrammarGenerator::generate( Grammar& grammar, ErrorPolicy* error_policy )
 // @param ...
 //  Arguments described by *format*.
 */
-void GrammarGenerator::error( int line, int error, const char* format, ... )
+void GrammarGenerator::error(int line, int column, int error, const char* format, ... )
 {
     ++errors_;    
     if ( error_policy_ )
     {
         va_list args;
         va_start( args, format );
-        error_policy_->lalr_error( line, 0, error, format, args );
+        error_policy_->lalr_error( line, column, error, format, args );
         va_end( args );
     }
 }
@@ -408,7 +412,7 @@ void GrammarGenerator::check_for_undefined_symbol_errors()
             LALR_ASSERT( symbol );
             if ( symbol->symbol_type() == SYMBOL_NON_TERMINAL && symbol->productions().empty() && (symbol->referenced_in_rule() || !symbol->referenced_in_precedence_directive()) )
             {
-                error( symbol->line(), PARSER_ERROR_UNDEFINED_SYMBOL, "undefined symbol '%s'", symbol->identifier().c_str(), identifier_.c_str() );
+                error(symbol->line(), symbol->column(), PARSER_ERROR_UNDEFINED_SYMBOL, "undefined symbol '%s'", symbol->identifier().c_str(), identifier_.c_str());
             }
         }
     }
@@ -444,7 +448,8 @@ void GrammarGenerator::check_for_unreferenced_symbol_errors()
 
                 if ( references == 0 )
                 {
-                    error( symbol->line(), PARSER_ERROR_UNREFERENCED_SYMBOL, "unreferenced symbol '%s'/'%s'", symbol->identifier().c_str(), symbol->lexeme().c_str() );
+                    error(symbol->line(), symbol->column(), PARSER_ERROR_UNREFERENCED_SYMBOL, "unreferenced symbol '%s'/'%s'",
+                            symbol->identifier().c_str(), symbol->lexeme().c_str());
                 }
             }
         }
@@ -474,7 +479,9 @@ void GrammarGenerator::check_for_implicit_terminal_duplicate_associativity()
                 bool non_terminal_associates = non_terminal->associativity() != ASSOCIATE_NULL;
                 if ( terminal_associates && non_terminal_associates )
                 {
-                    error( terminal->line(), PARSER_ERROR_DUPLICATE_ASSOCIATION_ON_IMPLICIT_TERMINAL, "implicit terminal '%s'/%s' specifies associativity and precedence on both forms", terminal->lexeme().c_str(), non_terminal->lexeme().c_str() );
+                    error(terminal->line(), terminal->column(), PARSER_ERROR_DUPLICATE_ASSOCIATION_ON_IMPLICIT_TERMINAL,
+                            "implicit terminal '%s'/%s' specifies associativity and precedence on both forms",
+                            terminal->lexeme().c_str(), non_terminal->lexeme().c_str());
                 }
             }
         }
@@ -498,7 +505,7 @@ void GrammarGenerator::check_for_error_symbol_on_left_hand_side_errors()
         LALR_ASSERT( symbol );
         if ( !symbol->productions().empty() && symbol->lexeme() == error_symbol_->lexeme() )
         {
-            error( 1, PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "error appears on the left hand side of a production" );
+            error(symbol->line(), symbol->column(), PARSER_ERROR_ERROR_SYMBOL_ON_LEFT_HAND_SIDE, "error appears on the left hand side of a production" );
         }
     }
 }
@@ -575,7 +582,8 @@ void GrammarGenerator::calculate_implicit_terminal_symbols()
             }
             else if(non_terminal_symbol->associativity() != ASSOCIATE_NULL && non_terminal_symbol->productions().size())
             {
-                error( non_terminal_symbol->line(), PARSER_ERROR_ASSOCIATIVITY_ASSIGNED_ON_NON_TERMINAL, "associativity has been assigned to a non-terminal: %s",  non_terminal_symbol->identifier().c_str());
+                error(non_terminal_symbol->line(), non_terminal_symbol->column(), PARSER_ERROR_ASSOCIATIVITY_ASSIGNED_ON_NON_TERMINAL,
+                        "associativity has been assigned to a non-terminal: %s",  non_terminal_symbol->identifier().c_str());
             }
         }
     }
@@ -968,7 +976,7 @@ void GrammarGenerator::generate_reduce_transitions()
     {
         GrammarState* state = i->get();
         LALR_ASSERT( state );
-
+        //printf("state %d\n", state->index());
         for ( set<GrammarItem>::const_iterator item = state->items().begin(); item != state->items().end(); ++item )
         {
             const GrammarProduction* production = productions_[item->production()].get();
@@ -984,7 +992,25 @@ void GrammarGenerator::generate_reduce_transitions()
                     {
                         const GrammarSymbol* symbol = symbols_[index].get();
                         LALR_ASSERT( symbol );
-                        generate_reduce_transition( state, symbol, production );
+            const GrammarProduction* production_curr;
+            size_t prod_idx = item->production()+index;
+            if(prod_idx < productions_.size())
+            {
+                production_curr = productions_[prod_idx].get();
+/*
+                printf("\t%s : ", production->symbol()->identifier().c_str());
+                short the_dot = 0;
+                for ( vector<GrammarSymbol*>::const_iterator ips = production_curr->symbols().begin(); ips != production_curr->symbols().end(); ++ips )
+                {
+                    GrammarSymbol *symbol = *ips;
+                    printf(" %s", symbol->identifier().c_str());
+                    if(++the_dot == item->position() ) printf(" * ");
+                }
+                printf("\n");
+ */
+            }
+            else production_curr = nullptr;
+                        generate_reduce_transition( state, symbol, production, production_curr ? production_curr : production );
                     }
                 }
             }
@@ -1004,7 +1030,7 @@ void GrammarGenerator::generate_reduce_transitions()
 // @param production
 //  The GrammarProduction that is to be reduced.
 */
-void GrammarGenerator::generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production )
+void GrammarGenerator::generate_reduce_transition( GrammarState* state, const GrammarSymbol* symbol, const GrammarProduction* production, const GrammarProduction* curr_production )
 {
     LALR_ASSERT( state );
     LALR_ASSERT( symbol );
@@ -1021,7 +1047,15 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
         {
             if ( production->precedence() == 0 || symbol->precedence() == 0 || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_NULL) )
             {
-                error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'", production->symbol()->identifier().c_str(), symbol->lexeme().c_str() );
+                error( production->line(), production->column(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'", production->symbol()->identifier().c_str(), symbol->lexeme().c_str() );
+/*
+                error(curr_production->line(), curr_production->column(),
+                        PARSER_ERROR_PARSE_TABLE_CONFLICT, "shift/reduce conflict for '%s' on '%s'\n\t=> lalr (%d:%d): shift on '%s'\n\t=> lalr (%d:%d): reduce on '%s'",
+                        production->symbol()->identifier().c_str(), symbol->lexeme().c_str(),
+                        transition->symbol()->line(), transition->symbol()->column(), transition->symbol()->identifier().c_str(),
+                        production->line(), production->column(), production->symbol()->identifier().c_str());
+
+*/                
             }
             else if ( production->precedence() > symbol->precedence() || (symbol->precedence() == production->precedence() && symbol->associativity() == ASSOCIATE_RIGHT) )
             {
@@ -1034,7 +1068,15 @@ void GrammarGenerator::generate_reduce_transition( GrammarState* state, const Gr
             LALR_ASSERT( transition->is_reduce() );
             if ( production->precedence() == 0 || transition->precedence() == 0 || production->precedence() == transition->precedence() )
             {
-                error( production->line(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'", production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str() );
+                error( production->line(), production->column(), PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'", production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str() );
+/*
+                error(curr_production->line(), curr_production->column(),
+                        PARSER_ERROR_PARSE_TABLE_CONFLICT, "reduce/reduce conflict for '%s' and '%s' on '%s'\n\t=> lalr (%d:%d): reduce on '%s'\n\t=> lalr (%d:%d): reduce on '%s'",
+                        production->symbol()->identifier().c_str(), transition->reduced_symbol()->identifier().c_str(), symbol->lexeme().c_str(),
+                        transition->symbol()->line(), transition->symbol()->column(), transition->symbol()->identifier().c_str(),
+                        transition->production()->line(), transition->production()->column(), transition->production()->symbol()->identifier().c_str());
+  
+*/            
             }
             else if ( production->precedence() > transition->precedence() )
             {

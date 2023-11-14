@@ -75,14 +75,14 @@ public:
     bool is_error_recovery_off() const {return error_recovery_off_;}
     bool is_error_recovery_show() const {return error_recovery_show_;}
     void genEBNF();
-    void genYACC();
+    void genYACC(bool asHtml=false);
     void genNakedGrammar();
 
 private:
     GrammarSymbol* literal_symbol(const char* lexeme, int line , int column);
     GrammarSymbol* regex_symbol(const char* lexeme, int line , int column);
-    GrammarSymbol* non_terminal_symbol(const char* lexeme, int line , int column);
-    GrammarSymbol* add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type );
+    GrammarSymbol* non_terminal_symbol(const char* lexeme, int line , int column, bool update_line_col = false );
+    GrammarSymbol* add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type, bool update_line_col = false );
     GrammarProduction* add_production(GrammarSymbol* symbol, int line , int column);
     GrammarAction* add_action( const char* id );
 };

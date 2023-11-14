@@ -26,37 +26,52 @@ typedef unsigned char mychar_t;
 
 struct C_MultLineCommentLexer
 {
-	static lalr::PositionIterator<const mychar_t*> string_lexer( const lalr::PositionIterator<const mychar_t*>& begin,
+    static lalr::PositionIterator<const mychar_t*> string_lexer( const lalr::PositionIterator<const mychar_t*>& begin,
 							const lalr::PositionIterator<const mychar_t*>& end,
 							std::basic_string<mychar_t>* lexeme,
 							const void** /*symbol*/ )
-	{
-		LALR_ASSERT( lexeme );
+    {
+        LALR_ASSERT( lexeme );
 
-		lexeme->clear();
-                //printf("C_MultLineCommentLexer : %s\n", lexeme->c_str());
+        lexeme->clear();
+        //printf("C_MultLineCommentLexer : %s\n", lexeme->c_str());
 
-		bool done = false;
-		lalr::PositionIterator<const mychar_t*> i = begin;
-		while ( i != end && !done)
-		{
-			switch( *i )
-			{
-				case '*':
-					++i;
-					if(i != end && *i == '/') done = true;
-					continue;
-					break;
-			}
-			++i;
-		}
-		if ( i != end )
-		{
-			LALR_ASSERT( *i == '/' );
-			++i;
-		}
-		return i;
-	}
+        bool done = false;
+        int nested = 0;
+        lalr::PositionIterator<const mychar_t*> i = begin;
+        while ( i != end && !done)
+        {
+            switch( *i )
+            {
+                case '*':
+                    ++i;
+                    if(i != end && *i == '/')
+                    {
+                        if(nested == 0) done = true;
+                        else --nested;
+                    }
+                    continue;
+                    break;
+                case '/':
+                    ++i;
+                    if(i != end && *i == '*')
+                    {
+                        ++nested;
+                        ++i;
+                        continue;
+                    }
+                    break;
+
+            }
+            ++i;
+        }
+        if ( i != end )
+        {
+            LALR_ASSERT( *i == '/' && nested == 0);
+            ++i;
+        }
+        return i;
+    }
 };
 
 
@@ -193,7 +208,7 @@ static void print_parsetree( const ParseTreeUserData& ast, int level )
     }
 }
 
-extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLexer, int generate_ebnf, int generate_yacc, int generate_parsetree)
+extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLexer, int generate_ebnf, int generate_yacc, int generate_yacc_html, int generate_parsetree)
 {
     int err = 0; // currently, zero is always returned; result codes for each part
                  // are sent to JS via set_result()
@@ -216,7 +231,7 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
 
     lalr::GrammarCompiler compiler;
     lalr::ErrorPolicy error_policy;
-    int errors = compiler.compile( grammar, grammar + strlen(grammar), &error_policy,  generate_ebnf, generate_yacc);
+    int errors = compiler.compile( grammar, grammar + strlen(grammar), &error_policy,  generate_ebnf, generate_yacc, generate_yacc_html);
 
     if (errors != 0) {
         fprintf(stderr, "Error compiling grammar. "
@@ -225,7 +240,7 @@ extern "C" int parse(const char *grammar, const unsigned char *input, int dumpLe
         goto done;
     }
     else {
-	if(generate_ebnf || generate_yacc) {
+	if(generate_ebnf || generate_yacc || generate_yacc_html) {
 	    err = -3;
 	    parse_result = 0;
 	    goto done;

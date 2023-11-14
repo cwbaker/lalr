@@ -760,12 +760,16 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
     const ParserSymbol* symbol = reinterpret_cast<const ParserSymbol*>( lexer_.symbol() );
     const ParserState* state = !nodes_.empty() ? nodes_.back().state() : nullptr;
 
-    bool handled = false;
+    bool handled = state_machine_->error_recovery_off;
     while ( !nodes_.empty() && !handled && !*accepted && !*rejected )
     {
         const ParserTransition* transition = find_transition( state_machine_->error_symbol, nodes_.back().state() );
         if ( transition )
         {
+            if(state_machine_->error_recovery_show)
+            {
+                printf("===>>Parser error recovering at: %d:%d\n", line, column);
+            }
             if ( transition->state )
             {
                 shift( transition, std::basic_string<Char, Traits, Allocator>(), line, column );
@@ -784,7 +788,7 @@ void Parser<Iterator, UserData, Char, Traits, Allocator>::error( bool* accepted,
         }
     }
 
-    if ( nodes_.empty() )
+    if ( nodes_.empty() || state_machine_->error_recovery_off )
     {
         if ( symbol )
         {

@@ -147,7 +147,7 @@ Grammar& Grammar::production( const char* identifier, int line, int column )
     active_whitespace_directive_ = false;
     active_precedence_directive_ = false;
     active_production_ = nullptr;
-    active_symbol_ = non_terminal_symbol(identifier, line , column);
+    active_symbol_ = non_terminal_symbol(identifier, line , column, true);
     return *this;
 }
 
@@ -322,7 +322,7 @@ Grammar& Grammar::identifier( const char* identifier, int line, int column )
     return *this;
 }
 
-static void ouptputTerminal(const GrammarSymbol *sym)
+static void ouptputTerminal(const GrammarSymbol *sym, bool asHtml=false)
 {
     if(sym->symbol_type() == SYMBOL_TERMINAL) {
         if(sym->lexeme_type() == LEXEME_LITERAL)
@@ -331,7 +331,12 @@ static void ouptputTerminal(const GrammarSymbol *sym)
             printf("\"%s\"", sym->lexeme().c_str());
     }
     else
-        printf("%s", sym->lexeme().c_str());
+    {
+        if(asHtml)
+            printf("<a href='#%s'>%s</a>", sym->lexeme().c_str(), sym->lexeme().c_str());
+        else
+            printf("%s", sym->lexeme().c_str());
+    }
 }
 
 static bool isTerminalRegex(const GrammarSymbol *symbol)
@@ -340,9 +345,35 @@ static bool isTerminalRegex(const GrammarSymbol *symbol)
             && symbol->lexeme_type() == LexemeType::LEXEME_REGULAR_EXPRESSION;
 }
 
+static bool isTerminalOrRegex(const GrammarSymbol *symbol)
+{
+    return symbol->symbol_type() == SymbolType::SYMBOL_TERMINAL
+            || symbol->lexeme_type() == LexemeType::LEXEME_REGULAR_EXPRESSION;
+}
+
 static bool isTerminal(const GrammarSymbol *symbol)
 {
     return symbol->symbol_type() == SymbolType::SYMBOL_TERMINAL;
+}
+
+static bool IsTerminalProduction(const GrammarSymbol *symbol, const GrammarProduction* production, bool hasMoreProductions)
+{
+    return (isTerminalRegex(symbol)
+                    || (!hasMoreProductions && production->length() == 1 && isTerminal(production->symbol_by_position(0))));
+
+}
+
+static bool isProductionTerminal(const GrammarSymbol *symbol)
+{
+    if(isTerminalOrRegex(symbol)) return true;
+    if(symbol->symbol_type() == SymbolType::SYMBOL_NON_TERMINAL)
+    {
+        if(symbol->productions().size() == 1)
+        {
+            return isTerminalOrRegex(symbol->productions()[0]->symbol_by_position(0));
+        }
+    }
+    return false;
 }
 
 void Grammar::genEBNF()
@@ -409,8 +440,9 @@ void Grammar::genEBNF()
     printf("\n\n// end EBNF\n");
 }
 
-void Grammar::genYACC()
+void Grammar::genYACC(bool asHtml)
 {
+    if(asHtml) printf("<html>\n<title>Yacc HTML linked for %s</title><body>\n<pre>\n", identifier().c_str());
     const char *prefix = "";
     printf(
             "//\n"
@@ -431,8 +463,7 @@ void Grammar::genYACC()
         bool hasMoreProductions = same_production || (production_next != productions().end() && production_next->get()->symbol() == curr_symbol);
         if(!same_production)
         {
-            if( isTerminalRegex(curr_symbol)
-                        || (!hasMoreProductions && production->length() == 1 && isTerminal(production->symbol_by_position(0))) )
+            if(IsTerminalProduction(curr_symbol, production, hasMoreProductions))
             {
                 printf("%%token %s ;\n", curr_symbol->lexeme().c_str());
             }
@@ -516,8 +547,7 @@ void Grammar::genYACC()
         bool same_production = last_production_symbol && last_production_symbol == curr_symbol;
         vector<unique_ptr<GrammarProduction>>::const_iterator production_next = (i+1);
         bool hasMoreProductions = same_production || (production_next != productions().end() && production_next->get()->symbol() == curr_symbol);
-        if (isTerminalRegex(curr_symbol)
-                    || (!hasMoreProductions && production->length() == 1 && isTerminal(production->symbol_by_position(0))))
+        if(IsTerminalProduction(curr_symbol, production, hasMoreProductions))
         {
             continue;
         }
@@ -538,7 +568,11 @@ void Grammar::genYACC()
             {
                 printf("\n%s\t;", prefix);
             }
-            printf("\n\n%s%s%s :\n%s\t", prefix, sym_prefix, sym_name, prefix);
+            printf("\n\n%s%s", prefix, sym_prefix);
+            if(asHtml)
+                printf("<span id='%s'>%s</span> :\n%s\t", sym_name, sym_name, prefix);
+            else
+                printf("%s :\n%s\t", sym_name, prefix);
         }
         if(production->length() > 0) {
             for(int elm=0; elm < production->length(); ++elm) {
@@ -548,7 +582,7 @@ void Grammar::genYACC()
                     printf("\n%s\t| ", prefix);
                 }
                 else printf(" ");
-                ouptputTerminal(sym);
+                ouptputTerminal(sym, asHtml ? !isProductionTerminal(sym) : false);
             }
         }
         else {
@@ -569,6 +603,7 @@ void Grammar::genYACC()
         printf("\n%s\t;", prefix);
     }
     printf("\n\n// end YACC\n");
+    if(asHtml) printf("</pre>\n</body>\n</html>\n");
 }
 
 void Grammar::genNakedGrammar()
@@ -634,14 +669,14 @@ GrammarSymbol* Grammar::regex_symbol(const char* lexeme, int line , int column)
     return add_symbol(lexeme, line, column, LEXEME_REGULAR_EXPRESSION, SYMBOL_TERMINAL );
 }
 
-GrammarSymbol* Grammar::non_terminal_symbol(const char* lexeme, int line , int column)
+GrammarSymbol* Grammar::non_terminal_symbol(const char* lexeme, int line , int column, bool update_line_col)
 {
     LALR_ASSERT( lexeme );
     LALR_ASSERT( line >= 0 );
-    return add_symbol(lexeme, line, column, LEXEME_NULL, SYMBOL_NON_TERMINAL );
+    return add_symbol(lexeme, line, column, LEXEME_NULL, SYMBOL_NON_TERMINAL, update_line_col );
 }
 
-GrammarSymbol* Grammar::add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type )
+GrammarSymbol* Grammar::add_symbol(const char* lexeme, int line, int column, LexemeType lexeme_type, SymbolType symbol_type, bool update_line_col )
 {
     LALR_ASSERT( lexeme );
     LALR_ASSERT( line >= 0 );
@@ -663,6 +698,11 @@ GrammarSymbol* Grammar::add_symbol(const char* lexeme, int line, int column, Lex
     GrammarSymbol* symbol = i->get();
     LALR_ASSERT( symbol );
     LALR_ASSERT( symbol->symbol_type() == symbol_type );
+    if(update_line_col)
+    {
+        symbol->set_line( line );
+        symbol->set_column( column );
+    }
     return symbol;
 }
 
