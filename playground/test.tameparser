@@ -1,0 +1,221 @@
+///
+/// Parser Language Definition
+///
+/// Created by Andrew Hunter on 21/05/2011
+///
+
+language ParserLanguage {
+	/// Symbols used by the lexer
+	lexer-symbols {
+		// Commonly used character sets
+		letter 			= /({unicode-letter}|{unicode-punctuation-dash}|{unicode-punctuation-connector})/
+		digit 			= /{unicode-number}/
+		alphanumeric 	= /({letter}|{digit})/
+		whitespace		= /{unicode-separator}|[\t]/
+		anycharacter	= /[^\n\r]/
+
+		// Characters valid in regular expressions and strings
+		first-re-char 	= /[^\/\*]|(\\\/)/
+		regex-char		= /[^\/]|(\\\/)/
+		string-char     = /[^"]|(\\")/
+
+		// Identifiers, regular expressions
+		identifier		= /{letter}{alphanumeric}*/
+		regex			= /\/{first-re-char}{regex-char}*\//
+	}
+
+	/// Lexical symbols
+	lexer {
+		identifier		= /{identifier}/
+		nonterminal		= /\<{identifier}\>/
+		regex			= /{regex}/
+		string			= /"{string-char}*"/
+		character		= /'(.|\\.)'/
+	}
+
+	/// Ignored symbols
+	ignore {
+		newline			= /[\n\r]+/
+		whitespace		= /{whitespace}+/
+		comment			= /\/\/({anycharacter}*)/
+		c-comment		= /\/\*([^*]|\*[^\/])*\*\//
+	}
+
+	/// Keywords
+	/// (We use very few keywords, to extend the range of identifiers available)
+	keywords {
+	}
+
+	/// Weak keywords
+	/// Declared here to suppress warnings
+	weak keywords {
+		language
+		import
+		lexer-symbols
+		lexer
+		ignore
+		weak
+		keywords
+		grammar
+		replace
+		parser
+		test
+		from
+		case
+		sensitive
+		insensitive
+		precedence
+
+		left
+		right
+		non-associative
+		non-assoc
+
+		conflict
+		shift
+		reduce
+
+		can-clash
+	}
+
+	/// The grammar itself
+	grammar {
+
+		//
+		// The top-level definitions
+		//
+
+		<Parser-Language>		= (<TopLevel-Block>)*
+
+		<TopLevel-Block>		= <Language-Block>
+								| <Import-Block>
+								| <Parser-Block>
+								| <Test-Block>
+
+		<Language-Block>		= language identifier[name] (<Language-Inherits>)? '{' (<Language-Definition>)* '}'
+
+		<Import-Block>			= import string[filename]
+
+		<Language-Inherits>		= ':' identifier[inherit-from]
+
+		//
+		// The language block
+		//
+
+		<Language-Definition>	= <Lexer-Symbols-Definition>
+								| <Lexer-Definition>
+								| <Ignore-Definition>
+								| <Keywords-Definition>
+								| <Grammar-Definition>
+								| <Precedence-Definition>
+
+		//
+		// Basic language items
+		//
+
+		<Lexer-Symbols-Definition>	= <Lexer-Symbols-Modifier>*[modifiers] lexer-symbols '{' (<Lexeme-Definition>)*[definitions] '}'
+
+		<Lexer-Definition> 			= [=> <Lexer-Modifier>* lexer] <Lexer-Modifier>*[modifiers] lexer '{' (<Lexeme-Definition>)*[definitions] '}'
+
+		<Ignore-Definition>			= ignore '{' (<Keyword-Definition>)*[definitions] '}'
+
+		<Keywords-Definition>		= [=> <Lexer-Modifier>* keywords] <Lexer-Modifier>*[modifiers] keywords '{' (<Keyword-Definition>)*[definitions] '}'
+
+		<Lexer-Modifier>			= weak
+									| case sensitive
+									| case insensitive
+
+		<Lexer-Symbols-Modifier>	= case sensitive
+									| case insensitive
+
+		<Keyword-Definition>		= identifier[literal]
+									| <Lexeme-Definition>[lexeme]
+
+		<Lexeme-Definition> 		= identifier[name] ('=' | "|=") (regex | string | character)
+									| [=> replace identifier '='] replace identifier[name] '=' (regex | string | character)
+                                    | identifier[name] '=' identifier[source-language] '.' identifier[source-name]
+
+		//
+		// Defining grammars
+		//
+
+		<Grammar-Definition>		= grammar '{' (<Nonterminal-Definition>)*[nonterminals] '}'
+
+		<Nonterminal-Definition>	= [=> nonterminal ('=' | "|=")] nonterminal ('=' | "|=") <Production> ('|' <Production>)*
+									| [=> replace nonterminal '='] replace nonterminal '=' <Production> ('|' <Production>)*
+
+		// Top level is just a simple EBNF term, as the '|' operator creates a new production at this point
+		<Production>				= (<Simple-Ebnf-Item>)*[items]
+
+		<Ebnf-Item>					= (<Simple-Ebnf-Item>)*[items]
+									| (<Simple-Ebnf-Item>)*[items] '|' <Ebnf-Item>[or-item]
+
+		<Simple-Ebnf-Item>			= <Nonterminal> <Semantic-Specification>?
+									| <Terminal> <Semantic-Specification>?
+									| <Guard> <Semantic-Specification>?
+									| <Simple-Ebnf-Item> '*' <Semantic-Specification>?
+									| <Simple-Ebnf-Item> '+' <Semantic-Specification>?
+									| <Simple-Ebnf-Item> '?' <Semantic-Specification>?
+									| '(' <Ebnf-Item> ')' <Semantic-Specification>?
+
+		<Guard>						= "[=>" <Ebnf-Item> ']'
+									| "[=>" '[' can-clash ']' <Ebnf-Item> ']'
+
+		<Nonterminal>				= nonterminal
+									| identifier[source-language] '.' nonterminal
+
+		<Terminal>					= <Basic-Terminal>
+									| identifier[source-language] '.' <Basic-Terminal>
+
+		<Basic-Terminal>			= identifier[lexeme-name]
+									| string
+									| character
+
+		//
+		// Semantics
+		//
+
+		<Semantic-Specification>	= '[' <Semantic-Item>[first-item] (',' <Semantic-Item>)*[more-items] ']'
+
+		<Semantic-Item>				= identifier[name]
+									| conflict '=' shift
+									| conflict '=' reduce
+									| conflict '=' weak reduce
+
+		//
+		// Defining precedence
+		//
+
+		<Precedence-Definition>		= precedence '{' <Precedence-Item>*[items] '}'
+
+		<Precedence-Item>			= left <Equal-Precedence-Items>
+									| right <Equal-Precedence-Items>
+									| non-associative  <Equal-Precedence-Items>
+									| non-assoc <Equal-Precedence-Items>
+
+		<Equal-Precedence-Items>	= <Simple-Ebnf-Item>
+									| '{' <Simple-Ebnf-Item>*[terminals] '}'
+
+		//
+		// The parser declaration block
+		//
+
+		<Parser-Block>				= parser identifier[name] ':' identifier[language-name] '{' (<Parser-StartSymbol>)+[start-symbols] '}'
+
+		<Parser-StartSymbol>		= <Nonterminal>
+
+		//
+		// Test definition block
+		//
+
+		<Test-Block>				= test identifier[language-name] '{' <Test-Definition>*[tests] '}'
+
+		<Test-Definition>			= <Nonterminal> '=' <Test-Specification>+
+									| <Nonterminal> "!=" <Test-Specification>+
+									| <Nonterminal> from <Test-Specification>+
+
+		<Test-Specification>		= string
+									| [=> identifier '('] identifier '(' string ')'
+
+	}
+}

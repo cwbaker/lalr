@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<document name='example'>
+      <paragraph id='1.1'/>
+      <paragraph id='1.2'/>
+      <paragraph id='1.3'></paragraph>
+</document>

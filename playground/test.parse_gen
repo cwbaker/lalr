@@ -1,0 +1,271 @@
+/coderequires /{
+	#include "regular.h"
+/}
+
+/code /{
+	#include <stdlib.h>
+	#include "regular_lex.h"
+
+	static void yyerror(char const* msg, reg_nfa* out, void* scanner);
+	static int yyparse(reg_nfa* out, void* scanner);
+	static int init_node(reg_nfa_table* table) {
+		unsigned int* p = malloc((sizeof *p) * 16);
+		if (p == NULL) return 1;
+		int res = 0;
+		DYNARR_CHK(table->node_cnt, table->node_cap, table->nodes, res);
+		if (res) {free(p); return 1;}
+		table->nodes[table->node_cnt].lambda = (reg_nfa_lam){.paths=p,.cnt=0,.cap=16};
+		for (size_t i = 0; i < (1 << CHAR_BIT); ++i) {
+			table->nodes[table->node_cnt].tran[i] = UINT_MAX;
+		}
+		++(table->node_cnt);
+		return 0;
+	}
+
+	static int add_path(reg_nfa_node* node, unsigned int goal) {
+		int res = 0;
+		DYNARR_CHK(node->lambda.cnt, node->lambda.cap, node->lambda.paths, res);
+		if (res) return 1;
+		node->lambda.paths[node->lambda.cnt] = goal;
+		++(node->lambda.cnt);
+		return 0;
+	}
+/}
+
+/parseparam <reg_nfa*> out
+/parseparam <void*> scanner
+/lexparam <void*> scanner
+
+/token tokpipe 1
+/token tokkleene 2
+/token tokplus 3
+/token tokopen 4
+/token tokclose 5
+/token <char> tokchar 6
+/token tokdot 7
+/token tokdash 8
+
+/nterm NTRE
+/nterm <reg_in> NTALT
+/nterm <struct reg_link*> NTALTLIST
+/nterm <reg_in> NTSEQ
+/nterm <struct reg_link*> NTSEQLIST
+/nterm <reg_in> NTATOM
+/nterm <enum atommod_type> NTATOMMOD
+/nterm <reg_in> NTNUCLEUS
+/nterm <struct charrng> NTCHARRNG
+
+/start NTRE
+
+%%
+
+NTRE:
+	NTALT /{out->specials = $1;/}
+	;
+
+NTALT:
+	NTSEQ NTALTLIST /{
+		if ($2 == NULL) {
+			$0 = $1;
+		} else {
+			if (init_node(&(out->table))) exit(1);
+			if (init_node(&(out->table))) exit(1);
+			if (add_path(&(out->table.nodes[out->table.node_cnt - 2]), $1.start)) exit(1);
+			if (add_path(&(out->table.nodes[$1.end]), out->table.node_cnt - 1)) exit(1);
+			struct reg_link* curr = $2;
+			while (curr != NULL) {
+				struct reg_link* tmp = curr;
+				if (add_path(&(out->table.nodes[out->table.node_cnt - 2]), tmp->sub.start)) exit(1);
+				if (add_path(&(out->table.nodes[tmp->sub.end]), out->table.node_cnt - 1)) exit(1);
+				curr = tmp->next;
+				free(tmp);
+			}
+			$0.start = out->table.node_cnt - 2;
+			$0.end = out->table.node_cnt - 1;
+		}
+	/}
+	;
+
+NTALTLIST:
+	tokpipe NTSEQ NTALTLIST /{
+		struct reg_link* top = malloc(sizeof *top);
+		if (top == NULL) exit(1);
+		top->next = $3;
+		top->sub = $2;
+		$0 = top;
+	/}
+	| /empty /{$0 = NULL;/}
+	;
+
+NTSEQ:
+	NTATOM NTSEQLIST /{
+		if ($2 == NULL) {
+			$0 = $1;
+		} else {
+			if (init_node(&(out->table))) exit(1);
+			if (init_node(&(out->table))) exit(1);
+			if (add_path(&(out->table.nodes[out->table.node_cnt - 2]), $1.start)) exit(1);
+			unsigned int save = $1.end;
+			struct reg_link* curr = $2;
+			while (curr != NULL) {
+				struct reg_link* tmp = curr;
+				if (add_path(&(out->table.nodes[save]), tmp->sub.start)) exit(1);
+				save = tmp->sub.end;
+				curr = tmp->next;
+				free(tmp);
+			}
+			if (add_path(&(out->table.nodes[save]), out->table.node_cnt - 1)) exit(1);
+			$0.start = out->table.node_cnt - 2;
+			$0.end = out->table.node_cnt - 1;
+		}
+	/}
+	| /empty /{
+		if (init_node(&(out->table))) exit(1);
+		if (init_node(&(out->table))) exit(1);
+		if (add_path(&(out->table.nodes[out->table.node_cnt - 2]), out->table.node_cnt - 1)) exit(1);
+		$0.start = out->table.node_cnt - 2;
+		$0.end = out->table.node_cnt - 1;
+	/}
+	;
+
+NTSEQLIST:
+	NTATOM NTSEQLIST /{
+		struct reg_link* top = malloc(sizeof *top);
+		top->next = $2;
+		top->sub = $1;
+		$0 = top;
+	/}
+	| /empty /{$0 = NULL;/}
+	;
+
+NTATOM:
+	NTNUCLEUS NTATOMMOD /{
+		if ($2 == MOD_NONE) {
+			$0 = $1;
+		} else {
+			if (init_node(&(out->table))) exit(1);
+			if (init_node(&(out->table))) exit(1);
+			if (add_path(&(out->table.nodes[out->table.node_cnt - 2]), $1.start)) exit(1);
+			if (add_path(&(out->table.nodes[$1.end]), out->table.node_cnt - 1)) exit(1);
+			if (add_path(&(out->table.nodes[$1.end]), $1.start)) exit(1);
+			if ($2 == MOD_KLEENE) {
+				if (add_path(&(out->table.nodes[$1.start]), $1.end)) exit(1);
+			}
+			$0.start = out->table.node_cnt - 2;
+			$0.end = out->table.node_cnt - 1;
+		}
+	/}
+	;
+
+NTATOMMOD:
+	tokkleene /{$0 = MOD_KLEENE;/}
+	| tokplus /{$0 = MOD_PLUS;/}
+	| /empty /{$0 = MOD_NONE;/}
+	;
+
+NTNUCLEUS:
+	tokopen NTALT tokclose /{$0 = $2;/}
+	| tokchar NTCHARRNG /{
+		if (init_node(&(out->table))) exit(1);
+		if (init_node(&(out->table))) exit(1);
+		if ($2.type == RNG_NONE) {
+			out->table.nodes[out->table.node_cnt - 2].tran[(unsigned char)$1] = out->table.node_cnt - 1;
+		} else {
+			if ((unsigned char)$1 > (unsigned char)($2.top)) exit(1);
+			for (size_t i = (unsigned char)$1; i <= (unsigned char)($2.top); ++i) {
+				out->table.nodes[out->table.node_cnt - 2].tran[i] = out->table.node_cnt - 1;
+			}
+		}
+		$0.start = out->table.node_cnt - 2;
+		$0.end = out->table.node_cnt - 1;
+	/}
+	| tokdot /{
+		if (init_node(&(out->table))) exit(1);
+		if (init_node(&(out->table))) exit(1);
+		for (size_t i = 0; i < (1 << CHAR_BIT); ++i) {
+			out->table.nodes[out->table.node_cnt - 2].tran[i] = out->table.node_cnt - 1;
+		}
+		$0.start = out->table.node_cnt - 2;
+		$0.end = out->table.node_cnt - 1;
+	/}
+	;
+
+NTCHARRNG:
+	tokdash tokchar /{
+		$0.type = RNG_TOP;
+		$0.top = $2;
+	/}
+	| /empty /{$0.type = RNG_NONE;/}
+	;
+
+%%
+
+void yyerror(char const* msg, reg_nfa* out, void* scanner) {
+	(void)out;
+	(void)scanner;
+	fprintf(stderr, "%s\n", msg);
+}
+
+static void write_reg(FILE* restrict out, reg_nfa const* restrict r) {
+	_Bool* table = malloc((sizeof *table) * r->table.node_cnt);
+	fputs("+----++", out);
+	for (size_t i = 0; i < (1 << CHAR_BIT); ++i) fputs("-----+", out);
+	fputs("\n|  T ||", out);
+	for (size_t i = 0; i < (1 << CHAR_BIT); ++i) {
+		if (i >= 32 && i <= 126) fprintf(out, "  %c  |", (char)i);
+		else fprintf(out, "<%3zu>|", i);
+	}
+	fputs("\n+----++", out);
+	for (size_t i = 0; i < (1 << CHAR_BIT); ++i) fputs("-----+", out);
+	fputs("\n+----++", out);
+	for (size_t i = 0; i < (1 << CHAR_BIT); ++i) fputs("-----+", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) {
+		fprintf(out, "\n|%c%3zu||", r->specials.end == i ? '+' : (r->specials.start == i ? 'S' : ' '), i);
+		for (size_t j = 0; j < (1 << CHAR_BIT); ++j) {
+			if (r->table.nodes[i].tran[j] == UINT_MAX) {
+				fprintf(out, "  E  |");
+			} else {
+				fprintf(out, " %3u |", r->table.nodes[i].tran[j]);
+			}
+		}
+		fputs("\n+----++", out);
+		for (size_t i = 0; i < (1 << CHAR_BIT); ++i) fputs("-----+", out);
+	}
+	fputs("\n\n+----++", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) fputs("----+", out);
+	fputs("\n|  L ||", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) {
+		fprintf(out, "%c%3zu|", r->specials.end == i ? '+' : (r->specials.start == i ? 'S' : ' '), i);
+	}
+	fputs("\n+----++", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) fputs("----+", out);
+	fputs("\n+----++", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) fputs("----+", out);
+	for (size_t i = 0; i < r->table.node_cnt; ++i) {
+		for (size_t j = 0; j < r->table.node_cnt; ++j) table[j] = 0;
+		for (size_t j = 0; j < r->table.nodes[i].lambda.cnt; ++j) table[r->table.nodes[i].lambda.paths[j]] = 1;
+		fprintf(out, "\n|%c%3zu||", r->specials.end == i ? '+' : (r->specials.start == i ? 'S' : ' '), i);
+		for (size_t j = 0; j < r->table.node_cnt; ++j) {
+			fprintf(out, "  %c |", table[j] ? '*' : ' ');
+		}
+		fputs("\n+----++", out);
+		for (size_t i = 0; i < r->table.node_cnt; ++i) fputs("----+", out);
+	}
+	fputc('\n', out);
+}
+
+int main(void) {
+	void* scanner = init_scanner(stdin);
+	if (scanner == NULL) return 1;
+	reg_nfa out;
+	out.table.nodes = malloc((sizeof *(out.table.nodes)) * 16);
+	out.table.node_cnt = 0;
+	out.table.node_cap = 16;
+	int res = yyparse(&out, scanner);
+	fini_scanner(scanner);
+	if (res == 0) {
+		write_reg(stdout, &out);
+		fputc('\n', stdout);
+	}
+	return res;
+}
