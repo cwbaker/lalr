@@ -8,6 +8,8 @@
 /sweet/sweet_parser.sln
 /*.sln
 /.vscode/
+/.vs
+/out
 debug
 release
 shipping
