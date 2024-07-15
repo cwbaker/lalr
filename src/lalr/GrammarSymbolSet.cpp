@@ -20,23 +20,23 @@ static const size_t BITS_PER_ELEMENT = sizeof(size_t) * 8;
 
 GrammarSymbolSet::GrammarSymbolSet( size_t symbols )
 : set_()
-, minimum_(numeric_limits<size_t>::max())
-, maximum_(numeric_limits<size_t>::min())
+, minimum_( numeric_limits<size_t>::max() )
+, maximum_( numeric_limits<size_t>::min() )
 {
     set_.resize( symbols / BITS_PER_ELEMENT );
 }
 
 GrammarSymbolSet::GrammarSymbolSet( GrammarSymbolSet&& set )
 : set_( std::move(set.set_) )
-, minimum_(set.minimum_)
-, maximum_(set.maximum_)
+, minimum_( std::exchange(set.minimum_, numeric_limits<size_t>::max()) )
+, maximum_( std::exchange(set.maximum_, numeric_limits<size_t>::min()) )
 {
 }
 
 GrammarSymbolSet::GrammarSymbolSet( const GrammarSymbolSet& set )
 : set_( set.set_ )
-, minimum_(set.minimum_)
-, maximum_(set.maximum_)
+, minimum_( set.minimum_ )
+, maximum_( set.maximum_ )
 {
 }
 
